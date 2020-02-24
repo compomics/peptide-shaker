@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.followup;
 
-import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.aminoacids.AminoAcid;
 import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
@@ -17,14 +16,14 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.io.export.xml.SimpleXmlWriter;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
+import com.compomics.util.io.IoUtil;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -44,10 +43,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 public class PepXmlExport {
 
     /**
-     * The spectrum factory.
-     */
-    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
      * The PTM factory.
      */
     private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
@@ -65,6 +60,7 @@ public class PepXmlExport {
      * @param identification the identification object containing the
      * identification results
      * @param identificationParameters the identification parameters
+     * @param spectrumProvider the spectrum provider
      * @param destinationFile the file where to write
      * @param peptideShakerVersion the PeptideShaker version
      * @param waitingHandler a waiting handler to display progress and allow
@@ -74,8 +70,15 @@ public class PepXmlExport {
      * @throws IOException exception thrown whenever an error is encountered
      * while reading or writing a file
      */
-    public void writePepXmlFile(Identification identification, IdentificationParameters identificationParameters, File destinationFile, String peptideShakerVersion,
-            WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) throws IOException {
+    public void writePepXmlFile(
+            Identification identification,
+            IdentificationParameters identificationParameters,
+            SpectrumProvider spectrumProvider,
+            File destinationFile,
+            String peptideShakerVersion,
+            WaitingHandler waitingHandler,
+            ExceptionHandler exceptionHandler
+    ) throws IOException {
 
         if (waitingHandler != null) {
 
@@ -84,11 +87,25 @@ public class PepXmlExport {
 
         }
 
-        SimpleXmlWriter sw = new SimpleXmlWriter(new BufferedWriter(new FileWriter(destinationFile)));
-        writeHeader(sw);
-        writeMsmsPipelineAnalysis(sw, peptideShakerVersion, destinationFile, identification, identificationParameters, waitingHandler);
-        sw.close();
+        try ( SimpleXmlWriter sw = new SimpleXmlWriter(
+                new BufferedWriter(
+                        new FileWriter(
+                                destinationFile
+                        )
+                )
+        )) {
 
+            writeHeader(sw);
+            writeMsmsPipelineAnalysis(
+                    sw,
+                    peptideShakerVersion,
+                    destinationFile,
+                    identification,
+                    spectrumProvider,
+                    identificationParameters,
+                    waitingHandler
+            );
+        }
     }
 
     /**
@@ -99,7 +116,9 @@ public class PepXmlExport {
      * @throws IOException exception thrown whenever an error is encountered
      * while writing to the file
      */
-    private void writeHeader(SimpleXmlWriter sw) throws IOException {
+    private void writeHeader(
+            SimpleXmlWriter sw
+    ) throws IOException {
 
         sw.writeLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 
@@ -111,6 +130,7 @@ public class PepXmlExport {
      * @param sw the XML file writer
      * @param identification the identification object containing the
      * identification results
+     * @param spectrumProvider the spectrum provider
      * @param identificationParameters the identification parameters
      * @param destinationFile the file where to write
      * @param peptideShakerVersion the PeptideShaker version
@@ -120,14 +140,28 @@ public class PepXmlExport {
      * @throws IOException exception thrown whenever an error is encountered
      * while reading or writing a file
      */
-    private void writeMsmsPipelineAnalysis(SimpleXmlWriter sw, String peptideShakerVersion, File destinationFile, Identification identification, IdentificationParameters identificationParameters,
-            WaitingHandler waitingHandler) throws IOException {
+    private void writeMsmsPipelineAnalysis(
+            SimpleXmlWriter sw,
+            String peptideShakerVersion,
+            File destinationFile,
+            Identification identification,
+            SpectrumProvider spectrumProvider,
+            IdentificationParameters identificationParameters,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         sw.writeLine("<msms_pipeline_analysis xmlns=\"https://regis-web.systemsbiology.net/pepXML\" xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\" "
                 + "xsi:schemaLocation=\"http://sashimi.sourceforge.net/schema_revision/pepXML/pepXML_v117.xsd\" summary_xml=\"" + destinationFile.getAbsolutePath() + "\">");
 
-        writeAnalysisSummary(sw, peptideShakerVersion);
-        writeMsmsRunSummary(sw, identification, identificationParameters, waitingHandler);
+        writeAnalysisSummary(
+                sw,
+                peptideShakerVersion
+        );
+        writeMsmsRunSummary(
+                sw,
+                identification,
+                spectrumProvider,
+                identificationParameters, waitingHandler);
 
         sw.writeLineDecreasedIndent("</msms_pipeline_analysis>");
 
@@ -142,7 +176,10 @@ public class PepXmlExport {
      * @throws IOException exception thrown whenever an error is encountered
      * while writing to the file
      */
-    private void writeAnalysisSummary(SimpleXmlWriter sw, String peptideShakerVersion) throws IOException {
+    private void writeAnalysisSummary(
+            SimpleXmlWriter sw,
+            String peptideShakerVersion
+    ) throws IOException {
 
         sw.writeLineIncreasedIndent("<analysis_summary>");
 
@@ -163,6 +200,7 @@ public class PepXmlExport {
      * @param sw the XML file writer
      * @param identification the identification object containing the
      * identification results
+     * @param spectrumProvider the spectrum provider
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler to display progress and allow
      * interrupting the process
@@ -170,8 +208,13 @@ public class PepXmlExport {
      * @throws IOException exception thrown whenever an error is encountered
      * while reading or writing a file
      */
-    private void writeMsmsRunSummary(SimpleXmlWriter sw, Identification identification,
-            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException {
+    private void writeMsmsRunSummary(
+            SimpleXmlWriter sw,
+            Identification identification,
+            SpectrumProvider spectrumProvider,
+            IdentificationParameters identificationParameters,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         if (waitingHandler != null) {
 
@@ -188,13 +231,12 @@ public class PepXmlExport {
 
             StringBuilder runStart = new StringBuilder();
             runStart.append("<msms_run_summary");
-            File spectrumFile = spectrumFactory.getMgfFileFromName(spectrumFileName);
+            String filePath = spectrumProvider.getFilePaths().get(spectrumFileName);
 
-            if (spectrumFile != null) {
+            if (filePath != null) {
 
-                String path = spectrumFile.getAbsolutePath();
-                String baseName = Util.removeExtension(path);
-                String extension = Util.getExtension(spectrumFile);
+                String baseName = IoUtil.removeExtension(filePath);
+                String extension = IoUtil.getExtension(new File(filePath));
                 runStart.append(" base_name=\"").append(baseName).append("\" ");
                 runStart.append("raw_data_type=\"").append(extension).append("\" ");
                 runStart.append("raw_data=\"").append(extension).append("\"");
@@ -218,7 +260,14 @@ public class PepXmlExport {
             }
 
             writeSearchSummary(sw, identificationParameters);
-            writeSpectrumQueries(sw, identification, identificationParameters, spectrumFileName, waitingHandler);
+            writeSpectrumQueries(
+                    sw,
+                    identification,
+                    spectrumProvider,
+                    identificationParameters,
+                    spectrumFileName,
+                    waitingHandler
+            );
 
             sw.writeLineDecreasedIndent("</msms_run_summary>");
 
@@ -240,7 +289,11 @@ public class PepXmlExport {
      * @throws IOException exception thrown whenever an error is encountered
      * while reading or writing a file
      */
-    private void writeEnzyme(SimpleXmlWriter sw, Enzyme enzyme, DigestionParameters.Specificity specificity) throws IOException {
+    private void writeEnzyme(
+            SimpleXmlWriter sw,
+            Enzyme enzyme,
+            DigestionParameters.Specificity specificity
+    ) throws IOException {
 
         sw.writeLineIncreasedIndent("<sample_enzyme name=\"" + enzyme.getName() + "\" fidelity=\"" + specificity + "\">");
 
@@ -294,7 +347,10 @@ public class PepXmlExport {
      * @throws IOException exception thrown whenever an error is encountered
      * while reading or writing a file
      */
-    private void writeSearchSummary(SimpleXmlWriter sw, IdentificationParameters identificationParameters) throws IOException {
+    private void writeSearchSummary(
+            SimpleXmlWriter sw,
+            IdentificationParameters identificationParameters
+    ) throws IOException {
 
         sw.writeLine("<search_summary precursor_mass_type=\"monoisotopic\" fragment_mass_type=\"monoisotopic\">");
         sw.increaseIndent();
@@ -325,7 +381,10 @@ public class PepXmlExport {
      *
      * @return the line for a modification
      */
-    private String getModLine(Modification modification, boolean variable) {
+    private String getModLine(
+            Modification modification,
+            boolean variable
+    ) {
 
         StringBuilder modificationLine = new StringBuilder();
 
@@ -451,27 +510,48 @@ public class PepXmlExport {
      * @param sw the XML file writer
      * @param identification the identification object containing the
      * identification results
+     * @param spectrumProvider the spectrum provider
      * @param identificationParameters the identification parameters
+     * @param refSpectrumFile the spectrum file to export
      * @param waitingHandler a waiting handler to display progress and allow
      * interrupting the process
      *
      * @throws IOException exception thrown whenever an error is encountered
      * while reading or writing a file
      */
-    private void writeSpectrumQueries(SimpleXmlWriter sw, Identification identification, IdentificationParameters identificationParameters, String spectrumFile, WaitingHandler waitingHandler) throws IOException {
+    private void writeSpectrumQueries(
+            SimpleXmlWriter sw,
+            Identification identification,
+            SpectrumProvider spectrumProvider,
+            IdentificationParameters identificationParameters,
+            String refSpectrumFile,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(waitingHandler);
         SpectrumMatch spectrumMatch;
 
         while ((spectrumMatch = psmIterator.next()) != null) {
-            String spectrumKey = spectrumMatch.getSpectrumKey();
-            if (!Spectrum.getSpectrumFile(spectrumKey).equals(spectrumFile)) continue;
-            
-            String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
+
+            String spectrumFile = spectrumMatch.getSpectrumFile();
+
+            if (!spectrumFile.equals(refSpectrumFile)) {
+                continue;
+            }
+
+            String spectrumTitle = spectrumMatch.getSpectrumTitle();
             StringBuilder spectrumQueryStart = new StringBuilder();
-            spectrumQueryStart.append("<spectrum_query unique_search_id=\"").append(StringEscapeUtils.escapeHtml4(spectrumTitle)).append("\">");
+            spectrumQueryStart.append("<spectrum_query unique_search_id=\"")
+                    .append(StringEscapeUtils.escapeHtml4(spectrumTitle))
+                    .append("\">");
             sw.writeLine(spectrumQueryStart.toString());
-            writeSpectrumMatch(sw, identification, identificationParameters, spectrumMatch);
+            writeSpectrumMatch(
+                    sw,
+                    identification,
+                    spectrumProvider,
+                    identificationParameters,
+                    spectrumMatch
+            );
             sw.writeLineDecreasedIndent("</spectrum_query>");
 
             if (waitingHandler != null) {
@@ -493,17 +573,25 @@ public class PepXmlExport {
      * @param sw the XML file writer
      * @param identification the identification object containing the
      * identification results
+     * @param spectrumProvider the spectrum provider
      * @param identificationParameters the identification parameters
-     * @param waitingHandler a waiting handler to display progress and allow
-     * interrupting the process
+     * @param spectrumMatch the spectrum match
      *
      * @throws IOException exception thrown whenever an error is encountered
      * while reading or writing a file
      */
-    private void writeSpectrumMatch(SimpleXmlWriter sw, Identification identification, IdentificationParameters identificationParameters, SpectrumMatch spectrumMatch) throws IOException {
+    private void writeSpectrumMatch(
+            SimpleXmlWriter sw,
+            Identification identification,
+            SpectrumProvider spectrumProvider,
+            IdentificationParameters identificationParameters,
+            SpectrumMatch spectrumMatch
+    ) throws IOException {
 
-        String spectrumKey = spectrumMatch.getSpectrumKey();
-        Double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
+        double precursorMz = spectrumProvider.getPrecursorMz(
+                spectrumMatch.getSpectrumFile(),
+                spectrumMatch.getSpectrumTitle()
+        );
         PSParameter psParameter;
 
         sw.writeLineIncreasedIndent("<search_result>");
@@ -515,7 +603,14 @@ public class PepXmlExport {
         if (peptideAssumption != null) {
 
             psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
-            writeSearchHit(sw, identificationParameters, peptideAssumption, precursorMz, psParameter, true);
+            writeSearchHit(
+                    sw,
+                    identificationParameters,
+                    peptideAssumption,
+                    precursorMz,
+                    psParameter,
+                    true
+            );
         }
 
         // Search engines results
@@ -529,8 +624,14 @@ public class PepXmlExport {
 
                     peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
                     psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
-                    writeSearchHit(sw, identificationParameters, peptideAssumption, precursorMz, psParameter, false);
-
+                    writeSearchHit(
+                            sw,
+                            identificationParameters,
+                            peptideAssumption,
+                            precursorMz,
+                            psParameter,
+                            false
+                    );
                 }
             }
         }
@@ -552,21 +653,49 @@ public class PepXmlExport {
      * @throws IOException exception thrown whenever an error is encountered
      * while reading or writing a file
      */
-    private void writeSearchHit(SimpleXmlWriter sw, IdentificationParameters identificationParameters, PeptideAssumption peptideAssumption, Double precursorMz, PSParameter psParameter, boolean mainHit) throws IOException {
+    private void writeSearchHit(
+            SimpleXmlWriter sw,
+            IdentificationParameters identificationParameters,
+            PeptideAssumption peptideAssumption,
+            double precursorMz,
+            PSParameter psParameter,
+            boolean mainHit
+    ) throws IOException {
 
         Peptide peptide = peptideAssumption.getPeptide();
 
         StringBuilder searchHitStart = new StringBuilder();
-        searchHitStart.append("<search_hit hit_rank=\"").append(peptideAssumption.getRank()).append("\" ");
-        searchHitStart.append("peptide=\"").append(peptide.getSequence()).append("\" ");
+        searchHitStart.append("<search_hit hit_rank=\"")
+                .append(peptideAssumption.getRank())
+                .append("\" ")
+                .append("peptide=\"")
+                .append(peptide.getSequence())
+                .append("\" ");
+
         TreeMap<String, int[]> proteinMapping = peptide.getProteinMapping();
         String proteins = proteinMapping.navigableKeySet().stream()
-                .collect(Collectors.joining(","));
+                .collect(
+                        Collectors.joining(",")
+                );
 
-        searchHitStart.append("protein=\"").append(proteins).append("\" ");
-        searchHitStart.append("num_tot_proteins=\"").append(proteinMapping.size()).append("\" ");
-        searchHitStart.append("calc_neutral_pep_mass=\"").append(peptideAssumption.getTheoreticMass()).append("\" ");
-        searchHitStart.append("massdiff=\"").append(peptideAssumption.getDeltaMass(precursorMz, false, identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection())).append("\">");
+        searchHitStart.append("protein=\"")
+                .append(proteins)
+                .append("\" ")
+                .append("num_tot_proteins=\"")
+                .append(proteinMapping.size())
+                .append("\" ")
+                .append("calc_neutral_pep_mass=\"")
+                .append(peptideAssumption.getTheoreticMass())
+                .append("\" ")
+                .append("massdiff=\"")
+                .append(
+                        peptideAssumption.getDeltaMass(
+                                precursorMz,
+                                false,
+                                identificationParameters.getSearchParameters().getMinIsotopicCorrection(),
+                                identificationParameters.getSearchParameters().getMaxIsotopicCorrection())
+                )
+                .append("\">");
 
         sw.writeLine(searchHitStart.toString());
 
@@ -577,7 +706,9 @@ public class PepXmlExport {
             for (String accession : proteinMapping.navigableKeySet()) {
 
                 StringBuilder proteinLine = new StringBuilder();
-                proteinLine.append("<alternative_protein protein=\"").append(accession).append("\"/>");
+                proteinLine.append("<alternative_protein protein=\"")
+                        .append(accession)
+                        .append("\"/>");
                 sw.writeLine(proteinLine.toString());
 
             }
@@ -638,13 +769,17 @@ public class PepXmlExport {
 
             if (nTermMass != null) {
 
-                modificationStart.append(" mod_nterm_mass=\"").append(nTermMass).append("\"");
+                modificationStart.append(" mod_nterm_mass=\"")
+                        .append(nTermMass)
+                        .append("\"");
 
             }
 
             if (cTermMass != null) {
 
-                modificationStart.append(" mod_cterm_mass=\"").append(nTermMass).append("\"");
+                modificationStart.append(" mod_cterm_mass=\"")
+                        .append(nTermMass)
+                        .append("\"");
 
             }
 
@@ -659,7 +794,11 @@ public class PepXmlExport {
 
                     double modifiedMass = modifiedAminoAcids.get(site);
                     StringBuilder modificationSite = new StringBuilder();
-                    modificationSite.append("<mod_aminoacid_mass position=\"").append(site).append("\" mass=\"").append(modifiedMass).append("\"/>");
+                    modificationSite.append("<mod_aminoacid_mass position=\"")
+                            .append(site)
+                            .append("\" mass=\"")
+                            .append(modifiedMass)
+                            .append("\"/>");
                     sw.writeLine(modificationSite.toString());
 
                 }
@@ -675,31 +814,47 @@ public class PepXmlExport {
         if (mainHit) {
 
             StringBuilder searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM raw score\" value=\"").append(psParameter.getTransformedScore()).append("\"/>");
+            searchScore.append("<search_score name=\"PSM raw score\" value=\"")
+                    .append(psParameter.getTransformedScore())
+                    .append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM score\" value=\"").append(psParameter.getTransformedScore()).append("\"/>");
+            searchScore.append("<search_score name=\"PSM score\" value=\"")
+                    .append(psParameter.getTransformedScore())
+                    .append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM PEP\" value=\"").append(psParameter.getProbability()).append("\"/>");
+            searchScore.append("<search_score name=\"PSM PEP\" value=\"")
+                    .append(psParameter.getProbability())
+                    .append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"PSM confidence\" value=\"").append(psParameter.getConfidence()).append("\"/>");
+            searchScore.append("<search_score name=\"PSM confidence\" value=\"")
+                    .append(psParameter.getConfidence())
+                    .append("\"/>");
             sw.writeLine(searchScore.toString());
 
         } else {
 
             StringBuilder searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"Identification algorithm raw score\" value=\"").append(peptideAssumption.getRawScore()).append("\"/>");
+            searchScore.append("<search_score name=\"Identification algorithm raw score\" value=\"")
+                    .append(peptideAssumption.getRawScore())
+                    .append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"Identification algorithm score\" value=\"").append(peptideAssumption.getScore()).append("\"/>");
+            searchScore.append("<search_score name=\"Identification algorithm score\" value=\"")
+                    .append(peptideAssumption.getScore())
+                    .append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"Identification algorithm PEP\" value=\"").append(psParameter.getProbability()).append("\"/>");
+            searchScore.append("<search_score name=\"Identification algorithm PEP\" value=\"")
+                    .append(psParameter.getProbability())
+                    .append("\"/>");
             sw.writeLine(searchScore.toString());
             searchScore = new StringBuilder();
-            searchScore.append("<search_score name=\"Identification algorithm confidence\" value=\"").append(psParameter.getConfidence()).append("\"/>");
+            searchScore.append("<search_score name=\"Identification algorithm confidence\" value=\"")
+                    .append(psParameter.getConfidence())
+                    .append("\"/>");
             sw.writeLine(searchScore.toString());
 
         }
@@ -728,7 +883,15 @@ public class PepXmlExport {
                 .append("\"/>");
         sw.writeLine(parameterLine.toString());
         parameterLine = new StringBuilder();
-        parameterLine.append("<parameter name=\"isotope\" value=\"").append(peptideAssumption.getIsotopeNumber(precursorMz, identificationParameters.getSearchParameters().getMinIsotopicCorrection(), identificationParameters.getSearchParameters().getMaxIsotopicCorrection())).append("\"/>");
+        parameterLine.append("<parameter name=\"isotope\" value=\"")
+                .append(
+                        peptideAssumption.getIsotopeNumber(
+                                precursorMz,
+                                identificationParameters.getSearchParameters().getMinIsotopicCorrection(),
+                                identificationParameters.getSearchParameters().getMaxIsotopicCorrection()
+                        )
+                )
+                .append("\"/>");
         sw.writeLine(parameterLine.toString());
         sw.writeLineDecreasedIndent("</analysis_result>");
         sw.writeLineDecreasedIndent("</search_hit>");

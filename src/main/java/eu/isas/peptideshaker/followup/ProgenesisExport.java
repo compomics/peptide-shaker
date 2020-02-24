@@ -53,9 +53,16 @@ public class ProgenesisExport {
      *
      * @throws IOException thrown if an error occurred while writing the file
      */
-    public static void writeProgenesisExport(File destinationFile, SequenceProvider sequenceProvider,
-            ProteinDetailsProvider proteinDetailsProvider, Identification identification, ExportType exportType,
-            WaitingHandler waitingHandler, HashSet<String> targetedModifications, SequenceMatchingParameters sequenceMatchingPreferences)
+    public static void writeProgenesisExport(
+            File destinationFile,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
+            Identification identification,
+            ExportType exportType,
+            WaitingHandler waitingHandler,
+            HashSet<String> targetedModifications,
+            SequenceMatchingParameters sequenceMatchingPreferences
+    )
             throws IOException {
 
         if (exportType == ExportType.confident_ptms) {
@@ -67,7 +74,7 @@ public class ProgenesisExport {
             }
         }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile))) {
+        try ( BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile))) {
 
             writer.write("sequence");
             writer.write(SEPARATOR);
@@ -175,7 +182,10 @@ public class ProgenesisExport {
      * @return true if the peptide contains one or more of the targeted
      * modifications confidently localized
      */
-    private static boolean isTargetedPeptide(Peptide peptide, HashSet<String> targetedModifications) {
+    private static boolean isTargetedPeptide(
+            Peptide peptide,
+            HashSet<String> targetedModifications
+    ) {
 
         return Arrays.stream(peptide.getVariableModifications())
                 .anyMatch(modificationMatch -> targetedModifications.contains(modificationMatch.getModification())
@@ -195,7 +205,11 @@ public class ProgenesisExport {
      *
      * @throws IOException thrown if an error occurred while writing the file
      */
-    private static void writeSpectrumMatch(BufferedWriter writer, SpectrumMatch spectrumMatch, ProteinDetailsProvider proteinDetailsProvider)
+    private static void writeSpectrumMatch(
+            BufferedWriter writer,
+            SpectrumMatch spectrumMatch,
+            ProteinDetailsProvider proteinDetailsProvider
+    )
             throws IOException {
 
         PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
@@ -258,7 +272,7 @@ public class ProgenesisExport {
             writer.write(SEPARATOR);
 
             // compound
-            String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getSpectrumKey());
+            String spectrumTitle = spectrumMatch.getSpectrumTitle();
 
 // correct for the intensity tag introduced in the newest version of Progenesis
             int intensityIndex = spectrumTitle.indexOf(" (intensity=");
@@ -337,27 +351,17 @@ public class ProgenesisExport {
          */
         public static ExportType getTypeFromIndex(int index) {
 
-            if (index == validated_psms.index) {
+            for (ExportType exportType : values()) {
 
-                return validated_psms;
+                if (index == exportType.index) {
 
-            } else if (index == validated_psms_peptides.index) {
+                    return exportType;
 
-                return validated_psms_peptides;
-
-            } else if (index == validated_psms_peptides_proteins.index) {
-
-                return validated_psms_peptides_proteins;
-
-            } else if (index == confident_ptms.index) {
-
-                return confident_ptms;
-
-            } else {
-
-                throw new IllegalArgumentException("Export type index " + index + " not implemented.");
-
+                }
             }
+
+            throw new IllegalArgumentException("Export type index " + index + " not implemented.");
+
             //Note: don't forget to add new enums in the following methods
         }
 
@@ -369,12 +373,11 @@ public class ProgenesisExport {
          */
         public static String[] getPossibilities() {
 
-            return new String[]{
-                validated_psms_peptides_proteins.description,
-                validated_psms_peptides.description,
-                validated_psms.description,
-                confident_ptms.description
-            };
+            return Arrays.stream(values())
+                    .map(
+                            value -> value.description
+                    )
+                    .toArray(String[]::new);
         }
 
         /**

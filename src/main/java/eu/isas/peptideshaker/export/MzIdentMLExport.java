@@ -260,7 +260,7 @@ public class MzIdentMLExport {
 
         for (String fileName : spectrumProvider.getFileNames()) {
 
-            String[] spectrumTitles = spectrumProvider.getSectrumTitles(fileName);
+            String[] spectrumTitles = spectrumProvider.getSpectrumTitles(fileName);
             HashMap<String, Integer> tempMap = new HashMap<>(spectrumTitles.length);
 
             for (int i = 0; i < spectrumTitles.length; i++) {

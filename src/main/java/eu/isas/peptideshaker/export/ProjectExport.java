@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export;
 
-import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFileUtils;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.io.IoUtil;

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.followup;
 
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.experiment.biology.enzymes.Enzyme;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.parameters.identification.search.SearchParameters;
@@ -8,17 +9,19 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.gui.filtering.FilterParameters;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import com.compomics.util.io.flat.SimpleFileWriter;
+import static eu.isas.peptideshaker.followup.ProgenesisExport.ExportType.values;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class exports identifications in an inclusion list.
@@ -36,6 +39,7 @@ public class InclusionListExport {
      * and match parameters
      * @param identificationFeaturesGenerator the identification features
      * generator calculating identification metrics on the fly
+     * @param spectrumProvider the spectrum provider
      * @param proteinFilters the inclusion list protein filters
      * @param peptideFilters the inclusion list peptide filters
      * @param exportFormat the export format
@@ -48,11 +52,20 @@ public class InclusionListExport {
      *
      * @throws IOException thrown if an error occurred while writing the file
      */
-    public static void exportInclusionList(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ArrayList<Integer> proteinFilters, ArrayList<PeptideFilterType> peptideFilters, ExportFormat exportFormat, SearchParameters searchParameters, double rtWindow,
-            WaitingHandler waitingHandler, FilterParameters filterPreferences) throws IOException {
+    public static void exportInclusionList(
+            File destinationFile,
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SpectrumProvider spectrumProvider,
+            ArrayList<Integer> proteinFilters,
+            ArrayList<PeptideFilterType> peptideFilters,
+            ExportFormat exportFormat,
+            SearchParameters searchParameters,
+            double rtWindow,
+            WaitingHandler waitingHandler,
+            FilterParameters filterPreferences
+    ) throws IOException {
 
-        SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         if (waitingHandler != null) {
             if (waitingHandler.isRunCanceled()) {
                 return;
@@ -62,10 +75,10 @@ public class InclusionListExport {
             waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
         }
 
-        try (FileWriter f = new FileWriter(destinationFile);
-                BufferedWriter b = new BufferedWriter(f)) {
+        try ( SimpleFileWriter writer = new SimpleFileWriter(destinationFile, false)) {
 
             ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(waitingHandler);
+
             ProteinMatch proteinMatch;
             while ((proteinMatch = proteinMatchesIterator.next()) != null) {
 
@@ -168,7 +181,12 @@ public class InclusionListExport {
                                     if (spectrumParameter.getMatchValidationLevel().isValidated()) {
 
                                         validatedPsms.add(spectrumMatch);
-                                        retentionTimes.add(spectrumFactory.getPrecursor(spectrumMatch.getSpectrumKey()).getRt());
+                                        retentionTimes.add(
+                                                spectrumProvider.getPrecursorRt(
+                                                        spectrumMatch.getSpectrumFile(),
+                                                        spectrumMatch.getSpectrumTitle()
+                                                )
+                                        );
 
                                     }
                                 }
@@ -178,9 +196,21 @@ public class InclusionListExport {
 
                                 for (SpectrumMatch spectrumMatch : validatedPsms) {
 
-                                    String line = getInclusionListLine(spectrumMatch, retentionTimes, rtWindow, exportFormat, searchParameters);
-                                    b.write(line);
-                                    b.newLine();
+                                    double precursorMz = spectrumProvider.getPrecursorMz(
+                                            spectrumMatch.getSpectrumFile(),
+                                            spectrumMatch.getSpectrumTitle()
+                                    );
+
+                                    String line = getInclusionListLine(
+                                            spectrumMatch,
+                                            retentionTimes,
+                                            rtWindow,
+                                            precursorMz,
+                                            exportFormat,
+                                            searchParameters
+                                    );
+
+                                    writer.writeLine(line);
 
                                 }
                             }
@@ -189,15 +219,15 @@ public class InclusionListExport {
                 }
 
                 if (waitingHandler != null) {
-                    
+
                     if (waitingHandler.isRunCanceled()) {
-                    
+
                         return;
-                    
+
                     }
-                    
+
                     waitingHandler.increaseSecondaryProgressCounter();
-                
+
                 }
             }
         }
@@ -210,79 +240,105 @@ public class InclusionListExport {
      * @param spectrumKey The key of the spectrum
      * @param retentionTimes The retention times found for this peptide
      * @param rtWindow the retention time window set by the user
+     * @param precursorMz the precursor m/z
      * @param exportFormat the export format to use
      * @param searchParameters the search parameters used for the search
      *
      * @return a line to be appended in the inclusion list
      */
-    private static String getInclusionListLine(SpectrumMatch spectrumMatch, ArrayList<Double> retentionTimes, double rtWindow,
-            ExportFormat exportFormat, SearchParameters searchParameters) {
-
-        String spectrumKey = spectrumMatch.getSpectrumKey();
-
-        SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-        Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
+    private static String getInclusionListLine(
+            SpectrumMatch spectrumMatch,
+            ArrayList<Double> retentionTimes,
+            double rtWindow,
+            double precursorMz,
+            ExportFormat exportFormat,
+            SearchParameters searchParameters
+    ) {
 
         switch (exportFormat) {
-            
+
             case Thermo:
                 int index = (int) (0.25 * retentionTimes.size());
                 double rtMin = retentionTimes.get(index) / 60;
                 index = (int) (0.75 * retentionTimes.size());
                 double rtMax = retentionTimes.get(index) / 60;
-                
+
                 if (rtMax - rtMin < rtWindow / 60) {
-                
+
                     index = (int) (0.5 * retentionTimes.size());
                     rtMin = (retentionTimes.get(index) - rtWindow / 2) / 60;
                     rtMax = (retentionTimes.get(index) + rtWindow / 2) / 60;
-                
+
                 }
-                
-                return precursor.getMz() + "\t" + rtMin + "\t" + rtMax;
-            
+
+                return String.join("\t",
+                        Double.toString(precursorMz),
+                        Double.toString(rtMin),
+                        Double.toString(rtMax)
+                );
+
             case ABI:
                 index = (int) (0.5 * retentionTimes.size());
                 double rtInMin = retentionTimes.get(index) / 60;
-                return rtInMin + "\t" + precursor.getMz();
-           
+
+                return String.join("\t",
+                        Double.toString(rtInMin),
+                        Double.toString(precursorMz)
+                );
+
             case Bruker:
                 index = (int) 0.5 * retentionTimes.size();
                 double rt = retentionTimes.get(index);
                 int index25 = (int) (0.25 * retentionTimes.size());
                 int index75 = (int) (0.75 * retentionTimes.size());
                 double range = retentionTimes.get(index75) - retentionTimes.get(index25);
-            
+
                 if (range < rtWindow) {
-                
+
                     range = rtWindow;
-                
+
                 }
-                
+
                 if (searchParameters.getPrecursorAccuracyType() == SearchParameters.MassAccuracyType.PPM) {
-                
-                    double deltaMZ = searchParameters.getPrecursorAccuracy() / 1000000 * precursor.getMz();
-                    double mzMin = precursor.getMz() - deltaMZ;
-                    double mzMax = precursor.getMz() + deltaMZ;
-                    return rt + "," + range + "," + mzMin + "," + mzMax;
-                
+
+                    double deltaMZ = searchParameters.getPrecursorAccuracy() / 1000000 * precursorMz;
+                    double mzMin = precursorMz - deltaMZ;
+                    double mzMax = precursorMz + deltaMZ;
+
+                    return String.join(",",
+                            Double.toString(rt),
+                            Double.toString(range),
+                            Double.toString(mzMin),
+                            Double.toString(mzMax)
+                    );
+
                 } else { // Dalton
-                
+
                     double deltaMZ = searchParameters.getPrecursorAccuracy() / spectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
-                    double mzMin = precursor.getMz() - deltaMZ;
-                    double mzMax = precursor.getMz() + deltaMZ;
-                    return rt + "," + range + "," + mzMin + "," + mzMax;
-                
+                    double mzMin = precursorMz - deltaMZ;
+                    double mzMax = precursorMz + deltaMZ;
+
+                    return String.join(",",
+                            Double.toString(rt),
+                            Double.toString(range),
+                            Double.toString(mzMin),
+                            Double.toString(mzMax)
+                    );
+
                 }
-                
+
             case MassLynx:
                 index = (int) (0.5 * retentionTimes.size());
                 rt = retentionTimes.get(index);
-                return precursor.getMz() + "," + rt;
-            
+
+                return String.join(",",
+                        Double.toString(precursorMz),
+                        Double.toString(rt)
+                );
+
             default:
                 return "";
-                
+
         }
     }
 
@@ -327,7 +383,11 @@ public class InclusionListExport {
          * @param description the description of the parameter
          * @param extension the extension of the file
          */
-        private ExportFormat(int index, String description, String extension) {
+        private ExportFormat(
+                int index,
+                String description,
+                String extension
+        ) {
             this.index = index;
             this.description = description;
             this.extension = extension;
@@ -339,18 +399,16 @@ public class InclusionListExport {
          * @param index the index of interest
          * @return the export type corresponding to a given index
          */
-        public static ExportFormat getTypeFromIndex(int index) {
-            if (index == Thermo.index) {
-                return Thermo;
-            } else if (index == ABI.index) {
-                return ABI;
-            } else if (index == Bruker.index) {
-                return Bruker;
-            } else if (index == MassLynx.index) {
-                return MassLynx;
-            } else {
-                throw new IllegalArgumentException("Export format index " + index + "not implemented.");
+        public static ExportFormat getTypeFromIndex(
+                int index
+        ) {
+            for (ExportFormat format : values()) {
+                if (index == format.index) {
+                    return format;
+                }
             }
+
+            throw new IllegalArgumentException("Export format index " + index + "not implemented.");
             //Note: don't forget to add new enums in the following methods
         }
 
@@ -361,12 +419,11 @@ public class InclusionListExport {
          * @return all possibilities descriptions in an array of string
          */
         public static String[] getPossibilities() {
-            return new String[]{
-                Thermo.description,
-                ABI.description,
-                Bruker.description,
-                MassLynx.description
-            };
+            return Arrays.stream(values())
+                    .map(
+                            value -> value.description
+                    )
+                    .toArray(String[]::new);
         }
 
         /**
@@ -389,7 +446,10 @@ public class InclusionListExport {
          * @param exportFormat the export format
          * @return returns a file with updated extension
          */
-        public static File verifyFileExtension(File destinationFile, ExportFormat exportFormat) {
+        public static File verifyFileExtension(
+                File destinationFile,
+                ExportFormat exportFormat
+        ) {
             if (!destinationFile.getName().endsWith(exportFormat.extension)) {
                 return new File(destinationFile.getParent(), destinationFile.getName() + exportFormat.extension);
             }
@@ -429,7 +489,10 @@ public class InclusionListExport {
          * @param index the index number of the parameter
          * @param description the description of the parameter
          */
-        private PeptideFilterType(int index, String description) {
+        private PeptideFilterType(
+                int index,
+                String description
+        ) {
             this.index = index;
             this.description = description;
         }
@@ -440,7 +503,9 @@ public class InclusionListExport {
          * @param index the index of interest
          * @return the parameter type corresponding to a given index
          */
-        public static PeptideFilterType getTypeFromIndex(int index) {
+        public static PeptideFilterType getTypeFromIndex(
+                int index
+        ) {
             if (index == miscleaved.index) {
                 return miscleaved;
             } else if (index == reactive.index) {
@@ -460,11 +525,11 @@ public class InclusionListExport {
          * @return all possibilities descriptions in an array of string
          */
         public static String[] getPossibilities() {
-            return new String[]{
-                miscleaved.description,
-                reactive.description,
-                degenerated.description
-            };
+            return Arrays.stream(values())
+                    .map(
+                            value -> value.description
+                    )
+                    .toArray(String[]::new);
         }
 
         /**

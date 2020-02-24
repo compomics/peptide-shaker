@@ -1,11 +1,12 @@
 package eu.isas.peptideshaker.followup;
 
-import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
+import com.compomics.util.experiment.io.mass_spectrometry.mgf.MgfFileWriter;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.io.IoUtil;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.recalibration.RunMzDeviation;
 import eu.isas.peptideshaker.recalibration.SpectrumRecalibrator;
@@ -14,7 +15,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-
 
 /**
  * This class exports recalibrated spectra.
@@ -29,11 +29,11 @@ public class RecalibrationExporter {
      * The debug mode exports the ion distributions and the titles of the
      * processed spectra.
      */
-    private static final boolean debug = false;
+    private static final boolean DEBUG = false;
     /**
      * Suffix for the mgf file containing all recalibrated spectra.
      */
-    public static final String recalibrated = "_recalibrated";
+    public static final String SUFFIX = "_recalibrated";
 
     /**
      * Writes the recalibrated spectra in files named according to
@@ -46,42 +46,57 @@ public class RecalibrationExporter {
      * @param folder folder where recalibrated files shall be written
      * @param identification identification of the project
      * @param sequenceProvider the sequence provider
+     * @param spectrumProvider the spectrum provider
      * @param identificationParameters the identification parameters
      * @param waitingHandler waiting handler displaying progress and used to
      * cancel the process. Can be null. The method does not call RunFinished.
      * @return ArrayList files containing recalibrated spectra
-
-     * @throws IOException exception thrown whenever an error occurred while writing the file
+     *
+     * @throws IOException exception thrown whenever an error occurred while
+     * writing the file
      */
-    public static ArrayList<File> writeRecalibratedSpectra(boolean recalibratePrecursors, boolean recalibrateFragmentIons, File folder,
-            Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException {
+    public static ArrayList<File> writeRecalibratedSpectra(
+            boolean recalibratePrecursors,
+            boolean recalibrateFragmentIons,
+            File folder,
+            Identification identification,
+            SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
+            IdentificationParameters identificationParameters,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
-        SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         SpectrumRecalibrator spectrumRecalibrator = new SpectrumRecalibrator();
-        ArrayList<File> recalibratedSpectrums = new ArrayList<File>();
+        ArrayList<File> recalibratedSpectrums = new ArrayList<>();
         int progress = 1;
 
-        for (String fileName : spectrumFactory.getMgfFileNames()) {
+        for (String fileName : spectrumProvider.getFileNames()) {
 
             if (waitingHandler != null) {
-                
+
                 if (waitingHandler.isRunCanceled()) {
-                    
+
                     break;
-                    
+
                 }
 
-                waitingHandler.setWaitingText("Recalibrating Spectra. Inspecting Mass Deviations. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+                waitingHandler.setWaitingText("Recalibrating Spectra. Inspecting Mass Deviations. Please Wait... (" + progress + "/" + spectrumProvider.getFileNames().length + ")");
                 waitingHandler.resetSecondaryProgressCounter();
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-                waitingHandler.setMaxSecondaryProgressCounter(2 * spectrumFactory.getNSpectra(fileName));
-                
+                waitingHandler.setMaxSecondaryProgressCounter(2 * spectrumProvider.getSpectrumTitles(fileName).length);
+
             }
 
-            spectrumRecalibrator.estimateErrors(fileName, identification, sequenceProvider, identificationParameters, waitingHandler);
+            spectrumRecalibrator.estimateErrors(
+                    fileName,
+                    identification,
+                    sequenceProvider,
+                    identificationParameters,
+                    waitingHandler
+            );
 
             // Debug part
-            if (debug) {
+            if (DEBUG) {
 
                 RunMzDeviation runMzDeviation = spectrumRecalibrator.getRunMzDeviations(fileName);
 
@@ -93,16 +108,16 @@ public class RecalibrationExporter {
                 for (double key : runMzDeviation.getPrecursorRTList()) {
 
                     if (waitingHandler != null && waitingHandler.isRunCanceled()) {
-                        
+
                         break;
-                        
+
                     }
 
                     debugWriter.write(key + "\t");
                     debugWriter.write(runMzDeviation.getSlope(key) + "\t");
                     debugWriter.write(runMzDeviation.getOffset(key) + "\t");
                     debugWriter.newLine();
-                    
+
                 }
 
                 debugWriter.flush();
@@ -120,7 +135,7 @@ public class RecalibrationExporter {
                         debugWriter.write("\t" + mzKey);
 
                     }
-                    
+
                     debugWriter.newLine();
                     debugWriter.write("Error");
 
@@ -131,60 +146,72 @@ public class RecalibrationExporter {
                     }
 
                     debugWriter.newLine();
-                    
+
                 }
-                
+
                 debugWriter.flush();
                 debugWriter.close();
                 // End of debug part
-                
+
             }
 
             if (waitingHandler != null && waitingHandler.isRunCanceled()) {
-                
+
                 return null;
-                
+
             }
 
             File file = new File(folder, getRecalibratedFileName(fileName));
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                
+
+            try ( BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+
                 if (waitingHandler != null) {
-                    
-                    waitingHandler.setWaitingText("Recalibrating Spectra. Writing Spectra. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+
+                    waitingHandler.setWaitingText("Recalibrating Spectra. Writing Spectra. Please Wait... (" + progress + "/" + spectrumProvider.getFileNames().length + ")");
                     waitingHandler.resetSecondaryProgressCounter();
-                    waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getNSpectra(fileName));
-                    
+                    waitingHandler.setMaxSecondaryProgressCounter(spectrumProvider.getSpectrumTitles(fileName).length);
+
                 }
-                
-                for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
-                    
-                    if (debug) {
+
+                for (String spectrumTitle : spectrumProvider.getSpectrumTitles(fileName)) {
+
+                    if (DEBUG) {
                         //System.out.println(new Date() + " recalibrating " + spectrumTitle + "\n");
                     }
-                    
-                    Spectrum recalibratedSpectrum = spectrumRecalibrator.recalibrateSpectrum(fileName, spectrumTitle, recalibratePrecursors, recalibrateFragmentIons);
-                    recalibratedSpectrum.writeMgf(writer);
+
+                    Spectrum recalibratedSpectrum = spectrumRecalibrator.recalibrateSpectrum(
+                            fileName,
+                            spectrumTitle,
+                            recalibratePrecursors,
+                            recalibrateFragmentIons
+                    );
+                    String recalibratedSpectrumAsMgf = MgfFileWriter.asMgf(spectrumTitle, recalibratedSpectrum);
+                    writer.write(recalibratedSpectrumAsMgf);
                     writer.flush();
-                    
+
                     if (waitingHandler != null) {
-                        
+
                         if (waitingHandler.isRunCanceled()) {
-                            
+
                             break;
-                            
+
                         }
-                        
+
                         waitingHandler.increasePrimaryProgressCounter();
-                        
+
                     }
                 }
-                
+
                 spectrumRecalibrator.clearErrors(fileName);
+
             }
+
             recalibratedSpectrums.add(file);
+
         }
+
         return recalibratedSpectrums;
+
     }
 
     /**
@@ -194,7 +221,11 @@ public class RecalibrationExporter {
      *
      * @return the name of the recalibrated file
      */
-    public static String getRecalibratedFileName(String fileName) {
-        return Util.appendSuffix(fileName, recalibrated);
+    public static String getRecalibratedFileName(
+            String fileName
+    ) {
+
+        return IoUtil.appendSuffix(fileName, SUFFIX);
+
     }
 }
