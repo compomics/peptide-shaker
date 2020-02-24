@@ -25,7 +25,6 @@ import com.compomics.util.experiment.identification.modification.ModificationLoc
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -49,6 +48,8 @@ import com.compomics.util.experiment.identification.peptide_shaker.ModificationS
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
+import com.compomics.util.io.IoUtil;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -76,22 +77,14 @@ public class MzIdentMLExport {
      */
     private BufferedWriter bw;
     /**
-     * Encoding for the file, cf the second rule.
-     */
-    public static final String encoding = "UTF-8";
-    /**
      * Integer keeping track of the number of tabs to include at the beginning
      * of each line.
      */
     private int tabCounter = 0;
     /**
-     * The spectrum factory.
-     */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
      * The PTM factory.
      */
-    private ModificationFactory modificationFactory = ModificationFactory.getInstance();
+    private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
     /**
      * The number of decimals to use for the confidence values.
      */
@@ -104,7 +97,7 @@ public class MzIdentMLExport {
     /**
      * D-score threshold.
      */
-    private Double dScoreThreshold = 95.0; //@TODO: avoid this hard coded value!!
+    private final Double dScoreThreshold = 95.0; //@TODO: avoid this hard coded value!!
     /**
      * The version of the mzIdentML file to use, 1.1 by default.
      */
@@ -112,97 +105,115 @@ public class MzIdentMLExport {
     /**
      * The protein sequence provider.
      */
-    private SequenceProvider sequenceProvider;
+    private final SequenceProvider sequenceProvider;
+    /**
+     * The spectrum provider.
+     */
+    private final SpectrumProvider spectrumProvider;
     /**
      * Summary information on the protein sequences file.
      */
-    private FastaSummary fastaSummary;
+    private final FastaSummary fastaSummary;
     /**
      * A protein details provider.
      */
-    private ProteinDetailsProvider proteinDetailsProvider;
+    private final ProteinDetailsProvider proteinDetailsProvider;
     /**
      * The PeptideShaker version.
      */
-    private String peptideShakerVersion;
+    private final String peptideShakerVersion;
     /**
      * The identifications object.
      */
-    private Identification identification;
+    private final Identification identification;
     /**
      * The project details.
      */
-    private ProjectDetails projectDetails;
+    private final ProjectDetails projectDetails;
     /**
      * The identification feature generator.
      */
-    private IdentificationFeaturesGenerator identificationFeaturesGenerator;
+    private final IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
      * The peptide spectrum annotator.
      */
-    private PeptideSpectrumAnnotator peptideSpectrumAnnotator;
+    private final PeptideSpectrumAnnotator peptideSpectrumAnnotator;
     /**
      * The waiting handler.
      */
-    private WaitingHandler waitingHandler;
+    private final WaitingHandler waitingHandler;
     /**
      * The peptide evidence IDs.
      */
-    private HashMap<String, String> pepEvidenceIds = new HashMap<>();
+    private final HashMap<String, String> pepEvidenceIds = new HashMap<>();
     /**
      * The spectrum IDs.
      */
-    private HashMap<Long, String> spectrumIds = new HashMap<>();
+    private final HashMap<Long, String> spectrumIds = new HashMap<>();
     /**
      * The spectrum key to parent peptide key map.
      */
-    private HashMap<Long, Long> spectrumKeyToPeptideKeyMap;
+    private final HashMap<Long, Long> spectrumKeyToPeptideKeyMap;
     /**
      * The identification parameters.
      */
-    private IdentificationParameters identificationParameters;
+    private final IdentificationParameters identificationParameters;
     /**
      * Map of PTM indexes: PTM mass to index.
      */
-    private HashMap<Double, Integer> modIndexMap = new HashMap<>();
+    private final HashMap<Double, Integer> modIndexMap = new HashMap<>();
+    /**
+     * Map of the spectrum title to index.
+     */
+    private final HashMap<String, HashMap<String, Integer>> spectrumTitleToIndexMap = new HashMap<>(0);
     /**
      * If true, the fragment ions will be written to the mzid file.
      */
-    private boolean writeFragmentIons = true;
+    private final boolean writeFragmentIons = true;
     /**
      * If true, the protein sequences are included in the mzid file.
      */
-    private boolean includeProteinSequences = false;
+    private final boolean includeProteinSequences;
 
     /**
      * Constructor.
      *
-     * @param peptideShakerVersion the PeptideShaker version
-     * @param identification the identification object which can be used to
-     * retrieve identification matches and parameters
-     * @param projectDetails the project details
-     * @param identificationParameters the identification parameters
-     * @param sequenceProvider the sequence provider
-     * @param fastaSummary summary information on the protein sequences file
-     * @param proteinDetailsProvider the protein details provider
-     * @param identificationFeaturesGenerator the identification features
-     * generator
-     * @param outputFile the output file
-     * @param includeProteinSequences if true, the protein sequences are
-     * included in the output
-     * @param waitingHandler waiting handler used to display progress to the
-     * user and interrupt the process
-     * @param gzip if true export as gzipped file
+     * @param peptideShakerVersion The PeptideShaker version.
+     * @param identification The identification object.
+     * @param projectDetails The project details.
+     * @param identificationParameters The identification parameters.
+     * @param sequenceProvider The sequence provider.
+     * @param fastaSummary The summary information on the protein sequences
+     * file.
+     * @param proteinDetailsProvider The protein details provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param identificationFeaturesGenerator The identification features
+     * generator.
+     * @param outputFile The output file.
+     * @param includeProteinSequences If true, the protein sequences are
+     * included in the output.
+     * @param waitingHandler The waiting handler used to display progress to the
+     * user and interrupt the process.
+     * @param gzip If true export as gzipped file.
      *
-     * @throws IOException exception thrown whenever an error occurred while
-     * reading/writing a file
+     * @throws IOException Exception thrown whenever an error occurred while
+     * reading/writing a file.
      */
-    public MzIdentMLExport(String peptideShakerVersion, Identification identification,
-            ProjectDetails projectDetails, IdentificationParameters identificationParameters,
-            SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider,
-            FastaSummary fastaSummary, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            File outputFile, boolean includeProteinSequences,
-            WaitingHandler waitingHandler, boolean gzip) throws IOException {
+    public MzIdentMLExport(
+            String peptideShakerVersion,
+            Identification identification,
+            ProjectDetails projectDetails,
+            IdentificationParameters identificationParameters,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
+            SpectrumProvider spectrumProvider,
+            FastaSummary fastaSummary,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            File outputFile,
+            boolean includeProteinSequences,
+            WaitingHandler waitingHandler,
+            boolean gzip
+    ) throws IOException {
 
         if (outputFile.getParent() == null) {
 
@@ -216,23 +227,49 @@ public class MzIdentMLExport {
         this.identificationParameters = identificationParameters;
         this.sequenceProvider = sequenceProvider;
         this.proteinDetailsProvider = proteinDetailsProvider;
+        this.spectrumProvider = spectrumProvider;
         this.fastaSummary = fastaSummary;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.includeProteinSequences = includeProteinSequences;
         this.waitingHandler = waitingHandler;
         this.peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
+        this.spectrumKeyToPeptideKeyMap = new HashMap<>(identification.getSpectrumIdentificationSize());
+
+        setSpectrumTitlesMap();
+
         if (gzip) {
 
             // Setup the writer
             FileOutputStream fileStream = new FileOutputStream(outputFile);
             GZIPOutputStream gzipStream = new GZIPOutputStream(fileStream);
-            OutputStreamWriter encoder = new OutputStreamWriter(gzipStream, encoding);
+            OutputStreamWriter encoder = new OutputStreamWriter(gzipStream, IoUtil.ENCODING);
             bw = new BufferedWriter(encoder);
 
         } else {
 
             bw = new BufferedWriter(new FileWriter(outputFile));
+
+        }
+    }
+
+    /**
+     * Sets the spectrum titles to index map.
+     */
+    private void setSpectrumTitlesMap() {
+
+        for (String fileName : spectrumProvider.getFileNames()) {
+
+            String[] spectrumTitles = spectrumProvider.getSectrumTitles(fileName);
+            HashMap<String, Integer> tempMap = new HashMap<>(spectrumTitles.length);
+
+            for (int i = 0; i < spectrumTitles.length; i++) {
+
+                tempMap.put(spectrumTitles[i], i);
+
+            }
+
+            spectrumTitleToIndexMap.put(fileName, tempMap);
 
         }
     }
@@ -245,7 +282,9 @@ public class MzIdentMLExport {
      * @throws IOException exception thrown whenever an error occurred while
      * reading/writing a file
      */
-    public void createMzIdentMLFile(MzIdentMLVersion mzIdentMLVersion) throws IOException {
+    public void createMzIdentMLFile(
+            MzIdentMLVersion mzIdentMLVersion
+    ) throws IOException {
 
         this.mzIdentMLVersion = mzIdentMLVersion;
         switch (mzIdentMLVersion) {
@@ -277,10 +316,12 @@ public class MzIdentMLExport {
 
         waitingHandler.setPrimaryProgressCounterIndeterminate(false);
         waitingHandler.resetPrimaryProgressCounter();
-        waitingHandler.setMaxPrimaryProgressCounter(fastaSummary.nSequences
+        waitingHandler.setMaxPrimaryProgressCounter(
+                fastaSummary.nSequences
                 + identification.getPeptideIdentification().size() * 2
                 + identification.getSpectrumIdentificationSize()
-                + identification.getProteinIdentification().size());
+                + identification.getProteinIdentification().size()
+        );
 
         // write the sequence collection
         writeSequenceCollection();
@@ -527,10 +568,39 @@ public class MzIdentMLExport {
         bw.newLine();
         tabCounter++;
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", "PeptideShaker developers"));
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", "Proteomics Unit, Building for Basic Biology, University of Bergen, Jonas Liesvei 91, N-5009 Bergen, Norway"));
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact URL", "https://compomics.github.io/projects/peptide-shaker.html"));
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000589", "contact email", "peptide-shaker@googlegroups.com"));
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS",
+                        "MS:1000586",
+                        "contact name",
+                        "PeptideShaker developers"
+                )
+        );
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS",
+                        "MS:1000587",
+                        "contact address",
+                        "Proteomics Unit, Building for Basic Biology, University of Bergen, Jonas Liesvei 91, N-5009 Bergen, Norway"
+                )
+        );
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS",
+                        "MS:1000588",
+                        "contact URL",
+                        "https://compomics.github.io/projects/peptide-shaker.html"
+                )
+        );
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS",
+                        "MS:1000589",
+                        "contact email",
+                        "peptide-shaker@googlegroups.com"
+                )
+        );
+
         tabCounter--;
 
         bw.write(getCurrentTabSpace());
@@ -588,7 +658,14 @@ public class MzIdentMLExport {
             }
 
             String description = proteinDetailsProvider.getDescription(accession);
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", StringEscapeUtils.escapeHtml4(description)));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1001088",
+                            "protein description",
+                            StringEscapeUtils.escapeHtml4(description)
+                    )
+            );
 
             tabCounter--;
             bw.write(getCurrentTabSpace());
@@ -605,8 +682,6 @@ public class MzIdentMLExport {
         }
 
         // set up the spectrum key to peptide key map
-        spectrumKeyToPeptideKeyMap = new HashMap<>(identification.getSpectrumIdentificationSize());
-
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(waitingHandler);
         PeptideMatch peptideMatch;
 
@@ -636,7 +711,11 @@ public class MzIdentMLExport {
             bw.write("</PeptideSequence>");
             bw.newLine();
 
-            String[] fixedModifications = peptide.getFixedModifications(identificationParameters.getSearchParameters().getModificationParameters(), sequenceProvider, identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters());
+            String[] fixedModifications = peptide.getFixedModifications(
+                    identificationParameters.getSearchParameters().getModificationParameters(),
+                    sequenceProvider,
+                    identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters()
+            );
 
             for (int site = 0; site < fixedModifications.length; site++) {
 
@@ -766,7 +845,13 @@ public class MzIdentMLExport {
 
                 for (int index : indexes) {
 
-                    String aaBefore = PeptideUtils.getAaBefore(peptide, accession, index, nAa, sequenceProvider);
+                    String aaBefore = PeptideUtils.getAaBefore(
+                            peptide,
+                            accession,
+                            index,
+                            nAa,
+                            sequenceProvider
+                    );
 
                     if (aaBefore.length() == 0) {
 
@@ -774,7 +859,13 @@ public class MzIdentMLExport {
 
                     }
 
-                    String aaAfter = PeptideUtils.getAaAfter(peptide, accession, index, nAa, sequenceProvider);
+                    String aaAfter = PeptideUtils.getAaAfter(
+                            peptide,
+                            accession,
+                            index,
+                            nAa,
+                            sequenceProvider
+                    );
 
                     if (aaAfter.length() == 0) {
 
@@ -796,7 +887,14 @@ public class MzIdentMLExport {
 
                     bw.write(getCurrentTabSpace());
                     bw.write("<PeptideEvidence isDecoy=\"");
-                    bw.write(Boolean.toString(PeptideUtils.isDecoy(peptideMatch.getPeptide(), sequenceProvider)));
+                    bw.write(
+                            Boolean.toString(
+                                    PeptideUtils.isDecoy(
+                                            peptideMatch.getPeptide(),
+                                            sequenceProvider
+                                    )
+                            )
+                    );
                     bw.write("\" pre=\"");
                     bw.write(aaBefore);
                     bw.write("\" post=\"");
@@ -844,13 +942,20 @@ public class MzIdentMLExport {
      * @return the peptide evidence key as string for the given peptide
      * attributes
      */
-    public static String getPeptideEvidenceKey(String accession, int peptideStart, long peptideKey) {
+    public static String getPeptideEvidenceKey(
+            String accession,
+            int peptideStart,
+            long peptideKey
+    ) {
 
         String peptideStartAsString = Integer.toString(peptideStart);
         String peptideKeyAsString = Long.toString(peptideKey);
 
-        StringBuilder pepEvidenceKeybuilder = new StringBuilder(accession.length()
-                + peptideStartAsString.length() + peptideKeyAsString.length() + 2);
+        StringBuilder pepEvidenceKeybuilder = new StringBuilder(
+                accession.length()
+                + peptideStartAsString.length()
+                + peptideKeyAsString.length() + 2
+        );
 
         pepEvidenceKeybuilder.append(accession)
                 .append('_')
@@ -881,7 +986,7 @@ public class MzIdentMLExport {
         tabCounter++;
 
         // iterate the spectrum files and add the file name refs
-        for (String mgfFileName : spectrumFactory.getMgfFileNames()) {
+        for (String mgfFileName : spectrumProvider.getFileNames()) {
 
             bw.write(getCurrentTabSpace());
             bw.write("<InputSpectra spectraData_ref=\"");
@@ -963,8 +1068,22 @@ public class MzIdentMLExport {
         bw.newLine();
 
         tabCounter++;
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1001211", "parent mass type mono", null));
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1001256", "fragment mass type mono", null));
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS",
+                        "MS:1001211",
+                        "parent mass type mono",
+                        null
+                )
+        );
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS",
+                        "MS:1001256",
+                        "fragment mass type mono",
+                        null
+                )
+        );
 
         switch (mzIdentMLVersion) {
 
@@ -972,10 +1091,38 @@ public class MzIdentMLExport {
                 break;
 
             case v1_2:
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002492", "consensus scoring", null));
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002490", "peptide-level scoring", null));
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002497", "group PSMs by sequence with modifications", null));
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002491", "modification localization scoring", null));
+                writeCvTerm(
+                        new CvTerm(
+                                "PSI-MS",
+                                "MS:1002492",
+                                "consensus scoring",
+                                null
+                        )
+                );
+                writeCvTerm(
+                        new CvTerm(
+                                "PSI-MS",
+                                "MS:1002490",
+                                "peptide-level scoring",
+                                null
+                        )
+                );
+                writeCvTerm(
+                        new CvTerm(
+                                "PSI-MS",
+                                "MS:1002497",
+                                "group PSMs by sequence with modifications",
+                                null
+                        )
+                );
+                writeCvTerm(
+                        new CvTerm(
+                                "PSI-MS",
+                                "MS:1002491",
+                                "modification localization scoring",
+                                null
+                        )
+                );
                 break;
 
             default:
@@ -1077,22 +1224,50 @@ public class MzIdentMLExport {
 
                     case modn_protein:
                     case modnaa_protein:
-                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002057", "modification specificity protein N-term", null));
+                        writeCvTerm(
+                                new CvTerm(
+                                        "PSI-MS",
+                                        "MS:1002057",
+                                        "modification specificity protein N-term",
+                                        null
+                                )
+                        );
                         break;
 
                     case modn_peptide:
                     case modnaa_peptide:
-                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001189", "modification specificity peptide N-term", null));
+                        writeCvTerm(
+                                new CvTerm(
+                                        "PSI-MS",
+                                        "MS:1001189",
+                                        "modification specificity peptide N-term",
+                                        null
+                                )
+                        );
                         break;
 
                     case modc_protein:
                     case modcaa_protein:
-                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002058", "modification specificity protein C-term", null));
+                        writeCvTerm(
+                                new CvTerm(
+                                        "PSI-MS",
+                                        "MS:1002058",
+                                        "modification specificity protein C-term",
+                                        null
+                                )
+                        );
                         break;
 
                     case modc_peptide:
                     case modcaa_peptide:
-                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001190", "modification specificity peptide C-term", null));
+                        writeCvTerm(
+                                new CvTerm(
+                                        "PSI-MS",
+                                        "MS:1001190",
+                                        "modification specificity peptide C-term",
+                                        null
+                                )
+                        );
                         break;
 
                     default:
@@ -1124,7 +1299,14 @@ public class MzIdentMLExport {
 
                 } else {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001460", "unknown modification", null));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1001460",
+                                    "unknown modification",
+                                    null
+                            )
+                    );
                 }
             }
 
@@ -1144,7 +1326,14 @@ public class MzIdentMLExport {
 
                     }
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002504", "modification index", modIndex.toString()));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002504",
+                                    "modification index",
+                                    modIndex.toString()
+                            )
+                    );
                     break;
 
                 default:
@@ -1183,7 +1372,12 @@ public class MzIdentMLExport {
             bw.newLine();
 
             tabCounter++;
-            CvTerm enzymeCvTerm = new CvTerm("PSI-MS", "MS:1001091", "unspecific cleavage", null);
+            CvTerm enzymeCvTerm = new CvTerm(
+                    "PSI-MS",
+                    "MS:1001091",
+                    "unspecific cleavage",
+                    null
+            );
             writeCvTerm(enzymeCvTerm);
 
             tabCounter--;
@@ -1213,7 +1407,12 @@ public class MzIdentMLExport {
             bw.newLine();
             tabCounter++;
 
-            CvTerm enzymeCvTerm = new CvTerm("PSI-MS", "MS:1001955", "NoEnzyme", null);
+            CvTerm enzymeCvTerm = new CvTerm(
+                    "PSI-MS",
+                    "MS:1001955",
+                    "NoEnzyme",
+                    null
+            );
             writeCvTerm(enzymeCvTerm);
 
             tabCounter--;
@@ -1396,14 +1595,45 @@ public class MzIdentMLExport {
 
         if (!targetDecoy) {
 
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001494", "no threshold", null));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1001494",
+                            "no threshold",
+                            null
+                    )
+            );
 
         } else {
 
             // Initial global thresholds
             IdMatchValidationParameters idMatchValidationPreferences = identificationParameters.getIdValidationParameters();
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "peptide sequence-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultPeptideFDR(), CONFIDENCE_DECIMALS))));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultPsmFDR(), CONFIDENCE_DECIMALS))));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1001364",
+                            "peptide sequence-level global FDR",
+                            Double.toString(
+                                    Util.roundDouble(
+                                            idMatchValidationPreferences.getDefaultPeptideFDR(),
+                                            CONFIDENCE_DECIMALS
+                                    )
+                            )
+                    )
+            );
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1002350",
+                            "PSM-level global FDR",
+                            Double.toString(
+                                    Util.roundDouble(
+                                            idMatchValidationPreferences.getDefaultPsmFDR(),
+                                            CONFIDENCE_DECIMALS
+                                    )
+                            )
+                    )
+            );
 
             ModificationLocalizationParameters ptmScoringPreferences = identificationParameters.getModificationLocalizationParameters();
 
@@ -1411,12 +1641,25 @@ public class MzIdentMLExport {
 
                 if (ptmScoringPreferences.getSelectedProbabilisticScore() == ModificationLocalizationScore.PhosphoRS) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002567", "phosphoRS score threshold", ptmScoringPreferences.getProbabilisticScoreThreshold() + ""));
-
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002567",
+                                    "phosphoRS score threshold",
+                                    Double.toString(ptmScoringPreferences.getProbabilisticScoreThreshold())
+                            )
+                    );
                 }
             }
 
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002557", "D-Score threshold", dScoreThreshold.toString()));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1002557",
+                            "D-Score threshold",
+                            dScoreThreshold.toString()
+                    )
+            );
 
             // @TODO: add peptide and psm level annotation
 //            // peptideshaker maps
@@ -1537,7 +1780,14 @@ public class MzIdentMLExport {
 
         if (!targetDecoy) {
 
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001494", "no threshold", null));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1001494",
+                            "no threshold",
+                            null
+                    )
+            );
 
         } else {
 
@@ -1551,16 +1801,54 @@ public class MzIdentMLExport {
 
             if (thresholdType == 0) {
 
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002461", "protein group-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
+                // confidence
+                writeCvTerm(
+                        new CvTerm(
+                                "PSI-MS",
+                                "MS:1002461",
+                                "protein group-level global confidence",
+                                Double.toString(
+                                        Util.roundDouble(
+                                                threshold,
+                                                CONFIDENCE_DECIMALS
+                                        )
+                                )
+                        )
+                );
 
             } else if (proteinTargetDecoyResults.getInputType() == 1) {
 
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002369", "protein group-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
+                // FDR
+                writeCvTerm(
+                        new CvTerm(
+                                "PSI-MS",
+                                "MS:1002369",
+                                "protein group-level global FDR",
+                                Double.toString(
+                                        Util.roundDouble(
+                                                threshold,
+                                                CONFIDENCE_DECIMALS
+                                        )
+                                )
+                        )
+                );
 
             } else if (proteinTargetDecoyResults.getInputType() == 2) {
 
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002460", "protein group-level global FNR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FNR
-
+                // FNR
+                writeCvTerm(
+                        new CvTerm(
+                                "PSI-MS",
+                                "MS:1002460",
+                                "protein group-level global FNR",
+                                Double.toString(
+                                        Util.roundDouble(
+                                                threshold,
+                                                CONFIDENCE_DECIMALS
+                                        )
+                                )
+                        )
+                );
             }
         }
 
@@ -1632,9 +1920,11 @@ public class MzIdentMLExport {
         SpectrumMatch spectrumMatch;
         while ((spectrumMatch = psmIterator.next()) != null) {
 
-            long spectrumMatchKey = spectrumMatch.getKey();
-
-            writeSpectrumIdentificationResult(spectrumMatchKey, ++psmCount);
+            writeSpectrumIdentificationResult(
+                    spectrumMatch.getSpectrumFile(),
+                    spectrumMatch.getSpectrumTitle(),
+                    ++psmCount
+            );
             waitingHandler.increasePrimaryProgressCounter();
 
             if (waitingHandler.isRunCanceled()) {
@@ -1770,19 +2060,42 @@ public class MzIdentMLExport {
                 // add main protein cv terms
                 if (accession.equalsIgnoreCase(mainAccession)) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002403", "group representative", null));
-
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002403",
+                                    "group representative",
+                                    null
+                            )
+                    );
                 }
 
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002401", "leading protein", null));
+                writeCvTerm(
+                        new CvTerm(
+                                "PSI-MS",
+                                "MS:1002401",
+                                "leading protein",
+                                null
+                        )
+                );
 
                 // add protein coverage cv term - main protein only
                 if (accession.equalsIgnoreCase(mainAccession)) {
 
                     double validatedCoverage = identificationFeaturesGenerator.getValidatedSequenceCoverage(proteinGroupKey);
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001093", "sequence coverage",
-                            Double.toString(Util.roundDouble(validatedCoverage, CONFIDENCE_DECIMALS))));
-
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1001093",
+                                    "sequence coverage",
+                                    Double.toString(
+                                            Util.roundDouble(
+                                                    validatedCoverage,
+                                                    CONFIDENCE_DECIMALS
+                                            )
+                                    )
+                            )
+                    );
                 }
 
                 tabCounter--;
@@ -1793,14 +2106,50 @@ public class MzIdentMLExport {
             }
 
             // add protein group cv terms
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002470", "PeptideShaker protein group score",
-                    Double.toString(Util.roundDouble(psParameter.getTransformedScore(), CONFIDENCE_DECIMALS))));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002471", "PeptideShaker protein group confidence",
-                    Double.toString(Util.roundDouble(psParameter.getConfidence(), CONFIDENCE_DECIMALS))));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002542", "PeptideShaker protein confidence type",
-                    psParameter.getMatchValidationLevel().getName()));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002415", "protein group passes threshold",
-                    Boolean.toString(psParameter.getMatchValidationLevel().isValidated())));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1002470",
+                            "PeptideShaker protein group score",
+                            Double.toString(
+                                    Util.roundDouble(
+                                            psParameter.getTransformedScore(),
+                                            CONFIDENCE_DECIMALS
+                                    )
+                            )
+                    )
+            );
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1002471",
+                            "PeptideShaker protein group confidence",
+                            Double.toString(
+                                    Util.roundDouble(
+                                            psParameter.getConfidence(),
+                                            CONFIDENCE_DECIMALS
+                                    )
+                            )
+                    )
+            );
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1002542",
+                            "PeptideShaker protein confidence type",
+                            psParameter.getMatchValidationLevel().getName()
+                    )
+            );
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1002415",
+                            "protein group passes threshold",
+                            Boolean.toString(
+                                    psParameter.getMatchValidationLevel().isValidated()
+                            )
+                    )
+            );
 
             tabCounter--;
             bw.write(getCurrentTabSpace());
@@ -1816,8 +2165,16 @@ public class MzIdentMLExport {
             }
         }
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1002404", "count of identified proteins",
-                Integer.toString(identificationFeaturesGenerator.getNValidatedProteins())));
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS",
+                        "MS:1002404",
+                        "count of identified proteins",
+                        Integer.toString(
+                                identificationFeaturesGenerator.getNValidatedProteins()
+                        )
+                )
+        );
         // @TODO: add children of MS:1001184 - search statistics? (date / time search performed, number of molecular hypothesis considered, search time taken)
 
         tabCounter--;
@@ -1830,32 +2187,35 @@ public class MzIdentMLExport {
     /**
      * Write a spectrum identification result.
      *
-     * @param spectrumMatchKey the key of the spectrum match to write
-     * @param spectrumMatchIndex the index of the spectrum match
+     * @param spectrumFile The name of the spectrum file.
+     * @param spectrumTitle The title of the spectrum.
+     * @param spectrumMatchIndex The index of the spectrum match.
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading/writing a file
      */
-    private void writeSpectrumIdentificationResult(long spectrumMatchKey, int spectrumMatchIndex)
+    private void writeSpectrumIdentificationResult(
+            String spectrumFile,
+            String spectrumTitle,
+            int spectrumMatchIndex
+    )
             throws IOException {
 
-        SpectrumMatch spectrumMatch = (SpectrumMatch) identification.retrieveObject(spectrumMatchKey);
+        long spectrumKey = SpectrumMatch.getKey(spectrumFile, spectrumTitle);
+        SpectrumMatch spectrumMatch = (SpectrumMatch) identification.retrieveObject(spectrumKey);
 
         // @TODO: iterate all assumptions and not just the best one?
         PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
         if (bestPeptideAssumption != null) {
 
-            String spectrumKey = spectrumMatch.getSpectrumKey();
-            String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
-            String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
             String spectrumIdentificationResultItemKey = "SIR_" + spectrumMatchIndex;
 
             bw.write(getCurrentTabSpace());
             bw.write("<SpectrumIdentificationResult spectraData_ref=\"");
-            bw.write(spectrumFileName);
+            bw.write(spectrumFile);
             bw.write("\" spectrumID=\"index=");
-            bw.write(spectrumFactory.getSpectrumIndex(spectrumTitle, spectrumFileName).toString());
+            bw.write(spectrumTitleToIndexMap.get(spectrumFile).get(spectrumTitle).toString());
             bw.write("\" id=\"");
             bw.write(spectrumIdentificationResultItemKey);
             bw.write("\">");
@@ -1866,10 +2226,10 @@ public class MzIdentMLExport {
 
             int rank = 1;
             String spectrumIdentificationItemKey = "SII_" + spectrumMatchIndex + "_" + rank;
-            spectrumIds.put(spectrumMatchKey, spectrumIdentificationItemKey);
+            spectrumIds.put(spectrumKey, spectrumIdentificationItemKey);
 
             //String bestPeptideKey = bestPeptideAssumption.getPeptide().getMatchingKey(identificationParameters.getSequenceMatchingPreferences());
-            long peptideMatchKey = spectrumKeyToPeptideKeyMap.get(spectrumMatchKey);
+            long peptideMatchKey = spectrumKeyToPeptideKeyMap.get(spectrumKey);
 
             bw.write(getCurrentTabSpace());
             bw.write("<SpectrumIdentificationItem passThreshold=\"");
@@ -1881,7 +2241,7 @@ public class MzIdentMLExport {
             bw.write("\" calculatedMassToCharge=\"");
             bw.write(Double.toString(bestPeptideAssumption.getTheoreticMz()));
             bw.write("\" experimentalMassToCharge=\"");
-            bw.write(Double.toString(spectrumFactory.getPrecursorMz(spectrumKey)));
+            bw.write(Double.toString(spectrumProvider.getPrecursorMz(spectrumFile, spectrumTitle)));
             bw.write("\" chargeState=\"");
             bw.write(Integer.toString(bestPeptideAssumption.getIdentificationCharge()));
             bw.write("\" id=\"");
@@ -1919,12 +2279,30 @@ public class MzIdentMLExport {
             if (writeFragmentIons) {
 
                 // add the fragment ion annotation
-                AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
-                Spectrum spectrum = spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle, false);
+                AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
+                Spectrum spectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
                 ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(spectrumKey, bestPeptideAssumption, modificationParameters, sequenceProvider, modificationSequenceMatchingParameters, peptideSpectrumAnnotator);
-                IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, bestPeptideAssumption.getPeptide(), modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
+                        spectrumFile,
+                        spectrumTitle,
+                        bestPeptideAssumption,
+                        modificationParameters,
+                        sequenceProvider,
+                        modificationSequenceMatchingParameters,
+                        peptideSpectrumAnnotator
+                );
+                IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
+                        annotationParameters,
+                        specificAnnotationParameters,
+                        spectrumFile,
+                        spectrumTitle,
+                        spectrum,
+                        bestPeptideAssumption.getPeptide(),
+                        modificationParameters,
+                        sequenceProvider,
+                        modificationSequenceMatchingParameters
+                );
 
                 // organize the fragment ions by ion type
                 HashMap<String, HashMap<Integer, ArrayList<IonMatch>>> allFragmentIons = new HashMap<>();
@@ -2031,9 +2409,9 @@ public class MzIdentMLExport {
 
                                 }
 
-                                mzValues.append(ionMatch.peak.mz)
+                                mzValues.append(ionMatch.peakMz)
                                         .append(' ');
-                                intensityValues.append(ionMatch.peak.intensity)
+                                intensityValues.append(ionMatch.peakIntensity)
                                         .append(' ');
                                 errorValues.append(ionMatch.getAbsoluteError())
                                         .append(' ');
@@ -2110,8 +2488,32 @@ public class MzIdentMLExport {
             }
 
             // add peptide shaker score and confidence
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002466", "PeptideShaker PSM score", Double.toString(Util.roundDouble(psmParameter.getTransformedScore(), CONFIDENCE_DECIMALS))));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002467", "PeptideShaker PSM confidence", Double.toString(Util.roundDouble(psmParameter.getConfidence(), CONFIDENCE_DECIMALS))));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1002466",
+                            "PeptideShaker PSM score",
+                            Double.toString(
+                                    Util.roundDouble(
+                                            psmParameter.getTransformedScore(),
+                                            CONFIDENCE_DECIMALS
+                                    )
+                            )
+                    )
+            );
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1002467",
+                            "PeptideShaker PSM confidence",
+                            Double.toString(
+                                    Util.roundDouble(
+                                            psmParameter.getConfidence(),
+                                            CONFIDENCE_DECIMALS
+                                    )
+                            )
+                    )
+            );
 
             switch (mzIdentMLVersion) {
 
@@ -2181,8 +2583,14 @@ public class MzIdentMLExport {
                                                                 .append(':')
                                                                 .append(valid);
 
-                                                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001969", "phosphoRS score", sb.toString()));
-
+                                                        writeCvTerm(
+                                                                new CvTerm(
+                                                                        "PSI-MS",
+                                                                        "MS:1001969",
+                                                                        "phosphoRS score",
+                                                                        sb.toString()
+                                                                )
+                                                        );
                                                     }
                                                 }
                                             }
@@ -2208,8 +2616,14 @@ public class MzIdentMLExport {
                                                         .append(':')
                                                         .append(valid);
 
-                                                writeCvTerm(new CvTerm("PSI-MS", "MS:1002536", "D-Score", sb.toString()));
-
+                                                writeCvTerm(
+                                                        new CvTerm(
+                                                                "PSI-MS",
+                                                                "MS:1002536",
+                                                                "D-Score",
+                                                                sb.toString()
+                                                        )
+                                                );
                                             }
                                         }
                                     }
@@ -2219,14 +2633,46 @@ public class MzIdentMLExport {
                     }
 
                     PSParameter peptideParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002469", "PeptideShaker peptide confidence",
-                            Double.toString(peptideParameter.getConfidence())));
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002468", "PeptideShaker peptide score",
-                            Double.toString(peptideParameter.getTransformedScore())));
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002500", "peptide passes threshold",
-                            Boolean.toString(peptideParameter.getMatchValidationLevel().isValidated())));
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002520", "peptide group ID",
-                            Long.toString(peptideMatchKey)));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002469",
+                                    "PeptideShaker peptide confidence",
+                                    Double.toString(
+                                            peptideParameter.getConfidence()
+                                    )
+                            )
+                    );
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002468",
+                                    "PeptideShaker peptide score",
+                                    Double.toString(
+                                            peptideParameter.getTransformedScore()
+                                    )
+                            )
+                    );
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002500",
+                                    "peptide passes threshold",
+                                    Boolean.toString(
+                                            peptideParameter.getMatchValidationLevel().isValidated()
+                                    )
+                            )
+                    );
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002520",
+                                    "peptide group ID",
+                                    Long.toString(
+                                            peptideMatchKey
+                                    )
+                            )
+                    );
 
                     psModificationScores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
 
@@ -2284,8 +2730,14 @@ public class MzIdentMLExport {
                                                                 .append(':')
                                                                 .append(valid);
 
-                                                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002550", "peptide:phosphoRS score", sb.toString()));
-
+                                                        writeCvTerm(
+                                                                new CvTerm(
+                                                                        "PSI-MS",
+                                                                        "MS:1002550",
+                                                                        "peptide:phosphoRS score",
+                                                                        sb.toString()
+                                                                )
+                                                        );
                                                     }
                                                 }
                                             }
@@ -2311,8 +2763,14 @@ public class MzIdentMLExport {
                                                         .append(':')
                                                         .append(valid);
 
-                                                writeCvTerm(new CvTerm("PSI-MS", "MS:1002553", "peptide:D-Score", sb.toString()));
-
+                                                writeCvTerm(
+                                                        new CvTerm(
+                                                                "PSI-MS",
+                                                                "MS:1002553",
+                                                                "peptide:D-Score",
+                                                                sb.toString()
+                                                        )
+                                                );
                                             }
                                         }
                                     }
@@ -2331,7 +2789,7 @@ public class MzIdentMLExport {
             // add the individual search engine results
             Double mascotScore = null, msAmandaScore = null;
             TreeMap<Integer, Double> scores = new TreeMap<>();
-            HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptions = identification.getSpectrumMatch(spectrumMatchKey).getPeptideAssumptionsMap();
+            HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptions = identification.getSpectrumMatch(spectrumKey).getPeptideAssumptionsMap();
 
             for (Integer tempAdvocate : assumptions.keySet()) {
 
@@ -2373,27 +2831,69 @@ public class MzIdentMLExport {
 
                 if (advocate == Advocate.msgf.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002052", "MS-GF:SpecEValue", Double.toString(eValue)));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002052",
+                                    "MS-GF:SpecEValue",
+                                    Double.toString(eValue)
+                            )
+                    );
 
                 } else if (advocate == Advocate.mascot.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001172", "Mascot:expectation value", Double.toString(eValue)));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1001172",
+                                    "Mascot:expectation value",
+                                    Double.toString(eValue)
+                            )
+                    );
 
                 } else if (advocate == Advocate.omssa.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", Double.toString(eValue)));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1001328",
+                                    "OMSSA:evalue",
+                                    Double.toString(eValue)
+                            )
+                    );
 
                 } else if (advocate == Advocate.xtandem.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", Double.toString(eValue)));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1001330",
+                                    "X!Tandem:expect",
+                                    Double.toString(eValue)
+                            )
+                    );
 
                 } else if (advocate == Advocate.comet.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002257", "Comet:expectation value", Double.toString(eValue)));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002257",
+                                    "Comet:expectation value",
+                                    Double.toString(eValue)
+                            )
+                    );
 
                 } else if (advocate == Advocate.myriMatch.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001589", "MyriMatch:MVH", Double.toString(eValue)));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1001589",
+                                    "MyriMatch:MVH",
+                                    Double.toString(eValue)
+                            )
+                    );
 
                 } else {
 
@@ -2405,13 +2905,26 @@ public class MzIdentMLExport {
             // add the additional search engine scores
             if (mascotScore != null) {
 
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1001171", "Mascot:score", Double.toString(mascotScore)));
+                writeCvTerm(
+                        new CvTerm(
+                                "PSI-MS",
+                                "MS:1001171",
+                                "Mascot:score",
+                                Double.toString(mascotScore)
+                        )
+                );
 
             }
             if (msAmandaScore != null) {
 
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002319", "Amanda:AmandaScore", Double.toString(msAmandaScore)));
-
+                writeCvTerm(
+                        new CvTerm(
+                                "PSI-MS",
+                                "MS:1002319",
+                                "Amanda:AmandaScore",
+                                Double.toString(msAmandaScore)
+                        )
+                );
             }
 
             // add other cv and user params
@@ -2422,7 +2935,14 @@ public class MzIdentMLExport {
             bw.newLine();
 
             // add validation level information
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002540", "PeptideShaker PSM confidence type", psmParameter.getMatchValidationLevel().getName()));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1002540",
+                            "PeptideShaker PSM confidence type",
+                            psmParameter.getMatchValidationLevel().getName()
+                    )
+            );
             tabCounter--;
 
             bw.write(getCurrentTabSpace());
@@ -2430,16 +2950,23 @@ public class MzIdentMLExport {
             bw.newLine();
 
             // add the spectrum title
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1000796", "spectrum title", spectrumTitle));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1000796",
+                            "spectrum title",
+                            spectrumTitle
+                    )
+            );
 
             // add the precursor retention time
-            Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
+            double precursorRt = spectrumProvider.getPrecursorRt(spectrumFile, spectrumTitle);
 
-            if (precursor != null) {
+            if (!Double.isNaN(precursorRt)) {
 
                 bw.write(getCurrentTabSpace());
                 bw.write("<cvParam cvRef=\"PSI-MS\" accession=\"MS:1000894\" name=\"retention time\" value=\"");
-                bw.write(Double.toString(precursor.getRt()));
+                bw.write(Double.toString(precursorRt));
                 bw.write("\" unitCvRef=\"UO\" unitAccession=\"UO:0000010\" unitName=\"second\"/>");
                 bw.newLine();
 
@@ -2555,7 +3082,7 @@ public class MzIdentMLExport {
             bw.newLine();
             tabCounter++;
 
-            String idFileName = Util.getFileName(idFile);
+            String idFileName = IoUtil.getFileName(idFile);
             HashMap<String, ArrayList<String>> algorithms = projectDetails.getIdentificationAlgorithmsForFile(idFileName);
 
             for (String algorithmName : algorithms.keySet()) {
@@ -2566,35 +3093,91 @@ public class MzIdentMLExport {
 
                 if (advocateIndex == Advocate.mascot.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001199", "Mascot DAT format", null));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1001199",
+                                    "Mascot DAT format",
+                                    null
+                            )
+                    );
 
                 } else if (advocateIndex == Advocate.xtandem.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001401", "X!Tandem xml format", null));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1001401",
+                                    "X!Tandem xml format",
+                                    null
+                            )
+                    );
 
                 } else if (advocateIndex == Advocate.omssa.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001400", "OMSSA xml format", null));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1001400",
+                                    "OMSSA xml format",
+                                    null
+                            )
+                    );
 
                 } else if (advocateIndex == Advocate.msgf.getIndex() || advocateIndex == Advocate.myriMatch.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002073", "mzIdentML format", null));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002073",
+                                    "mzIdentML format",
+                                    null
+                            )
+                    );
 
                 } else if (advocateIndex == Advocate.msAmanda.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002459", "MS Amanda csv format", null));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002459",
+                                    "MS Amanda csv format",
+                                    null
+                            )
+                    );
 
                 } else if (advocateIndex == Advocate.comet.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001421", "pepXML format", null));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1001421",
+                                    "pepXML format",
+                                    null
+                            )
+                    );
 
                 } else if (advocateIndex == Advocate.tide.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1000914", "tab delimited text format", null));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1000914",
+                                    "tab delimited text format",
+                                    null
+                            )
+                    );
 
                 } else if (advocateIndex == Advocate.andromeda.getIndex()) {
 
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002576", "Andromeda result file", null));
+                    writeCvTerm(
+                            new CvTerm(
+                                    "PSI-MS",
+                                    "MS:1002576",
+                                    "Andromeda result file",
+                                    null
+                            )
+                    );
 
                 } else {
                     // no cv term available for the given advocate...
@@ -2630,7 +3213,14 @@ public class MzIdentMLExport {
         bw.newLine();
         tabCounter++;
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1001348", "FASTA format", null));
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS",
+                        "MS:1001348",
+                        "FASTA format",
+                        null
+                )
+        );
         tabCounter--;
 
         bw.write(getCurrentTabSpace());
@@ -2649,7 +3239,14 @@ public class MzIdentMLExport {
         bw.write("</DatabaseName>");
         bw.newLine();
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1001073", "database type amino acid", null));
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS",
+                        "MS:1001073",
+                        "database type amino acid",
+                        null
+                )
+        );
 
         tabCounter--;
         bw.write(getCurrentTabSpace());
@@ -2657,7 +3254,7 @@ public class MzIdentMLExport {
         bw.newLine();
 
         // add the spectra location
-        for (String mgfFileName : spectrumFactory.getMgfFileNames()) {
+        for (String mgfFileName : spectrumProvider.getFileNames()) {
 
             File mgfFile = projectDetails.getSpectrumFile(mgfFileName);
 
@@ -2677,7 +3274,14 @@ public class MzIdentMLExport {
             bw.newLine();
             tabCounter++;
 
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001062", "Mascot MGF format", null));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1001062",
+                            "Mascot MGF format",
+                            null
+                    )
+            );
 
             tabCounter--;
             bw.write(getCurrentTabSpace());
@@ -2689,7 +3293,14 @@ public class MzIdentMLExport {
             bw.newLine();
             tabCounter++;
 
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1000774", "multiple peak list nativeID format", null));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS",
+                            "MS:1000774",
+                            "multiple peak list nativeID format",
+                            null
+                    )
+            );
 
             tabCounter--;
             bw.write(getCurrentTabSpace());
@@ -2802,7 +3413,11 @@ public class MzIdentMLExport {
             case 12:
                 return "\t\t\t\t\t\t\t\t\t\t\t\t";
             default:
-                return "";
+                StringBuilder sb = new StringBuilder(tabCounter);
+                for (int i = 0; i < tabCounter; i++) {
+                    sb.append('\t');
+                }
+                return sb.toString();
 
         }
     }
@@ -2831,7 +3446,10 @@ public class MzIdentMLExport {
      * @throws IOException exception thrown whenever a problem occurred while
      * writing to the file
      */
-    private void writeCvTerm(CvTerm cvTerm, boolean showValue) throws IOException {
+    private void writeCvTerm(
+            CvTerm cvTerm, 
+            boolean showValue
+    ) throws IOException {
 
         bw.write(getCurrentTabSpace());
         bw.write("<cvParam cvRef=\"");
@@ -2856,7 +3474,10 @@ public class MzIdentMLExport {
      * @throws IOException exception thrown whenever a problem occurred while
      * writing to the file
      */
-    private void writeCvTermValue(CvTerm cvTerm, boolean showValue) throws IOException {
+    private void writeCvTermValue(
+            CvTerm cvTerm, 
+            boolean showValue
+    ) throws IOException {
 
         String value = cvTerm.getValue();
 
@@ -2884,7 +3505,9 @@ public class MzIdentMLExport {
      * @throws IOException exception thrown whenever a problem occurred while
      * writing to the file
      */
-    private void writeUserParam(String userParamAsString) throws IOException {
+    private void writeUserParam(
+            String userParamAsString
+    ) throws IOException {
 
         bw.write(getCurrentTabSpace());
         bw.write("<userParam name=\"");
@@ -2904,7 +3527,10 @@ public class MzIdentMLExport {
      * @throws IOException exception thrown whenever a problem occurred while
      * writing to the file
      */
-    private void writeUserParam(String name, String value) throws IOException {
+    private void writeUserParam(
+            String name, 
+            String value
+    ) throws IOException {
 
         bw.write(getCurrentTabSpace());
         bw.write("<userParam name=\"");

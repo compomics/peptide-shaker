@@ -50,7 +50,10 @@ public class PsExportStyle implements WorkbookStyle {
      *
      * @return the style attached to that writer
      */
-    public static PsExportStyle getReportStyle(ExcelWriter excelWriter) {
+    public static PsExportStyle getReportStyle(
+            ExcelWriter excelWriter
+    ) {
+    
         HSSFWorkbook workbook = excelWriter.getWorkbook();
         PsExportStyle result = styles.get(workbook);
         if (result == null) {

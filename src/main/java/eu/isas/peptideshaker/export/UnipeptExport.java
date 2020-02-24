@@ -15,6 +15,7 @@ import java.util.List;
  * @author Pieter Verschaffelt
  * @author Thilo Muth
  * @author Harald Barsnes
+ * @author Marc Vaudel
  */
 public class UnipeptExport {
 
@@ -35,42 +36,70 @@ public class UnipeptExport {
      * enabled
      * @param tempHtmlFile the temporary file for Unipept HTML forwarding
      * @param waitingHandler the waiting handler
+     * 
      * @throws IOException thrown if something goes wrong with the export
      */
-    public static void analyzeInUnipept(List<String> peptides, boolean equateIandL, boolean filterDuplicates, boolean handleMissingCleavage, File tempHtmlFile, WaitingHandler waitingHandler) throws IOException {
+    public static void analyzeInUnipept(
+            List<String> peptides,
+            boolean equateIandL,
+            boolean filterDuplicates,
+            boolean handleMissingCleavage,
+            File tempHtmlFile,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         // write the html form to a temporary file
-        BufferedWriter writer = new BufferedWriter(new FileWriter(tempHtmlFile));
+        try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tempHtmlFile))) {
 
-        // write the initial html section
-        writer.write("<html>" + LINE_BREAK);
-        writer.write("\t<body>" + LINE_BREAK);
-        writer.write("\t\t<form id=\"unipept-form\" action=\"https://unipept.ugent.be/export\" accept-charset=\"UTF-8\" method=\"post\">" + LINE_BREAK);  
-        writer.write("\t\t\t<input name=\"utf8\" type=\"hidden\" value=\"âœ“\">" + LINE_BREAK);
-        writer.write("\t\t\t<textarea name=\"qs\" id=\"qs\" rows=\"7\" style=\"visibility: hidden;\">" + LINE_BREAK);
+            // write the initial html section
+            writer.write("<html>");
+            writer.newLine();
+            writer.write("\t<body>");
+            writer.newLine();
+            writer.write("\t\t<form id=\"unipept-form\" action=\"https://unipept.ugent.be/export\" accept-charset=\"UTF-8\" method=\"post\">");
+            writer.newLine();
+            writer.write("\t\t\t<input name=\"utf8\" type=\"hidden\" value=\"âœ“\">");
+            writer.newLine();
+            writer.write("\t\t\t<textarea name=\"qs\" id=\"qs\" rows=\"7\" style=\"visibility: hidden;\">");
+            writer.newLine();
 
-        // write the peptide sequences
-        for (String peptide : peptides) {
-            writer.write(peptide + LINE_BREAK); // @TODO: possible to also avoid creating the potentially large peptide list?
+            // write the peptide sequences
+            for (String peptide : peptides) {
+
+                writer.write(peptide); // @TODO: possible to also avoid creating the potentially large peptide list?
+                writer.newLine();
+
+            }
+
+            // write the ending html section
+            writer.write("\t\t\t</textarea>");
+            writer.newLine();
+            writer.write("\t\t\t<input type=\"text\" name=\"search_name\" id=\"search_name\" style=\"visibility: hidden;\">");
+            writer.newLine();
+            writer.write("\t\t\t<input type=\"checkbox\" name=\"il\" id=\"il\" value=\"1\" " + (equateIandL ? "checked=\"checked\"" : "") + " style=\"visibility: hidden;\">");
+            writer.newLine();
+            writer.write("\t\t\t<input type=\"checkbox\" name=\"dupes\" id=\"dupes\" value=\"1\" " + (filterDuplicates ? "checked=\"checked\"" : "") + " style=\"visibility: hidden;\">");
+            writer.newLine();
+            writer.write("\t\t\t<input type=\"checkbox\" name=\"missed\" id=\"missed\" value=\"1\" " + (handleMissingCleavage ? "checked=\"checked\"" : "") + " style=\"visibility: hidden;\">");
+            writer.newLine();
+            writer.write("\t\t</form>");
+            writer.newLine();
+            writer.write("\t\t<script>");
+            writer.newLine();
+            writer.write("\t\t\twindow.onload = () => {");
+            writer.newLine();
+            writer.write("\t\t\t\tdocument.getElementById(\"unipept-form\").submit();");
+            writer.newLine();
+            writer.write("\t\t\t};");
+            writer.newLine();
+            writer.write("\t\t</script>");
+            writer.newLine();
+            writer.write("\t</body>");
+            writer.newLine();
+            writer.write("</html>");
+            writer.newLine();
+
         }
-
-        // write the ending html section
-        writer.write("\t\t\t</textarea>" + LINE_BREAK);
-        writer.write("\t\t\t<input type=\"text\" name=\"search_name\" id=\"search_name\" style=\"visibility: hidden;\">" + LINE_BREAK);
-        writer.write("\t\t\t<input type=\"checkbox\" name=\"il\" id=\"il\" value=\"1\" " + (equateIandL ? "checked=\"checked\"" : "") + " style=\"visibility: hidden;\">" + LINE_BREAK);
-        writer.write("\t\t\t<input type=\"checkbox\" name=\"dupes\" id=\"dupes\" value=\"1\" " + (filterDuplicates ? "checked=\"checked\"" : "") + " style=\"visibility: hidden;\">" + LINE_BREAK);
-        writer.write("\t\t\t<input type=\"checkbox\" name=\"missed\" id=\"missed\" value=\"1\" " + (handleMissingCleavage ? "checked=\"checked\"" : "") + " style=\"visibility: hidden;\">" + LINE_BREAK);
-        writer.write("\t\t</form>" + LINE_BREAK);
-        writer.write("\t\t<script>" + LINE_BREAK);
-        writer.write("\t\t\twindow.onload = () => {" + LINE_BREAK);
-        writer.write("\t\t\t\tdocument.getElementById(\"unipept-form\").submit();" + LINE_BREAK);
-        writer.write("\t\t\t};" + LINE_BREAK);
-        writer.write("\t\t</script>" + LINE_BREAK);
-        writer.write("\t</body>" + LINE_BREAK);
-        writer.write("</html>" + LINE_BREAK);
-
-        // close the writer
-        writer.close();
 
         // open the temporary file in the default browser, which automatically forwards to the
         // unipept analysis page, with all required values automatically set and filled in

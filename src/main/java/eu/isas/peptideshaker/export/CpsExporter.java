@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export;
 
-import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -17,8 +16,7 @@ import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCo
 import eu.isas.peptideshaker.scoring.PSMaps;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
-import com.compomics.util.io.IoUtils;
-import com.compomics.util.io.compression.GzUtils;
+import com.compomics.util.io.IoUtil;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.io.*;
 
@@ -105,7 +103,7 @@ public class CpsExporter {
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
 
                 identification.getObjectsDB().lock(waitingHandler);
-                IoUtils.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
+                IoUtil.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
                 // @TODO: re-add when the zipping works
 //                GzUtils.gzFile(
 //                        identification.getObjectsDB().getDbFile(),

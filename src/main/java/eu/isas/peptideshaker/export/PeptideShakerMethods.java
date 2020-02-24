@@ -150,7 +150,10 @@ public class PeptideShakerMethods {
      *
      * @return the database usage details
      */
-    public static String getDatabaseText(FastaParameters fastaParameters, FastaSummary fastaSummary) {
+    public static String getDatabaseText(
+            FastaParameters fastaParameters, 
+            FastaSummary fastaSummary
+    ) {
 
         StringBuilder text = new StringBuilder();
 
@@ -224,7 +227,9 @@ public class PeptideShakerMethods {
      *
      * @return the identification settings details
      */
-    public static String getIdentificationSettings(SearchParameters searchParameters) {
+    public static String getIdentificationSettings(
+            SearchParameters searchParameters
+    ) {
 
         StringBuilder text = new StringBuilder("The identification settings were as follows: ");
         DigestionParameters digestionPreferences = searchParameters.getDigestionParameters();
@@ -253,7 +258,12 @@ public class PeptideShakerMethods {
                             }
                         }
                     }
-                    text.append(enzymeName).append(", ").append(digestionPreferences.getSpecificity(enzymeName)).append(", with a maximum of ").append(digestionPreferences.getnMissedCleavages(enzymeName)).append(" missed cleavages");
+                    text.append(enzymeName)
+                            .append(", ")
+                            .append(digestionPreferences.getSpecificity(enzymeName))
+                            .append(", with a maximum of ")
+                            .append(digestionPreferences.getnMissedCleavages(enzymeName))
+                            .append(" missed cleavages");
                 }
                 break;
 
@@ -262,7 +272,14 @@ public class PeptideShakerMethods {
 
         }
 
-        text.append(searchParameters.getPrecursorAccuracy()).append(" ").append(searchParameters.getPrecursorAccuracyType()).append(" as MS1 and ").append(searchParameters.getFragmentIonAccuracy()).append(" ").append(searchParameters.getFragmentAccuracyType()).append(" as MS2 tolerances; ");
+        text.append(searchParameters.getPrecursorAccuracy())
+                .append(" ")
+                .append(searchParameters.getPrecursorAccuracyType())
+                .append(" as MS1 and ")
+                .append(searchParameters.getFragmentIonAccuracy())
+                .append(" ")
+                .append(searchParameters.getFragmentAccuracyType())
+                .append(" as MS2 tolerances; ");
         ModificationFactory ptmFactory = ModificationFactory.getInstance();
         ArrayList<String> fixedPtmsNames = searchParameters.getModificationParameters().getFixedModifications();
 
@@ -294,7 +311,11 @@ public class PeptideShakerMethods {
                 Modification ptm = ptmFactory.getModification(ptmName);
                 char sign = ptm.getRoundedMass() < 0 ? '-' : '+';
 
-                text.append(ptmName).append(" (").append(sign).append(ptm.getRoundedMass()).append(" Da)");
+                text.append(ptmName)
+                        .append(" (")
+                        .append(sign)
+                        .append(ptm.getRoundedMass())
+                        .append(" Da)");
 
             }
 
@@ -332,7 +353,11 @@ public class PeptideShakerMethods {
                 Modification ptm = ptmFactory.getModification(ptmName);
                 char sign = ptm.getRoundedMass() < 0 ? '-' : '+';
 
-                text.append(ptmName).append(" (").append(sign).append(ptm.getRoundedMass()).append(" Da)");
+                text.append(ptmName)
+                        .append(" (")
+                        .append(sign)
+                        .append(ptm.getRoundedMass())
+                        .append(" Da)");
 
             }
 
@@ -370,7 +395,11 @@ public class PeptideShakerMethods {
                 Modification ptm = ptmFactory.getModification(ptmName);
                 char sign = ptm.getRoundedMass() < 0 ? '-' : '+';
 
-                text.append(ptmName).append(" (").append(sign).append(ptm.getRoundedMass()).append(" Da)");
+                text.append(ptmName)
+                        .append(" (")
+                        .append(sign)
+                        .append(ptm.getRoundedMass())
+                        .append(" Da)");
 
             }
 
@@ -408,7 +437,11 @@ public class PeptideShakerMethods {
                 Modification ptm = ptmFactory.getModification(ptmName);
                 char sign = ptm.getRoundedMass() < 0 ? '-' : '+';
 
-                text.append(ptmName).append(" (").append(sign).append(ptm.getRoundedMass()).append(" Da)");
+                text.append(ptmName)
+                        .append(" (")
+                        .append(sign)
+                        .append(ptm.getRoundedMass())
+                        .append(" Da)");
 
             }
         }
@@ -437,7 +470,9 @@ public class PeptideShakerMethods {
      *
      * @return the validation thresholds used
      */
-    public static String getValidation(IdMatchValidationParameters idMatchValidationPreferences) {
+    public static String getValidation(
+            IdMatchValidationParameters idMatchValidationPreferences
+    ) {
 
         double psmFDR = idMatchValidationPreferences.getDefaultPsmFDR();
         double peptideFDR = idMatchValidationPreferences.getDefaultPeptideFDR();
@@ -468,7 +503,9 @@ public class PeptideShakerMethods {
      *
      * @return the PTM scoring methods used
      */
-    public static String getPtmScoring(ModificationLocalizationParameters ptmScoringPreferences) {
+    public static String getPtmScoring(
+            ModificationLocalizationParameters ptmScoringPreferences
+    ) {
 
         StringBuilder text = new StringBuilder();
         text.append("Post-translational modification localizations were scored using the D-score [PMID 23307401] ");
@@ -532,7 +569,9 @@ public class PeptideShakerMethods {
      *
      * @return the spectrum counting method usage details
      */
-    public static String getSpectrumCounting(SpectrumCountingParameters spectrumCountingPreferences) {
+    public static String getSpectrumCounting(
+            SpectrumCountingParameters spectrumCountingPreferences
+    ) {
 
         String text = "Spectrum counting abundance indexes were estimated using the ";
 
