@@ -2,21 +2,17 @@ package eu.isas.peptideshaker.processing;
 
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import com.compomics.util.threading.SimpleArrayListIterator;
+import com.compomics.util.threading.ConcurrentIterator;
 import com.compomics.util.waiting.WaitingHandler;
 import static eu.isas.peptideshaker.PeptideShaker.TIMEOUT_DAYS;
-import eu.isas.peptideshaker.fileimport.PsmImportRunnable;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
-import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -60,6 +56,7 @@ public class PsmProcessor {
      * @param modificationLocalizationScorer Post-translational modifications
      * scorer.
      * @param sequenceProvider Protein sequence provider.
+     * @param spectrumProvider The spectrum provider.
      * @param proteinCount Map of the protein occurrence.
      * @param nThreads The number of threads to use.
      * @param waitingHandler Waiting handler to display progress and allow
@@ -77,6 +74,7 @@ public class PsmProcessor {
             MatchesValidator matchesValidator,
             ModificationLocalizationScorer modificationLocalizationScorer,
             SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
             HashMap<String, Integer> proteinCount,
             int nThreads,
             WaitingHandler waitingHandler,
@@ -88,7 +86,7 @@ public class PsmProcessor {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(spectrumKeys.size());
 
-        SimpleArrayListIterator<Long> spectrumMatchKeysIterator = new SimpleArrayListIterator<>(spectrumKeys);
+        ConcurrentIterator<Long> spectrumMatchKeysIterator = new ConcurrentIterator<>(spectrumKeys);
 
         ExecutorService importPool = Executors.newFixedThreadPool(nThreads);
 
@@ -105,6 +103,7 @@ public class PsmProcessor {
                             matchesValidator,
                             modificationLocalizationScorer,
                             sequenceProvider,
+                            spectrumProvider,
                             proteinCount,
                             waitingHandler,
                             exceptionHandler

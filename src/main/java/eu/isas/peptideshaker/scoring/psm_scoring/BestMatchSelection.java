@@ -4,31 +4,26 @@ import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
-import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
-import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
-import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -42,26 +37,36 @@ import java.util.stream.Collectors;
 public class BestMatchSelection {
 
     /**
-     * The spectrum factory.
-     */
-    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
      * The sequence provider
      */
     private final SequenceProvider sequenceProvider;
     /**
-     * The identification parameters.
+     * The spectrum provider.
      */
-    private final IdentificationParameters identificationParameters;
+    private final SpectrumProvider spectrumProvider;
     /**
      * The tie breaker for equally scoring matches.
      */
     private final TieBreaker tieBreaker;
+    /**
+     * The peptide assumptions filter.
+     */
     private final PeptideAssumptionFilter peptideAssumptionFilter;
-    private final SequenceMatchingParameters sequenceMatchingPreferences;
-    private final SequenceMatchingParameters ptmSequenceMatchingPreferences;
+    /**
+     * The sequence matching parameters.
+     */
+    private final SequenceMatchingParameters sequenceMatchingParameters;
+    /**
+     * The search parameters.
+     */
     private final SearchParameters searchParameters;
+    /**
+     * The modification parameters.
+     */
     private final ModificationParameters modificationParameters;
+    /**
+     * The sequence matching parameters for modifications.
+     */
     private final SequenceMatchingParameters modificationSequenceMatchingParameters;
     /**
      * The FASTA parameters.
@@ -71,32 +76,35 @@ public class BestMatchSelection {
     /**
      * Constructor.
      *
-     * @param proteinCount a map of proteins found multiple times
-     * @param sequenceProvider the sequence provider
-     * @param identificationParameters the identification parameters
-     * @param peptideSpectrumAnnotator the peptide spectrum annotator to use
+     * @param proteinCount Map of the occurrence of the protein accessions.
+     * @param sequenceProvider The sequence provider.
+     * @param identificationParameters The identification parameters.
+     * @param peptideSpectrumAnnotator The peptide spectrum annotator.
+     * @param spectrumProvider The spectrum provider.
      */
     public BestMatchSelection(
             HashMap<String, Integer> proteinCount,
             SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
             IdentificationParameters identificationParameters,
             PeptideSpectrumAnnotator peptideSpectrumAnnotator
     ) {
 
         this.sequenceProvider = sequenceProvider;
-        this.identificationParameters = identificationParameters;
+        this.spectrumProvider = spectrumProvider;
         this.peptideAssumptionFilter = identificationParameters.getPeptideAssumptionFilter();
-        this.sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
-        this.ptmSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+        this.sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
         this.searchParameters = identificationParameters.getSearchParameters();
         this.modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         this.modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
         this.fastaParameters = identificationParameters.getFastaParameters();
+
         this.tieBreaker = new TieBreaker(
                 proteinCount,
                 identificationParameters,
                 peptideSpectrumAnnotator,
-                sequenceProvider
+                sequenceProvider,
+                spectrumProvider
         );
 
     }
@@ -104,9 +112,9 @@ public class BestMatchSelection {
     /**
      * Selects the best hit.
      *
-     * @param spectrumMatch the spectrum match
-     * @param inputMap the input map
-     * @param psmTargetDecoyMap the PSM target decoy map
+     * @param spectrumMatch The spectrum match.
+     * @param inputMap The input map.
+     * @param psmTargetDecoyMap The PSM target decoy map.
      */
     public void selectBestHit(
             SpectrumMatch spectrumMatch,
@@ -120,7 +128,8 @@ public class BestMatchSelection {
         psmParameter.setMatchValidationLevel(MatchValidationLevel.none);
         spectrumMatch.addUrParam(psmParameter);
 
-        String spectrumKey = spectrumMatch.getSpectrumKey();
+        String spectrumFile = spectrumMatch.getSpectrumFile();
+        String spectrumTitle = spectrumMatch.getSpectrumTitle();
 
         HashSet<Long> ids = new HashSet<>(2);
         ArrayList<PeptideAssumption> assumptions = new ArrayList<>(4);
@@ -148,10 +157,29 @@ public class BestMatchSelection {
 
                         if (peptide1.getProteinMapping() != null
                                 && !peptide1.getProteinMapping().isEmpty()
-                                && peptideAssumptionFilter.validatePeptide(peptide1, sequenceMatchingPreferences, searchParameters.getDigestionParameters())
-                                && peptideAssumptionFilter.validateModifications(peptide1, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getModificationParameters())
-                                && peptideAssumptionFilter.validatePrecursor(peptideAssumption1, spectrumKey, spectrumFactory, searchParameters)
-                                && peptideAssumptionFilter.validateProteins(peptide1, sequenceMatchingPreferences, sequenceProvider)) {
+                                && peptideAssumptionFilter.validatePeptide(
+                                        peptide1,
+                                        sequenceMatchingParameters,
+                                        searchParameters.getDigestionParameters()
+                                )
+                                && peptideAssumptionFilter.validateModifications(
+                                        peptide1,
+                                        sequenceMatchingParameters,
+                                        modificationSequenceMatchingParameters,
+                                        searchParameters.getModificationParameters()
+                                )
+                                && peptideAssumptionFilter.validatePrecursor(
+                                        peptideAssumption1,
+                                        spectrumFile,
+                                        spectrumTitle,
+                                        spectrumProvider,
+                                        searchParameters
+                                )
+                                && peptideAssumptionFilter.validateProteins(
+                                        peptide1,
+                                        sequenceMatchingParameters,
+                                        sequenceProvider
+                                )) {
 
                             PSParameter psParameter1 = (PSParameter) peptideAssumption1.getUrParam(PSParameter.dummy);
 
@@ -176,7 +204,7 @@ public class BestMatchSelection {
                                             if (peptideAssumption1.getPeptide()
                                                     .isSameSequenceAndModificationStatus(
                                                             peptideAssumption2.getPeptide(),
-                                                            sequenceMatchingPreferences
+                                                            sequenceMatchingParameters
                                                     )) {
 
                                                 PSParameter psParameter2 = (PSParameter) peptideAssumption2.getUrParam(PSParameter.dummy);
@@ -190,7 +218,13 @@ public class BestMatchSelection {
                                 }
                             }
 
-                            psmTargetDecoyMap.put(p, PeptideUtils.isDecoy(peptide1, sequenceProvider));
+                            psmTargetDecoyMap.put(
+                                    p,
+                                    PeptideUtils.isDecoy(
+                                            peptide1,
+                                            sequenceProvider
+                                    )
+                            );
 
                             if (p <= bestP) {
 
@@ -212,7 +246,11 @@ public class BestMatchSelection {
 
         if (!assumptions.isEmpty()) {
 
-            PeptideAssumption bestPeptideAssumption = getBestMatch(spectrumKey, assumptions);
+            PeptideAssumption bestPeptideAssumption = getBestMatch(
+                    spectrumFile, 
+                    spectrumTitle, 
+                    assumptions
+            );
 
             psmParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
 
@@ -221,7 +259,7 @@ public class BestMatchSelection {
                 // try to find the most likely modification localization based on the search engine results
                 ArrayList<PeptideAssumption> inspectedAssumptions = new ArrayList<>(1);
                 HashMap<Long, TreeSet<Double>> assumptionPEPs = new HashMap<>(1);
-                long bestAssumptionKey = bestPeptideAssumption.getPeptide().getMatchingKey(sequenceMatchingPreferences);
+                long bestAssumptionKey = bestPeptideAssumption.getPeptide().getMatchingKey(sequenceMatchingParameters);
 
                 assumptionsLoop:
 
@@ -233,7 +271,7 @@ public class BestMatchSelection {
 
                         for (PeptideAssumption peptideAssumption : advocateEntry.getValue()) {
 
-                            long assumptionKey = peptideAssumption.getPeptide().getMatchingKey(sequenceMatchingPreferences);
+                            long assumptionKey = peptideAssumption.getPeptide().getMatchingKey(sequenceMatchingParameters);
 
                             if (assumptionKey == bestAssumptionKey) {
 
@@ -350,7 +388,8 @@ public class BestMatchSelection {
                                 TagAssumption::getScore,
                                 TreeMap::new,
                                 Collectors.toCollection(ArrayList::new)
-                        ));
+                        )
+                );
 
         if (!tagAssumptions.isEmpty()) {
 
@@ -384,17 +423,24 @@ public class BestMatchSelection {
      * Returns the best match for the given spectrum among the given peptide
      * assumptions.
      *
-     * @param spectrumKey The key of the spectrum.
+     * @param spectrumFile The file name of the spectrum.
+     * @param spectrumTitle The title of the spectrum.
      * @param assumptions A list of peptide assumptions.
      *
      * @return The best match.
      */
     public PeptideAssumption getBestMatch(
-            String spectrumKey,
+            String spectrumFile,
+            String spectrumTitle,
             ArrayList<PeptideAssumption> assumptions
     ) {
 
-        return getBestMatch(spectrumKey, assumptions, false);
+        return getBestMatch(
+                spectrumFile,
+                spectrumTitle,
+                assumptions, 
+                false
+        );
 
     }
 
@@ -402,7 +448,8 @@ public class BestMatchSelection {
      * Returns the best match for the given spectrum among the given peptide
      * assumptions.
      *
-     * @param spectrumKey The key of the spectrum.
+     * @param spectrumFile The file name of the spectrum.
+     * @param spectrumTitle The title of the spectrum.
      * @param assumptions A list of peptide assumptions.
      * @param silentFail If true, no exception will be thrown if ties cannot be
      * broken and the first of the best hits will be returned.
@@ -410,7 +457,8 @@ public class BestMatchSelection {
      * @return The best match.
      */
     public PeptideAssumption getBestMatch(
-            String spectrumKey,
+            String spectrumFile,
+            String spectrumTitle,
             ArrayList<PeptideAssumption> assumptions,
             boolean silentFail
     ) {
@@ -422,7 +470,8 @@ public class BestMatchSelection {
             PeptideAssumption peptideAssumption = assumptions.get(i);
 
             bestPeptideAssumption = tieBreaker.getBestPeptideAssumption(
-                    spectrumKey,
+                    spectrumFile,
+                    spectrumTitle,
                     bestPeptideAssumption,
                     peptideAssumption,
                     silentFail

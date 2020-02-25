@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.recalibration;
 
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Peak;
 import com.compomics.util.experiment.identification.Identification;
@@ -31,10 +30,6 @@ import java.util.HashMap;
  */
 public class RunMzDeviation {
 
-    /**
-     * The spectrum factory.
-     */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The precursor slopes.
      */
@@ -82,7 +77,9 @@ public class RunMzDeviation {
      *
      * @return the list for fragment ion m/z bins
      */
-    public ArrayList<Double> getFragmentMZList(double precursorRT) {
+    public ArrayList<Double> getFragmentMZList(
+            double precursorRT
+    ) {
         return new ArrayList<>(fragmentsRtDeviations.get(precursorRT).keySet());
     }
 
@@ -94,7 +91,9 @@ public class RunMzDeviation {
      *
      * @return the precursor m/z deviation slope
      */
-    public Double getSlope(Double rtBin) {
+    public double getSlope(
+            double rtBin
+    ) {
         return precursorSlopes.get(rtBin);
     }
 
@@ -106,7 +105,9 @@ public class RunMzDeviation {
      *
      * @return the precursor m/z deviation offset
      */
-    public Double getOffset(Double rtBin) {
+    public double getOffset(
+            double rtBin
+    ) {
         return precursorOffsets.get(rtBin);
     }
 
@@ -119,7 +120,10 @@ public class RunMzDeviation {
      *
      * @return the median error
      */
-    public double getPrecursorMzCorrection(Double precursorMz, Double precursorRT) {
+    public double getPrecursorMzCorrection(
+            double precursorMz, 
+            double precursorRT
+    ) {
 
         double key1 = precursorRTList.get(0);
         double key2 = key1;
@@ -142,9 +146,10 @@ public class RunMzDeviation {
             }
         }
 
-        double grade = (precursorSlopes.get(key1) + precursorSlopes.get(key2)) / 2;
+        double slope = (precursorSlopes.get(key1) + precursorSlopes.get(key2)) / 2;
         double offset = (precursorOffsets.get(key1) + precursorOffsets.get(key2)) / 2;
-        return grade * precursorMz + offset;
+        return slope * precursorMz + offset;
+        
     }
 
     /**
@@ -155,7 +160,10 @@ public class RunMzDeviation {
      *
      * @return the error found
      */
-    public Double getFragmentMzError(double precursorRT, double fragmentMZ) {
+    public Double getFragmentMzError(
+            double precursorRT, 
+            double fragmentMZ
+    ) {
 
         double rtKey1 = precursorRTList.get(0);
         double rtKey2 = rtKey1;
@@ -243,16 +251,24 @@ public class RunMzDeviation {
      *
      * @return the recalibrated peak list
      */
-    public HashMap<Double, Peak> recalibratePeakList(double precursorRT, HashMap<Double, Peak> originalPeakList) {
+    public HashMap<Double, Peak> recalibratePeakList(
+            double precursorRT, 
+            HashMap<Double, Peak> originalPeakList
+    ) {
+    
         HashMap<Double, Peak> recalibratedPeakList = new HashMap<>(originalPeakList.size());
 
         for (double mz : originalPeakList.keySet()) {
+
             double correction = getFragmentMzError(precursorRT, mz);
             double newMz = mz - correction;
             Peak peak = new Peak(newMz, originalPeakList.get(mz).intensity);
             recalibratedPeakList.put(newMz, peak);
+
         }
+
         return recalibratedPeakList;
+
     }
 
     /**
@@ -265,7 +281,13 @@ public class RunMzDeviation {
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
      */
-    public RunMzDeviation(String spectrumFileName, Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
+    public RunMzDeviation(
+            String spectrumFileName, 
+            Identification identification, 
+            SequenceProvider sequenceProvider, 
+            IdentificationParameters identificationParameters, 
+            WaitingHandler waitingHandler
+    ) {
 
         AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();

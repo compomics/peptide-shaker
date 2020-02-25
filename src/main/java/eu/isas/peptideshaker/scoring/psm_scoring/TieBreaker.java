@@ -1,13 +1,12 @@
 package eu.isas.peptideshaker.scoring.psm_scoring;
 
-import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
@@ -25,25 +24,53 @@ import java.util.Map;
 public class TieBreaker {
 
     /**
-     * The spectrum factory.
+     * Map of the occurrence of the protein accessions.
      */
-    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     private final HashMap<String, Integer> proteinCount;
+    /**
+     * The search parameters.
+     */
     private final SearchParameters searchParameters;
+    /**
+     * The spectrum annotation parameters.
+     */
     private final AnnotationParameters annotationParameters;
+    /**
+     * The modification parameters.
+     */
     private final ModificationParameters modificationParameters;
+    /**
+     * The sequence matching parameters for modifications.
+     */
     private final SequenceMatchingParameters modificationSequenceMatchingParameters;
     /**
      * The sequence provider
      */
     private final SequenceProvider sequenceProvider;
+    /**
+     * The spectrum provider.
+     */
+    private final SpectrumProvider spectrumProvider;
+    /**
+     * The peptide spectrum annotator.
+     */
     private final PeptideSpectrumAnnotator peptideSpectrumAnnotator;
 
+    /**
+     * Constructor.
+     *
+     * @param proteinCount Map of the occurrence of the protein accessions.
+     * @param identificationParameters The identification parameters.
+     * @param peptideSpectrumAnnotator The peptide spectrum annotator.
+     * @param sequenceProvider The sequence provider.
+     * @param spectrumProvider The spectrum provider.
+     */
     public TieBreaker(
             HashMap<String, Integer> proteinCount,
             IdentificationParameters identificationParameters,
             PeptideSpectrumAnnotator peptideSpectrumAnnotator,
-            SequenceProvider sequenceProvider
+            SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider
     ) {
         this.proteinCount = proteinCount;
         this.annotationParameters = identificationParameters.getAnnotationParameters();
@@ -52,23 +79,47 @@ public class TieBreaker {
         this.modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
         this.peptideSpectrumAnnotator = peptideSpectrumAnnotator;
         this.sequenceProvider = sequenceProvider;
+        this.spectrumProvider = spectrumProvider;
     }
 
+    /**
+     * Returns the best assumption between the two given possibilities for the
+     * given spectrum.
+     *
+     * @param spectrumFile The spectrum file name.
+     * @param spectrumTitle The spectrum title.
+     * @param peptideAssumption1 The first possible peptide.
+     * @param peptideAssumption2 The second possible peptide.
+     * @param silentFail If false an exception will be thrown if tie could not
+     * be broken.
+     *
+     * @return The best assumption between the two given possibilities for the
+     * given spectrum.
+     */
     public PeptideAssumption getBestPeptideAssumption(
-            String spectrumKey,
+            String spectrumFile,
+            String spectrumTitle,
             PeptideAssumption peptideAssumption1,
             PeptideAssumption peptideAssumption2,
             boolean silentFail
     ) {
 
         int proteinMaxOccurrence1 = peptideAssumption1.getPeptide().getProteinMapping().navigableKeySet().stream()
-                .filter(accession -> proteinCount.containsKey(accession))
-                .mapToInt(accession -> proteinCount.get(accession))
+                .filter(
+                        accession -> proteinCount.containsKey(accession)
+                )
+                .mapToInt(
+                        accession -> proteinCount.get(accession)
+                )
                 .max()
                 .orElse(1);
         int proteinMaxOccurrence2 = peptideAssumption1.getPeptide().getProteinMapping().navigableKeySet().stream()
-                .filter(accession -> proteinCount.containsKey(accession))
-                .mapToInt(accession -> proteinCount.get(accession))
+                .filter(
+                        accession -> proteinCount.containsKey(accession)
+                )
+                .mapToInt(
+                        accession -> proteinCount.get(accession)
+                )
                 .max()
                 .orElse(1);
 
@@ -82,10 +133,23 @@ public class TieBreaker {
 
         }
 
-        Spectrum spectrum = (Spectrum) spectrumFactory.getSpectrum(spectrumKey);
+        Spectrum spectrum = spectrumProvider.getSpectrum(
+                spectrumFile,
+                spectrumTitle
+        );
 
-        int nCoveredAminoAcids1 = nCoveredAminoAcids(peptideAssumption1, spectrum);
-        int nCoveredAminoAcids2 = nCoveredAminoAcids(peptideAssumption2, spectrum);
+        int nCoveredAminoAcids1 = nCoveredAminoAcids(
+                spectrumFile,
+                spectrumTitle,
+                peptideAssumption1,
+                spectrum
+        );
+        int nCoveredAminoAcids2 = nCoveredAminoAcids(
+                spectrumFile,
+                spectrumTitle,
+                peptideAssumption2,
+                spectrum
+        );
 
         if (nCoveredAminoAcids1 > nCoveredAminoAcids2) {
 
@@ -99,7 +163,7 @@ public class TieBreaker {
 
         double massError1 = Math.abs(
                 peptideAssumption1.getDeltaMass(
-                        spectrum.getPrecursor().getMz(),
+                        spectrum.getPrecursor().mz,
                         searchParameters.isPrecursorAccuracyTypePpm(),
                         searchParameters.getMinIsotopicCorrection(),
                         searchParameters.getMaxIsotopicCorrection()
@@ -107,7 +171,7 @@ public class TieBreaker {
 
         double massError2 = Math.abs(
                 peptideAssumption2.getDeltaMass(
-                        spectrum.getPrecursor().getMz(),
+                        spectrum.getPrecursor().mz,
                         searchParameters.isPrecursorAccuracyTypePpm(),
                         searchParameters.getMinIsotopicCorrection(),
                         searchParameters.getMaxIsotopicCorrection()
@@ -129,18 +193,30 @@ public class TieBreaker {
 
         }
 
-        throw new IllegalArgumentException("Tie during best match selection in spectrum " + spectrumKey + "(" + peptideAssumption1.getPeptide().getSequence() + " vs. " + peptideAssumption2.getPeptide().getSequence() + ".");
+        throw new IllegalArgumentException("Tie during best match selection in spectrum " + spectrumTitle + " of file " + spectrumFile + "(" + peptideAssumption1.getPeptide().getSequence() + " vs. " + peptideAssumption2.getPeptide().getSequence() + ".");
 
     }
 
+    /**
+     * Returns the number of amino acids covered by the fragment ions.
+     *
+     * @param spectrumFile The spectrum file name.
+     * @param spectrumTitle The spectrum title.
+     * @param peptideAssumption The peptide assumption.
+     * @param spectrum The spectrum.
+     *
+     * @return The number of amino acids covered by the fragment ions.
+     */
     private int nCoveredAminoAcids(
+            String spectrumFile,
+            String spectrumTitle,
             PeptideAssumption peptideAssumption,
             Spectrum spectrum
     ) {
 
-        Peptide peptide1 = peptideAssumption.getPeptide();
         SpecificAnnotationParameters specificAnnotationPreferences = annotationParameters.getSpecificAnnotationParameters(
-                spectrum.getSpectrumKey(),
+                spectrumFile,
+                spectrumTitle,
                 peptideAssumption,
                 modificationParameters,
                 sequenceProvider,
@@ -150,6 +226,8 @@ public class TieBreaker {
         Map<Integer, ArrayList<IonMatch>> coveredAminoAcids = peptideSpectrumAnnotator.getCoveredAminoAcids(
                 annotationParameters,
                 specificAnnotationPreferences,
+                spectrumFile,
+                spectrumTitle,
                 spectrum,
                 peptideAssumption.getPeptide(),
                 modificationParameters,

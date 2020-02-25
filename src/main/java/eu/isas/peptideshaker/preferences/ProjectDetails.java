@@ -1,8 +1,8 @@
 package eu.isas.peptideshaker.preferences;
 
-import com.compomics.util.Util;
 import com.compomics.util.db.object.DbObject;
 import com.compomics.util.experiment.identification.Advocate;
+import com.compomics.util.io.IoUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -174,7 +174,7 @@ public class ProjectDetails extends DbObject {
     public void addSpectrumFile(File spectrumFile) {
         writeDBMode();
         String path = spectrumFile.getAbsolutePath();
-        String fileName = Util.getFileName(path);
+        String fileName = IoUtil.getFileName(path);
         spectrumFiles.put(fileName, path);
     }
 
