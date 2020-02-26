@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.utils;
 
-import com.compomics.util.Util;
+import com.compomics.util.io.IoUtil;
 
 /**
  * This class contains information and methods to zip and unzip files from PeptideShaker.
@@ -57,6 +57,6 @@ public class PsZipUtils {
      * @return the folder name associated to the zip file
      */
     public static String getTempFolderName(String fileName) {
-        return Util.removeExtension(fileName) + "_" + tempFolderName;
+        return IoUtil.removeExtension(fileName) + "_" + tempFolderName;
     }
 }

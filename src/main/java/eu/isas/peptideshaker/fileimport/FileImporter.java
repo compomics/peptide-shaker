@@ -8,8 +8,6 @@ import com.compomics.util.experiment.io.identification.IdfileReader;
 import com.compomics.util.experiment.io.identification.IdfileReaderFactory;
 import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.experiment.biology.genes.ProteinGeneDetailsProvider;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
@@ -32,6 +30,8 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.protein_inference.TagMapper;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
+import com.compomics.util.io.IoUtil;
 import eu.isas.peptideshaker.PeptideShaker;
 
 import javax.swing.*;
@@ -58,13 +58,13 @@ public class FileImporter {
      */
     private final ExceptionHandler exceptionHandler;
     /**
-     * The spectrum factory.
-     */
-    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
      * A provider for protein sequences.
      */
     private SequenceProvider sequenceProvider;
+    /**
+     * The ms file handler.
+     */
+    private final MsFileHandler msFileHandler;
     /**
      * A provider for protein details.
      */
@@ -114,11 +114,11 @@ public class FileImporter {
     /**
      * List of the mgf files used.
      */
-    private final ArrayList<String> mgfUsed = new ArrayList<>();
+    private final ArrayList<String> spectrumFileUsed = new ArrayList<>();
     /**
      * Map of the missing mgf files indexed by identification file.
      */
-    private final HashMap<File, String> missingMgfFiles = new HashMap<>();
+    private final HashMap<File, String> missingSpectrumFiles = new HashMap<>();
     /**
      * The input map.
      */
@@ -160,13 +160,14 @@ public class FileImporter {
     /**
      * Constructor for the importer.
      *
-     * @param identification the identification where to store the matches
-     * @param waitingHandler The handler displaying feedback to the user
-     * @param processingParameters the processing parameters
-     * @param identificationParameters the identification parameters
-     * @param projectDetails the project details
-     * @param metrics metrics of the dataset to be saved for the GUI
-     * @param exceptionHandler the exception handler
+     * @param identification The identification where to store the matches.
+     * @param processingParameters The processing parameters.
+     * @param identificationParameters The identification parameters.
+     * @param projectDetails The project details.
+     * @param metrics The metrics of the dataset to be saved.
+     * @param msFileHandler The ms file handler.
+     * @param waitingHandler The handler displaying feedback to the user.
+     * @param exceptionHandler The exception handler.
      */
     public FileImporter(
             Identification identification,
@@ -174,6 +175,7 @@ public class FileImporter {
             ProcessingParameters processingParameters,
             Metrics metrics,
             ProjectDetails projectDetails,
+            MsFileHandler msFileHandler,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
     ) {
@@ -182,6 +184,7 @@ public class FileImporter {
         this.metrics = metrics;
         this.processingParameters = processingParameters;
         this.projectDetails = projectDetails;
+        this.msFileHandler = msFileHandler;
         this.waitingHandler = waitingHandler;
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
@@ -204,11 +207,21 @@ public class FileImporter {
     ) {
 
         ArrayList<File> sortedIdFiles = idFiles.stream()
-                .collect(Collectors.groupingBy(File::getName, TreeMap::new, Collectors.toList()))
+                .collect(
+                        Collectors.groupingBy(
+                                File::getName,
+                                TreeMap::new,
+                                Collectors.toList()
+                        )
+                )
                 .values().stream()
-                .flatMap(List::stream)
+                .flatMap(
+                        List::stream
+                )
                 .distinct()
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(
+                        Collectors.toCollection(ArrayList::new)
+                );
 
         for (File spectrumFile : spectrumFiles) {
 
@@ -224,7 +237,8 @@ public class FileImporter {
                     identificationParameters.getSearchParameters(),
                     identificationParameters.getFastaParameters(),
                     identificationParameters.getPeptideVariantsParameters(),
-                    waitingHandler, exceptionHandler
+                    waitingHandler,
+                    exceptionHandler
             );
 
             if (waitingHandler.isRunCanceled()) {
@@ -238,7 +252,11 @@ public class FileImporter {
             if (genePreferences.getUseGeneMapping()) {
 
                 waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                waitingHandler.appendReport("Importing gene mappings.", true, true);
+                waitingHandler.appendReport(
+                        "Importing gene mappings.", 
+                        true, 
+                        true
+                );
                 importGenes();
 
             } else {
@@ -254,13 +272,21 @@ public class FileImporter {
             }
 
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-            waitingHandler.appendReport("Establishing local database connection.", true, true);
+            waitingHandler.appendReport(
+                    "Establishing local database connection.", 
+                    true, 
+                    true
+            );
 
             waitingHandler.increasePrimaryProgressCounter();
 
             if (!waitingHandler.isRunCanceled()) {
 
-                waitingHandler.appendReport("Reading identification files.", true, true);
+                waitingHandler.appendReport(
+                        "Reading identification files.", 
+                        true, 
+                        true
+                );
 
                 for (File idFile : sortedIdFiles) {
 
@@ -272,37 +298,44 @@ public class FileImporter {
                     }
                 }
 
-                while (!missingMgfFiles.isEmpty()) {
+                while (!missingSpectrumFiles.isEmpty()) {
 
                     if (hasGUI) {
 
-                        new MgfFilesNotFoundDialog((WaitingDialog) waitingHandler, missingMgfFiles);
+                        new MgfFilesNotFoundDialog(
+                                (WaitingDialog) waitingHandler,
+                                missingSpectrumFiles
+                        );
 
                     } else {
 
-                        String missingFiles = missingMgfFiles.keySet().stream()
+                        String missingFiles = missingSpectrumFiles.keySet().stream()
                                 .map(File::getName)
                                 .sorted()
                                 .collect(Collectors.joining(", "));
 
-                        waitingHandler.appendReport("MGF files missing: " + missingFiles, true, true);
+                        waitingHandler.appendReport("Spectrum files missing: " + missingFiles, true, true);
 
                         return 1;
 
                     }
 
-                    waitingHandler.appendReport("Processing files with the new input.", true, true);
-                    ArrayList<File> filesToProcess = new ArrayList<>(missingMgfFiles.keySet());
+                    waitingHandler.appendReport(
+                            "Processing files with the new input.", 
+                            true, 
+                            true
+                    );
+                    ArrayList<File> filesToProcess = new ArrayList<>(missingSpectrumFiles.keySet());
 
-                    for (String mgfName : missingMgfFiles.values()) {
+                    for (String fileName : missingSpectrumFiles.values()) {
 
-                        File newFile = spectrumFactory.getSpectrumFileFromIdName(mgfName);
+                        File newFile = new File(msFileHandler.getFilePaths().get(fileName));
                         this.spectrumFiles.put(newFile.getName(), newFile);
                         projectDetails.addSpectrumFile(newFile);
 
                     }
 
-                    missingMgfFiles.clear();
+                    missingSpectrumFiles.clear();
 
                     for (File idFile : filesToProcess) {
 
@@ -319,17 +352,29 @@ public class FileImporter {
 
                 if (nRetained == 0) {
 
-                    waitingHandler.appendReport("No identifications retained.", true, true);
+                    waitingHandler.appendReport(
+                            "No identifications retained.", 
+                            true, 
+                            true
+                    );
                     waitingHandler.setRunCanceled();
 
                     return 1;
 
                 }
 
-                waitingHandler.appendReport("File import completed. "
-                        + nPSMs + " first hits imported (" + nTotal + " total) from " + nSpectra + " spectra.", true, true);
-                waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
-                waitingHandler.increaseSecondaryProgressCounter(spectrumFiles.size() - mgfUsed.size());
+                waitingHandler.appendReport(
+                        "File import completed. "
+                        + nPSMs + " first hits imported (" + nTotal + " total) from " + nSpectra + " spectra.",
+                        true,
+                        true
+                );
+                waitingHandler.appendReport(
+                        "[" + nRetained + " first hits passed the initial filtering]",
+                        true,
+                        true
+                );
+                waitingHandler.increaseSecondaryProgressCounter(spectrumFiles.size() - spectrumFileUsed.size());
 
             }
         } catch (OutOfMemoryError error) {
@@ -347,12 +392,16 @@ public class FileImporter {
 
             if (waitingHandler instanceof WaitingDialog) {
 
-                JOptionPane.showMessageDialog((WaitingDialog) waitingHandler, JOptionEditorPane.getJOptionEditorPane(
-                        "PeptideShaker used up all the available memory and had to be stopped.<br>"
-                        + "Memory boundaries are changed in the the Welcome Dialog (Settings<br>"
-                        + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit<br>"
-                        + "Java Options). See also <a href=\"https://compomics.github.io/projects/compomics-utilities/wiki/javatroubleshooting.html\">JavaTroubleShooting</a>."),
-                        "Out Of Memory", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        (WaitingDialog) waitingHandler, JOptionEditorPane.getJOptionEditorPane(
+                                "PeptideShaker used up all the available memory and had to be stopped.<br>"
+                                + "Memory boundaries are changed in the the Welcome Dialog (Settings<br>"
+                                + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit<br>"
+                                + "Java Options). See also <a href=\"https://compomics.github.io/projects/compomics-utilities/wiki/javatroubleshooting.html\">JavaTroubleShooting</a>."
+                        ),
+                        "Out Of Memory",
+                        JOptionPane.ERROR_MESSAGE
+                );
 
             }
 
@@ -368,19 +417,47 @@ public class FileImporter {
 
             if (e instanceof NullPointerException) {
 
-                waitingHandler.appendReport("An error occurred while loading the identification files.", true, true);
-                waitingHandler.appendReport("Please see the error log (Help Menu > Bug Report) for details.", true, true);
+                waitingHandler.appendReport(
+                        "An error occurred while loading the identification files.",
+                        true,
+                        true
+                );
+                waitingHandler.appendReport(
+                        "Please see the error log (Help Menu > Bug Report) for details.",
+                        true,
+                        true
+                );
 
             } else if (FrameExceptionHandler.getExceptionType(e).equalsIgnoreCase("Protein not found")) {
 
-                waitingHandler.appendReport("An error occurred while loading the identification files:", true, true);
-                waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
-                waitingHandler.appendReport("Please see https://compomics.github.io/projects/searchgui/wiki/databasehelp.html.", true, true);
+                waitingHandler.appendReport(
+                        "An error occurred while loading the identification files:",
+                        true,
+                        true
+                );
+                waitingHandler.appendReport(
+                        e.getLocalizedMessage(),
+                        true,
+                        true
+                );
+                waitingHandler.appendReport(
+                        "Please see https://compomics.github.io/projects/searchgui/wiki/databasehelp.html.",
+                        true,
+                        true
+                );
 
             } else {
 
-                waitingHandler.appendReport("An error occurred while loading the identification files:", true, true);
-                waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
+                waitingHandler.appendReport(
+                        "An error occurred while loading the identification files:",
+                        true,
+                        true
+                );
+                waitingHandler.appendReport(
+                        e.getLocalizedMessage(),
+                        true,
+                        true
+                );
 
             }
 
@@ -410,7 +487,11 @@ public class FileImporter {
     ) throws IOException, InterruptedException, TimeoutException {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-        waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
+        waitingHandler.appendReport(
+                "Parsing " + idFile.getName() + ".",
+                true,
+                true
+        );
 
         IdfileReader fileReader = null;
         try {
@@ -419,14 +500,22 @@ public class FileImporter {
 
         } catch (OutOfMemoryError error) {
 
-            waitingHandler.appendReport("Ran out of memory when parsing \'" + Util.getFileName(idFile) + "\'.", true, true);
-            throw new OutOfMemoryError("Ran out of memory when parsing \'" + Util.getFileName(idFile) + "\'.");
+            waitingHandler.appendReport(
+                    "Ran out of memory when parsing \'" + IoUtil.getFileName(idFile) + "\'.",
+                    true,
+                    true
+            );
+            throw new OutOfMemoryError("Ran out of memory when parsing \'" + IoUtil.getFileName(idFile) + "\'.");
 
         }
 
         if (fileReader == null) {
 
-            waitingHandler.appendReport("Identification result file \'" + Util.getFileName(idFile) + "\' not recognized.", true, true);
+            waitingHandler.appendReport(
+                    "Identification result file \'" + IoUtil.getFileName(idFile) + "\' not recognized.",
+                    true,
+                    true
+            );
             waitingHandler.setRunCanceled();
             return;
 
@@ -438,7 +527,7 @@ public class FileImporter {
 
         try {
 
-            idFileSpectrumMatches = fileReader.getAllSpectrumMatches(
+            idFileSpectrumMatches = fileReader.getAllSpectrumMatches(msFileHandler,
                     waitingHandler,
                     identificationParameters.getSearchParameters(),
                     identificationParameters.getSequenceMatchingParameters(),
@@ -447,17 +536,21 @@ public class FileImporter {
 
         } catch (Exception e) {
 
-            waitingHandler.appendReport("An error occurred while loading spectrum matches from \'"
-                    + Util.getFileName(idFile)
+            waitingHandler.appendReport(
+                    "An error occurred while loading spectrum matches from \'"
+                    + IoUtil.getFileName(idFile)
                     + "\'. This file will be ignored. Error: " + e.toString()
-                    + " See resources/PeptideShaker.log for details.", true, true);
+                    + " See resources/PeptideShaker.log for details.",
+                    true,
+                    true
+            );
             e.printStackTrace();
 
         }
 
         // set the search engine name and version for this file
         HashMap<String, ArrayList<String>> software = fileReader.getSoftwareVersions();
-        projectDetails.setIdentificationAlgorithmsForFile(Util.getFileName(idFile), software);
+        projectDetails.setIdentificationAlgorithmsForFile(IoUtil.getFileName(idFile), software);
 
         // check for unsupported software
         if (!software.isEmpty()) {
@@ -468,9 +561,13 @@ public class FileImporter {
 
                 if (advocate == null || advocate.getType() == Advocate.AdvocateType.unknown) {
 
-                    waitingHandler.appendReport("Warning: The software used to generate " + idFile.getName() + " was not recognized by PeptideShaker. "
+                    waitingHandler.appendReport(
+                            "Warning: The software used to generate " + idFile.getName() + " was not recognized by PeptideShaker. "
                             + "Please create an issue on the tool website and we will add support for the software used. "
-                            + "github.com/compomics/peptide-shaker/issues", true, true);
+                            + "github.com/compomics/peptide-shaker/issues",
+                            true,
+                            true
+                    );
                     return;
 
                 }
@@ -485,7 +582,11 @@ public class FileImporter {
 
             if (nMatches == 0) {
 
-                waitingHandler.appendReport("No PSM found in " + idFile.getName() + ".", true, true);
+                waitingHandler.appendReport(
+                        "No PSM found in " + idFile.getName() + ".",
+                        true,
+                        true
+                );
 
             } else {
 
@@ -493,7 +594,11 @@ public class FileImporter {
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.resetSecondaryProgressCounter();
                 waitingHandler.setMaxSecondaryProgressCounter(nMatches);
-                waitingHandler.appendReport("Loading spectra for " + idFile.getName() + ".", true, true);
+                waitingHandler.appendReport(
+                        "Loading spectra for " + idFile.getName() + ".",
+                        true,
+                        true
+                );
 
                 for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
 
@@ -515,23 +620,34 @@ public class FileImporter {
 
                         waitingHandler.resetSecondaryProgressCounter();
                         waitingHandler.setMaxSecondaryProgressCounter(nMatches);
-                        waitingHandler.appendReport("Mapping tags to peptides.", true, true);
-                        tagMapper.mapTags(idFileSpectrumMatches, fastaMapper, waitingHandler);
-
+                        waitingHandler.appendReport(
+                                "Mapping tags to peptides.",
+                                true,
+                                true
+                        );
+                        tagMapper.mapTags(
+                                idFileSpectrumMatches,
+                                fastaMapper,
+                                waitingHandler
+                        );
                     }
 
                     waitingHandler.setMaxSecondaryProgressCounter(2 * nMatches);
-                    waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
+                    waitingHandler.appendReport(
+                            "Importing PSMs from " + idFile.getName(),
+                            true,
+                            true
+                    );
 
                     PsmImporter psmImporter = new PsmImporter();
-                    psmImporter.importPsms(
-                            idFileSpectrumMatches,
+                    psmImporter.importPsms(idFileSpectrumMatches,
                             identification,
                             identificationParameters,
                             inputMap,
                             fileReader,
                             idFile,
                             sequenceProvider,
+                            msFileHandler,
                             fastaMapper,
                             processingParameters.getnThreads(),
                             waitingHandler,
@@ -605,8 +721,16 @@ public class FileImporter {
 
                     if (psmsRejected > 0) {
 
-                        waitingHandler.appendReport(psmsRejected + " identified spectra (" + Util.roundDouble(sharePsmsRejected, 1) + "%) did not present a valid peptide.", true, true);
-                        waitingHandler.appendReport(totalAssumptionsRejected + " of the best scoring peptides were excluded by the import filters:", true, true);
+                        waitingHandler.appendReport(
+                                psmsRejected + " identified spectra (" + Util.roundDouble(sharePsmsRejected, 1) + "%) did not present a valid peptide.",
+                                true,
+                                true
+                        );
+                        waitingHandler.appendReport(
+                                totalAssumptionsRejected + " of the best scoring peptides were excluded by the import filters:",
+                                true,
+                                true
+                        );
 
                         String padding = "    ";
                         PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
@@ -615,18 +739,24 @@ public class FileImporter {
 
                         if (share >= 1) {
 
-                            waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
-                                    + "% peptide not matching to the database.", true, true);
-
+                            waitingHandler.appendReport(
+                                    padding + "- " + Util.roundDouble(share, 1)
+                                    + "% peptide not matching to the database.",
+                                    true,
+                                    true
+                            );
                         }
 
                         share = 100 * ((double) proteinIssue) / totalAssumptionsRejected;
 
                         if (share >= 1) {
 
-                            waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
-                                    + "% peptide mapping to both target and decoy.", true, true);
-
+                            waitingHandler.appendReport(
+                                    padding + "- " + Util.roundDouble(share, 1)
+                                    + "% peptide mapping to both target and decoy.",
+                                    true,
+                                    true
+                            );
                         }
 
                         share = 100 * ((double) peptideIssue) / totalAssumptionsRejected;
@@ -647,23 +777,41 @@ public class FileImporter {
 
                                 if (maxMissedCleavages != null) {
 
-                                    waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
-                                            + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ",", true, true);
-                                    waitingHandler.appendReport(padding + "    or number of missed cleavage sites outside of the range [" + minMissedCleavages + "-" + maxMissedCleavages + "].", true, true);
+                                    waitingHandler.appendReport(
+                                            padding + "- " + Util.roundDouble(share, 1)
+                                            + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ",",
+                                            true,
+                                            true
+                                    );
+                                    waitingHandler.appendReport(
+                                            padding + "    or number of missed cleavage sites outside of the range [" + minMissedCleavages + "-" + maxMissedCleavages + "].",
+                                            true,
+                                            true
+                                    );
 
                                 } else {
 
-                                    waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
-                                            + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ",", true, true);
-                                    waitingHandler.appendReport(padding + "    or number of missed cleavage sites lower than " + minMissedCleavages + ".", true, true);
-
+                                    waitingHandler.appendReport(
+                                            padding + "- " + Util.roundDouble(share, 1)
+                                            + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ",",
+                                            true,
+                                            true
+                                    );
+                                    waitingHandler.appendReport(
+                                            padding + "    or number of missed cleavage sites lower than " + minMissedCleavages + ".",
+                                            true,
+                                            true
+                                    );
                                 }
 
                             } else {
 
-                                waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
-                                        + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ".", true, true);
-
+                                waitingHandler.appendReport(
+                                        padding + "- " + Util.roundDouble(share, 1)
+                                        + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ".",
+                                        true,
+                                        true
+                                );
                             }
                         }
 
@@ -671,17 +819,23 @@ public class FileImporter {
 
                         if (share >= 1) {
 
-                            waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
-                                    + "% peptide presenting high mass or isotopic deviation.", true, true);
-
+                            waitingHandler.appendReport(
+                                    padding + "- " + Util.roundDouble(share, 1)
+                                    + "% peptide presenting high mass or isotopic deviation.",
+                                    true,
+                                    true
+                            );
                         }
 
                         share = 100 * ((double) ptmIssue) / totalAssumptionsRejected;
 
                         if (share >= 1) {
 
-                            waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1) + "% unrecognized modifications.", true, true);
-
+                            waitingHandler.appendReport(
+                                    padding + "- " + Util.roundDouble(share, 1) + "% unrecognized modifications.",
+                                    true,
+                                    true
+                            );
                         }
                     }
 
@@ -714,7 +868,12 @@ public class FileImporter {
                                 + "- When using the 'REVERSED' tag, decoy sequences must be reversed versions of the target sequences, use the 'DECOY' tag otherwise." + System.getProperty("line.separator")
                                 + "- When using in house databases make sure that the format is recognized by search engines and PeptideShaker (more details at https://compomics.github.io/projects/searchgui/wiki/databasehelp.html)." + System.getProperty("line.separator")
                                 + "The problematic spectra can be inspected in the Spectrum ID tab. In case of doubt please contact the developers.";
-                        waitingHandler.appendReport(report, true, true);
+
+                        waitingHandler.appendReport(
+                                report,
+                                true,
+                                true
+                        );
 
                     }
 
@@ -767,8 +926,11 @@ public class FileImporter {
                             }
                         }
 
-                        waitingHandler.appendReport(report, true, true);
-
+                        waitingHandler.appendReport(
+                                report,
+                                true,
+                                true
+                        );
                     }
                 }
             }
@@ -779,8 +941,7 @@ public class FileImporter {
 
     /**
      * Checks whether the spectrum file needed for the given spectrum match is
-     * loaded and if the spectrum is present. Try to load it from the factory
-     * otherwise.
+     * loaded and if the spectrum is present.
      *
      * @param idFile the identification file
      * @param spectrumMatch the spectrum match
@@ -796,36 +957,39 @@ public class FileImporter {
             int numberOfMatches
     ) {
 
-        String spectrumKey = spectrumMatch.getSpectrumKey();
-        String fileName = Spectrum.getSpectrumFile(spectrumKey);
-        String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
+        String spectrumFileName = spectrumMatch.getSpectrumFile();
+        String spectrumFilePath = msFileHandler.getFilePaths().get(spectrumFileName);
 
         // remap wrong spectrum file names
-        if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
+        if (spectrumFilePath != null) {
 
-            fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
-            spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
-            spectrumMatch.setSpectrumKey(spectrumKey);
+            spectrumMatch.setSpectrumFile(
+                    IoUtil.getFileName(spectrumFilePath)
+            );
 
         }
 
-        // import the mgf file if not done already
-        if (!mgfUsed.contains(fileName)) {
+        // import the spectrum file file if not done already
+        if (!spectrumFileUsed.contains(spectrumFileName)) {
 
-            File spectrumFile = spectrumFiles.get(fileName);
+            File spectrumFile = spectrumFiles.get(spectrumFileName);
 
             if (spectrumFile != null && spectrumFile.exists()) {
 
-                importSpectra(fileName);
+                importSpectra(spectrumFileName);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
 
             } else {
 
-                if (!missingMgfFiles.containsKey(idFile)) {
+                if (!missingSpectrumFiles.containsKey(idFile)) {
 
-                    missingMgfFiles.put(idFile, fileName);
-                    waitingHandler.appendReport(fileName + " not found.", true, true);
+                    missingSpectrumFiles.put(idFile, spectrumFileName);
+                    waitingHandler.appendReport(
+                            spectrumFileName + " not found.",
+                            true,
+                            true
+                    );
 
                 }
 
@@ -834,60 +998,13 @@ public class FileImporter {
             }
         }
 
-        // remap missing spectrum titles
-        if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
-
-            String oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
-            Integer spectrumNumber = spectrumMatch.getSpectrumNumber();
-
-            if (spectrumNumber == null) {
-
-                try {
-
-                    spectrumNumber = new Integer(oldTitle);
-
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-
-            if (spectrumNumber == null) {
-
-                String errorMessage = "Spectrum \'" + oldTitle + "\' not found in file " + fileName + ".";
-                waitingHandler.appendReport(errorMessage, true, true);
-                waitingHandler.setRunCanceled();
-                throw new IllegalArgumentException(errorMessage);
-
-            }
-
-            spectrumTitle = spectrumFactory.getSpectrumTitle(fileName, spectrumNumber);
-            spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
-            spectrumMatch.setSpectrumKey(spectrumKey);
-
-            if (!spectrumFactory.spectrumLoaded(spectrumKey)) {
-
-                spectrumTitle = spectrumNumber + "";
-                spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
-                spectrumMatch.setSpectrumKey(spectrumKey);
-
-                if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
-
-                    String errorMessage = "Spectrum \'" + oldTitle + "\' number " + spectrumTitle + " not found in file " + fileName + ".";
-                    waitingHandler.appendReport(errorMessage, true, true);
-                    waitingHandler.setRunCanceled();
-                    throw new IllegalArgumentException(errorMessage);
-
-                }
-            }
-        }
-
         return true;
 
     }
 
     /**
-     * Verify that the spectra are imported and imports spectra from the desired
-     * spectrum file if necessary.
+     * Verify that the spectra are imported and imports spectra from the
+     * corresponding file if necessary.
      *
      * @param targetFileName the spectrum file
      */
@@ -902,9 +1019,9 @@ public class FileImporter {
             waitingHandler.appendReport("Importing " + targetFileName, true, true);
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             waitingHandler.resetSecondaryProgressCounter();
-            spectrumFactory.addSpectra(spectrumFile, waitingHandler);
-            mgfUsed.add(spectrumFile.getName());
-            nSpectra += spectrumFactory.getNSpectra(spectrumFile.getName());
+            msFileHandler.register(spectrumFile);
+            spectrumFileUsed.add(spectrumFile.getName());
+            nSpectra += msFileHandler.getSpectrumTitles(spectrumFile.getName()).length;
             projectDetails.addSpectrumFile(spectrumFile);
             identification.addFraction(spectrumFile.getName());
 
@@ -921,7 +1038,11 @@ public class FileImporter {
 
         } catch (Exception e) {
 
-            waitingHandler.appendReport("Spectrum files import failed when trying to import " + targetFileName + ".", true, true);
+            waitingHandler.appendReport(
+                    "Spectrum files import failed when trying to import " + targetFileName + ".",
+                    true,
+                    true
+            );
             e.printStackTrace();
 
         }
@@ -950,17 +1071,33 @@ public class FileImporter {
             PeptideVariantsParameters peptideVariantsPreferences,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
-    ) throws IOException {
+    )
+            throws IOException {
 
         String fastaFilePath = projectDetails.getFastaFile();
         File fastaFile = new File(fastaFilePath);
 
-        waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
+        waitingHandler.appendReport(
+                "Importing sequences from " + fastaFile.getName() + ".",
+                true,
+                true
+        );
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
-        fastaSummary = FastaSummary.getSummary(fastaFilePath, fastaParameters, waitingHandler);
+        fastaSummary = FastaSummary.getSummary(
+                fastaFilePath,
+                fastaParameters,
+                waitingHandler
+        );
 
-        FMIndex fmIndex = new FMIndex(fastaFile, fastaParameters, waitingHandler, true, searchParameters.getModificationParameters(), peptideVariantsPreferences);
+        FMIndex fmIndex = new FMIndex(
+                fastaFile,
+                fastaParameters,
+                waitingHandler,
+                true,
+                searchParameters.getModificationParameters(),
+                peptideVariantsPreferences
+        );
 
         sequenceProvider = fmIndex;
         fastaMapper = fmIndex;
@@ -974,16 +1111,26 @@ public class FileImporter {
     public void importGenes() {
 
         ProteinGeneDetailsProvider geneFactory = new ProteinGeneDetailsProvider();
+
         try {
+
             geneFactory.initialize(PeptideShaker.getJarFilePath());
+
         } catch (Exception e) {
+
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred while loading the gene mappings.", "Gene Mapping File Error", JOptionPane.ERROR_MESSAGE);
+
         }
 
         GeneParameters genePreferences = identificationParameters.getGeneParameters();
-        geneMaps = geneFactory.getGeneMaps(genePreferences, fastaSummary, sequenceProvider, proteinDetailsProvider, waitingHandler);
-
+        geneMaps = geneFactory.getGeneMaps(
+                genePreferences,
+                fastaSummary,
+                sequenceProvider,
+                proteinDetailsProvider,
+                waitingHandler
+        );
     }
 
     /**

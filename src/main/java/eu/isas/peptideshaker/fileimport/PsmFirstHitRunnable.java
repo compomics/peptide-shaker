@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.proteins.Peptide;
-import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -10,12 +9,12 @@ import com.compomics.util.experiment.identification.spectrum_assumptions.Peptide
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.threading.SimpleArrayListIterator;
+import com.compomics.util.threading.ConcurrentIterator;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
@@ -34,10 +33,6 @@ import java.util.TreeMap;
 public class PsmFirstHitRunnable implements Runnable {
 
     /**
-     * The spectrum factory.
-     */
-    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
      * The identification parameters.
      */
     private final IdentificationParameters identificationParameters;
@@ -46,13 +41,13 @@ public class PsmFirstHitRunnable implements Runnable {
      */
     private final SequenceProvider sequenceProvider;
     /**
+     * The spectrum provider.
+     */
+    private final SpectrumProvider spectrumProvider;
+    /**
      * The input map.
      */
     private final InputMap inputMap;
-    /**
-     * Map of the number of times proteins appeared as first hit.
-     */
-    private final HashMap<String, Integer> proteinCount;
     /**
      * The spectrum annotator to use for peptides.
      */
@@ -64,7 +59,7 @@ public class PsmFirstHitRunnable implements Runnable {
     /**
      * Iterator for the spectrum matches to import.
      */
-    private final SimpleArrayListIterator<SpectrumMatch> spectrumMatchIterator;
+    private final ConcurrentIterator<SpectrumMatch> spectrumMatchIterator;
     /**
      * The number of PSMs which did not pass the import filters.
      */
@@ -121,19 +116,21 @@ public class PsmFirstHitRunnable implements Runnable {
     /**
      * Constructor.
      *
-     * @param spectrumMatchIterator the spectrum matches iterator to use
-     * @param identificationParameters the identification parameters
-     * @param sequenceProvider the protein sequence provider
-     * @param inputMap the input scores map
-     * @param proteinCount the map of protein occurrence
+     * @param spectrumMatchIterator The spectrum matches iterator to use.
+     * @param identificationParameters The identification parameters.
+     * @param sequenceProvider The protein sequence provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param inputMap The input scores map.
+     * @param proteinCount The map of protein occurrence.
      * @param waitingHandler The waiting handler to display feedback to the
      * user.
      * @param exceptionHandler The handler of exceptions.
      */
     public PsmFirstHitRunnable(
-            SimpleArrayListIterator<SpectrumMatch> spectrumMatchIterator,
+            ConcurrentIterator<SpectrumMatch> spectrumMatchIterator,
             IdentificationParameters identificationParameters,
             SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
             InputMap inputMap,
             HashMap<String, Integer> proteinCount,
             WaitingHandler waitingHandler,
@@ -143,14 +140,15 @@ public class PsmFirstHitRunnable implements Runnable {
         this.spectrumMatchIterator = spectrumMatchIterator;
         this.identificationParameters = identificationParameters;
         this.sequenceProvider = sequenceProvider;
+        this.spectrumProvider = spectrumProvider;
         this.inputMap = inputMap;
-        this.proteinCount = proteinCount;
         this.waitingHandler = waitingHandler;
         this.exceptionHandler = exceptionHandler;
-        
+
         this.bestMatchSelection = new BestMatchSelection(
                 proteinCount,
                 sequenceProvider,
+                spectrumProvider,
                 identificationParameters,
                 peptideSpectrumAnnotator
         );
@@ -183,10 +181,17 @@ public class PsmFirstHitRunnable implements Runnable {
         }
     }
 
-    private void processPsm(SpectrumMatch spectrumMatch) {
+    /**
+     * Selects the first hit for the given spectrum match.
+     *
+     * @param spectrumMatch
+     */
+    private void processPsm(
+            SpectrumMatch spectrumMatch
+    ) {
 
-        String spectrumKey = spectrumMatch.getSpectrumKey();
-        String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
+        String spectrumFile = spectrumMatch.getSpectrumFile();
+        String spectrumTitle = spectrumMatch.getSpectrumTitle();
 
         PeptideAssumptionFilter peptideAssumptionFilter = identificationParameters.getPeptideAssumptionFilter();
         SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
@@ -216,17 +221,31 @@ public class PsmFirstHitRunnable implements Runnable {
                         Peptide peptide = peptideAssumption.getPeptide();
                         boolean filterPassed = true;
 
-                        if (!peptideAssumptionFilter.validatePeptide(peptide, sequenceMatchingPreferences, searchParameters.getDigestionParameters())) {
+                        if (!peptideAssumptionFilter.validatePeptide(
+                                peptide,
+                                sequenceMatchingPreferences,
+                                searchParameters.getDigestionParameters()
+                        )) {
 
                             filterPassed = false;
                             peptideIssue++;
 
-                        } else if (!peptideAssumptionFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory, searchParameters)) {
+                        } else if (!peptideAssumptionFilter.validatePrecursor(
+                                peptideAssumption,
+                                spectrumFile,
+                                spectrumTitle,
+                                spectrumProvider,
+                                searchParameters
+                        )) {
 
                             filterPassed = false;
                             precursorIssue++;
 
-                        } else if (!peptideAssumptionFilter.validateProteins(peptide, sequenceMatchingPreferences, sequenceProvider)) {
+                        } else if (!peptideAssumptionFilter.validateProteins(
+                                peptide,
+                                sequenceMatchingPreferences,
+                                sequenceProvider
+                        )) {
 
                             filterPassed = false;
                             proteinIssue++;
@@ -255,33 +274,58 @@ public class PsmFirstHitRunnable implements Runnable {
 
                     if (!firstHits.isEmpty()) {
 
-                        firstPeptideHit = bestMatchSelection.getBestMatch(spectrumKey, firstHits, true);
+                        firstPeptideHit = bestMatchSelection.getBestMatch(
+                                spectrumFile,
+                                spectrumTitle,
+                                firstHits,
+                                true
+                        );
 
                     }
                     if (firstPeptideHit != null) {
 
-                        inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), PeptideUtils.isDecoy(firstPeptideHit.getPeptide(), sequenceProvider));
+                        inputMap.addEntry(
+                                advocateId,
+                                spectrumFile,
+                                firstPeptideHit.getScore(),
+                                PeptideUtils.isDecoy(
+                                        firstPeptideHit.getPeptide(),
+                                        sequenceProvider
+                                )
+                        );
                         nRetained++;
                         break;
 
                     } else if (!firstHitsNoProteins.isEmpty()) {
 
                         // See if a peptide without protein can be a best match
-                        firstPeptideHit = bestMatchSelection.getBestMatch(spectrumKey, firstHits, true);
-
+                        firstPeptideHit = bestMatchSelection.getBestMatch(
+                                spectrumFile,
+                                spectrumTitle,
+                                firstHits,
+                                true
+                        );
                     }
                 }
 
                 if (firstPeptideHit != null) {
 
-                    savePeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit);
+                    savePeptidesMassErrorsAndCharges(
+                            spectrumFile,
+                            spectrumTitle,
+                            firstPeptideHit
+                    );
 
                 } else {
 
                     // Check if a peptide with no protein can be a good candidate
                     if (firstPeptideHitNoProtein != null) {
 
-                        savePeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHitNoProtein);
+                        savePeptidesMassErrorsAndCharges(
+                                spectrumFile,
+                                spectrumTitle,
+                                firstPeptideHitNoProtein
+                        );
 
                     } else {
 
@@ -292,11 +336,16 @@ public class PsmFirstHitRunnable implements Runnable {
 
                             firstTagHit = tagsForAdvocate.keySet().stream()
                                     .sorted()
-                                    .flatMap(score -> tagsForAdvocate.get(score).stream())
+                                    .flatMap(
+                                            score -> tagsForAdvocate.get(score).stream()
+                                    )
                                     .findFirst()
                                     .get();
-                            checkTagMassErrorsAndCharge(spectrumKey, firstTagHit);
-
+                            checkTagMassErrorsAndCharge(
+                                    spectrumFile,
+                                    spectrumTitle,
+                                    firstTagHit
+                            );
                         }
                     }
                 }
@@ -313,17 +362,22 @@ public class PsmFirstHitRunnable implements Runnable {
     /**
      * Saves the peptide maximal mass error and found charge.
      *
-     * @param spectrumKey the key of the spectrum match
-     * @param peptideAssumption the peptide assumption
+     * @param spectrumFile The file name of the spectrum.
+     * @param spectrumTitle The title of the spectrum.
+     * @param peptideAssumption The peptide assumption.
      */
     private void savePeptidesMassErrorsAndCharges(
-            String spectrumKey,
+            String spectrumFile,
+            String spectrumTitle,
             PeptideAssumption peptideAssumption
     ) {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
-        double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
+        double precursorMz = spectrumProvider.getPrecursorMz(
+                spectrumFile,
+                spectrumTitle
+        );
 
         maxPeptideErrorPpm = Math.max(
                 maxPeptideErrorPpm,
@@ -333,16 +387,21 @@ public class PsmFirstHitRunnable implements Runnable {
                                 true,
                                 searchParameters.getMinIsotopicCorrection(),
                                 searchParameters.getMaxIsotopicCorrection()
-                        )));
+                        )
+                )
+        );
 
         maxPeptideErrorDa = Math.max(
                 maxPeptideErrorDa,
-                Math.abs(peptideAssumption.getDeltaMass(
-                        precursorMz,
-                        false,
-                        searchParameters.getMinIsotopicCorrection(),
-                        searchParameters.getMaxIsotopicCorrection()
-                )));
+                Math.abs(
+                        peptideAssumption.getDeltaMass(
+                                precursorMz,
+                                false,
+                                searchParameters.getMinIsotopicCorrection(),
+                                searchParameters.getMaxIsotopicCorrection()
+                        )
+                )
+        );
 
         charges.add(peptideAssumption.getIdentificationCharge());
     }
@@ -350,23 +409,46 @@ public class PsmFirstHitRunnable implements Runnable {
     /**
      * Saves the maximal precursor error and charge.
      *
-     * @param spectrumKey the key of the spectrum match
-     * @param tagAssumption the tag assumption
+     * @param spectrumFile The file name of the spectrum.
+     * @param spectrumTitle The title of the spectrum.
+     * @param tagAssumption The tag assumption.
      */
     private void checkTagMassErrorsAndCharge(
-            String spectrumKey,
+            String spectrumFile,
+            String spectrumTitle,
             TagAssumption tagAssumption
     ) {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
-        double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
+        double precursorMz = spectrumProvider.getPrecursorMz(
+                spectrumFile,
+                spectrumTitle
+        );
 
-        maxTagErrorPpm = Math.max(maxTagErrorPpm,
-                Math.abs(tagAssumption.getDeltaMass(precursorMz, true, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection())));
+        maxTagErrorPpm = Math.max(
+                maxTagErrorPpm,
+                Math.abs(
+                        tagAssumption.getDeltaMass(
+                                precursorMz, 
+                                true, 
+                                searchParameters.getMinIsotopicCorrection(), 
+                                searchParameters.getMaxIsotopicCorrection()
+                        )
+                )
+        );
 
-        maxTagErrorDa = Math.max(maxTagErrorDa,
-                Math.abs(tagAssumption.getDeltaMass(precursorMz, false, searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection())));
+        maxTagErrorDa = Math.max(
+                maxTagErrorDa,
+                Math.abs(
+                        tagAssumption.getDeltaMass(
+                                precursorMz, 
+                                false, 
+                                searchParameters.getMinIsotopicCorrection(), 
+                                searchParameters.getMaxIsotopicCorrection()
+                        )
+                )
+        );
 
         charges.add(tagAssumption.getIdentificationCharge());
 

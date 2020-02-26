@@ -12,9 +12,10 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identification.IdfileReader;
 import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
-import com.compomics.util.threading.SimpleArrayListIterator;
+import com.compomics.util.threading.ConcurrentIterator;
 import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
 import static eu.isas.peptideshaker.PeptideShaker.TIMEOUT_DAYS;
@@ -121,17 +122,18 @@ public class PsmImporter {
     /**
      * Imports PSMs.
      *
-     * @param spectrumMatches the PSMs to import
-     * @param identification the identification object
-     * @param identificationParameters the identification parameters
-     * @param inputMap the input map
-     * @param fileReader the file reader
-     * @param idFile the identification file
-     * @param sequenceProvider the sequence provider
-     * @param fastaMapper the sequence mapper
-     * @param nThreads the number of threads to use
-     * @param waitingHandler waiting handler to display progress and allow
-     * canceling the import
+     * @param spectrumMatches The PSMs to import.
+     * @param identification The identification object.
+     * @param identificationParameters The identification parameters.
+     * @param inputMap The input map.
+     * @param fileReader The file reader.
+     * @param idFile The identification file.
+     * @param sequenceProvider The sequence provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param fastaMapper The sequence mapper.
+     * @param nThreads The number of threads to use.
+     * @param waitingHandler The waiting handler to display progress and allow
+     * canceling the import.
      * @param exceptionHandler The handler of exceptions.
      *
      * @throws java.lang.InterruptedException Exception thrown if a thread is
@@ -147,13 +149,14 @@ public class PsmImporter {
             IdfileReader fileReader,
             File idFile,
             SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
             FastaMapper fastaMapper,
             int nThreads,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
     ) throws InterruptedException, TimeoutException {
 
-        SimpleArrayListIterator<SpectrumMatch> spectrumMatchIterator = new SimpleArrayListIterator<>(spectrumMatches);
+        ConcurrentIterator<SpectrumMatch> spectrumMatchIterator = new ConcurrentIterator<>(spectrumMatches);
 
         ExecutorService importPool = Executors.newFixedThreadPool(nThreads);
 
@@ -214,7 +217,7 @@ public class PsmImporter {
             }
         }
 
-        spectrumMatchIterator = new SimpleArrayListIterator<>(spectrumMatches);
+        spectrumMatchIterator = new ConcurrentIterator<>(spectrumMatches);
 
         ExecutorService firstHitPool = Executors.newFixedThreadPool(nThreads);
 
@@ -227,6 +230,7 @@ public class PsmImporter {
                             spectrumMatchIterator,
                             identificationParameters,
                             sequenceProvider,
+                            spectrumProvider,
                             inputMap,
                             proteinCount,
                             waitingHandler,
@@ -279,42 +283,46 @@ public class PsmImporter {
 
             xTandemModsCheckMutex.acquire();
 
-            SearchParameters searchParameters = identificationParameters.getSearchParameters();
-            ModificationParameters modificationProfile = searchParameters.getModificationParameters();
-            IdentificationAlgorithmParameter algorithmParameter = searchParameters.getIdentificationAlgorithmParameter(Advocate.xtandem.getIndex());
+            if (!xTandemModsCheck) {
 
-            if (algorithmParameter != null) {
+                SearchParameters searchParameters = identificationParameters.getSearchParameters();
+                ModificationParameters modificationProfile = searchParameters.getModificationParameters();
+                IdentificationAlgorithmParameter algorithmParameter = searchParameters.getIdentificationAlgorithmParameter(Advocate.xtandem.getIndex());
 
-                XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;
+                if (algorithmParameter != null) {
 
-                if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("Acetylation of protein N-term")) {
+                    XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;
 
-                    Modification modification = ModificationFactory.getInstance().getModification("Acetylation of protein N-term");
+                    if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("Acetylation of protein N-term")) {
 
-                    if (!modificationProfile.getRefinementVariableModifications().contains(modification.getName())) {
+                        Modification modification = ModificationFactory.getInstance().getModification("Acetylation of protein N-term");
 
-                        modificationProfile.addRefinementVariableModification(modification);
+                        if (!modificationProfile.getRefinementVariableModifications().contains(modification.getName())) {
 
-                    }
-                }
-
-                String[] pyroMods = {"Pyrolidone from E", "Pyrolidone from Q", "Pyrolidone from carbamidomethylated C"};
-
-                if (xtandemParameters.isQuickPyrolidone()) {
-
-                    for (String modName : pyroMods) {
-
-                        if (!modificationProfile.getRefinementVariableModifications().contains(modName)) {
-
-                            Modification modification = ModificationFactory.getInstance().getModification(modName);
                             modificationProfile.addRefinementVariableModification(modification);
 
                         }
                     }
-                }
-            }
 
-            xTandemModsCheck = true;
+                    String[] pyroMods = {"Pyrolidone from E", "Pyrolidone from Q", "Pyrolidone from carbamidomethylated C"};
+
+                    if (xtandemParameters.isQuickPyrolidone()) {
+
+                        for (String modName : pyroMods) {
+
+                            if (!modificationProfile.getRefinementVariableModifications().contains(modName)) {
+
+                                Modification modification = ModificationFactory.getInstance().getModification(modName);
+                                modificationProfile.addRefinementVariableModification(modification);
+
+                            }
+                        }
+                    }
+                }
+
+                xTandemModsCheck = true;
+
+            }
 
             xTandemModsCheckMutex.release();
 

@@ -78,9 +78,9 @@ public class BestMatchSelection {
      *
      * @param proteinCount Map of the occurrence of the protein accessions.
      * @param sequenceProvider The sequence provider.
+     * @param spectrumProvider The spectrum provider.
      * @param identificationParameters The identification parameters.
      * @param peptideSpectrumAnnotator The peptide spectrum annotator.
-     * @param spectrumProvider The spectrum provider.
      */
     public BestMatchSelection(
             HashMap<String, Integer> proteinCount,
