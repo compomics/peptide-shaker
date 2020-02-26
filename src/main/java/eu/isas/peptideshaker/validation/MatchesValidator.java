@@ -43,6 +43,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.util.ArrayList;
@@ -78,10 +79,6 @@ public class MatchesValidator {
      * The protein target decoy map.
      */
     private TargetDecoyMap proteinMap;
-    /**
-     * The spectrum factory.
-     */
-    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
     /**
      * Constructor.
@@ -106,22 +103,23 @@ public class MatchesValidator {
      * This method validates the identification matches of an identification
      * object. Target Decoy thresholds must be set.
      *
-     * @param identification the identification class containing the matches to
-     * validate
-     * @param metrics if provided, metrics on fractions will be saved while
-     * iterating the matches
-     * @param geneMaps the gene maps
-     * @param inputMap the target decoy map of all search engine scores
-     * @param waitingHandler a waiting handler displaying progress to the user
-     * and allowing canceling the process
-     * @param exceptionHandler a handler for exceptions
-     * @param identificationFeaturesGenerator an identification features
-     * generator computing information about the identification matches
-     * @param sequenceProvider a protein sequence provider
-     * @param proteinDetailsProvider a protein details provider
-     * @param identificationParameters the identification parameters
-     * @param projectType the project type
-     * @param processingParameters the processing parameters
+     * @param identification The identification class containing the matches to
+     * validate.
+     * @param metrics If provided, metrics on fractions will be saved while
+     * iterating the matches.
+     * @param geneMaps The gene maps.
+     * @param inputMap The target decoy map of all search engine scores.
+     * @param waitingHandler The waiting handler displaying progress to the user
+     * and allowing canceling the process.
+     * @param exceptionHandler The handler for exceptions.
+     * @param identificationFeaturesGenerator The identification features
+     * generator computing information about the identification matches.
+     * @param sequenceProvider The protein sequence provider.
+     * @param proteinDetailsProvider The protein details provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param identificationParameters The identification parameters.
+     * @param projectType The project type.
+     * @param processingParameters The processing parameters.
      *
      * @throws java.lang.InterruptedException exception thrown if a thread gets
      * interrupted
@@ -137,6 +135,7 @@ public class MatchesValidator {
             IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
+            SpectrumProvider spectrumProvider,
             GeneMaps geneMaps,
             IdentificationParameters identificationParameters,
             ProjectType projectType,
@@ -183,9 +182,11 @@ public class MatchesValidator {
         waitingHandler.setWaitingText("Match Validation and Quality Control. Please Wait...");
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.resetSecondaryProgressCounter();
-        waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size()
+        waitingHandler.setMaxSecondaryProgressCounter(
+                identification.getProteinIdentification().size()
                 + identification.getPeptideIdentification().size()
-                + 2 * identification.getSpectrumIdentificationSize());
+                + 2 * identification.getSpectrumIdentificationSize()
+        );
 
         // validate the spectrum matches
         if (inputMap != null) {
@@ -212,6 +213,7 @@ public class MatchesValidator {
                     identificationFeaturesGenerator,
                     sequenceProvider,
                     proteinDetailsProvider,
+                    spectrumProvider,
                     geneMaps,
                     identificationParameters,
                     waitingHandler,
@@ -242,35 +244,47 @@ public class MatchesValidator {
         }
 
         // combine the precursor mz deviations from the different threads into one map 
-        HashMap<String, ArrayList<Double>> precursorMzDeviations = new HashMap<>();
+        HashMap<String, ArrayList<Double>> precursorMzDeviations = new HashMap<>(identification.getSpectrumIdentification().size());
 
         for (PsmValidatorRunnable runnable : psmRunnables) {
 
             for (String spectrumFileName : runnable.getThreadPrecursorMzDeviations().keySet()) {
-                
-                if (!precursorMzDeviations.containsKey(spectrumFileName)) {
-                    precursorMzDeviations.put(spectrumFileName, runnable.getThreadPrecursorMzDeviations().get(spectrumFileName));
-                } else {
-                    precursorMzDeviations.get(spectrumFileName).addAll(runnable.getThreadPrecursorMzDeviations().get(spectrumFileName));
-                }
-                
-            }
 
+                ArrayList<Double> threadPrecursorMzDeviations = runnable.getThreadPrecursorMzDeviations().get(spectrumFileName);
+
+                ArrayList<Double> filePrecursorMzDeviations = precursorMzDeviations.get(spectrumFileName);
+
+                if (filePrecursorMzDeviations != null) {
+
+                    precursorMzDeviations.putAll(precursorMzDeviations);
+
+                } else {
+
+                    precursorMzDeviations.put(spectrumFileName, threadPrecursorMzDeviations);
+
+                }
+            }
         }
 
         for (String spectrumFileName : precursorMzDeviations.keySet()) {
 
-            ArrayList<Double> precursorMzDeviationsFile = precursorMzDeviations.get(spectrumFileName);
+            double[] precursorMzDeviationsFile = precursorMzDeviations.get(spectrumFileName).stream()
+                    .mapToDouble(a -> a)
+                    .toArray();
 
-            if (precursorMzDeviationsFile.size() >= 100) {
+            if (precursorMzDeviationsFile.length >= 100) {
 
-                Collections.sort(precursorMzDeviationsFile);
-                identificationFeaturesGenerator.setMassErrorDistribution(spectrumFileName, precursorMzDeviationsFile);
+                Arrays.sort(precursorMzDeviationsFile);
+                identificationFeaturesGenerator.setMassErrorDistribution(
+                        spectrumFileName,
+                        precursorMzDeviationsFile
+                );
 
             } else {
 
                 // There are not enough precursors, disable probabilistic precursor filter
                 if (validationQCParameters.getPsmFilters() != null) {
+
                     for (Filter filter : validationQCParameters.getPsmFilters()) {
 
                         PsmFilter psmFilter = (PsmFilter) filter;
@@ -341,6 +355,7 @@ public class MatchesValidator {
                     identificationFeaturesGenerator,
                     sequenceProvider,
                     proteinDetailsProvider,
+                    spectrumProvider,
                     geneMaps,
                     identificationParameters,
                     waitingHandler,
@@ -386,6 +401,7 @@ public class MatchesValidator {
                         identificationFeaturesGenerator,
                         sequenceProvider,
                         proteinDetailsProvider,
+                        spectrumProvider,
                         geneMaps,
                         identificationParameters,
                         waitingHandler,
@@ -463,6 +479,7 @@ public class MatchesValidator {
                             identificationFeaturesGenerator,
                             sequenceProvider,
                             proteinDetailsProvider,
+                            spectrumProvider,
                             geneMaps,
                             metrics,
                             identificationParameters,
@@ -491,7 +508,9 @@ public class MatchesValidator {
                 }
 
                 long[] validatedTargetProteinKeys = proteinRunnables.stream()
-                        .flatMap(runnable -> runnable.getValidatedProteinMatches().stream())
+                        .flatMap(
+                                runnable -> runnable.getValidatedProteinMatches().stream()
+                        )
                         .mapToLong(a -> a)
                         .toArray();
 
@@ -512,6 +531,7 @@ public class MatchesValidator {
      * @param identificationFeaturesGenerator the identification features
      * generator
      * @param sequenceProvider a protein sequence provider
+     * @param spectrumProvider The spectrum provider.
      * @param proteinDetailsProvider a protein details provider
      * @param proteinKey the key of the protein match of interest
      * @param identificationParameters the identification parameters
@@ -520,6 +540,7 @@ public class MatchesValidator {
             Identification identification,
             IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
             ProteinDetailsProvider proteinDetailsProvider,
             GeneMaps geneMaps,
             IdentificationParameters identificationParameters,
@@ -549,6 +570,7 @@ public class MatchesValidator {
                 identificationFeaturesGenerator,
                 sequenceProvider,
                 proteinDetailsProvider,
+                spectrumProvider,
                 geneMaps,
                 identificationParameters,
                 proteinMap,
@@ -568,6 +590,7 @@ public class MatchesValidator {
      * @param identification the identification object
      * @param targetDecoyMap the protein level target/decoy map
      * @param sequenceProvider a protein sequence provider
+     * @param spectrumProvider The spectrum provider.
      * @param proteinDetailsProvider a protein details provider
      * @param geneMaps the gene maps
      * @param scoreThreshold the validation score doubtfulThreshold
@@ -587,6 +610,7 @@ public class MatchesValidator {
             IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
+            SpectrumProvider spectrumProvider,
             GeneMaps geneMaps,
             IdentificationParameters identificationParameters,
             TargetDecoyMap targetDecoyMap,
@@ -621,7 +645,8 @@ public class MatchesValidator {
                                     identificationFeaturesGenerator,
                                     identificationParameters,
                                     sequenceProvider,
-                                    proteinDetailsProvider
+                                    proteinDetailsProvider,
+                                    spectrumProvider
                             );
                             psParameter.setQcResult(filter.getName(), validation);
 
@@ -667,6 +692,7 @@ public class MatchesValidator {
      * generator
      * @param sequenceProvider a protein sequence provider
      * @param proteinDetailsProvider a protein details provider
+     * @param spectrumProvider The spectrum provider.
      * @param geneMaps the gene maps
      * @param identificationParameters the identification parameters
      * @param peptideKey the key of the peptide match of interest
@@ -676,6 +702,7 @@ public class MatchesValidator {
             IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
+            SpectrumProvider spectrumProvider,
             GeneMaps geneMaps,
             IdentificationParameters identificationParameters,
             TargetDecoyMap peptideMap,
@@ -717,7 +744,8 @@ public class MatchesValidator {
                                 identificationFeaturesGenerator,
                                 identificationParameters,
                                 sequenceProvider,
-                                proteinDetailsProvider
+                                proteinDetailsProvider,
+                                spectrumProvider
                         );
                         psParameter.setQcResult(filter.getName(), validation);
 
@@ -764,6 +792,7 @@ public class MatchesValidator {
      * generator
      * @param sequenceProvider a protein sequence provider
      * @param proteinDetailsProvider a protein details provider
+     * @param spectrumProvider The spectrum provider.
      * @param spectrumMatchKey the key of the spectrum match of interest
      * @param applyQCFilters if true quality control filters will be used
      */
@@ -772,6 +801,7 @@ public class MatchesValidator {
             IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
+            SpectrumProvider spectrumProvider,
             GeneMaps geneMaps,
             IdentificationParameters identificationParameters,
             TargetDecoyMap psmMap,
@@ -823,7 +853,8 @@ public class MatchesValidator {
                                 identificationFeaturesGenerator,
                                 identificationParameters,
                                 sequenceProvider,
-                                proteinDetailsProvider
+                                proteinDetailsProvider,
+                                spectrumProvider
                         );
                         psParameter.setQcResult(psmFilter.getName(), validated);
 
@@ -870,6 +901,7 @@ public class MatchesValidator {
      * generator
      * @param sequenceProvider a protein sequence provider
      * @param proteinDetailsProvider a protein details provider
+     * @param spectrumProvider The spectrum provider.
      * @param inputMap the target decoy map of all search engine scores
      * @param spectrumMatchKey the key of the spectrum match having this
      * assumption
@@ -883,6 +915,7 @@ public class MatchesValidator {
             IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
+            SpectrumProvider spectrumProvider,
             IdentificationParameters identificationParameters,
             InputMap inputMap,
             long spectrumMatchKey,
@@ -929,11 +962,13 @@ public class MatchesValidator {
                         PsmFilter psmFilter = (PsmFilter) filter;
                         AssumptionFilter assumptionFilter = psmFilter.getAssumptionFilter();
                         boolean validated = assumptionFilter.isValidated(
-                                spectrumMatchKey,
-                                spectrumMatch.getSpectrumKey(),
+                                spectrumMatch.getKey(),
+                                spectrumMatch.getSpectrumFile(),
+                                spectrumMatch.getSpectrumTitle(),
                                 peptideAssumption,
                                 identification,
                                 sequenceProvider,
+                                spectrumProvider,
                                 identificationFeaturesGenerator,
                                 identificationParameters
                         );
@@ -982,13 +1017,15 @@ public class MatchesValidator {
      * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
      * @param sequenceProvider the sequence provider
+     * @param spectrumProvider The spectrum provider.
      */
     public void fillPeptideMaps(
             Identification identification,
             Metrics metrics,
             WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters,
-            SequenceProvider sequenceProvider
+            SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider
     ) {
 
         waitingHandler.setWaitingText("Filling Peptide Maps. Please Wait...");
@@ -1009,8 +1046,13 @@ public class MatchesValidator {
 
             foundModifications.addAll(
                     Arrays.stream(peptideMatch.getPeptide().getVariableModifications())
-                            .map(ModificationMatch::getModification)
-                            .collect(Collectors.toSet()));
+                            .map(
+                                    ModificationMatch::getModification
+                            )
+                            .collect(
+                                    Collectors.toSet()
+                            )
+            );
 
             double probaScore = 1.0;
             HashMap<String, Double> fractionScores = new HashMap<>(nFractions);
@@ -1024,8 +1066,7 @@ public class MatchesValidator {
 
                 if (nFractions > 1) {
 
-                    String fraction = Spectrum.getSpectrumFile(spectrumMatch.getSpectrumKey());
-
+                    String fraction = spectrumMatch.getSpectrumFile();
                     Double fractionScore = fractionScores.get(fraction);
                     boolean change = false;
 
@@ -1072,18 +1113,21 @@ public class MatchesValidator {
 
             if (nFractions == 1) {
 
-                String spectrumFile = spectrumFactory.getMgfFileNames().get(0);
-                fractionScores.put(spectrumFile, probaScore);
+                String fraction = spectrumProvider.getFileNames()[0];
+                fractionScores.put(fraction, probaScore);
 
                 String peptideKeyString = Long.toString(peptideKey);
-                StringBuilder fractionKeyB = new StringBuilder(spectrumFile.length() + peptideKeyString.length() + 1);
-                fractionKeyB.append(spectrumFile).append('_').append(peptideKeyString);
+                StringBuilder fractionKeyB = new StringBuilder(fraction.length() + peptideKeyString.length() + 1);
+                fractionKeyB.append(fraction).append('_').append(peptideKeyString);
                 String fractionKey = fractionKeyB.toString();
 
-                fractionPsmMatches.put(fractionKey, Arrays.stream(peptideMatch.getSpectrumMatchesKeys())
-                        .boxed()
-                        .collect(Collectors.toCollection(ArrayList::new)));
-
+                fractionPsmMatches.put(
+                        fractionKey,
+                        Arrays.stream(peptideMatch.getSpectrumMatchesKeys())
+                                .boxed()
+                                .collect(
+                                        Collectors.toCollection(ArrayList::new)
+                                ));
             }
 
             PSParameter peptideParameter = new PSParameter();
@@ -1200,10 +1244,12 @@ public class MatchesValidator {
      *
      * @param identification the identification class containing the matches to
      * validate
+     * @param spectrumProvider The spectrum provider.
      * @param waitingHandler the handler displaying feedback to the user
      */
     public void fillProteinMap(
             Identification identification,
+            SpectrumProvider spectrumProvider,
             WaitingHandler waitingHandler
     ) {
 
@@ -1292,7 +1338,7 @@ public class MatchesValidator {
 
             if (nFractions == 1) {
 
-                String spectrumFile = spectrumFactory.getMgfFileNames().get(0);
+                String spectrumFile = spectrumProvider.getFileNames()[0];
                 fractionScores.put(spectrumFile, proteinGroupScore);
 
             }
@@ -1549,6 +1595,10 @@ public class MatchesValidator {
          */
         private final ProteinDetailsProvider proteinDetailsProvider;
         /**
+         * The spectrum provider.
+         */
+        private final SpectrumProvider spectrumProvider;
+        /**
          * The gene maps.
          */
         private final GeneMaps geneMaps;
@@ -1592,6 +1642,7 @@ public class MatchesValidator {
          * generator used to estimate, store and retrieve identification
          * features
          * @param sequenceProvider a protein sequence provider
+         * @param spectrumProvider The spectrum provider.
          * @param proteinDetailsProvider a protein details provider
          * @param geneMaps the gene maps
          * @param identificationParameters the identification parameters
@@ -1611,6 +1662,7 @@ public class MatchesValidator {
                 IdentificationFeaturesGenerator identificationFeaturesGenerator,
                 SequenceProvider sequenceProvider,
                 ProteinDetailsProvider proteinDetailsProvider,
+                SpectrumProvider spectrumProvider,
                 GeneMaps geneMaps,
                 IdentificationParameters identificationParameters,
                 WaitingHandler waitingHandler,
@@ -1625,6 +1677,7 @@ public class MatchesValidator {
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;
             this.sequenceProvider = sequenceProvider;
             this.proteinDetailsProvider = proteinDetailsProvider;
+            this.spectrumProvider = spectrumProvider;
             this.geneMaps = geneMaps;
             this.identificationParameters = identificationParameters;
             this.waitingHandler = waitingHandler;
@@ -1643,7 +1696,7 @@ public class MatchesValidator {
                 while ((spectrumMatch = psmIterator.next()) != null && !waitingHandler.isRunCanceled()) {
 
                     long spectrumKey = spectrumMatch.getKey();
-                    String spectrumFileName = Spectrum.getSpectrumFile(spectrumMatch.getSpectrumKey());
+                    String spectrumFileName = spectrumMatch.getSpectrumFile();
 
                     if (spectrumMatch.getBestPeptideAssumption() == null) {
 
@@ -1656,6 +1709,7 @@ public class MatchesValidator {
                             identificationFeaturesGenerator,
                             sequenceProvider,
                             proteinDetailsProvider,
+                            spectrumProvider,
                             geneMaps,
                             identificationParameters,
                             psmMap,
@@ -1677,6 +1731,7 @@ public class MatchesValidator {
                                         identificationFeaturesGenerator,
                                         sequenceProvider,
                                         proteinDetailsProvider,
+                                        spectrumProvider,
                                         identificationParameters,
                                         inputMap,
                                         spectrumKey,
@@ -1697,7 +1752,10 @@ public class MatchesValidator {
 
                         if (psParameter.getMatchValidationLevel().isValidated() && !PeptideUtils.isDecoy(peptideAssumption.getPeptide(), sequenceProvider)) {
 
-                            double precursorMz = spectrumFactory.getPrecursorMz(spectrumMatch.getSpectrumKey());
+                            double precursorMz = spectrumProvider.getPrecursorMz(
+                                    spectrumFileName,
+                                    spectrumMatch.getSpectrumTitle()
+                            );
                             SearchParameters searchParameters = identificationParameters.getSearchParameters();
                             double precursorMzError = peptideAssumption.getDeltaMass(
                                     precursorMz,
@@ -1721,8 +1779,12 @@ public class MatchesValidator {
 
                                 Peptide bestPeptide = peptideAssumption.getPeptide();
                                 int[] agreementAdvocates = assumptions.entrySet().stream()
-                                        .filter(entry -> !entry.getValue().isEmpty() && hasBestAssumption(entry.getValue(), bestPeptide))
-                                        .mapToInt(entry -> entry.getKey())
+                                        .filter(
+                                                entry -> !entry.getValue().isEmpty() && hasBestAssumption(entry.getValue(), bestPeptide)
+                                        )
+                                        .mapToInt(
+                                                entry -> entry.getKey()
+                                        )
                                         .distinct()
                                         .toArray();
 
@@ -1769,9 +1831,12 @@ public class MatchesValidator {
             ArrayList<PeptideAssumption> firstHits = advocateAssumptions.firstEntry().getValue();
 
             return firstHits.stream()
-                    .anyMatch(assumption -> bestPeptide.isSameSequenceAndModificationStatus(
-                    assumption.getPeptide(),
-                    identificationParameters.getSequenceMatchingParameters()));
+                    .anyMatch(
+                            assumption -> bestPeptide.isSameSequenceAndModificationStatus(
+                                    assumption.getPeptide(),
+                                    identificationParameters.getSequenceMatchingParameters()
+                            )
+                    );
 
         }
 
@@ -1814,6 +1879,10 @@ public class MatchesValidator {
          */
         private final ProteinDetailsProvider proteinDetailsProvider;
         /**
+         * The spectrum provider.
+         */
+        private final SpectrumProvider spectrumProvider;
+        /**
          * The gene maps.
          */
         private final GeneMaps geneMaps;
@@ -1852,6 +1921,7 @@ public class MatchesValidator {
          * features
          * @param sequenceProvider a protein sequence provider
          * @param proteinDetailsProvider a protein details provider
+         * @param spectrumProvider The spectrum provider.
          * @param geneMaps the gene maps
          * @param identificationParameters the identification parameters
          * @param waitingHandler a waiting handler to display progress and allow
@@ -1869,6 +1939,7 @@ public class MatchesValidator {
                 IdentificationFeaturesGenerator identificationFeaturesGenerator,
                 SequenceProvider sequenceProvider,
                 ProteinDetailsProvider proteinDetailsProvider,
+                SpectrumProvider spectrumProvider,
                 GeneMaps geneMaps,
                 IdentificationParameters identificationParameters,
                 WaitingHandler waitingHandler,
@@ -1881,6 +1952,7 @@ public class MatchesValidator {
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;
             this.sequenceProvider = sequenceProvider;
             this.proteinDetailsProvider = proteinDetailsProvider;
+            this.spectrumProvider = spectrumProvider;
             this.geneMaps = geneMaps;
             this.identificationParameters = identificationParameters;
             this.waitingHandler = waitingHandler;
@@ -1904,6 +1976,7 @@ public class MatchesValidator {
                             identificationFeaturesGenerator,
                             sequenceProvider,
                             proteinDetailsProvider,
+                            spectrumProvider,
                             geneMaps,
                             identificationParameters,
                             peptideMap,
@@ -1955,7 +2028,10 @@ public class MatchesValidator {
 
                                     }
 
-                                    double intensity = SpectrumFactory.getInstance().getPrecursor(spectrumMatch.getSpectrumKey()).getIntensity();
+                                    double intensity = spectrumProvider.getPrecursor(
+                                            spectrumMatch.getSpectrumFile(),
+                                            spectrumMatch.getSpectrumTitle()
+                                    ).intensity;
 
                                     if (intensity > 0) {
 
@@ -2002,11 +2078,14 @@ public class MatchesValidator {
          *
          * @param fractionName the name of the fraction
          */
-        private synchronized void addValidatedPeptideForFraction(String fractionName) {
+        private synchronized void addValidatedPeptideForFraction(
+                String fractionName
+        ) {
 
-            if (validatedTotalPeptidesPerFraction.containsKey(fractionName)) {
+            Integer value = validatedTotalPeptidesPerFraction.get(fractionName);
 
-                int value = validatedTotalPeptidesPerFraction.get(fractionName);
+            if (value != null) {
+
                 validatedTotalPeptidesPerFraction.put(fractionName, value + 1);
 
             } else {
@@ -2068,6 +2147,10 @@ public class MatchesValidator {
          */
         private final ProteinDetailsProvider proteinDetailsProvider;
         /**
+         * The spectrum provider.
+         */
+        private final SpectrumProvider spectrumProvider;
+        /**
          * The gene maps.
          */
         private final GeneMaps geneMaps;
@@ -2106,6 +2189,7 @@ public class MatchesValidator {
          * features
          * @param sequenceProvider a protein sequence provider
          * @param proteinDetailsProvider a protein details provider
+         * @param spectrumProvider The spectrum provider.
          * @param geneMaps the gene maps
          * @param metrics the object used to store metrics on the project
          * @param identificationParameters the identification parameters
@@ -2119,6 +2203,7 @@ public class MatchesValidator {
                 IdentificationFeaturesGenerator identificationFeaturesGenerator,
                 SequenceProvider sequenceProvider,
                 ProteinDetailsProvider proteinDetailsProvider,
+                SpectrumProvider spectrumProvider,
                 GeneMaps geneMaps,
                 Metrics metrics,
                 IdentificationParameters identificationParameters,
@@ -2131,6 +2216,7 @@ public class MatchesValidator {
             this.identificationFeaturesGenerator = identificationFeaturesGenerator;
             this.sequenceProvider = sequenceProvider;
             this.proteinDetailsProvider = proteinDetailsProvider;
+            this.spectrumProvider = spectrumProvider;
             this.geneMaps = geneMaps;
             this.metrics = metrics;
             this.identificationParameters = identificationParameters;
@@ -2169,6 +2255,7 @@ public class MatchesValidator {
                             identificationFeaturesGenerator,
                             sequenceProvider,
                             proteinDetailsProvider,
+                            spectrumProvider,
                             geneMaps,
                             identificationParameters,
                             proteinMap,
@@ -2202,22 +2289,19 @@ public class MatchesValidator {
 
                         for (String fraction : peptideMatchPsParameter.getFractions()) {
 
-                            if (peptideMatchPsParameter.getFractionValidatedSpectra(fraction) != null) {
+                            Integer peptideValue = peptideMatchPsParameter.getFractionValidatedSpectra(fraction);
 
-                                if (validatedPsmsPerFraction.containsKey(fraction)) {
+                            if (peptideValue != null) {
 
-                                    int value = validatedPsmsPerFraction.get(fraction);
-                                    validatedPsmsPerFraction.put(fraction, value + peptideMatchPsParameter.getFractionValidatedSpectra(fraction));
+                                Integer value = validatedPsmsPerFraction.get(fraction);
 
-                                } else {
+                                int newValue = value == null ? peptideValue : peptideValue + value;
 
-                                    validatedPsmsPerFraction.put(fraction, peptideMatchPsParameter.getFractionValidatedSpectra(fraction));
+                                validatedPeptidesPerFraction.put(fraction, newValue);
 
-                                }
+                                if (newValue > maxValidatedSpectraFractionLevel) {
 
-                                if (validatedPsmsPerFraction.get(fraction) > maxValidatedSpectraFractionLevel) {
-
-                                    maxValidatedSpectraFractionLevel = validatedPsmsPerFraction.get(fraction);
+                                    maxValidatedSpectraFractionLevel = newValue;
 
                                 }
                             }
@@ -2241,20 +2325,23 @@ public class MatchesValidator {
 
                             if (peptideMatchPsParameter.getMatchValidationLevel().isValidated()) {
 
-                                if (validatedPeptidesPerFraction.containsKey(fraction)) {
+                                Integer value = validatedPeptidesPerFraction.get(fraction);
 
-                                    int value = validatedPeptidesPerFraction.get(fraction);
-                                    validatedPeptidesPerFraction.put(fraction, value + 1);
+                                if (value != null) {
+
+                                    value++;
 
                                 } else {
 
-                                    validatedPeptidesPerFraction.put(fraction, 1);
+                                    value = 1;
 
                                 }
 
-                                if (validatedPeptidesPerFraction.get(fraction) > maxValidatedPeptidesFractionLevel) {
+                                validatedPeptidesPerFraction.put(fraction, value);
 
-                                    maxValidatedPeptidesFractionLevel = validatedPeptidesPerFraction.get(fraction);
+                                if (value > maxValidatedPeptidesFractionLevel) {
+
+                                    maxValidatedPeptidesFractionLevel = value;
 
                                 }
                             }
