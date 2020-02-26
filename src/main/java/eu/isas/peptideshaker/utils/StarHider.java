@@ -21,6 +21,7 @@ import com.compomics.util.experiment.identification.filtering.PeptideFilter;
 import com.compomics.util.experiment.identification.filtering.ProteinFilter;
 import com.compomics.util.experiment.identification.filtering.PsmFilter;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.gui.filtering.FilterParameters;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,10 @@ public class StarHider {
      * The sequence provider.
      */
     private final SequenceProvider sequenceProvider;
+    /**
+     * The spectrum provider.
+     */
+    private final SpectrumProvider spectrumProvider;
     /**
      * The protein details provider.
      */
@@ -85,35 +90,40 @@ public class StarHider {
     /**
      * Constructor.
      *
-     * @param identification the identification
-     * @param filterPreferences the filter preferences
-     * @param sequenceProvider the sequence provider
-     * @param proteinDetailsProvider the protein details provider
-     * @param geneMaps the gene maps
-     * @param identificationFeaturesGenerator the identification features
-     * generator
-     * @param identificationParameters the identification parameters
-     * @param metrics the metrics
-     * @param progressDialog the progress dialog
-     * @param nThreads the number of threads
-     * @param exceptionHandler the exception handler
+     * @param identification The identification.
+     * @param filterParameters The filter parameters.
+     * @param sequenceProvider The sequence provider.
+     * @param proteinDetailsProvider The protein details provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param geneMaps The gene maps.
+     * @param identificationFeaturesGenerator The identification features
+     * generator.
+     * @param identificationParameters The identification parameters.
+     * @param metrics The metrics.
+     * @param progressDialog The progress dialog.
+     * @param nThreads The number of threads.
+     * @param exceptionHandler The exception handler.
      */
-    public StarHider(Identification identification,
-            FilterParameters filterPreferences,
+    public StarHider(
+            Identification identification,
+            FilterParameters filterParameters,
             SequenceProvider sequenceProvider,
             ProteinDetailsProvider proteinDetailsProvider,
+            SpectrumProvider spectrumProvider,
             GeneMaps geneMaps,
             IdentificationFeaturesGenerator identificationFeaturesGenerator,
             IdentificationParameters identificationParameters,
             Metrics metrics,
             ProgressDialogX progressDialog,
             int nThreads,
-            ExceptionHandler exceptionHandler) {
+            ExceptionHandler exceptionHandler
+    ) {
 
         this.identification = identification;
-        this.filterPreferences = filterPreferences;
+        this.filterPreferences = filterParameters;
         this.sequenceProvider = sequenceProvider;
         this.proteinDetailsProvider = proteinDetailsProvider;
+        this.spectrumProvider = spectrumProvider;
         this.geneMaps = geneMaps;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.identificationParameters = identificationParameters;
@@ -223,7 +233,9 @@ public class StarHider {
      *
      * @param matchKey the key of the match
      */
-    public void starProtein(long matchKey) {
+    public void starProtein(
+            long matchKey
+    ) {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
         PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
@@ -237,7 +249,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 validated = true;
 
@@ -286,7 +307,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 matchFilter.addException(matchKey);
 
@@ -316,7 +346,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 validated = true;
 
@@ -365,7 +404,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 matchFilter.addException(matchKey);
 
@@ -395,7 +443,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 validated = true;
 
@@ -443,7 +500,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 matchFilter.addException(matchKey);
 
@@ -473,7 +539,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 validated = true;
 
@@ -522,7 +597,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 matchFilter.addException(matchKey);
 
@@ -552,7 +636,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 validated = true;
 
@@ -600,7 +693,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 matchFilter.addException(matchKey);
 
@@ -630,7 +732,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 validated = true;
 
@@ -678,7 +789,16 @@ public class StarHider {
 
             }
 
-            if (matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider)) {
+            if (matchFilter.isValidated(
+                    matchKey,
+                    identification,
+                    geneMaps,
+                    identificationFeaturesGenerator,
+                    identificationParameters,
+                    sequenceProvider,
+                    proteinDetailsProvider,
+                    spectrumProvider
+            )) {
 
                 matchFilter.addException(matchKey);
 
@@ -701,8 +821,19 @@ public class StarHider {
     public boolean isProteinHidden(long matchKey) {
 
         return filterPreferences.getProteinHideFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
-
+                .anyMatch(
+                        matchFilter -> matchFilter.isActive()
+                        && matchFilter.isValidated(
+                                matchKey,
+                                identification,
+                                geneMaps,
+                                identificationFeaturesGenerator,
+                                identificationParameters,
+                                sequenceProvider,
+                                proteinDetailsProvider,
+                                spectrumProvider
+                        )
+                );
     }
 
     /**
@@ -717,8 +848,19 @@ public class StarHider {
     public boolean isPeptideHidden(long matchKey) {
 
         return filterPreferences.getPeptideHideFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
-
+                .anyMatch(
+                        matchFilter -> matchFilter.isActive()
+                        && matchFilter.isValidated(
+                                matchKey,
+                                identification,
+                                geneMaps,
+                                identificationFeaturesGenerator,
+                                identificationParameters,
+                                sequenceProvider,
+                                proteinDetailsProvider,
+                                spectrumProvider
+                        )
+                );
     }
 
     /**
@@ -733,7 +875,19 @@ public class StarHider {
     public boolean isPsmHidden(long matchKey) {
 
         return filterPreferences.getPsmHideFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
+                .anyMatch(
+                        matchFilter -> matchFilter.isActive()
+                        && matchFilter.isValidated(
+                                matchKey,
+                                identification,
+                                geneMaps,
+                                identificationFeaturesGenerator,
+                                identificationParameters,
+                                sequenceProvider,
+                                proteinDetailsProvider,
+                                spectrumProvider
+                        )
+                );
 
     }
 
@@ -749,7 +903,19 @@ public class StarHider {
     public boolean isProteinStarred(long matchKey) {
 
         return filterPreferences.getProteinStarFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
+                .anyMatch(
+                        matchFilter -> matchFilter.isActive()
+                        && matchFilter.isValidated(
+                                matchKey,
+                                identification,
+                                geneMaps,
+                                identificationFeaturesGenerator,
+                                identificationParameters,
+                                sequenceProvider,
+                                proteinDetailsProvider,
+                                spectrumProvider
+                        )
+                );
 
     }
 
@@ -765,7 +931,19 @@ public class StarHider {
     public boolean isPeptideStarred(long matchKey) {
 
         return filterPreferences.getPeptideStarFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
+                .anyMatch(
+                        matchFilter -> matchFilter.isActive()
+                        && matchFilter.isValidated(
+                                matchKey,
+                                identification,
+                                geneMaps,
+                                identificationFeaturesGenerator,
+                                identificationParameters,
+                                sequenceProvider,
+                                proteinDetailsProvider,
+                                spectrumProvider
+                        )
+                );
 
     }
 
@@ -781,8 +959,19 @@ public class StarHider {
     public boolean isPsmStarred(long matchKey) {
 
         return filterPreferences.getPsmStarFilters().values().stream()
-                .anyMatch(matchFilter -> matchFilter.isActive() && matchFilter.isValidated(matchKey, identification, geneMaps, identificationFeaturesGenerator, identificationParameters, sequenceProvider, proteinDetailsProvider));
-
+                .anyMatch(
+                        matchFilter -> matchFilter.isActive()
+                        && matchFilter.isValidated(
+                                matchKey,
+                                identification,
+                                geneMaps,
+                                identificationFeaturesGenerator,
+                                identificationParameters,
+                                sequenceProvider,
+                                proteinDetailsProvider,
+                                spectrumProvider
+                        )
+                );
     }
 
     /**
@@ -795,7 +984,7 @@ public class StarHider {
         /**
          * The waiting handler.
          */
-        private WaitingHandler waitingHandler;
+        private final WaitingHandler waitingHandler;
         /**
          * The fraction mw map for this thread
          */
@@ -818,7 +1007,10 @@ public class StarHider {
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public StarHiderRunnable(ProteinMatchesIterator proteinMatchesIterator, WaitingHandler waitingHandler) {
+        public StarHiderRunnable(
+                ProteinMatchesIterator proteinMatchesIterator,
+                WaitingHandler waitingHandler
+        ) {
 
             this.proteinMatchesIterator = proteinMatchesIterator;
             this.waitingHandler = waitingHandler;
