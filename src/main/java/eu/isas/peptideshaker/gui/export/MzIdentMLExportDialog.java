@@ -1,12 +1,12 @@
 package eu.isas.peptideshaker.gui.export;
 
 import com.compomics.util.gui.file_handling.FileAndFileFilter;
-import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.identification.MzIdentMLVersion;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.gui.file_handling.FileChooserUtils;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.file.LastSelectedFolder;
@@ -103,7 +103,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         organizationNameJTextField.setText(projectDetails.getOrganizationName());
         organizationEmailJTextField.setText(projectDetails.getOrganizationEmail());
         organizationAddressJTextField.setText(projectDetails.getOrganizationAddress());
-        organizationUrlJTextField.setText(projectDetails.getOrganizationUrl());        
+        organizationUrlJTextField.setText(projectDetails.getOrganizationUrl());
 
         includeSequencesCheckBox.setSelected(projectDetails.getIncludeProteinSequences());
 
@@ -682,7 +682,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
                 projectDetails.setIncludeProteinSequences(includeSequencesCheckBox.isSelected());
                 projectDetails.setMzIdentOutputFile(outputFolderJTextField.getText());
-                peptideShakerGUI.setDataSaved(false); // @TODO: this might not always be true, e.g., if nothing has changed, but better than not saving at all
+                peptideShakerGUI.setDataSaved(false); 
 
                 boolean conversionCompleted = false;
 
@@ -691,10 +691,27 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 annotationParameters.setIntensityLimit(0.0);
 
                 try {
-                    FastaSummary fastaSummary = FastaSummary.getSummary(projectDetails.getFastaFile(), identificationParameters.getFastaParameters(), progressDialog);
-                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), projectDetails,
-                            identificationParameters, peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), fastaSummary, peptideShakerGUI.getIdentificationFeaturesGenerator(),
-                            finalOutputFile, includeSequencesCheckBox.isSelected(), progressDialog, true);
+
+                    FastaSummary fastaSummary = FastaSummary.getSummary(
+                            projectDetails.getFastaFile(),
+                            identificationParameters.getFastaParameters(),
+                            progressDialog
+                    );
+
+                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(
+                            PeptideShaker.getVersion(),
+                            peptideShakerGUI.getIdentification(),
+                            projectDetails,
+                            identificationParameters,
+                            peptideShakerGUI.getSequenceProvider(),
+                            peptideShakerGUI.getProteinDetailsProvider(),
+                            fastaSummary,
+                            peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                            finalOutputFile,
+                            includeSequencesCheckBox.isSelected(),
+                            progressDialog,
+                            true
+                    );
                     mzIdentMLExport.createMzIdentMLFile(mzIdentMLVersion);
 
                     // validate the mzidentml file
@@ -705,7 +722,12 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
                         // see if any errors were found, and display them to the user
                         if (!errors.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, errors, "mzIdentML Errors", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    errors,
+                                    "mzIdentML Errors",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
                         } else {
                             conversionCompleted = true;
                         }
@@ -729,17 +751,26 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
                 // display a conversion complete message to the user
                 if (conversionCompleted && !processCancelled) {
-                    JOptionPane.showMessageDialog(MzIdentMLExportDialog.this, JOptionEditorPane.getJOptionEditorPane(
-                            "mzIdentML file \'" + new File(outputFolderJTextField.getText()).getAbsolutePath() + "\' created."
-                            + "<br><br>"
-                            + "Review your mzIdentML files with <a href=\"https://github.com/PRIDE-Toolsuite/pride-inspector\">PRIDE Inspector</a>.<br>"
-                            + "Publish your mzIdentML files via <a href=\"http://www.proteomexchange.org/submission\">ProteomeXchange</a>."),
-                            "File Created", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            MzIdentMLExportDialog.this,
+                            JOptionEditorPane.getJOptionEditorPane(
+                                    "mzIdentML file \'" + new File(outputFolderJTextField.getText()).getAbsolutePath() + "\' created."
+                                    + "<br><br>"
+                                    + "Review your mzIdentML files with <a href=\"https://github.com/PRIDE-Toolsuite/pride-inspector\">PRIDE Inspector</a>.<br>"
+                                    + "Publish your mzIdentML files via <a href=\"http://www.proteomexchange.org/submission\">ProteomeXchange</a>."),
+                            "File Created",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                     dispose();
                 }
 
                 if (processCancelled) {
-                    JOptionPane.showMessageDialog(peptideShakerGUI, "mzIdentML conversion cancelled by the user.", "mzIdentML Conversion Cancelled", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            peptideShakerGUI, 
+                            "mzIdentML conversion cancelled by the user.", 
+                            "mzIdentML Conversion Cancelled", 
+                            JOptionPane.WARNING_MESSAGE
+                    );
                 }
             }
         }.start();

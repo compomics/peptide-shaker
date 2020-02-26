@@ -91,6 +91,7 @@ public class RecalibrationExporter {
                     fileName,
                     identification,
                     sequenceProvider,
+                    spectrumProvider,
                     identificationParameters,
                     waitingHandler
             );
@@ -182,6 +183,7 @@ public class RecalibrationExporter {
                     Spectrum recalibratedSpectrum = spectrumRecalibrator.recalibrateSpectrum(
                             fileName,
                             spectrumTitle,
+                            spectrumProvider,
                             recalibratePrecursors,
                             recalibrateFragmentIons
                     );

@@ -586,7 +586,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         String newFasta = selectedFastaFile;
 
         // remove the ending .fasta (if there)
-        Util.removeExtension(newFasta);
+        IoUtil.removeExtension(newFasta);
 
         // add the target decoy tag
         newFasta = String.join("", newFasta, fastaParameters.getTargetDecoyFileNameSuffix(), ".fasta");
@@ -598,7 +598,12 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             progressDialog.setTitle("Appending Decoy Sequences. Please Wait...");
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
-            DecoyConverter.appendDecoySequences(new File(selectedFastaFile), newFile, fastaParameters, progressDialog);
+            DecoyConverter.appendDecoySequences(
+                    new File(selectedFastaFile), 
+                    newFile, 
+                    fastaParameters, 
+                    progressDialog
+            );
 
             progressDialog.setTitle("Getting Database Details. Please Wait...");
 
@@ -609,26 +614,37 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         } catch (OutOfMemoryError error) {
 
             Runtime.getRuntime().gc();
-            JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(
+                    this,
                     "The tool used up all the available memory and had to be stopped.\n"
                     + "Memory boundaries are set in the Edit menu (Edit > Java Options).",
                     "Out Of Memory Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE
+            );
             System.out.println("Ran out of memory!");
             error.printStackTrace();
 
         } catch (FileNotFoundException e) {
 
-            JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(
+                    this,
                     new String[]{"FASTA Import Error.", "File " + selectedFastaFile + " not found."},
-                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+                    "FASTA Import Error", 
+                    JOptionPane.WARNING_MESSAGE
+            );
             e.printStackTrace();
 
         } catch (Exception e) {
 
-            JOptionPane.showMessageDialog(this,
-                    new String[]{"FASTA Import Error.", "File " + selectedFastaFile + " could not be imported."},
-                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    this,
+                    new String[]{
+                        "FASTA Import Error.",  
+                        "File " + selectedFastaFile + " could not be imported."
+                    },
+                    "FASTA Import Error", 
+                    JOptionPane.WARNING_MESSAGE
+            );
             e.printStackTrace();
 
         }
@@ -649,7 +665,12 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
 
         if (databaseSettingsTxt.getText() == null || databaseSettingsTxt.getText().trim().equals("")) {
             if (showMessage && valid) {
-                JOptionPane.showMessageDialog(this, "You need to specify a search database.", "Search Database Not Found", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this, 
+                        "You need to specify a search database.", 
+                        "Search Database Not Found", 
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
             databaseSettingsLbl.setForeground(Color.RED);
             databaseSettingsLbl.setToolTipText("Please select a valid '.fasta' or '.fas' database file");
@@ -658,7 +679,12 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             File fastaFile = new File(selectedFastaFile);
             if (!fastaFile.exists()) {
                 if (showMessage && valid) {
-                    JOptionPane.showMessageDialog(this, "The database file could not be found.", "Search Database Not Found", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            this, 
+                            "The database file could not be found.", 
+                            "Search Database Not Found", 
+                            JOptionPane.WARNING_MESSAGE
+                    );
                 }
                 databaseSettingsLbl.setForeground(Color.RED);
                 databaseSettingsLbl.setToolTipText("Database file could not be found!");

@@ -12,7 +12,6 @@ import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import com.compomics.util.gui.file_handling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
@@ -27,8 +26,9 @@ import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCo
 import eu.isas.peptideshaker.preferences.UserParameters;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
-import com.compomics.util.io.IoUtils;
-import com.compomics.util.io.compression.GzUtils;
+import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
+import com.compomics.util.io.IoUtil;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import java.io.File;
@@ -45,7 +45,7 @@ import java.util.HashMap;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class CpsParent extends UserPreferencesParent {
+public class CpsParent extends UserPreferencesParent implements AutoCloseable {
 
     /**
      * The identification.
@@ -79,6 +79,10 @@ public class CpsParent extends UserPreferencesParent {
      * The protein details provider.
      */
     protected ProteinDetailsProvider proteinDetailsProvider;
+    /**
+     * The mass spectrometry file handler.
+     */
+    protected MsFileHandler msFileHandler;
     /**
      * The gene maps.
      */
@@ -120,7 +124,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param dbFolder the folder where the database is stored.
      */
-    public CpsParent(File dbFolder) {
+    public CpsParent(
+            File dbFolder
+    ) {
 
         this.dbFolder = dbFolder;
 
@@ -136,7 +142,11 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @throws IOException thrown if an error occurred while reading the file
      */
-    public void loadCpsFromZipFile(File zipFile, File dbFolder, WaitingHandler waitingHandler) throws IOException {
+    public void loadCpsFromZipFile(
+            File zipFile,
+            File dbFolder,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         String newName = PsZipUtils.getTempFolderName(zipFile.getName());
         String parentFolder = PsZipUtils.getUnzipParentFolder();
@@ -177,7 +187,10 @@ public class CpsParent extends UserPreferencesParent {
      * @throws IOException thrown of IOException occurs exception thrown
      * whenever an error occurred while reading or writing a file
      */
-    public void loadCpsFile(File dbFolder, WaitingHandler waitingHandler) throws IOException { // @TODO: use the waiting handler!
+    public void loadCpsFile(
+            File dbFolder,
+            WaitingHandler waitingHandler
+    ) throws IOException { // @TODO: use the waiting handler!
 
         // close any open connection to an identification database
         if (identification != null) {
@@ -198,11 +211,15 @@ public class CpsParent extends UserPreferencesParent {
 
         File destinationFile = new File(dbFolder.getAbsolutePath(), dbName);
 
-        IoUtils.copyFile(cpsFile, destinationFile);
+        IoUtil.copyFile(cpsFile, destinationFile);
         //GzUtils.gunzipFile(cpsFile, destinationFile, false); // @TODO: re-add when the zipping works
 
-        ObjectsDB objectsDB = new ObjectsDB(dbFolder.getAbsolutePath(), destinationFile.getName(), false);
-        PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.key);
+        ObjectsDB objectsDB = new ObjectsDB(
+                dbFolder.getAbsolutePath(),
+                destinationFile.getName(),
+                false
+        );
+        PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.KEY);
 
         projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.key);
         identification = new Identification(objectsDB);
@@ -227,8 +244,18 @@ public class CpsParent extends UserPreferencesParent {
         proteinDetailsProvider = psParameters.getProteinDetailsProvider();
         projectType = psParameters.getProjectType();
 
+        // set up spectrum provider
+        msFileHandler = new MsFileHandler();
+
         // set up caches
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingParameters);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(
+                identification,
+                identificationParameters,
+                sequenceProvider,
+                msFileHandler,
+                metrics,
+                spectrumCountingParameters
+        );
         IdentificationFeaturesCache identificationFeaturesCache = psParameters.getIdentificationFeaturesCache();
 
         if (identificationFeaturesCache != null) {
@@ -261,11 +288,29 @@ public class CpsParent extends UserPreferencesParent {
      * @throws IOException thrown of IOException occurs exception thrown
      * whenever an error occurred while writing the file
      */
-    public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException {
+    public void saveProject(
+            WaitingHandler waitingHandler,
+            boolean emptyCache
+    ) throws IOException {
 
-        CpsExporter.saveAs(cpsFile, waitingHandler, identification, identificationParameters, sequenceProvider, proteinDetailsProvider,
-                spectrumCountingParameters, projectDetails, filterParameters, metrics, geneMaps, projectType,
-                identificationFeaturesGenerator.getIdentificationFeaturesCache(), emptyCache, displayParameters, dbFolder);
+        CpsExporter.saveAs(
+                cpsFile,
+                waitingHandler,
+                identification,
+                identificationParameters,
+                sequenceProvider,
+                proteinDetailsProvider,
+                spectrumCountingParameters,
+                projectDetails,
+                filterParameters,
+                metrics,
+                geneMaps,
+                projectType,
+                identificationFeaturesGenerator.getIdentificationFeaturesCache(),
+                emptyCache,
+                displayParameters,
+                dbFolder
+        );
 
         loadUserParameters();
         userPreferences.addRecentProject(cpsFile);
@@ -284,28 +329,33 @@ public class CpsParent extends UserPreferencesParent {
      * @throws IOException thrown of IOException occurs exception thrown
      * whenever an error occurred loading the spectrum files
      */
-    public boolean loadSpectrumFiles(WaitingHandler waitingHandler) throws IOException {
+    public boolean loadSpectrumFiles(
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
-        return loadSpectrumFiles(null, waitingHandler);
+        return loadSpectrumFiles(
+                null,
+                waitingHandler
+        );
 
     }
 
     /**
-     * Loads the spectra in the spectrum factory.
+     * Loads the spectrum files.
      *
-     * @param folder a folder to look into, the user last selected folder for
-     * instance, can be null
-     * @param waitingHandler a waiting handler displaying progress to the user.
-     * Can be null
+     * @param folder The folder to look into. Can be null.
+     * @param waitingHandler The waiting handler displaying progress to the
+     * user. Can be null.
      *
      * @return a boolean indicating whether the loading was successful
      *
-     * @throws IOException thrown of IOException occurs exception thrown
-     * whenever an error occurred while reading or writing a file
+     * @throws IOException Exception thrown whenever an error occurred while
+     * reading or writing a file.
      */
-    public boolean loadSpectrumFiles(File folder, WaitingHandler waitingHandler) throws IOException {
-
-        SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    public boolean loadSpectrumFiles(
+            File folder,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         for (String spectrumFileName : projectDetails.getSpectrumFileNames()) {
 
@@ -339,8 +389,8 @@ public class CpsParent extends UserPreferencesParent {
                 }
             }
 
-            File mgfFile = projectDetails.getSpectrumFile(spectrumFileName);
-            spectrumFactory.addSpectra(mgfFile, waitingHandler);
+            File spectrumFile = projectDetails.getSpectrumFile(spectrumFileName);
+            msFileHandler.register(spectrumFile);
 
         }
 
@@ -348,21 +398,23 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Loads the spectra in the spectrum factory.
+     * Loads the spectrum file.
      *
-     * @param spectrumFileName the name of the spectrum file to load
-     * @param mgfFiles the list to add the detected mgf files to
-     * @param waitingHandler a waiting handler displaying progress to the user.
-     * Can be null
+     * @param spectrumFileName The name of the spectrum file.
+     * @param spectrumFiles The list to add the detected spectrum files to.
+     * @param waitingHandler The waiting handler displaying progress to the
+     * user. Can be null.
      *
-     * @return a boolean indicating whether the loading was successful
+     * @return A boolean indicating whether the loading was successful.
      *
-     * @throws IOException thrown of IOException occurs exception thrown
-     * whenever an error occurred while reading or writing a file
+     * @throws IOException Exception thrown whenever an error occurred while
+     * reading or writing a file
      */
-    public boolean loadSpectrumFile(String spectrumFileName, ArrayList<File> mgfFiles, WaitingHandler waitingHandler) throws IOException {
-
-        SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    public boolean loadSpectrumFile(
+            String spectrumFileName,
+            ArrayList<File> spectrumFiles,
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         File providedSpectrumLocation = projectDetails.getSpectrumFile(spectrumFileName);
         File projectFolder = cpsFile.getParentFile();
@@ -370,6 +422,7 @@ public class CpsParent extends UserPreferencesParent {
 
         // try to locate the spectrum file
         if (providedSpectrumLocation == null || !providedSpectrumLocation.exists()) {
+
             File fileInProjectFolder = new File(projectFolder, spectrumFileName);
             File fileInDataFolder = new File(dataFolder, spectrumFileName);
 
@@ -388,11 +441,28 @@ public class CpsParent extends UserPreferencesParent {
             }
         }
 
-        File mgfFile = projectDetails.getSpectrumFile(spectrumFileName);
-        spectrumFactory.addSpectra(mgfFile, waitingHandler);
-        mgfFiles.add(mgfFile);
+        File spectrumFile = projectDetails.getSpectrumFile(spectrumFileName);
+        msFileHandler.register(spectrumFile);
+        spectrumFiles.add(spectrumFile);
 
         return true;
+    }
+
+    /**
+     * Adds a spectrum file to the spectrum provider.
+     *
+     * @param spectrumFile The spectrum file to add.
+     *
+     * @throws IOException Exception thrown whenever an error occurred while
+     * reading or writing a file
+     */
+    public void loadSpectrumFile(
+            File spectrumFile
+    ) throws IOException {
+
+        projectDetails.addSpectrumFile(spectrumFile);
+        msFileHandler.register(spectrumFile); 
+
     }
 
     /**
@@ -405,7 +475,9 @@ public class CpsParent extends UserPreferencesParent {
      * @throws IOException exception thrown if an error occurred while reading
      * or writing the file
      */
-    public FastaSummary loadFastaFile(WaitingHandler waitingHandler) throws IOException {
+    public FastaSummary loadFastaFile(
+            WaitingHandler waitingHandler
+    ) throws IOException {
 
         File providedFastaLocation = new File(projectDetails.getFastaFile());
 
@@ -435,7 +507,7 @@ public class CpsParent extends UserPreferencesParent {
                 }
 
             }
-            
+
             if (!fastaFileFound) {
                 throw new IOException("FASTA file not found: " + providedFastaLocation.getAbsolutePath());
             }
@@ -550,7 +622,9 @@ public class CpsParent extends UserPreferencesParent {
      * @param identificationFeaturesGenerator the identification feature
      * generator
      */
-    public void setIdentificationFeaturesGenerator(IdentificationFeaturesGenerator identificationFeaturesGenerator) {
+    public void setIdentificationFeaturesGenerator(
+            IdentificationFeaturesGenerator identificationFeaturesGenerator
+    ) {
 
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
 
@@ -561,7 +635,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
-    public void setSpectrumCountingParameters(SpectrumCountingParameters spectrumCountingPreferences) {
+    public void setSpectrumCountingParameters(
+            SpectrumCountingParameters spectrumCountingPreferences
+    ) {
 
         this.spectrumCountingParameters = spectrumCountingPreferences;
 
@@ -577,7 +653,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param projectDetails the project details
      */
-    public void setProjectDetails(ProjectDetails projectDetails) {
+    public void setProjectDetails(
+            ProjectDetails projectDetails
+    ) {
 
         this.projectDetails = projectDetails;
 
@@ -588,7 +666,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param metrics the metrics
      */
-    public void setMetrics(Metrics metrics) {
+    public void setMetrics(
+            Metrics metrics
+    ) {
 
         this.metrics = metrics;
 
@@ -599,7 +679,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param geneMaps the gene maps
      */
-    public void setGeneMaps(GeneMaps geneMaps) {
+    public void setGeneMaps(
+            GeneMaps geneMaps
+    ) {
 
         this.geneMaps = geneMaps;
 
@@ -621,7 +703,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param projectParameters the project parameters
      */
-    public void setProject(ProjectParameters projectParameters) {
+    public void setProject(
+            ProjectParameters projectParameters
+    ) {
 
         this.projectParameters = projectParameters;
 
@@ -632,7 +716,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param filterPreferences the filter preferences
      */
-    public void setFilterParameters(FilterParameters filterPreferences) {
+    public void setFilterParameters(
+            FilterParameters filterPreferences
+    ) {
 
         this.filterParameters = filterPreferences;
 
@@ -643,7 +729,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param displayPreferences the display preferences
      */
-    public void setDisplayParameters(DisplayParameters displayPreferences) {
+    public void setDisplayParameters(
+            DisplayParameters displayPreferences
+    ) {
 
         this.displayParameters = displayPreferences;
 
@@ -654,7 +742,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param cpsFile the cps file
      */
-    public void setCpsFile(File cpsFile) {
+    public void setCpsFile(
+            File cpsFile
+    ) {
 
         this.cpsFile = cpsFile;
 
@@ -676,7 +766,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param identification the identification object
      */
-    public void setIdentification(Identification identification) {
+    public void setIdentification(
+            Identification identification
+    ) {
 
         this.identification = identification;
 
@@ -700,8 +792,14 @@ public class CpsParent extends UserPreferencesParent {
      */
     public void resetIdentificationFeaturesGenerator() {
 
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingParameters);
-
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(
+                identification,
+                identificationParameters,
+                sequenceProvider,
+                msFileHandler,
+                metrics,
+                spectrumCountingParameters
+        );
     }
 
     /**
@@ -720,7 +818,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param identificationParameters the new identification parameters
      */
-    public void setIdentificationParameters(IdentificationParameters identificationParameters) {
+    public void setIdentificationParameters(
+            IdentificationParameters identificationParameters
+    ) {
 
         this.identificationParameters = identificationParameters;
 
@@ -759,11 +859,24 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
+     * Returns the spectrum provider.
+     *
+     * @return the spectrum provider
+     */
+    public SpectrumProvider getSpectrumProvider() {
+
+        return msFileHandler;
+
+    }
+
+    /**
      * Sets the sequence provider.
      *
      * @param sequenceProvider the sequence provider
      */
-    public void setSequenceProvider(SequenceProvider sequenceProvider) {
+    public void setSequenceProvider(
+            SequenceProvider sequenceProvider
+    ) {
 
         this.sequenceProvider = sequenceProvider;
 
@@ -785,7 +898,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param proteinDetailsProvider the protein details provider
      */
-    public void setProteinDetailsProvider(ProteinDetailsProvider proteinDetailsProvider) {
+    public void setProteinDetailsProvider(
+            ProteinDetailsProvider proteinDetailsProvider
+    ) {
 
         this.proteinDetailsProvider = proteinDetailsProvider;
 
@@ -805,7 +920,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param projectType the project type
      */
-    public void setProjectType(ProjectType projectType) {
+    public void setProjectType(
+            ProjectType projectType
+    ) {
         this.projectType = projectType;
     }
 
@@ -817,7 +934,9 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @return an extended HTML project report
      */
-    public String getExtendedProjectReport(String waitingHandlerReport) {
+    public String getExtendedProjectReport(
+            String waitingHandlerReport
+    ) {
 
         StringBuilder report = new StringBuilder();
 
@@ -943,6 +1062,13 @@ public class CpsParent extends UserPreferencesParent {
         }
 
         return report.toString();
+
+    }
+
+    @Override
+    public void close() {
+
+        msFileHandler.close();
 
     }
 }

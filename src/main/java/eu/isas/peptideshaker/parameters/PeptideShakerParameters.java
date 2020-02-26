@@ -13,6 +13,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 
 /**
@@ -26,58 +27,51 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
     /**
      * The identification parameters.
      */
-    private IdentificationParameters identificationParameters ;
+    private final IdentificationParameters identificationParameters ;
     /**
      * The spectrum counting preferences.
      */
-    private SpectrumCountingParameters spectrumCountingPreferences;
+    private final SpectrumCountingParameters spectrumCountingPreferences;
     /**
      * The GUI filter preferences.
      */
-    private FilterParameters filterParameters;
+    private final FilterParameters filterParameters;
     /**
      * The display preferences.
      */
-    private DisplayParameters displayParameters;
+    private final DisplayParameters displayParameters;
     /**
      * The project details.
      */
-    private ProjectDetails projectDetails;
+    private final ProjectDetails projectDetails;
     /**
      * The metrics saved when loading the files.
      */
-    private Metrics metrics;
+    private final Metrics metrics;
     /**
      * The sequence provider.
      */
-    private SequenceProvider sequenceProvider;
+    private final SequenceProvider sequenceProvider;
     /**
      * The protein details provider.
      */
-    private ProteinDetailsProvider proteinDetailsProvider;
+    private final ProteinDetailsProvider proteinDetailsProvider;
     /**
      * The gene maps.
      */
-    protected GeneMaps geneMaps;
+    private final GeneMaps geneMaps;
     /**
      * The identification features generator with features in cache.
      */
-    private IdentificationFeaturesCache identificationFeaturesCache;
+    private final IdentificationFeaturesCache identificationFeaturesCache;
     /**
      * The type of project.
      */
-    private ProjectType projectType;
+    private final ProjectType projectType;
     /**
      * The key of the object when stored in settings table of a cps file.
      */
-    public static final long key = ExperimentObject.asLong("PeptideShaker_parameters");
-
-    /**
-     * Empty default constructor.
-     */
-    public PeptideShakerParameters () {
-        
-    }
+    public static final long KEY = ExperimentObject.asLong("PeptideShaker_parameters");
     
     /**
      * Constructor for a PeptideShaker Settings class.
@@ -94,7 +88,8 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      * @param projectType the project type
      * @param identificationFeaturesCache the identification features cache
      */
-    public PeptideShakerParameters(IdentificationParameters identificationParameters,
+    public PeptideShakerParameters(
+            IdentificationParameters identificationParameters,
             SpectrumCountingParameters spectrumCountingPreferences,
             ProjectDetails projectDetails,
             FilterParameters filterPreferences,
@@ -104,7 +99,8 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
             ProteinDetailsProvider proteinDetailsProvider,
             GeneMaps geneMaps,
             ProjectType projectType,
-            IdentificationFeaturesCache identificationFeaturesCache) {
+            IdentificationFeaturesCache identificationFeaturesCache
+    ) {
         
         this.identificationParameters = identificationParameters;
         this.spectrumCountingPreferences = spectrumCountingPreferences;

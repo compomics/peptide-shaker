@@ -5,12 +5,12 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
@@ -37,6 +37,10 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * The ID input map.
      */
     private InputMap inputMap;
+    /**
+     * The spectrum provider.
+     */
+    private final SpectrumProvider spectrumProvider;
     /**
      * The exception handler catches exceptions.
      */
@@ -67,6 +71,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
         this.showScores = false;
         this.exceptionHandler = null;
         this.inputMap = null;
+        this.spectrumProvider = null;
 
     }
 
@@ -75,17 +80,26 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      *
      * @param identification the identification object containing the matches
      * @param displayFeaturesGenerator the display features generator
+     * @param spectrumProvider The spectrum provider.
      * @param identificationParameters the identification parameters
      * @param psmKeys the PSM keys
      * @param displayScores boolean indicating whether the scores should be
      * displayed instead of the confidence
      * @param exceptionHandler handler for the exceptions
      */
-    public PsmTableModel(Identification identification, DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters,
-            long[] psmKeys, boolean displayScores, ExceptionHandler exceptionHandler) {
+    public PsmTableModel(
+            Identification identification,
+            DisplayFeaturesGenerator displayFeaturesGenerator,
+            SpectrumProvider spectrumProvider,
+            IdentificationParameters identificationParameters,
+            long[] psmKeys,
+            boolean displayScores,
+            ExceptionHandler exceptionHandler
+    ) {
 
         this.identification = identification;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
+        this.spectrumProvider = spectrumProvider;
         this.identificationParameters = identificationParameters;
         this.psmKeys = psmKeys;
         this.showScores = displayScores;
@@ -106,26 +120,33 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * @param identificationParameters the identification parameters
      * @param psmKeys the PSM keys
      */
-    public void updateDataModel(Identification identification, DisplayFeaturesGenerator displayFeaturesGenerator, IdentificationParameters identificationParameters, long[] psmKeys) {
+    public void updateDataModel(
+            Identification identification,
+            DisplayFeaturesGenerator displayFeaturesGenerator,
+            IdentificationParameters identificationParameters,
+            long[] psmKeys
+    ) {
 
         this.identification = identification;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
         this.identificationParameters = identificationParameters;
         this.psmKeys = psmKeys;
-        
+
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) identification.getUrParam(pSMaps);
         this.inputMap = pSMaps.getInputMap();
 
     }
-    
+
     /**
      * Sets whether the scores should be displayed.
      *
      * @param showScores a boolean indicating whether the scores should be
      * displayed
      */
-    public void showScores(boolean showScores) {
+    public void showScores(
+            boolean showScores
+    ) {
         this.showScores = showScores;
     }
 
@@ -149,7 +170,9 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     }
 
     @Override
-    public String getColumnName(int column) {
+    public String getColumnName(
+            int column
+    ) {
         switch (column) {
             case 0:
                 return " ";
@@ -173,7 +196,10 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     }
 
     @Override
-    public Object getValueAt(int row, int column) {
+    public Object getValueAt(
+            int row,
+            int column
+    ) {
 
         int viewIndex = getViewIndex(row);
 
@@ -201,10 +227,19 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                     return psParameter.getStarred();
 
                 case 2:
-                    return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, identificationParameters.getSequenceMatchingParameters(), inputMap.getInputAlgorithmsSorted().size());
+                    return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(
+                            spectrumMatch,
+                            identificationParameters.getSequenceMatchingParameters(),
+                            inputMap.getInputAlgorithmsSorted().size()
+                    );
 
                 case 3:
-                    return displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
+                    return displayFeaturesGenerator.getTaggedPeptideSequence(
+                            spectrumMatch,
+                            true,
+                            true,
+                            true
+                    );
 
                 case 4:
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
@@ -222,17 +257,32 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                     }
 
                 case 5:
-                    String spectrumKey = spectrumMatch.getSpectrumKey();
-                    Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
+                    String spectrumFile = spectrumMatch.getSpectrumFile();
+                    String spectrumTitle = spectrumMatch.getSpectrumTitle();
+                    double precursorMz = spectrumProvider.getPrecursorMz(spectrumFile, spectrumTitle);
                     SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                        return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
+                        return Math.abs(
+                                spectrumMatch.getBestPeptideAssumption().getDeltaMass(
+                                        precursorMz,
+                                        searchParameters.isPrecursorAccuracyTypePpm(),
+                                        searchParameters.getMinIsotopicCorrection(),
+                                        searchParameters.getMaxIsotopicCorrection()
+                                )
+                        );
 
                     } else if (spectrumMatch.getBestTagAssumption() != null) {
 
-                        return Math.abs(spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection()));
+                        return Math.abs(
+                                spectrumMatch.getBestTagAssumption().getDeltaMass(
+                                        precursorMz,
+                                        searchParameters.isPrecursorAccuracyTypePpm(),
+                                        searchParameters.getMinIsotopicCorrection(),
+                                        searchParameters.getMaxIsotopicCorrection()
+                                )
+                        );
 
                     } else {
 
@@ -290,13 +340,20 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     }
 
     @Override
-    protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
+    protected int loadDataForRows(
+            ArrayList<Integer> rows,
+            WaitingHandler waitingHandler
+    ) {
 
         boolean canceled = rows.stream()
-                .map(i -> identification.getSpectrumMatch(psmKeys[i]))
-                .anyMatch(dummy -> waitingHandler.isRunCanceled());
+                .map(
+                        i -> identification.getSpectrumMatch(psmKeys[i])
+                )
+                .anyMatch(
+                        dummy -> waitingHandler.isRunCanceled()
+                );
 
         return canceled ? rows.get(0) : rows.get(rows.size() - 1);
-        
+
     }
 }

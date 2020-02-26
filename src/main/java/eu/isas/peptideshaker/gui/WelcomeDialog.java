@@ -13,6 +13,7 @@ import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.gui.file_handling.FileChooserUtils;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.UtilitiesUserParameters;
@@ -500,8 +501,19 @@ public class WelcomeDialog extends javax.swing.JDialog {
         String cpsFileFilterDescription = "PeptideShaker Database (.psdb)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".psdb", ".zip"},
-                new String[]{cpsFileFilterDescription, zipFileFilterDescription}, "Open PeptideShaker Project", lastSelectedFolderPath, null, true, false, false, 0);
+        
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(
+                this, 
+                new String[]{".psdb", ".zip"},
+                new String[]{cpsFileFilterDescription, zipFileFilterDescription}, 
+                "Open PeptideShaker Project", 
+                lastSelectedFolderPath, 
+                null, 
+                true, 
+                false, 
+                false, 
+                0
+        );
 
         if (selectedFileAndFilter != null) {
 
@@ -523,7 +535,13 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 lastSelectedFolder.setLastSelectedFolder(selectedFile.getAbsolutePath());
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.psdb).", "Unsupported File.", JOptionPane.WARNING_MESSAGE);
+                
+                JOptionPane.showMessageDialog(
+                        this, 
+                        "Not a PeptideShaker file (.psdb).", 
+                        "Unsupported File.", 
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
         }
     }//GEN-LAST:event_openJButtonActionPerformed
@@ -629,8 +647,20 @@ public class WelcomeDialog extends javax.swing.JDialog {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    ToolFactory.startSearchGUI(DUMMY_PARENT_FRAME, null, null, null, null, null, null, null, null);
+                    
+                    ToolFactory.startSearchGUI(
+                            DUMMY_PARENT_FRAME, 
+                            null, 
+                            null, 
+                            null, 
+                            null, 
+                            null, 
+                            null, 
+                            null, 
+                            null
+                    );
                     peptideShakerGUI.close();
+                
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
@@ -645,8 +675,14 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void quantifyJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantifyJButtonActionPerformed
 
-        JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Developement...", JOptionPane.INFORMATION_MESSAGE,
-                new javax.swing.ImageIcon(getClass().getResource("/icons/reporter_logo.png")));
+        JOptionPane.showMessageDialog(
+                this, 
+                "In development. Coming soon...", 
+                "In Developement...", 
+                JOptionPane.INFORMATION_MESSAGE,
+                new javax.swing.ImageIcon(getClass().getResource("/icons/reporter_logo.png")
+                )
+        );
 
 //        new Thread(new Runnable() {
 //            public void run() {
@@ -848,9 +884,16 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void bugReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bugReportMenuItemActionPerformed
-        new BugReport(this, peptideShakerGUI.getLastSelectedFolder(), "PeptideShaker", "peptide-shaker",
-                PeptideShaker.getVersion(), "peptide-shaker", "PeptideShaker",
-                new File(PeptideShaker.getJarFilePath() + "/resources/PeptideShaker.log"));
+        new BugReport(
+                this, 
+                peptideShakerGUI.getLastSelectedFolder(), 
+                "PeptideShaker", 
+                "peptide-shaker",
+                PeptideShaker.getVersion(), 
+                "peptide-shaker", 
+                "PeptideShaker",
+                new File(PeptideShaker.getJarFilePath() + "/resources/PeptideShaker.log")
+        );
     }//GEN-LAST:event_bugReportMenuItemActionPerformed
 
     /**
@@ -859,10 +902,13 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/AboutPeptideShaker.html"),
+        new HelpDialog(
+                peptideShakerGUI, 
+                getClass().getResource("/helpFiles/AboutPeptideShaker.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "About PeptideShaker");
+                "About PeptideShaker"
+        );
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     /**
@@ -889,7 +935,13 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void lowMemoryWarningLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lowMemoryWarningLabelMouseReleased
-        new JavaParametersDialog(DUMMY_PARENT_FRAME, peptideShakerGUI, this, "PeptideShaker", true);
+        new JavaParametersDialog(
+                DUMMY_PARENT_FRAME, 
+                peptideShakerGUI, 
+                this, 
+                "PeptideShaker", 
+                true
+        );
     }//GEN-LAST:event_lowMemoryWarningLabelMouseReleased
 
     /**
@@ -954,12 +1006,20 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param searchGuiJarPath the path to the SearchGUI jar file
      * @return true if a new version is available
      */
-    public boolean checkForNewSearchGUIVersion(String searchGuiJarPath) {
+    public boolean checkForNewSearchGUIVersion(
+            String searchGuiJarPath
+    ) {
         try {
+            
             File jarFile = new File(searchGuiJarPath);
             MavenJarFile oldMavenJarFile = new MavenJarFile(jarFile.toURI());
-            URL jarRepository = new URL("http", "genesis.ugent.be", new StringBuilder().append("/maven2/").toString());
+            URL jarRepository = new URL(
+                    "http", 
+                    "genesis.ugent.be", 
+                    "/maven2/"
+            );
             return WebDAO.newVersionReleased(oldMavenJarFile, jarRepository);
+            
         } catch (UnknownHostException ex) {
             System.out.println("Checking for new version failed. No internet connection.");
             // no internet connection
@@ -993,7 +1053,14 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         if (installPath == null) {
             installPath = "user.home";
-            downloadFolder = Util.getUserSelectedFolder(this, "Select SearchGUI Folder", installPath, "SearchGUI Folder", "Select", false);
+            downloadFolder = FileChooserUtils.getUserSelectedFolder(
+                    this, 
+                    "Select SearchGUI Folder", 
+                    installPath, 
+                    "SearchGUI Folder", 
+                    "Select", 
+                    false
+            );
         } else {
             firstTimeInstall = false;
             downloadFolder = new File(installPath);
@@ -1025,13 +1092,40 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-                        URL jarRepository = new URL("http", "genesis.ugent.be", new StringBuilder().append("/maven2/").toString());
+                        URL jarRepository = new URL(
+                                "http", 
+                                "genesis.ugent.be", 
+                                "/maven2/"
+                        );
+                        
                         if (finalFirstTimeInstall) {
-                            downloadLatestZipFromRepo(downloadFolder, "SearchGUI", "eu.isas.searchgui", "SearchGUI", "searchgui.ico",
-                                    null, jarRepository, false, true, new GUIFileDAO(), progressDialog);
+                        
+                            downloadLatestZipFromRepo(
+                                    downloadFolder, 
+                                    "SearchGUI", 
+                                    "eu.isas.searchgui", 
+                                    "SearchGUI", 
+                                    "searchgui.ico",
+                                    null, 
+                                    jarRepository, 
+                                    false, 
+                                    true, 
+                                    new GUIFileDAO(), 
+                                    progressDialog
+                            );
                         } else {
-                            downloadLatestZipFromRepo(new File(peptideShakerGUI.getUtilitiesUserParameters().getSearchGuiPath()).toURI().toURL(), "SearchGUI", false,
-                                    "searchgui.ico", null, jarRepository, false, true, new GUIFileDAO(), progressDialog);
+                            downloadLatestZipFromRepo(
+                                    new File(peptideShakerGUI.getUtilitiesUserParameters().getSearchGuiPath()).toURI().toURL(), 
+                                    "SearchGUI", 
+                                    false,
+                                    "searchgui.ico", 
+                                    null, 
+                                    jarRepository, 
+                                    false, 
+                                    true, 
+                                    new GUIFileDAO(), 
+                                    progressDialog
+                            );
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
