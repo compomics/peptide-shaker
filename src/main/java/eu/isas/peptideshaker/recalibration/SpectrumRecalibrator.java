@@ -2,9 +2,10 @@ package eu.isas.peptideshaker.recalibration;
 
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Peak;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
+import com.compomics.util.experiment.mass_spectrometry.spectra.RecalibrationUtils;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -17,10 +18,6 @@ import java.util.HashMap;
  */
 public class SpectrumRecalibrator {
 
-    /**
-     * The spectrum factory.
-     */
-    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * Map of the runs errors.
      */
@@ -38,8 +35,12 @@ public class SpectrumRecalibrator {
      *
      * @param spectrumFileName the spectrum file name
      */
-    public void clearErrors(String spectrumFileName) {
+    public void clearErrors(
+            String spectrumFileName
+    ) {
+
         runMzDeviationMap.remove(spectrumFileName);
+
     }
 
     /**
@@ -49,8 +50,12 @@ public class SpectrumRecalibrator {
      * @param spectrumFileName name of the spectrum file
      * @return the mz deviation statistics
      */
-    public RunMzDeviation getRunMzDeviations(String spectrumFileName) {
+    public RunMzDeviation getRunMzDeviations(
+            String spectrumFileName
+    ) {
+
         return runMzDeviationMap.get(spectrumFileName);
+
     }
 
     /**
@@ -63,13 +68,31 @@ public class SpectrumRecalibrator {
      * @param spectrumFileName the name of the file of the run
      * @param identification the corresponding identification
      * @param sequenceProvider the sequence provider
+     * @param spectrumProvider the spectrum provider
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
      */
-    public void estimateErrors(String spectrumFileName, Identification identification, SequenceProvider sequenceProvider, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) {
-        RunMzDeviation fileErrors = new RunMzDeviation(spectrumFileName, identification, sequenceProvider, identificationParameters, waitingHandler);
+    public void estimateErrors(
+            String spectrumFileName,
+            Identification identification,
+            SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
+            IdentificationParameters identificationParameters,
+            WaitingHandler waitingHandler
+    ) {
+
+        RunMzDeviation fileErrors = new RunMzDeviation(
+                spectrumFileName,
+                identification,
+                sequenceProvider,
+                spectrumProvider,
+                identificationParameters,
+                waitingHandler
+        );
+
         runMzDeviationMap.put(spectrumFileName, fileErrors);
+
     }
 
     /**
@@ -77,6 +100,7 @@ public class SpectrumRecalibrator {
      *
      * @param fileName the name of the file where to find the spectrum
      * @param spectrumTitle the title of the spectrum
+     * @param spectrumProvider the spectrum provider
      * @param recalibratePrecursor boolean indicating whether precursors shall
      * be recalibrated
      * @param recalibrateFragmentIons boolean indicating whether fragment ions
@@ -84,30 +108,41 @@ public class SpectrumRecalibrator {
      *
      * @return a recalibrated spectrum
      */
-    public Spectrum recalibrateSpectrum(String fileName, String spectrumTitle, boolean recalibratePrecursor, boolean recalibrateFragmentIons) {
+    public Spectrum recalibrateSpectrum(
+            String fileName,
+            String spectrumTitle,
+            SpectrumProvider spectrumProvider,
+            boolean recalibratePrecursor,
+            boolean recalibrateFragmentIons
+    ) {
 
         RunMzDeviation runError = runMzDeviationMap.get(fileName);
         if (runError == null) {
             throw new IllegalArgumentException("No m/z deviation statistics found for spectrum file " + fileName + ".");
         }
 
-        Spectrum spectrum = spectrumFactory.getSpectrum(fileName, spectrumTitle, false);
-        Precursor precursor = spectrum.getPrecursor();
-        double precursorMz = precursor.getMz();
-        double precursorRT = precursor.getRt();
-        double correction = 0.0;
+        Spectrum originalSpectrum = spectrumProvider.getSpectrum(
+                fileName,
+                spectrumTitle
+        );
+        double mzCorrection = recalibratePrecursor ? runError.getPrecursorMzCorrection(
+                originalSpectrum.precursor.mz,
+                originalSpectrum.precursor.rt)
+                : 0.0;
 
-        if (recalibratePrecursor) {
-            correction = runError.getPrecursorMzCorrection(precursorMz, precursorRT);
-        }
+        Precursor newPrecursor = RecalibrationUtils.getRecalibratedPrecursor(originalSpectrum.precursor, mzCorrection, 0.0);
+        
+        double[] newFragmentMz = recalibrateFragmentIons ?
+                runError.recalibrateFragmentMz(
+                        originalSpectrum.precursor.rt, 
+                        originalSpectrum.mz
+                )
+                : originalSpectrum.mz;
 
-        Precursor newPrecursor = spectrum.getPrecursor().getRecalibratedPrecursor(correction, 0.0);
-        HashMap<Double, Peak> peakList = spectrum.getPeakMap();
-
-        if (recalibrateFragmentIons) {
-            peakList = runError.recalibratePeakList(precursorRT, spectrum.getPeakMap());
-        }
-
-        return new Spectrum(2, newPrecursor, spectrumTitle, peakList, fileName);
+        return new Spectrum(
+                newPrecursor, 
+                newFragmentMz, 
+                originalSpectrum.intensity
+        );
     }
 }
