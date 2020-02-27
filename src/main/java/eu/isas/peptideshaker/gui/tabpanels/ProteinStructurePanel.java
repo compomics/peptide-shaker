@@ -34,9 +34,11 @@ import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import com.compomics.util.gui.file_handling.FileChooserUtils;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportScheme;
+import com.compomics.util.io.flat.SimpleFileWriter;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsProteinFeature;
@@ -3295,7 +3297,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      *
      * @param index the table index type
      */
-    private void copyTableContentToClipboardOrFile(TableIndex index) throws IOException {
+    private void copyTableContentToClipboardOrFile(
+            TableIndex index
+    ) throws IOException {
 
         final TableIndex tableIndex = index;
 
@@ -3324,8 +3328,18 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     break;
             }
 
-            FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".xls", ".txt", ".gz"},
-                    new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription}, "Export Report", lastSelectedFolderPath, exportName, false, true, false, 1);
+            FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(
+                    this,
+                    new String[]{".xls", ".txt", ".gz"},
+                    new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription},
+                    "Export Report",
+                    lastSelectedFolderPath,
+                    exportName,
+                    false,
+                    true,
+                    false,
+                    1
+            );
 
             if (selectedFileAndFilter != null) {
 
@@ -3343,10 +3357,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     gzip = false;
                 }
 
-                progressDialog = new ProgressDialogX(peptideShakerGUI,
+                progressDialog = new ProgressDialogX(
+                        peptideShakerGUI,
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                        true);
+                        true
+                );
                 progressDialog.setTitle("Exporting Data. Please Wait...");
 
                 final String filePath = selectedFile.getPath();
@@ -3401,13 +3417,40 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                                     sectionContent.add(PsProteinFeature.validated);
                                     exportFeatures.put(PsProteinFeature.type, sectionContent);
 
-                                    ExportScheme validatedProteinReport = new ExportScheme("Protein Table", false, exportFeatures, "\t", true, true, 0, false, false, false);
+                                    ExportScheme validatedProteinReport = new ExportScheme(
+                                            "Protein Table",
+                                            false,
+                                            exportFeatures,
+                                            "\t",
+                                            true,
+                                            true,
+                                            0,
+                                            false,
+                                            false,
+                                            false
+                                    );
 
-                                    PSExportFactory.writeExport(validatedProteinReport, selectedFile, exportFormat, gzip, peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
-                                            peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
-                                            peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), getDisplayedProteins(), null, null,
-                                            peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(), peptideShakerGUI.getIdentificationParameters(),
-                                            peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getSpectrumCountingParameters(), progressDialog);
+                                    PSExportFactory.writeExport(
+                                            validatedProteinReport,
+                                            selectedFile,
+                                            exportFormat,
+                                            gzip,
+                                            peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
+                                            peptideShakerGUI.getProjectDetails(),
+                                            peptideShakerGUI.getIdentification(),
+                                            peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                                            peptideShakerGUI.getGeneMaps(),
+                                            getDisplayedProteins(),
+                                            null,
+                                            null,
+                                            peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(),
+                                            peptideShakerGUI.getIdentificationParameters(),
+                                            peptideShakerGUI.getSequenceProvider(),
+                                            peptideShakerGUI.getProteinDetailsProvider(),
+                                            peptideShakerGUI.getSpectrumProvider(),
+                                            peptideShakerGUI.getSpectrumCountingParameters(),
+                                            progressDialog
+                                    );
 
                                     break;
 
@@ -3433,13 +3476,40 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                                     exportFeatures.put(PsPeptideFeature.type, sectionContent);
 
-                                    validatedProteinReport = new ExportScheme("Peptide Table", false, exportFeatures, "\t", true, true, 0, false, false, false);
+                                    validatedProteinReport = new ExportScheme(
+                                            "Peptide Table",
+                                            false,
+                                            exportFeatures,
+                                            "\t",
+                                            true,
+                                            true,
+                                            0,
+                                            false,
+                                            false,
+                                            false
+                                    );
 
-                                    PSExportFactory.writeExport(validatedProteinReport, selectedFile, exportFormat, gzip, peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
-                                            peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
-                                            peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), null, getDisplayedPeptides(), null,
-                                            peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(), peptideShakerGUI.getIdentificationParameters(),
-                                            peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getSpectrumCountingParameters(), progressDialog);
+                                    PSExportFactory.writeExport(
+                                            validatedProteinReport,
+                                            selectedFile,
+                                            exportFormat,
+                                            gzip,
+                                            peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
+                                            peptideShakerGUI.getProjectDetails(),
+                                            peptideShakerGUI.getIdentification(),
+                                            peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                                            peptideShakerGUI.getGeneMaps(),
+                                            null,
+                                            getDisplayedPeptides(),
+                                            null,
+                                            peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(),
+                                            peptideShakerGUI.getIdentificationParameters(),
+                                            peptideShakerGUI.getSequenceProvider(),
+                                            peptideShakerGUI.getProteinDetailsProvider(),
+                                            peptideShakerGUI.getSpectrumProvider(),
+                                            peptideShakerGUI.getSpectrumCountingParameters(),
+                                            progressDialog
+                                    );
 
                                     break;
 
@@ -3451,29 +3521,52 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                             progressDialog.setRunFinished();
 
                             if (!processCancelled) {
-                                JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(
+                                        peptideShakerGUI,
+                                        "Data copied to file:\n" + filePath,
+                                        "Data Exported",
+                                        JOptionPane.INFORMATION_MESSAGE
+                                );
                             }
                         } catch (FileNotFoundException e) {
                             progressDialog.setRunFinished();
-                            JOptionPane.showMessageDialog(peptideShakerGUI,
+                            JOptionPane.showMessageDialog(
+                                    peptideShakerGUI,
                                     "An error occurred while generating the output. Please make sure "
-                                    + "that the destination file is not opened by another application.", "Output Error", JOptionPane.ERROR_MESSAGE);
+                                    + "that the destination file is not opened by another application.",
+                                    "Output Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
                             e.printStackTrace();
                         } catch (IllegalArgumentException e) {
                             if (e.getMessage().contains("Invalid row number (65536)")) {
                                 progressDialog.setRunFinished();
-                                JOptionPane.showMessageDialog(peptideShakerGUI,
+                                JOptionPane.showMessageDialog(
+                                        peptideShakerGUI,
                                         "An error occurred while generating the output. This format can contain only 65,535 lines.\n" // @TODO: update the excel export library?
-                                        + "Please use a text export instead.", "Output Error", JOptionPane.ERROR_MESSAGE);
+                                        + "Please use a text export instead.",
+                                        "Output Error",
+                                        JOptionPane.ERROR_MESSAGE
+                                );
                                 e.printStackTrace();
                             } else {
                                 progressDialog.setRunFinished();
-                                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(
+                                        peptideShakerGUI,
+                                        "An error occurred while generating the output.",
+                                        "Output Error",
+                                        JOptionPane.ERROR_MESSAGE
+                                );
                                 e.printStackTrace();
                             }
                         } catch (Exception e) {
                             progressDialog.setRunFinished();
-                            JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(
+                                    peptideShakerGUI,
+                                    "An error occurred while generating the output.",
+                                    "Output Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
                             e.printStackTrace();
                         }
                     }
@@ -3484,31 +3577,67 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 || tableIndex == TableIndex.PDB_CHAINS) {
 
             // get the file to send the output to
-            File selectedFile = peptideShakerGUI.getUserSelectedFile("pdb_details.txt", ".txt", "Tab separated text file (.txt)", "Export...", false);
+            File selectedFile = peptideShakerGUI.getUserSelectedFile(
+                    "pdb_details.txt",
+                    ".txt",
+                    "Tab separated text file (.txt)",
+                    "Export...",
+                    false
+            );
             if (selectedFile != null) {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
 
                 if (tableIndex == TableIndex.PDB_CHAINS) {
 
-                    writer.write("\tChain\tPDB-Start\tPDB-End\tCoverage");
-                    writer.newLine();
+                    try ( SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
 
-                    for (int i = 0; i < pdbChainsJTable.getRowCount(); i++) {
-                        writer.write(pdbChainsJTable.getValueAt(i, 0) + "\t");
-                        writer.write(pdbChainsJTable.getValueAt(i, 1) + "\t");
-                        XYDataPoint pdbCoverage = (XYDataPoint) pdbChainsJTable.getValueAt(i, 2);
-                        writer.write(pdbCoverage.getX() + "\t" + pdbCoverage.getY() + "\t");
-                        writer.write(pdbChainsJTable.getValueAt(i, 3).toString());
-                        writer.newLine();
+                        writer.writeLine(
+                                "",
+                                "Chain",
+                                "PDB-Start",
+                                "PDB-End",
+                                "Coverage"
+                        );
+
+                        for (int i = 0; i < pdbChainsJTable.getRowCount(); i++) {
+
+                            XYDataPoint pdbCoverage = (XYDataPoint) pdbChainsJTable.getValueAt(i, 2);
+
+                            writer.writeLine(
+                                    pdbChainsJTable.getValueAt(i, 0).toString(),
+                                    pdbChainsJTable.getValueAt(i, 1).toString(),
+                                    Double.toString(pdbCoverage.getX()),
+                                    Double.toString(pdbCoverage.getY()),
+                                    pdbChainsJTable.getValueAt(i, 3).toString()
+                            );
+                        }
+
+                        JOptionPane.showMessageDialog(
+                                peptideShakerGUI,
+                                "Data copied to file:\n" + selectedFile.getPath(),
+                                "Data Exported",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
                     }
 
-                    JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getPath(), "Data Exported", JOptionPane.INFORMATION_MESSAGE);
                 } else if (tableIndex == TableIndex.PDB_MATCHES) {
-                    Util.tableToFile(pdbMatchesJTable, "\t", null, true, writer);
-                    JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getPath(), "Data Exported", JOptionPane.INFORMATION_MESSAGE);
-                }
 
-                writer.close();
+                    try ( BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile))) {
+
+                        Util.tableToFile(
+                                pdbMatchesJTable,
+                                "\t",
+                                null,
+                                true,
+                                writer
+                        );
+                        JOptionPane.showMessageDialog(
+                                peptideShakerGUI,
+                                "Data copied to file:\n" + selectedFile.getPath(),
+                                "Data Exported",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                    }
+                }
             }
         }
     }
@@ -3522,16 +3651,24 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         long peptideKey = peptideShakerGUI.getSelectedPeptideKey();
 
         if (proteinKey != NO_KEY) {
+
             int proteinRow = getProteinRow(proteinKey);
+
             if (proteinRow != -1 && proteinRow < proteinTable.getRowCount()) {
+
                 proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
+
             }
         }
 
         if (peptideKey != NO_KEY) {
+
             int peptideRow = getPeptideRow(peptideKey);
+
             if (peptideRow != -1) {
+
                 peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
+
             }
         }
     }

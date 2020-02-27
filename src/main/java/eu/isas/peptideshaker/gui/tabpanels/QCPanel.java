@@ -14,7 +14,6 @@ import com.compomics.util.experiment.identification.matches_iterators.ProteinMat
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
@@ -1188,7 +1187,7 @@ public class QCPanel extends javax.swing.JPanel {
                 tabbedPane.setEnabledAt(2, false);
                 tabbedPane.setSelectedIndex(0);
             }
-            
+
             currentProteinPlotType = PlotType.None;
             currentPeptidePlotType = PlotType.None;
             currentPsmPlotType = PlotType.None;
@@ -2033,11 +2032,18 @@ public class QCPanel extends javax.swing.JPanel {
 
                 if (!psmParameter.getHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
 
-                    Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumMatch.getSpectrumKey());
+                    String spectrumFile = spectrumMatch.getSpectrumFile();
+                    String spectrumTitle = spectrumMatch.getSpectrumTitle();
+                    double precursorMz = peptideShakerGUI.getSpectrumProvider()
+                            .getPrecursorMz(spectrumFile, spectrumTitle);
+
                     SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
                     double value = spectrumMatch.getBestPeptideAssumption().getDeltaMass(
-                            precursor.getMz(),
-                            searchParameters.isPrecursorAccuracyTypePpm(), searchParameters.getMinIsotopicCorrection(), searchParameters.getMaxIsotopicCorrection());
+                            precursorMz,
+                            searchParameters.isPrecursorAccuracyTypePpm(),
+                            searchParameters.getMinIsotopicCorrection(),
+                            searchParameters.getMaxIsotopicCorrection()
+                    );
                     if (value > maxValue) {
                         maxValue = value;
                     }

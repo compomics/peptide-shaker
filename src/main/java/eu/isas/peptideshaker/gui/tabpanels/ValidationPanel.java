@@ -1493,6 +1493,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                                 peptideShakerGUI.getIdentificationFeaturesGenerator(),
                                 peptideShakerGUI.getSequenceProvider(),
                                 peptideShakerGUI.getProteinDetailsProvider(),
+                                peptideShakerGUI.getSpectrumProvider(),
                                 peptideShakerGUI.getGeneMaps(),
                                 peptideShakerGUI.getIdentificationParameters(),
                                 peptideShakerGUI.getProjectType(),
