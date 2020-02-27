@@ -1,12 +1,12 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.gui.file_handling.FileAndFileFilter;
-import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
+import com.compomics.util.gui.file_handling.FileChooserUtils;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportFormat;
@@ -1191,13 +1191,40 @@ public class AnnotationPanel extends javax.swing.JPanel {
                                     sectionContent.add(PsProteinFeature.accession);
                                     exportFeatures.put(PsProteinFeature.type, sectionContent);
 
-                                    ExportScheme validatedProteinReport = new ExportScheme("Validated Proteins", false, exportFeatures, "\t", false, false, 0, false, true, false);
+                                    ExportScheme validatedProteinReport = new ExportScheme(
+                                            "Validated Proteins", 
+                                            false, 
+                                            exportFeatures, 
+                                            "\t", 
+                                            false, 
+                                            false, 
+                                            0, 
+                                            false, 
+                                            true, 
+                                            false
+                                    );
 
-                                    PSExportFactory.writeExport(validatedProteinReport, selectedFile, exportFormat, gzip, peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
-                                            peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
-                                            peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getGeneMaps(), null, null, null,
-                                            peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(), peptideShakerGUI.getIdentificationParameters(),
-                                            peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getSpectrumCountingParameters(), progressDialog);
+                                    PSExportFactory.writeExport(
+                                            validatedProteinReport, 
+                                            selectedFile, 
+                                            exportFormat, 
+                                            gzip, 
+                                            peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
+                                            peptideShakerGUI.getProjectDetails(), 
+                                            peptideShakerGUI.getIdentification(),
+                                            peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                                            peptideShakerGUI.getGeneMaps(), 
+                                            null, 
+                                            null, 
+                                            null,
+                                            peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(), 
+                                            peptideShakerGUI.getIdentificationParameters(),
+                                            peptideShakerGUI.getSequenceProvider(), 
+                                            peptideShakerGUI.getProteinDetailsProvider(), 
+                                            peptideShakerGUI.getSpectrumProvider(), 
+                                            peptideShakerGUI.getSpectrumCountingParameters(), 
+                                            progressDialog
+                                    );
 
                                     boolean processCancelled = progressDialog.isRunCanceled();
                                     progressDialog.setRunFinished();
@@ -1205,12 +1232,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
                                     if (!processCancelled) {
                                         JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                                     }
-                                } catch (FileNotFoundException e) {
-                                    progressDialog.setRunFinished();
-                                    JOptionPane.showMessageDialog(peptideShakerGUI,
-                                            "An error occurred while generating the output. Please make sure "
-                                            + "that the destination file is not opened by another application.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                                    e.printStackTrace();
                                 } catch (IllegalArgumentException e) {
                                     if (e.getMessage().contains("Invalid row number (65536)")) {
                                         progressDialog.setRunFinished();
