@@ -354,17 +354,31 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
 
                             try {
                                 PeptideShakerGUI peptideShakerGUI = followupPreferencesDialog.getPeptideShakerGUI();
-                                Double rtWindowDouble = new Double(rtWindow.getText());
-                                InclusionListExport.exportInclusionList(outputFile, peptideShakerGUI.getIdentification(),
-                                        peptideShakerGUI.getIdentificationFeaturesGenerator(), getProteinFilters(), getPeptideFilters(),
-                                        exportFormat, peptideShakerGUI.getIdentificationParameters().getSearchParameters(), rtWindowDouble, progressDialog, peptideShakerGUI.getFilterParameters());
+                                double rtWindowDouble = Double.parseDouble(rtWindow.getText());
+                                InclusionListExport.exportInclusionList(
+                                        outputFile, 
+                                        peptideShakerGUI.getIdentification(),
+                                        peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                                        peptideShakerGUI.getSpectrumProvider(),
+                                        getProteinFilters(), 
+                                        getPeptideFilters(),
+                                        exportFormat, 
+                                        peptideShakerGUI.getIdentificationParameters().getSearchParameters(), 
+                                        rtWindowDouble, 
+                                        progressDialog, 
+                                        peptideShakerGUI.getFilterParameters()
+                                );
 
                                 boolean processCancelled = progressDialog.isRunCanceled();
                                 progressDialog.setRunFinished();
 
                                 if (!processCancelled) {
-                                    JOptionPane.showMessageDialog(followupPreferencesDialog, "Inclusion list saved to " + fileChooser.getSelectedFile().getName() + ".",
-                                            "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                                    JOptionPane.showMessageDialog(
+                                            followupPreferencesDialog, 
+                                            "Inclusion list saved to " + fileChooser.getSelectedFile().getName() + ".",
+                                            "Save Complete", 
+                                            JOptionPane.INFORMATION_MESSAGE
+                                    );
                                 }
                             } catch (Exception e) {
                                 progressDialog.setRunFinished();

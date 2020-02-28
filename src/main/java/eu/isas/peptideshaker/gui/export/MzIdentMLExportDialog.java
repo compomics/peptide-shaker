@@ -519,12 +519,18 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
+        
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/mzIdentMLExportDialog.html"),
+        
+        new HelpDialog(
+                peptideShakerGUI, 
+                getClass().getResource("/helpFiles/mzIdentMLExportDialog.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "Export mzIdentML - Help");
+                "Export mzIdentML - Help"
+        );
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        
     }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
 
     /**
@@ -533,6 +539,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void browseOutputFolderJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseOutputFolderJButtonActionPerformed
+        
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         // First check whether a file has already been selected.
@@ -572,9 +579,18 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
         }
 
-        FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(this, new String[]{".mzid.gzip", ".mzid.gzip"},
-                versionsDescriptions, "Select Export File",
-                folder, peptideShakerGUI.getProjectParameters().getProjectUniqueName(), false, true, false, defaultFilterIndex);
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(
+                this, 
+                new String[]{".mzid.gzip", ".mzid.gzip"},
+                versionsDescriptions, 
+                "Select Export File",
+                folder, 
+                peptideShakerGUI.getProjectParameters().getProjectUniqueName(), 
+                false, 
+                true, 
+                false, 
+                defaultFilterIndex
+        );
 
         if (selectedFileAndFilter != null) {
             String path = selectedFileAndFilter.getFile().getAbsolutePath();
@@ -705,6 +721,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                             identificationParameters,
                             peptideShakerGUI.getSequenceProvider(),
                             peptideShakerGUI.getProteinDetailsProvider(),
+                            peptideShakerGUI.getSpectrumProvider(),
                             fastaSummary,
                             peptideShakerGUI.getIdentificationFeaturesGenerator(),
                             finalOutputFile,
