@@ -12,8 +12,10 @@ import com.compomics.util.experiment.mass_spectrometry.proteowizard.ProteoWizard
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.gui.parameters.identification.pride.EnzymeParametersDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.io.IoUtil;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
@@ -102,7 +104,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     /**
      * The PeptideShakerGUI parent.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The currently selected species.
      */
@@ -2834,7 +2836,14 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                 if (downloadFile) {
 
                                     // download the pride data file
-                                    Util.saveUrl(currentZippedPrideDataFile, currentDownloadLink, fileSizes.get(i), getUserName(), getPassword(), progressDialog);
+                                    IoUtil.saveUrl(
+                                            currentZippedPrideDataFile, 
+                                            currentDownloadLink, 
+                                            fileSizes.get(i), 
+                                            getUserName(), 
+                                            getPassword(), 
+                                            progressDialog
+                                    );
 
                                     // file downloaded, unzip file
                                     progressDialog.setTitle("Unzipping Files (" + (i + 1) + "/" + allFileLinks.size() + "). Please Wait...");
@@ -3852,16 +3861,25 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
         // get the download folder
         LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
-        final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
+        final File downloadFolder = FileChooserUtil.getUserSelectedFolder(
+                this, 
+                "Select Download Folder", 
+                lastSelectedFolder.getLastSelectedFolder(), 
+                "Download Folder", 
+                "Select", 
+                false
+        );
 
         if (downloadFolder != null) {
 
             lastSelectedFolder.setLastSelectedFolder(downloadFolder.getAbsolutePath());
 
-            progressDialog = new ProgressDialogX(this,
+            progressDialog = new ProgressDialogX(
+                    this,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
+                    true
+            );
 
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Downloading File. Please Wait...");
@@ -3907,7 +3925,14 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                             final String fileName = (String) filesTable.getValueAt(rowIndex, filesTable.getColumn("File").getModelIndex());
                             downLoadLocation = new File(downloadFolder, fileName);
-                            savedFile = Util.saveUrl(downLoadLocation, link, fileSizeInBytes, getUserName(), getPassword(), progressDialog);
+                            savedFile = IoUtil.saveUrl(
+                                    downLoadLocation, 
+                                    link, 
+                                    fileSizeInBytes, 
+                                    getUserName(), 
+                                    getPassword(), 
+                                    progressDialog
+                            );
                             progressDialog.setPrimaryProgressCounterIndeterminate(true);
                         }
 
@@ -3916,14 +3941,22 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                         if (fileRowIndexes.size() == 1) {
                             if (!canceled) {
-                                JOptionPane.showMessageDialog(PrideReshakeGUI.this, savedFile.getName() + " downloaded to "
-                                        + savedFile + ".", "Download Complete", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(
+                                        PrideReshakeGUI.this, 
+                                        savedFile.getName() + " downloaded to " + savedFile + ".", 
+                                        "Download Complete", 
+                                        JOptionPane.INFORMATION_MESSAGE
+                                );
                             } else if (downLoadLocation.exists()) {
                                 downLoadLocation.delete();
                             }
                         } else if (!canceled) {
-                            JOptionPane.showMessageDialog(PrideReshakeGUI.this, "Files downloaded to "
-                                    + downloadFolder.getAbsolutePath() + ".", "Download Complete", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(
+                                    PrideReshakeGUI.this, 
+                                    "Files downloaded to " + downloadFolder.getAbsolutePath() + ".", 
+                                    "Download Complete", 
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
                         }
                     } catch (MalformedURLException e) {
                         progressDialog.setRunFinished();

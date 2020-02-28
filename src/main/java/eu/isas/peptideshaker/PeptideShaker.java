@@ -266,8 +266,18 @@ public class PeptideShaker {
 
         identification.getObjectsDB().commit();
 
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, identificationParameters, sequenceProvider, metrics, spectrumCountingParameters);
-        matchesValidator = new MatchesValidator(new TargetDecoyMap(), new TargetDecoyMap(), new TargetDecoyMap());
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(
+                identification, 
+                identificationParameters, 
+                sequenceProvider, 
+                metrics, 
+                spectrumCountingParameters
+        );
+        matchesValidator = new MatchesValidator(
+                new TargetDecoyMap(), 
+                new TargetDecoyMap(), 
+                new TargetDecoyMap()
+        );
 
         if (waitingHandler.isRunCanceled()) {
             return;

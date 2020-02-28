@@ -6621,9 +6621,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     ProjectDetails projectParameters = cpsParent.getProjectDetails();
                     Set<String> fileNames = getProjectDetails().getSpectrumFileNames();
-                    ArrayList<File> mgfFiles = fileNames.stream()
-                            .map(projectParameters::getSpectrumFilePath)
-                            .collect(Collectors.toCollection(ArrayList::new));
+                    ArrayList<File> spectrumFiles = fileNames.stream()
+                            .map(
+                                    projectParameters::getSpectrumFilePath
+                            )
+                            .map(
+                                    path -> new File(path)
+                            )
+                            .collect(
+                                    Collectors.toCollection(ArrayList::new)
+                            );
                     int cpt = 0, total = fileNames.size();
 
                     for (String spectrumFileName : getIdentification().getFractions()) {
@@ -6635,7 +6642,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         try {
 
-                            found = cpsParent.loadSpectrumFile(spectrumFileName, mgfFiles, progressDialog);
+                            found = cpsParent.loadSpectrumFile(
+                                    spectrumFileName,
+                                    spectrumFiles,
+                                    progressDialog
+                            );
 
                         } catch (Exception e) {
 
@@ -6703,7 +6714,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                             if (spectrumFileName2.equals(fileName)) {
 
                                                 cpsParent.loadSpectrumFile(file);
-                                                mgfFiles.add(file);
+                                                spectrumFiles.add(file);
 
                                             }
 
@@ -6722,7 +6733,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                                     try {
 
-                                        found = cpsParent.loadSpectrumFile(spectrumFileName, mgfFiles, progressDialog);
+                                        found = cpsParent.loadSpectrumFile(
+                                                spectrumFileName,
+                                                spectrumFiles,
+                                                progressDialog
+                                        );
 
                                     } catch (Exception e) {
 
@@ -6733,9 +6748,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                                 if (!found) {
 
-                                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                                    JOptionPane.showMessageDialog(
+                                            peptideShakerGUI,
                                             spectrumFileName + " was not found in the given folder.",
-                                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                                            "File Input Error",
+                                            JOptionPane.ERROR_MESSAGE
+                                    );
                                     clearData(true, true);
                                     clearParameters();
                                     progressDialog.setRunFinished();

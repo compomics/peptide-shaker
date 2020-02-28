@@ -6,10 +6,12 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.mass_spectrometry.proteowizard.ProteoWizardMsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
+import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import static com.compomics.util.gui.parameters.identification.search.SequenceDbDetailsDialog.lastFolderKey;
+import com.compomics.util.io.IoUtil;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -833,12 +835,20 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                             link = link.substring(link.indexOf("\"") + 1);
                             link = link.substring(0, link.indexOf("\""));
 
-                            boolean exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
+                            boolean exists = IoUtil.checkIfURLExists(
+                                    link,
+                                    prideReShakeGUI.getUserName(),
+                                    prideReShakeGUI.getPassword()
+                            );
 
                             if (!exists) {
                                 if (link.endsWith(".gz")) {
                                     link = link.substring(0, link.length() - 3);
-                                    exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
+                                    exists = IoUtil.checkIfURLExists(
+                                            link,
+                                            prideReShakeGUI.getUserName(),
+                                            prideReShakeGUI.getPassword()
+                                    );
                                 }
                             }
 
@@ -860,11 +870,16 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                 }
                                 fileSizes.add(fileSizeInBytes);
                             } else {
-                                JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
-                                        "PRIDE web service access error. Cannot open:<br>"
-                                        + link + "<br>"
-                                        + "Please contact the <a href=\"https://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
-                                        "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                                JOptionPane.showMessageDialog(
+                                        PrideReshakeSetupDialog.this,
+                                        JOptionEditorPane.getJOptionEditorPane(
+                                                "PRIDE web service access error. Cannot open:<br>"
+                                                + link + "<br>"
+                                                + "Please contact the <a href=\"https://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."
+                                        ),
+                                        "PRIDE Access Error",
+                                        JOptionPane.WARNING_MESSAGE
+                                );
                                 System.out.println("Not found: " + link + "!");
                             }
                         }
@@ -881,13 +896,21 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                             if (!selectedSpectrumFileLinks.contains(link)) {
 
-                                boolean exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
+                                boolean exists = IoUtil.checkIfURLExists(
+                                        link,
+                                        prideReShakeGUI.getUserName(),
+                                        prideReShakeGUI.getPassword()
+                                );
 
                                 if (!exists) {
                                     if (link.endsWith(".gz")) {
                                         link = link.substring(0, link.length() - 3);
                                         if (!selectedSpectrumFileLinks.contains(link)) {
-                                            exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
+                                            exists = IoUtil.checkIfURLExists(
+                                                    link,
+                                                    prideReShakeGUI.getUserName(),
+                                                    prideReShakeGUI.getPassword()
+                                            );
                                         } else {
                                             exists = true;
                                         }
@@ -906,11 +929,16 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                     }
                                     fileSizes.add(fileSizeInBytes);
                                 } else {
-                                    JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
-                                            "PRIDE web service access error. Cannot open:<br>"
-                                            + link + "<br>"
-                                            + "Please contact the <a href=\"https://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
-                                            "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                                    JOptionPane.showMessageDialog(
+                                            PrideReshakeSetupDialog.this,
+                                            JOptionEditorPane.getJOptionEditorPane(
+                                                    "PRIDE web service access error. Cannot open:<br>"
+                                                    + link + "<br>"
+                                                    + "Please contact the <a href=\"https://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."
+                                            ),
+                                            "PRIDE Access Error",
+                                            JOptionPane.WARNING_MESSAGE
+                                    );
                                     System.out.println("Not found: " + link + "!");
                                 }
                             } else {
@@ -928,10 +956,22 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                     progressDialog.setRunFinished();
 
                     if (download) {
-                        prideReShakeGUI.downloadPrideDatasets(workingFolderTxt.getText(), selectedSpectrumFileLinks, selectedFileNames,
-                                selectedSearchSettingsFileLink, databaseSettingsTxt.getText(), speciesJTextField.getText(), fileSizes);
+                        prideReShakeGUI.downloadPrideDatasets(
+                                workingFolderTxt.getText(),
+                                selectedSpectrumFileLinks,
+                                selectedFileNames,
+                                selectedSearchSettingsFileLink,
+                                databaseSettingsTxt.getText(),
+                                speciesJTextField.getText(),
+                                fileSizes
+                        );
                     } else {
-                        JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, "No spectrum files found. Reshake canceled.", "File Error", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(
+                                PrideReshakeSetupDialog.this,
+                                "No spectrum files found. Reshake canceled.",
+                                "File Error",
+                                JOptionPane.WARNING_MESSAGE
+                        );
                     }
                 }
             }.start();
@@ -1011,7 +1051,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
             if (file.getName().contains(" ")) {
 
-                JOptionPane.showMessageDialog(this, "Your FASTA file name contains white space and ougth to be renamed.", "File Name Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this, 
+                        "Your FASTA file name contains white space and ougth to be renamed.", 
+                        "File Name Warning", 
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
 
         }
@@ -1026,11 +1071,21 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void browseWorkingFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseWorkingFolderButtonActionPerformed
-        File selectedFolder = Util.getUserSelectedFolder(this, "Select Working Folder", lastSelectedFolder.getLastSelectedFolder(), "Working Folder", "Select", false);
+
+        File selectedFolder = FileChooserUtil.getUserSelectedFolder(
+                this,
+                "Select Working Folder",
+                lastSelectedFolder.getLastSelectedFolder(),
+                "Working Folder",
+                "Select",
+                false
+        );
 
         if (selectedFolder != null) {
+
             lastSelectedFolder.setLastSelectedFolder(selectedFolder.getAbsolutePath());
             workingFolderTxt.setText(selectedFolder.getAbsolutePath());
+
         }
 
         validateInput(false);
@@ -1085,16 +1140,26 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             }
 
             final String fileName = (String) spectrumTable.getValueAt(row, spectrumTable.getColumn("File").getModelIndex());
-            final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
+
+            final File downloadFolder = FileChooserUtil.getUserSelectedFolder(
+                    this,
+                    "Select Download Folder",
+                    lastSelectedFolder.getLastSelectedFolder(),
+                    "Download Folder",
+                    "Select",
+                    false
+            );
 
             if (downloadFolder != null) {
 
                 lastSelectedFolder.setLastSelectedFolder(downloadFolder.getAbsolutePath());
 
-                progressDialog = new ProgressDialogX(prideReShakeGUI,
+                progressDialog = new ProgressDialogX(
+                        prideReShakeGUI,
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                        true);
+                        true
+                );
 
                 progressDialog.setPrimaryProgressCounterIndeterminate(true);
                 progressDialog.setTitle("Downloading File. Please Wait...");
@@ -1114,14 +1179,25 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                     public void run() {
                         try {
                             File downLoadLocation = new File(downloadFolder, fileName);
-                            File savedFile = Util.saveUrl(downLoadLocation, link, fileSizeInBytes, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword(), progressDialog);
+                            File savedFile = IoUtil.saveUrl(
+                                    downLoadLocation,
+                                    link,
+                                    fileSizeInBytes,
+                                    prideReShakeGUI.getUserName(),
+                                    prideReShakeGUI.getPassword(),
+                                    progressDialog
+                            );
 
                             boolean canceled = progressDialog.isRunCanceled();
                             progressDialog.setRunFinished();
 
                             if (!canceled) {
-                                JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, savedFile.getName() + " downloaded to\n"
-                                        + savedFile + ".", "Download Complete", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(
+                                        PrideReshakeSetupDialog.this,
+                                        savedFile.getName() + " downloaded to\n" + savedFile + ".",
+                                        "Download Complete",
+                                        JOptionPane.INFORMATION_MESSAGE
+                                );
                             } else {
                                 if (downLoadLocation.exists()) {
                                     downLoadLocation.delete();
@@ -1216,16 +1292,25 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 }
 
                 final String fileName = (String) spectrumTable.getValueAt(row, spectrumTable.getColumn("File").getModelIndex());
-                final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
+                final File downloadFolder = FileChooserUtil.getUserSelectedFolder(
+                        this, 
+                        "Select Download Folder", 
+                        lastSelectedFolder.getLastSelectedFolder(), 
+                        "Download Folder", 
+                        "Select", 
+                        false
+                );
 
                 if (downloadFolder != null) {
 
                     lastSelectedFolder.setLastSelectedFolder(downloadFolder.getAbsolutePath());
 
-                    progressDialog = new ProgressDialogX(prideReShakeGUI,
+                    progressDialog = new ProgressDialogX(
+                            prideReShakeGUI,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                            true);
+                            true
+                    );
 
                     progressDialog.setPrimaryProgressCounterIndeterminate(true);
                     progressDialog.setTitle("Downloading File. Please Wait...");
@@ -1245,14 +1330,24 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                         public void run() {
                             try {
                                 File downLoadLocation = new File(downloadFolder, fileName);
-                                File savedFile = Util.saveUrl(downLoadLocation, link, fileSizeInBytes, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword(), progressDialog);
+                                File savedFile = IoUtil.saveUrl(
+                                        downLoadLocation, 
+                                        link, 
+                                        fileSizeInBytes, 
+                                        prideReShakeGUI.getUserName(), 
+                                        prideReShakeGUI.getPassword(), 
+                                        progressDialog
+                                );
 
                                 boolean canceled = progressDialog.isRunCanceled();
                                 progressDialog.setRunFinished();
 
                                 if (!canceled) {
-                                    JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, savedFile.getName() + " downloaded to\n"
-                                            + savedFile + ".", "Download Complete", JOptionPane.INFORMATION_MESSAGE);
+                                    JOptionPane.showMessageDialog(
+                                            PrideReshakeSetupDialog.this, 
+                                            savedFile.getName() + " downloaded to\n" + savedFile + ".", "Download Complete", 
+                                            JOptionPane.INFORMATION_MESSAGE
+                                    );
                                 } else {
                                     if (downLoadLocation.exists()) {
                                         downLoadLocation.delete();
@@ -1634,7 +1729,6 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 //
 //        }
 //    }
-
     /**
      * Show a simple dialog saying that UniProt databases is recommended and
      * display a link to the Database Help web page.
