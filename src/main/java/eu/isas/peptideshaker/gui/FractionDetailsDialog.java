@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Util;
+import com.compomics.util.io.IoUtil;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,7 +40,11 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      * @param peptideShakerGUI the PeptideShakerGUI parent
      * @param modal if the dialog is modal or not
      */
-    public FractionDetailsDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
+    public FractionDetailsDialog(
+            PeptideShakerGUI peptideShakerGUI,
+            boolean modal
+    ) {
+
         super(peptideShakerGUI, modal);
         initComponents();
 
@@ -59,36 +64,38 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      * Add the data to the table.
      */
     private void addData() {
-        
+
         ArrayList<String> fractions = peptideShakerGUI.getIdentification().getFractions();
 
         HashMap<String, XYDataPoint> expectedMolecularWeightRanges = peptideShakerGUI.getIdentificationParameters().getFractionParameters().getFractionMolecularWeightRanges();
         int lineNumber = 1;
-        
+
         for (String fraction : fractions) {
 
             Double lower = 0.0;
             Double upper = 0.0;
 
             if (expectedMolecularWeightRanges != null) {
-                
+
                 XYDataPoint dataPoint = expectedMolecularWeightRanges.get(fraction);
-                
+
                 if (dataPoint != null) {
-                    
-                lower = dataPoint.getX();
-                upper = dataPoint.getY();
-                
+
+                    lower = dataPoint.getX();
+                    upper = dataPoint.getY();
+
                 }
             }
 
-            ((DefaultTableModel) fractionTable.getModel()).addRow(new Object[]{
+            ((DefaultTableModel) fractionTable.getModel()).addRow(
+                    new Object[]{
                         lineNumber++,
-                        Util.getFileName(fraction),
+                        IoUtil.getFileName(fraction),
                         lower,
                         upper
-                    });
-            
+                    }
+            );
+
         }
     }
 
@@ -96,6 +103,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      * Set up the table.
      */
     private void setUpTable() {
+
         fractionTable.getTableHeader().setReorderingAllowed(false);
 
         // correct the color for the upper right corner
@@ -104,7 +112,6 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         fractionJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, proteinCorner);
 
         //fractionTable.setAutoCreateRowSorter(true);
-
         // make sure that the scroll panes are see-through
         fractionJScrollPane.getViewport().setOpaque(false);
 
@@ -122,6 +129,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         fractionTable.getColumn("Lower Range (kDa)").setMinWidth(120);
         fractionTable.getColumn("Upper Range (kDa)").setMaxWidth(120);
         fractionTable.getColumn("Upper Range (kDa)").setMinWidth(120);
+
     }
 
     /**
@@ -497,12 +505,12 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      * @param evt the action event
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        
+
         ArrayList<String> spectrumFiles = new ArrayList<>();
         HashMap<String, XYDataPoint> fractionRanges = new HashMap<>();
 
         for (int i = 0; i < fractionTable.getRowCount(); i++) {
-            
+
             String fileName = (String) fractionTable.getValueAt(i, fractionTable.getColumn("Fraction").getModelIndex());
             spectrumFiles.add(fileName);
 
@@ -521,7 +529,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         peptideShakerGUI.getIdentificationParameters().getFractionParameters().setFractionMolecularWeightRanges(fractionRanges);
         this.setVisible(false);
         this.dispose();
-        
+
     }//GEN-LAST:event_okButtonActionPerformed
 
     /**
@@ -574,23 +582,60 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                 r.close();
 
             } catch (FileNotFoundException e) {
+
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Could not find the file \'" + selectedFile.getAbsolutePath() + "\'.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Could not find the file \'" + selectedFile.getAbsolutePath() + "\'.",
+                        "File Not Found",
+                        JOptionPane.WARNING_MESSAGE
+                );
+
             } catch (IOException e) {
+
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "An error occurred when parsing the file \'" + selectedFile.getAbsolutePath() + "\'.", "File Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "An error occurred when parsing the file \'" + selectedFile.getAbsolutePath() + "\'.",
+                        "File Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+
             } catch (NumberFormatException e) {
+
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "One of the values in the file is not a number.\nPlease include tab separated values only.", "File Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "One of the values in the file is not a number.\nPlease include tab separated values only.",
+                        "File Error",
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
 
             if (lowerAndUpper.size() > fractionTable.getRowCount()) {
-                JOptionPane.showMessageDialog(this, "There are more values in the file than there are rows in the table!\nSome rows will be ignored.", "File Error", JOptionPane.WARNING_MESSAGE);
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "There are more values in the file than there are rows in the table!\nSome rows will be ignored.",
+                        "File Error",
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
 
             for (int i = 0; i < lowerAndUpper.size(); i++) {
-                ((DefaultTableModel) fractionTable.getModel()).setValueAt(lowerAndUpper.get(i).getX(), i, 2);
-                ((DefaultTableModel) fractionTable.getModel()).setValueAt(lowerAndUpper.get(i).getY(), i, 3);
+
+                ((DefaultTableModel) fractionTable.getModel())
+                        .setValueAt(
+                                lowerAndUpper.get(i).getX(),
+                                i,
+                                2
+                        );
+                ((DefaultTableModel) fractionTable.getModel())
+                        .setValueAt(
+                                lowerAndUpper.get(i).getY(),
+                                i,
+                                3
+                        );
             }
         }
     }//GEN-LAST:event_importFractionRangesButtonActionPerformed
@@ -631,15 +676,33 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      * @param end the end index
      * @param destination the destination index
      */
-    public static void moveRows(DefaultTableModel model, int start, int end, int destination) {
+    public static void moveRows(
+            DefaultTableModel model,
+            int start,
+            int end,
+            int destination
+    ) {
+
         int count = end - start;
+
         if (count <= 0) {
+
             return;
+
         }
+
         if (destination > start) {
+
             destination = Math.max(start, destination - count);
+
         }
+
         end--;
-        model.moveRow(start, end, destination);
+        model.moveRow(
+                start,
+                end,
+                destination
+        );
+
     }
 }

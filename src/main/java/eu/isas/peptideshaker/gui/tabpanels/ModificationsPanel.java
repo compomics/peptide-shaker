@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.ArrayUtil;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.ions.Charge;
 import com.compomics.util.experiment.biology.modifications.Modification;
@@ -41,7 +42,7 @@ import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelD
 import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
-import com.compomics.util.experiment.mass_spectrometry.spectra.SpectrumUtils;
+import com.compomics.util.experiment.mass_spectrometry.spectra.SpectrumUtil;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -2900,23 +2901,36 @@ public class ModificationsPanel extends javax.swing.JPanel {
         int spectrumTabIndex = spectrumTabbedPane.getSelectedIndex();
 
         if (spectrumTabIndex == 0) {
-            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#AScore",
+            new HelpDialog(
+                    peptideShakerGUI, 
+                    getClass().getResource("/helpFiles/PTMPanel.html"), 
+                    "#Modification",
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    "Modification Analysis - Help");
+                    "Modification Analysis - Help"
+            );
         } else if (spectrumTabIndex == 1) {
-            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#DeltsScore",
+            new HelpDialog(
+                    peptideShakerGUI, 
+                    getClass().getResource("/helpFiles/PTMPanel.html"), 
+                    "#DeltaScore",
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    "Modification Analysis - Help");
+                    "Modification Analysis - Help"
+            );
         } else if (spectrumTabIndex == 2) {
-            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum",
+            new HelpDialog(
+                    peptideShakerGUI, 
+                    getClass().getResource("/helpFiles/PTMPanel.html"), 
+                    "#Spectrum",
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    "Modification Analysis - Help");
+                    "Modification Analysis - Help"
+            );
         }
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        
     }//GEN-LAST:event_spectrumHelpJButtonActionPerformed
 
     /**
@@ -3014,15 +3028,29 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
             menuItem = new JMenuItem("Modification Profile Plot");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
+                
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, modificationProfileRelatedPeptideJPanel.getComponent(1), peptideShakerGUI.getLastSelectedFolder());
+                    
+                    new ExportGraphicsDialog(
+                            peptideShakerGUI, 
+                            peptideShakerGUI.getNormalIcon(), 
+                            peptideShakerGUI.getWaitingIcon(), 
+                            true, 
+                            modificationProfileRelatedPeptideJPanel.getComponent(1), 
+                            peptideShakerGUI.getLastSelectedFolder()
+                    );
                 }
             });
 
             popupMenu.add(menuItem);
         }
 
-        popupMenu.show(exportRelatedPeptideProfileJButton, evt.getX(), evt.getY());
+        popupMenu.show(
+                exportRelatedPeptideProfileJButton, 
+                evt.getX(), 
+                evt.getY()
+        );
+        
     }//GEN-LAST:event_exportRelatedPeptideProfileJButtonMouseReleased
 
     /**
@@ -4061,7 +4089,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
             double[] intensityArray = secondSpectrumMatchKey == null
                     ? currentSpectrum.intensity
-                    : SpectrumUtils.scaleToMax(currentSpectrum.intensity);
+                    : ArrayUtil.scaleToMax(currentSpectrum.intensity);
 
             spectrumPanel = new SpectrumPanel(
                     currentSpectrum.mz,
@@ -4155,7 +4183,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
                     spectrumPanel.addMirroredSpectrum(
                             currentSpectrum.mz,
-                            SpectrumUtils.scaleToMax(currentSpectrum.intensity),
+                            ArrayUtil.scaleToMax(currentSpectrum.intensity),
                             currentSpectrum.getPrecursor().mz,
                             Charge.toString(secondSpectrumMatch.getBestPeptideAssumption().getIdentificationCharge()),
                             "",
