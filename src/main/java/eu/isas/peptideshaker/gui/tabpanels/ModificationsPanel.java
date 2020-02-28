@@ -4061,7 +4061,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
             double[] intensityArray = secondSpectrumMatchKey == null
                     ? currentSpectrum.intensity
-                    : SpectrumUtils.scaleIntensitiesToMax(currentSpectrum.intensity);
+                    : SpectrumUtils.scaleToMax(currentSpectrum.intensity);
 
             spectrumPanel = new SpectrumPanel(
                     currentSpectrum.mz,
@@ -4155,7 +4155,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
                     spectrumPanel.addMirroredSpectrum(
                             currentSpectrum.mz,
-                            SpectrumUtils.scaleIntensitiesToMax(currentSpectrum.intensity),
+                            SpectrumUtils.scaleToMax(currentSpectrum.intensity),
                             currentSpectrum.getPrecursor().mz,
                             Charge.toString(secondSpectrumMatch.getBestPeptideAssumption().getIdentificationCharge()),
                             "",

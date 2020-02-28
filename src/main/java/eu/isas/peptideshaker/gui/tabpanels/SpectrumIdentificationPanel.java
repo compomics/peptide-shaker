@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.ArrayUtil;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.ions.Charge;
 import com.compomics.util.experiment.biology.proteins.Peptide;
@@ -52,12 +53,10 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Specific
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.utils.ModificationUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
-import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
-import com.compomics.util.experiment.mass_spectrometry.spectra.SpectrumUtils;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Rectangle;
@@ -3016,7 +3015,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 double[] intensitiesAsArray = searchResultsTable.getSelectedRowCount() == 1
                         ? currentSpectrum.intensity
-                        : SpectrumUtils.scaleIntensitiesToMax(currentSpectrum.intensity);
+                        : ArrayUtil.scaleToMax(currentSpectrum.intensity);
 
                 spectrumPanel = new SpectrumPanel(
                         currentSpectrum.mz,
@@ -3044,7 +3043,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     spectrumPanel.addMirroredSpectrum(
                             currentSpectrum.mz,
-                            SpectrumUtils.scaleIntensitiesToMax(currentSpectrum.intensity),
+                            ArrayUtil.scaleToMax(currentSpectrum.intensity),
                             precursor.mz,
                             chargeAsString,
                             "",
