@@ -479,7 +479,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
                 ArrayList<File> spectrumFiles = new ArrayList<>();
                 for (String spectrumFileName : getIdentification().getFractions()) {
-                    File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
+                    File spectrumFile = getProjectDetails().getSpectrumFilePath(spectrumFileName);
                     spectrumFiles.add(spectrumFile);
                 }
 

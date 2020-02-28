@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.gui;
 
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import java.io.File;
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Marc Vaudel
  */
-public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
+public class IdToSpectrumFileMappingDialog extends javax.swing.JDialog {
 
     /**
      * Map of the missing mgf files indexed by ID file.
@@ -39,10 +38,6 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
      * The waiting dialog.
      */
     private final WaitingDialog waitingDialog;
-    /**
-     * The spectrum factory.
-     */
-    private final SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
     /**
      * Creates a new MgfFilesNotFoundDialog.
@@ -50,7 +45,10 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
      * @param waitingDialog a reference to the waiting dialog
      * @param missingFiles the list of missing mgf files.
      */
-    public MgfFilesNotFoundDialog(WaitingDialog waitingDialog, HashMap<File, String> missingFiles) {
+    public IdToSpectrumFileMappingDialog(
+            WaitingDialog waitingDialog, 
+            HashMap<File, String> missingFiles
+    ) {
         super(waitingDialog, true);
 
         this.waitingDialog = waitingDialog;
@@ -355,9 +353,6 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
-            for (String idName : newFiles.keySet()) {
-                spectrumFactory.addIdNameMapping(idName, newFiles.get(idName));
-            }
             dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
@@ -462,4 +457,14 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     private javax.swing.JButton removeButton;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Returns the new file mapping.
+     * 
+     * @return the new file mapping.
+     */
+    public HashMap<String, File> getNewFiles() {
+        return newFiles;
+    }
+
 }

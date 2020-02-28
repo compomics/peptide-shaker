@@ -13,7 +13,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.advanced.FractionParameters;
@@ -38,6 +37,7 @@ import com.compomics.util.experiment.identification.features.IdentificationFeatu
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.identification.protein_inference.PeptideAndProteinBuilder;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.experiment.quantification.spectrumcounting.ScalingFactorsEstimators;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.processing.ProteinProcessor;
@@ -174,8 +174,7 @@ public class PeptideShaker {
      *
      * @param waitingHandler the handler displaying feedback to the user
      * @param idFiles the files to import
-     * @param spectrumFiles the corresponding spectra (can be empty: spectra
-     * will not be loaded)
+     * @param spectrumProvider the spectrum provider
      * @param identificationParameters identification parameters
      * @param projectDetails the project details
      * @param processingPreferences the initial processing preferences
@@ -186,7 +185,7 @@ public class PeptideShaker {
     public int importFiles(
             WaitingHandler waitingHandler,
             ArrayList<File> idFiles,
-            ArrayList<File> spectrumFiles,
+            SpectrumProvider spectrumProvider,
             IdentificationParameters identificationParameters,
             ProjectDetails projectDetails,
             ProcessingParameters processingPreferences,
@@ -206,8 +205,20 @@ public class PeptideShaker {
         identification = new Identification(objectsDB);
         identification.addObject(ProjectParameters.key, projectParameters);
 
-        fileImporter = new FileImporter(identification, identificationParameters, processingPreferences, metrics, projectDetails, waitingHandler, exceptionHandler);
-        int outcome = fileImporter.importFiles(idFiles, spectrumFiles);
+        fileImporter = new FileImporter(
+                identification, 
+                identificationParameters, 
+                processingPreferences, 
+                metrics, 
+                projectDetails, 
+                spectrumProvider,
+                waitingHandler, 
+                exceptionHandler
+        );
+        int outcome = fileImporter.importFiles(
+                idFiles, 
+                spectrumFiles
+        );
 
         if (outcome == 0) {
 

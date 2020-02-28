@@ -78,12 +78,23 @@ public class CpsExporter {
             projectDetails.setUserAdvocateMapping(Advocate.getUserAdvocates());
 
             // add all necessary data and parameters into the db for export
-            if (!identification.contains(PeptideShakerParameters.key)) {
+            if (!identification.contains(PeptideShakerParameters.KEY)) {
 
-                PeptideShakerParameters peptideShakerParameters = new PeptideShakerParameters(identificationParameters, spectrumCountingParameters,
-                        projectDetails, filterParameters, displayParameters, metrics, sequenceProvider, proteinDetailsProvider, geneMaps, projectType, identificationFeaturesCache);
+                PeptideShakerParameters peptideShakerParameters = new PeptideShakerParameters(
+                        identificationParameters, 
+                        spectrumCountingParameters,
+                        projectDetails, 
+                        filterParameters, 
+                        displayParameters, 
+                        metrics, 
+                        sequenceProvider, 
+                        proteinDetailsProvider, 
+                        geneMaps, 
+                        projectType, 
+                        identificationFeaturesCache
+                );
 
-                identification.addObject(PeptideShakerParameters.key, peptideShakerParameters);
+                identification.addObject(PeptideShakerParameters.KEY, peptideShakerParameters);
 
             }
 

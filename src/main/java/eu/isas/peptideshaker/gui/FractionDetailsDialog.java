@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.gui;
 
-import com.compomics.util.Util;
 import com.compomics.util.io.IoUtil;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;

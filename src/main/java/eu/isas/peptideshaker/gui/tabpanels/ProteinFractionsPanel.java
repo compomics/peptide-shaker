@@ -524,10 +524,15 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         for (int i = 0; i < spectrumFiles.size(); i++) {
 
             try {
+                
                 if (peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().containsKey(spectrumFiles.get(i))) {
+
                     mwPlotDataset.add(peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().get(spectrumFiles.get(i)), "Observed MW (kDa)", "" + (i + 1));
+
                 } else {
+
                     mwPlotDataset.add(new ArrayList<>(0), "Observed MW (kDa)", "" + (i + 1));
+
                 }
             } catch (ClassCastException e) {
                 // do nothing, no data to show

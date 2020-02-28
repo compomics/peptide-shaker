@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
-import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
+import eu.isas.peptideshaker.gui.IdToSpectrumFileMappingDialog;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identification.IdfileReader;
@@ -31,6 +31,7 @@ import eu.isas.peptideshaker.protein_inference.TagMapper;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.io.IoUtil;
 import eu.isas.peptideshaker.PeptideShaker;
 
@@ -62,13 +63,17 @@ public class FileImporter {
      */
     private SequenceProvider sequenceProvider;
     /**
-     * The ms file handler.
-     */
-    private final MsFileHandler msFileHandler;
-    /**
      * A provider for protein details.
      */
     private ProteinDetailsProvider proteinDetailsProvider;
+    /**
+     * The spectrum provider.
+     */
+    private final SpectrumProvider spectrumProvider;
+    /**
+     * Map of the spectra loaded.
+     */
+    private final HashMap<String, HashSet<String>> loadedSpectraMap;
     /**
      * Summary information on the fasta file.
      */
@@ -92,10 +97,6 @@ public class FileImporter {
      */
     private final IdfileReaderFactory readerFactory = IdfileReaderFactory.getInstance();
     /**
-     * A list of spectrum files (can be empty, no spectrum will be imported).
-     */
-    private final HashMap<String, File> spectrumFiles = new HashMap<>();
-    /**
      * The processing preferences.
      */
     private final ProcessingParameters processingParameters;
@@ -112,14 +113,6 @@ public class FileImporter {
      */
     private long nSpectra = 0;
     /**
-     * List of the mgf files used.
-     */
-    private final ArrayList<String> spectrumFileUsed = new ArrayList<>();
-    /**
-     * Map of the missing mgf files indexed by identification file.
-     */
-    private final HashMap<File, String> missingSpectrumFiles = new HashMap<>();
-    /**
      * The input map.
      */
     private final InputMap inputMap = new InputMap();
@@ -130,7 +123,7 @@ public class FileImporter {
     /**
      * The database connection.
      */
-    private Identification identification;
+    private final Identification identification;
     /**
      * A fasta file mapper.
      */
@@ -165,7 +158,7 @@ public class FileImporter {
      * @param identificationParameters The identification parameters.
      * @param projectDetails The project details.
      * @param metrics The metrics of the dataset to be saved.
-     * @param msFileHandler The ms file handler.
+     * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The handler displaying feedback to the user.
      * @param exceptionHandler The exception handler.
      */
@@ -175,7 +168,7 @@ public class FileImporter {
             ProcessingParameters processingParameters,
             Metrics metrics,
             ProjectDetails projectDetails,
-            MsFileHandler msFileHandler,
+            SpectrumProvider spectrumProvider,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
     ) {
@@ -184,13 +177,25 @@ public class FileImporter {
         this.metrics = metrics;
         this.processingParameters = processingParameters;
         this.projectDetails = projectDetails;
-        this.msFileHandler = msFileHandler;
+        this.spectrumProvider = spectrumProvider;
         this.waitingHandler = waitingHandler;
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
 
         tagMapper = new TagMapper(identificationParameters, exceptionHandler);
 
+        loadedSpectraMap = new HashMap<>(spectrumProvider.getFileNames().length);
+
+        for (String fileName : spectrumProvider.getFileNames()) {
+
+            loadedSpectraMap.put(
+                    fileName,
+                    Arrays.stream(spectrumProvider.getSpectrumTitles(fileName))
+                            .collect(
+                                    Collectors.toCollection(HashSet::new)
+                            )
+            );
+        }
     }
 
     /**
@@ -223,13 +228,6 @@ public class FileImporter {
                         Collectors.toCollection(ArrayList::new)
                 );
 
-        for (File spectrumFile : spectrumFiles) {
-
-            this.spectrumFiles.put(spectrumFile.getName(), spectrumFile);
-            importSpectra(spectrumFile.getName());
-
-        }
-
         try {
 
             importSequences(
@@ -253,8 +251,8 @@ public class FileImporter {
 
                 waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                 waitingHandler.appendReport(
-                        "Importing gene mappings.", 
-                        true, 
+                        "Importing gene mappings.",
+                        true,
                         true
                 );
                 importGenes();
@@ -273,8 +271,8 @@ public class FileImporter {
 
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
             waitingHandler.appendReport(
-                    "Establishing local database connection.", 
-                    true, 
+                    "Establishing local database connection.",
+                    true,
                     true
             );
 
@@ -283,8 +281,8 @@ public class FileImporter {
             if (!waitingHandler.isRunCanceled()) {
 
                 waitingHandler.appendReport(
-                        "Reading identification files.", 
-                        true, 
+                        "Reading identification files.",
+                        true,
                         true
                 );
 
@@ -298,63 +296,11 @@ public class FileImporter {
                     }
                 }
 
-                while (!missingSpectrumFiles.isEmpty()) {
-
-                    if (hasGUI) {
-
-                        new MgfFilesNotFoundDialog(
-                                (WaitingDialog) waitingHandler,
-                                missingSpectrumFiles
-                        );
-
-                    } else {
-
-                        String missingFiles = missingSpectrumFiles.keySet().stream()
-                                .map(File::getName)
-                                .sorted()
-                                .collect(Collectors.joining(", "));
-
-                        waitingHandler.appendReport("Spectrum files missing: " + missingFiles, true, true);
-
-                        return 1;
-
-                    }
-
-                    waitingHandler.appendReport(
-                            "Processing files with the new input.", 
-                            true, 
-                            true
-                    );
-                    ArrayList<File> filesToProcess = new ArrayList<>(missingSpectrumFiles.keySet());
-
-                    for (String fileName : missingSpectrumFiles.values()) {
-
-                        File newFile = new File(msFileHandler.getFilePaths().get(fileName));
-                        this.spectrumFiles.put(newFile.getName(), newFile);
-                        projectDetails.addSpectrumFile(newFile);
-
-                    }
-
-                    missingSpectrumFiles.clear();
-
-                    for (File idFile : filesToProcess) {
-
-                        importPsms(idFile);
-
-                    }
-
-                    if (waitingHandler.isRunCanceled()) {
-
-                        return 1;
-
-                    }
-                }
-
                 if (nRetained == 0) {
 
                     waitingHandler.appendReport(
-                            "No identifications retained.", 
-                            true, 
+                            "No identification results.",
+                            true,
                             true
                     );
                     waitingHandler.setRunCanceled();
@@ -374,8 +320,6 @@ public class FileImporter {
                         true,
                         true
                 );
-                waitingHandler.increaseSecondaryProgressCounter(spectrumFiles.size() - spectrumFileUsed.size());
-
             }
         } catch (OutOfMemoryError error) {
 
@@ -527,7 +471,8 @@ public class FileImporter {
 
         try {
 
-            idFileSpectrumMatches = fileReader.getAllSpectrumMatches(msFileHandler,
+            idFileSpectrumMatches = fileReader.getAllSpectrumMatches(
+                    spectrumProvider,
                     waitingHandler,
                     identificationParameters.getSearchParameters(),
                     identificationParameters.getSequenceMatchingParameters(),
@@ -590,22 +535,46 @@ public class FileImporter {
 
             } else {
 
-                boolean allLoaded = true;
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.resetSecondaryProgressCounter();
                 waitingHandler.setMaxSecondaryProgressCounter(nMatches);
                 waitingHandler.appendReport(
-                        "Loading spectra for " + idFile.getName() + ".",
+                        "Checking spectra for " + idFile.getName() + ".",
                         true,
                         true
                 );
 
+                HashSet<String> importedFileNames = new HashSet<>(1);
+
                 for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
 
-                    // Verify that the spectrum is in the provided mgf files
-                    if (!importSpectrum(idFile, spectrumMatch, nMatches)) {
+                    String spectrumFile = spectrumMatch.getSpectrumFile();
+                    HashSet<String> titles = loadedSpectraMap.get(spectrumFile);
 
-                        allLoaded = false;
+                    if (titles == null) {
+
+                        waitingHandler.appendReport(
+                                "Spectrum file named \'" + spectrumFile + "\' required to parse \'" + IoUtil.getFileName(idFile) + "\' not found.",
+                                true,
+                                true
+                        );
+                        waitingHandler.setRunCanceled();
+                        return;
+
+                    }
+
+                    importedFileNames.add(spectrumFile);
+
+                    String spectrumTitle = spectrumMatch.getSpectrumTitle();
+                    if (!titles.contains(spectrumTitle)) {
+
+                        waitingHandler.appendReport(
+                                "Spectrum with title \'" + spectrumTitle + "\' in file named \'" + spectrumFile + "\' required to parse \'" + IoUtil.getFileName(idFile) + "\' not found.",
+                                true,
+                                true
+                        );
+                        waitingHandler.setRunCanceled();
+                        return;
 
                     }
 
@@ -613,439 +582,336 @@ public class FileImporter {
 
                 }
 
-                if (allLoaded) {
+                for (String spectrumFile : importedFileNames) {
 
-                    // if any map spectrum sequencing matches on protein sequences
-                    if (fileReader.hasDeNovoTags()) {
+                    projectDetails.addSpectrumFilePath(spectrumProvider.getFilePaths().get(spectrumFile));
+                    identification.addFraction(spectrumFile);
 
-                        waitingHandler.resetSecondaryProgressCounter();
-                        waitingHandler.setMaxSecondaryProgressCounter(nMatches);
-                        waitingHandler.appendReport(
-                                "Mapping tags to peptides.",
-                                true,
-                                true
-                        );
-                        tagMapper.mapTags(
-                                idFileSpectrumMatches,
-                                fastaMapper,
-                                waitingHandler
-                        );
-                    }
+                }
 
-                    waitingHandler.setMaxSecondaryProgressCounter(2 * nMatches);
+                // if any map spectrum sequencing matches on protein sequences
+                if (fileReader.hasDeNovoTags()) {
+
+                    waitingHandler.resetSecondaryProgressCounter();
+                    waitingHandler.setMaxSecondaryProgressCounter(nMatches);
                     waitingHandler.appendReport(
-                            "Importing PSMs from " + idFile.getName(),
+                            "Mapping tags to peptides.",
+                            true,
+                            true
+                    );
+                    tagMapper.mapTags(
+                            idFileSpectrumMatches,
+                            fastaMapper,
+                            waitingHandler
+                    );
+                }
+
+                waitingHandler.setMaxSecondaryProgressCounter(2 * nMatches);
+                waitingHandler.appendReport(
+                        "Importing PSMs from " + idFile.getName(),
+                        true,
+                        true
+                );
+
+                PsmImporter psmImporter = new PsmImporter();
+                psmImporter.importPsms(
+                        idFileSpectrumMatches,
+                        identification,
+                        identificationParameters,
+                        inputMap,
+                        fileReader,
+                        idFile,
+                        sequenceProvider,
+                        spectrumProvider,
+                        fastaMapper,
+                        processingParameters.getnThreads(),
+                        waitingHandler,
+                        exceptionHandler
+                );
+
+                if (waitingHandler.isRunCanceled()) {
+
+                    return;
+
+                }
+
+                for (Map.Entry<String, Integer> entry : psmImporter.getProteinCount().entrySet()) {
+
+                    String accession = entry.getKey();
+                    int fileCount = entry.getValue();
+                    Integer count = proteinCount.get(accession);
+
+                    if (count != null) {
+
+                        proteinCount.put(accession, count + fileCount);
+
+                    } else {
+
+                        proteinCount.put(accession, fileCount);
+
+                    }
+                }
+
+                nPSMs += psmImporter.getnPSMs();
+                nTotal += psmImporter.getnPeptideAssumptionsTotal();
+                nRetained += psmImporter.getnRetained();
+
+                metrics.addFoundCharges(psmImporter.getCharges());
+
+                if (psmImporter.getMaxPeptideErrorDa() > metrics.getMaxPeptidePrecursorErrorDa()) {
+
+                    metrics.setMaxPeptidePrecursorErrorDa(psmImporter.getMaxPeptideErrorDa());
+
+                }
+
+                if (psmImporter.getMaxPeptideErrorPpm() > metrics.getMaxPeptidePrecursorErrorPpm()) {
+
+                    metrics.setMaxPeptidePrecursorErrorPpm(psmImporter.getMaxPeptideErrorPpm());
+
+                }
+
+                if (psmImporter.getMaxTagErrorDa() > metrics.getMaxTagPrecursorErrorDa()) {
+
+                    metrics.setMaxTagPrecursorErrorDa(psmImporter.getMaxTagErrorDa());
+
+                }
+
+                if (psmImporter.getMaxTagErrorPpm() > metrics.getMaxTagPrecursorErrorPpm()) {
+
+                    metrics.setMaxTagPrecursorErrorPpm(psmImporter.getMaxTagErrorPpm());
+
+                }
+
+                projectDetails.addIdentificationFiles(idFile);
+
+                int psmsRejected = psmImporter.getPsmsRejected();
+                int noProteins = psmImporter.getMissingProteins();
+                int proteinIssue = psmImporter.getProteinIssue();
+                int peptideIssue = psmImporter.getPeptideIssue();
+                int precursorIssue = psmImporter.getPrecursorIssue();
+                int ptmIssue = psmImporter.getModificationIssue();
+                int totalAssumptionsRejected = noProteins + proteinIssue + peptideIssue + precursorIssue + ptmIssue;
+
+                double sharePsmsRejected = 100.0 * psmsRejected / nMatches;
+
+                if (psmsRejected > 0) {
+
+                    waitingHandler.appendReport(
+                            psmsRejected + " identified spectra (" + Util.roundDouble(sharePsmsRejected, 1) + "%) did not present a valid peptide.",
+                            true,
+                            true
+                    );
+                    waitingHandler.appendReport(
+                            totalAssumptionsRejected + " of the best scoring peptides were excluded by the import filters:",
                             true,
                             true
                     );
 
-                    PsmImporter psmImporter = new PsmImporter();
-                    psmImporter.importPsms(idFileSpectrumMatches,
-                            identification,
-                            identificationParameters,
-                            inputMap,
-                            fileReader,
-                            idFile,
-                            sequenceProvider,
-                            msFileHandler,
-                            fastaMapper,
-                            processingParameters.getnThreads(),
-                            waitingHandler,
-                            exceptionHandler
-                    );
+                    String padding = "    ";
+                    PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
 
-                    if (waitingHandler.isRunCanceled()) {
+                    double share = 100 * ((double) noProteins) / totalAssumptionsRejected;
 
-                        return;
-
-                    }
-
-                    for (Map.Entry<String, Integer> entry : psmImporter.getProteinCount().entrySet()) {
-
-                        String accession = entry.getKey();
-                        int fileCount = entry.getValue();
-                        Integer count = proteinCount.get(accession);
-
-                        if (count != null) {
-
-                            proteinCount.put(accession, count + fileCount);
-
-                        } else {
-
-                            proteinCount.put(accession, fileCount);
-
-                        }
-                    }
-
-                    nPSMs += psmImporter.getnPSMs();
-                    nTotal += psmImporter.getnPeptideAssumptionsTotal();
-                    nRetained += psmImporter.getnRetained();
-
-                    metrics.addFoundCharges(psmImporter.getCharges());
-
-                    if (psmImporter.getMaxPeptideErrorDa() > metrics.getMaxPeptidePrecursorErrorDa()) {
-
-                        metrics.setMaxPeptidePrecursorErrorDa(psmImporter.getMaxPeptideErrorDa());
-
-                    }
-
-                    if (psmImporter.getMaxPeptideErrorPpm() > metrics.getMaxPeptidePrecursorErrorPpm()) {
-
-                        metrics.setMaxPeptidePrecursorErrorPpm(psmImporter.getMaxPeptideErrorPpm());
-
-                    }
-
-                    if (psmImporter.getMaxTagErrorDa() > metrics.getMaxTagPrecursorErrorDa()) {
-
-                        metrics.setMaxTagPrecursorErrorDa(psmImporter.getMaxTagErrorDa());
-
-                    }
-
-                    if (psmImporter.getMaxTagErrorPpm() > metrics.getMaxTagPrecursorErrorPpm()) {
-
-                        metrics.setMaxTagPrecursorErrorPpm(psmImporter.getMaxTagErrorPpm());
-
-                    }
-
-                    projectDetails.addIdentificationFiles(idFile);
-
-                    int psmsRejected = psmImporter.getPsmsRejected();
-                    int noProteins = psmImporter.getMissingProteins();
-                    int proteinIssue = psmImporter.getProteinIssue();
-                    int peptideIssue = psmImporter.getPeptideIssue();
-                    int precursorIssue = psmImporter.getPrecursorIssue();
-                    int ptmIssue = psmImporter.getModificationIssue();
-                    int totalAssumptionsRejected = noProteins + proteinIssue + peptideIssue + precursorIssue + ptmIssue;
-
-                    double sharePsmsRejected = 100.0 * psmsRejected / nMatches;
-
-                    if (psmsRejected > 0) {
+                    if (share >= 1) {
 
                         waitingHandler.appendReport(
-                                psmsRejected + " identified spectra (" + Util.roundDouble(sharePsmsRejected, 1) + "%) did not present a valid peptide.",
+                                padding + "- " + Util.roundDouble(share, 1)
+                                + "% peptide not matching to the database.",
                                 true,
                                 true
                         );
+                    }
+
+                    share = 100 * ((double) proteinIssue) / totalAssumptionsRejected;
+
+                    if (share >= 1) {
+
                         waitingHandler.appendReport(
-                                totalAssumptionsRejected + " of the best scoring peptides were excluded by the import filters:",
+                                padding + "- " + Util.roundDouble(share, 1)
+                                + "% peptide mapping to both target and decoy.",
                                 true,
                                 true
                         );
+                    }
 
-                        String padding = "    ";
-                        PeptideAssumptionFilter idFilter = identificationParameters.getPeptideAssumptionFilter();
+                    share = 100 * ((double) peptideIssue) / totalAssumptionsRejected;
 
-                        double share = 100 * ((double) noProteins) / totalAssumptionsRejected;
+                    if (share >= 1) {
 
-                        if (share >= 1) {
+                        if (identificationParameters.getPeptideAssumptionFilter().getMinMissedCleavages() != null
+                                || identificationParameters.getPeptideAssumptionFilter().getMaxMissedCleavages() != null) {
 
-                            waitingHandler.appendReport(
-                                    padding + "- " + Util.roundDouble(share, 1)
-                                    + "% peptide not matching to the database.",
-                                    true,
-                                    true
-                            );
-                        }
+                            Integer minMissedCleavages = idFilter.getMinMissedCleavages();
+                            Integer maxMissedCleavages = idFilter.getMaxMissedCleavages();
 
-                        share = 100 * ((double) proteinIssue) / totalAssumptionsRejected;
+                            if (minMissedCleavages == null) {
 
-                        if (share >= 1) {
+                                minMissedCleavages = 0;
 
-                            waitingHandler.appendReport(
-                                    padding + "- " + Util.roundDouble(share, 1)
-                                    + "% peptide mapping to both target and decoy.",
-                                    true,
-                                    true
-                            );
-                        }
+                            }
 
-                        share = 100 * ((double) peptideIssue) / totalAssumptionsRejected;
+                            if (maxMissedCleavages != null) {
 
-                        if (share >= 1) {
-
-                            if (identificationParameters.getPeptideAssumptionFilter().getMinMissedCleavages() != null
-                                    || identificationParameters.getPeptideAssumptionFilter().getMaxMissedCleavages() != null) {
-
-                                Integer minMissedCleavages = idFilter.getMinMissedCleavages();
-                                Integer maxMissedCleavages = idFilter.getMaxMissedCleavages();
-
-                                if (minMissedCleavages == null) {
-
-                                    minMissedCleavages = 0;
-
-                                }
-
-                                if (maxMissedCleavages != null) {
-
-                                    waitingHandler.appendReport(
-                                            padding + "- " + Util.roundDouble(share, 1)
-                                            + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ",",
-                                            true,
-                                            true
-                                    );
-                                    waitingHandler.appendReport(
-                                            padding + "    or number of missed cleavage sites outside of the range [" + minMissedCleavages + "-" + maxMissedCleavages + "].",
-                                            true,
-                                            true
-                                    );
-
-                                } else {
-
-                                    waitingHandler.appendReport(
-                                            padding + "- " + Util.roundDouble(share, 1)
-                                            + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ",",
-                                            true,
-                                            true
-                                    );
-                                    waitingHandler.appendReport(
-                                            padding + "    or number of missed cleavage sites lower than " + minMissedCleavages + ".",
-                                            true,
-                                            true
-                                    );
-                                }
+                                waitingHandler.appendReport(
+                                        padding + "- " + Util.roundDouble(share, 1)
+                                        + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ",",
+                                        true,
+                                        true
+                                );
+                                waitingHandler.appendReport(
+                                        padding + "    or number of missed cleavage sites outside of the range [" + minMissedCleavages + "-" + maxMissedCleavages + "].",
+                                        true,
+                                        true
+                                );
 
                             } else {
 
                                 waitingHandler.appendReport(
                                         padding + "- " + Util.roundDouble(share, 1)
-                                        + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ".",
+                                        + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ",",
+                                        true,
+                                        true
+                                );
+                                waitingHandler.appendReport(
+                                        padding + "    or number of missed cleavage sites lower than " + minMissedCleavages + ".",
                                         true,
                                         true
                                 );
                             }
-                        }
 
-                        share = 100 * ((double) precursorIssue) / totalAssumptionsRejected;
-
-                        if (share >= 1) {
+                        } else {
 
                             waitingHandler.appendReport(
                                     padding + "- " + Util.roundDouble(share, 1)
-                                    + "% peptide presenting high mass or isotopic deviation.",
-                                    true,
-                                    true
-                            );
-                        }
-
-                        share = 100 * ((double) ptmIssue) / totalAssumptionsRejected;
-
-                        if (share >= 1) {
-
-                            waitingHandler.appendReport(
-                                    padding + "- " + Util.roundDouble(share, 1) + "% unrecognized modifications.",
+                                    + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ".",
                                     true,
                                     true
                             );
                         }
                     }
 
-                    // inform the user in case search engine results could not be mapped to the database
-                    boolean allSearchEngines = true;
+                    share = 100 * ((double) precursorIssue) / totalAssumptionsRejected;
 
-                    for (String advocateName : software.keySet()) {
-
-                        Advocate advocate = Advocate.getAdvocate(advocateName);
-
-                        if (advocate.getType() != Advocate.AdvocateType.search_engine) {
-
-                            allSearchEngines = false;
-                            break;
-
-                        }
-                    }
-
-                    if (allSearchEngines && noProteins > 0) {
-
-                        String report = "Some peptides could not be mapped to the database. Please verify the following:" + System.getProperty("line.separator");
-
-                        if (software.keySet().contains(Advocate.mascot.getName())) {
-
-                            report += "- Make sure that Mascot was not used using the 'decoy' option.";
-
-                        }
-
-                        report += "- The protein sequence database must be the same or contain the database used for the search." + System.getProperty("line.separator")
-                                + "- When using the 'REVERSED' tag, decoy sequences must be reversed versions of the target sequences, use the 'DECOY' tag otherwise." + System.getProperty("line.separator")
-                                + "- When using in house databases make sure that the format is recognized by search engines and PeptideShaker (more details at https://compomics.github.io/projects/searchgui/wiki/databasehelp.html)." + System.getProperty("line.separator")
-                                + "The problematic spectra can be inspected in the Spectrum ID tab. In case of doubt please contact the developers.";
+                    if (share >= 1) {
 
                         waitingHandler.appendReport(
-                                report,
+                                padding + "- " + Util.roundDouble(share, 1)
+                                + "% peptide presenting high mass or isotopic deviation.",
                                 true,
                                 true
                         );
-
                     }
 
-                    // inform the user in case more than 75% of the hits were rejected by the filters
-                    if (sharePsmsRejected > 75) {
+                    share = 100 * ((double) ptmIssue) / totalAssumptionsRejected;
 
-                        String report = "Warning: More than 75% of the PSMs did not pass the import filters." + System.getProperty("line.separator");
-                        double meanRejected = sharePsmsRejected / 4;
-
-                        if (!allSearchEngines && noProteins > meanRejected) {
-
-                            report += " PeptideShaker did not manage to map most peptides to the database. Please verify your database." + System.getProperty("line.separator");
-
-                        }
-
-                        if (proteinIssue > meanRejected) {
-
-                            report += " Apparently your database contains a high degree of shared peptides between the target and decoy sequences. Please verify your database";
-
-                            if (software.keySet().contains(Advocate.mascot.getName())) {
-
-                                report += " and make sure that you use Mascot with the 'decoy' option disabled.";
-
-                            }
-
-                            report += "." + System.getProperty("line.separator");
-
-                        }
-
-                        if (peptideIssue > meanRejected) {
-
-                            report += " Please verify that your peptide selection criteria are not too restrictive." + System.getProperty("line.separator");
-
-                        }
-
-                        if (precursorIssue > meanRejected) {
-
-                            report += " Please verify that your precursor selection criteria are not too restrictive." + System.getProperty("line.separator");
-
-                        }
-
-                        if (ptmIssue > meanRejected) {
-
-                            report += " Apparently your data contains modifications which are not recognized by PeptideShaker. Please verify the search parameters provided when creating the project." + System.getProperty("line.separator");
-
-                            if (software.keySet().contains(Advocate.mascot.getName())) {
-
-                                report += " When using Mascot alone, you need to specify the search parameters manually when creating the project. We recommend the complementary use of SearchGUI when possible." + System.getProperty("line.separator");
-
-                            }
-                        }
+                    if (share >= 1) {
 
                         waitingHandler.appendReport(
-                                report,
+                                padding + "- " + Util.roundDouble(share, 1) + "% unrecognized modifications.",
                                 true,
                                 true
                         );
                     }
                 }
-            }
-        }
 
-        waitingHandler.increasePrimaryProgressCounter();
-    }
+                // inform the user in case search engine results could not be mapped to the database
+                boolean allSearchEngines = true;
 
-    /**
-     * Checks whether the spectrum file needed for the given spectrum match is
-     * loaded and if the spectrum is present.
-     *
-     * @param idFile the identification file
-     * @param spectrumMatch the spectrum match
-     * @param numberOfMatches the number of matches expected for this
-     * identification file
-     *
-     * @return indicates whether the spectrum is imported, false if the file was
-     * not found
-     */
-    private boolean importSpectrum(
-            File idFile,
-            SpectrumMatch spectrumMatch,
-            int numberOfMatches
-    ) {
+                for (String advocateName : software.keySet()) {
 
-        String spectrumFileName = spectrumMatch.getSpectrumFile();
-        String spectrumFilePath = msFileHandler.getFilePaths().get(spectrumFileName);
+                    Advocate advocate = Advocate.getAdvocate(advocateName);
 
-        // remap wrong spectrum file names
-        if (spectrumFilePath != null) {
+                    if (advocate.getType() != Advocate.AdvocateType.search_engine) {
 
-            spectrumMatch.setSpectrumFile(
-                    IoUtil.getFileName(spectrumFilePath)
-            );
+                        allSearchEngines = false;
+                        break;
 
-        }
+                    }
+                }
 
-        // import the spectrum file file if not done already
-        if (!spectrumFileUsed.contains(spectrumFileName)) {
+                if (allSearchEngines && noProteins > 0) {
 
-            File spectrumFile = spectrumFiles.get(spectrumFileName);
+                    String report = "Some peptides could not be mapped to the database. Please verify the following:" + System.getProperty("line.separator");
 
-            if (spectrumFile != null && spectrumFile.exists()) {
+                    if (software.keySet().contains(Advocate.mascot.getName())) {
 
-                importSpectra(spectrumFileName);
-                waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-                waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
+                        report += "- Make sure that Mascot was not used using the 'decoy' option.";
 
-            } else {
+                    }
 
-                if (!missingSpectrumFiles.containsKey(idFile)) {
+                    report += "- The protein sequence database must be the same or contain the database used for the search." + System.getProperty("line.separator")
+                            + "- When using the 'REVERSED' tag, decoy sequences must be reversed versions of the target sequences, use the 'DECOY' tag otherwise." + System.getProperty("line.separator")
+                            + "- When using in house databases make sure that the format is recognized by search engines and PeptideShaker (more details at https://compomics.github.io/projects/searchgui/wiki/databasehelp.html)." + System.getProperty("line.separator")
+                            + "The problematic spectra can be inspected in the Spectrum ID tab. In case of doubt please contact the developers.";
 
-                    missingSpectrumFiles.put(idFile, spectrumFileName);
                     waitingHandler.appendReport(
-                            spectrumFileName + " not found.",
+                            report,
                             true,
                             true
                     );
 
                 }
 
-                return false;
+                // inform the user in case more than 75% of the hits were rejected by the filters
+                if (sharePsmsRejected > 75) {
 
+                    String report = "Warning: More than 75% of the PSMs did not pass the import filters." + System.getProperty("line.separator");
+                    double meanRejected = sharePsmsRejected / 4;
+
+                    if (!allSearchEngines && noProteins > meanRejected) {
+
+                        report += " PeptideShaker did not manage to map most peptides to the database. Please verify your database." + System.getProperty("line.separator");
+
+                    }
+
+                    if (proteinIssue > meanRejected) {
+
+                        report += " Apparently your database contains a high degree of shared peptides between the target and decoy sequences. Please verify your database";
+
+                        if (software.keySet().contains(Advocate.mascot.getName())) {
+
+                            report += " and make sure that you use Mascot with the 'decoy' option disabled.";
+
+                        }
+
+                        report += "." + System.getProperty("line.separator");
+
+                    }
+
+                    if (peptideIssue > meanRejected) {
+
+                        report += " Please verify that your peptide selection criteria are not too restrictive." + System.getProperty("line.separator");
+
+                    }
+
+                    if (precursorIssue > meanRejected) {
+
+                        report += " Please verify that your precursor selection criteria are not too restrictive." + System.getProperty("line.separator");
+
+                    }
+
+                    if (ptmIssue > meanRejected) {
+
+                        report += " Apparently your data contains modifications which are not recognized by PeptideShaker. Please verify the search parameters provided when creating the project." + System.getProperty("line.separator");
+
+                        if (software.keySet().contains(Advocate.mascot.getName())) {
+
+                            report += " When using Mascot alone, you need to specify the search parameters manually when creating the project. We recommend the complementary use of SearchGUI when possible." + System.getProperty("line.separator");
+
+                        }
+                    }
+
+                    waitingHandler.appendReport(
+                            report,
+                            true,
+                            true
+                    );
+                }
             }
         }
 
-        return true;
+        waitingHandler.increasePrimaryProgressCounter();
 
-    }
-
-    /**
-     * Verify that the spectra are imported and imports spectra from the
-     * corresponding file if necessary.
-     *
-     * @param targetFileName the spectrum file
-     */
-    public void importSpectra(
-            String targetFileName
-    ) {
-
-        File spectrumFile = spectrumFiles.get(targetFileName);
-
-        try {
-
-            waitingHandler.appendReport("Importing " + targetFileName, true, true);
-            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-            waitingHandler.resetSecondaryProgressCounter();
-            msFileHandler.register(spectrumFile);
-            spectrumFileUsed.add(spectrumFile.getName());
-            nSpectra += msFileHandler.getSpectrumTitles(spectrumFile.getName()).length;
-            projectDetails.addSpectrumFile(spectrumFile);
-            identification.addFraction(spectrumFile.getName());
-
-            // @TODO: check for duplicate spectrum titles and show the warning in the lower right corner of the main frame
-            if (waitingHandler.isRunCanceled()) {
-
-                return;
-
-            }
-
-            waitingHandler.resetSecondaryProgressCounter();
-            waitingHandler.increasePrimaryProgressCounter();
-            waitingHandler.appendReport(targetFileName + " imported.", true, true);
-
-        } catch (Exception e) {
-
-            waitingHandler.appendReport(
-                    "Spectrum files import failed when trying to import " + targetFileName + ".",
-                    true,
-                    true
-            );
-            e.printStackTrace();
-
-        }
     }
 
     /**

@@ -9,7 +9,6 @@ import com.compomics.util.experiment.biology.ions.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.IonFactory;
 import com.compomics.util.experiment.biology.aminoacids.AminoAcid;
 import com.compomics.util.experiment.biology.proteins.Peptide;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Peak;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.modifications.Modification;
@@ -19,7 +18,7 @@ import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssu
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import eu.isas.peptideshaker.gui.filtering.FiltersDialog;
 import com.compomics.util.gui.error_handlers.notification.NotificationDialogParent;
-import eu.isas.peptideshaker.gui.export.FeaturesPreferencesDialog;
+import eu.isas.peptideshaker.gui.export.FeaturesExportDialog;
 import eu.isas.peptideshaker.gui.export.FollowupPreferencesDialog;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.software.CompomicsWrapper;
@@ -2774,7 +2773,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void identificationFeaturesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificationFeaturesMenuItemActionPerformed
 
-        new FeaturesPreferencesDialog(this);
+        new FeaturesExportDialog(this);
 
     }//GEN-LAST:event_identificationFeaturesMenuItemActionPerformed
 
@@ -6623,7 +6622,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     ProjectDetails projectParameters = cpsParent.getProjectDetails();
                     Set<String> fileNames = getProjectDetails().getSpectrumFileNames();
                     ArrayList<File> mgfFiles = fileNames.stream()
-                            .map(projectParameters::getSpectrumFile)
+                            .map(projectParameters::getSpectrumFilePath)
                             .collect(Collectors.toCollection(ArrayList::new));
                     int cpt = 0, total = fileNames.size();
 

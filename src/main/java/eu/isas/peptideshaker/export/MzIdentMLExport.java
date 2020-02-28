@@ -3254,17 +3254,18 @@ public class MzIdentMLExport {
         bw.newLine();
 
         // add the spectra location
-        for (String mgfFileName : spectrumProvider.getFileNames()) {
+        for (String spectrumFileName : spectrumProvider.getFileNames()) {
 
-            File mgfFile = projectDetails.getSpectrumFile(mgfFileName);
+            String spectrumFilePath = projectDetails.getSpectrumFilePath(spectrumFileName);
+            File spectrumFile = new File(spectrumFilePath);
 
             bw.write(getCurrentTabSpace());
             bw.write("<SpectraData location=\"");
-            bw.write(mgfFile.toURI().toString());
+            bw.write(spectrumFile.toURI().toString());
             bw.write("\" id=\"");
-            bw.write(mgfFileName);
+            bw.write(spectrumFileName);
             bw.write("\" name=\"");
-            bw.write(mgfFile.getName());
+            bw.write(spectrumFile.getName());
             bw.write("\">");
             bw.newLine();
             tabCounter++;

@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.export;
 
 import com.compomics.util.gui.file_handling.FileAndFileFilter;
-import com.compomics.util.Util;
 import com.compomics.util.gui.export.report.ReportEditor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.file_handling.FileChooserUtils;
@@ -25,7 +24,7 @@ import javax.swing.table.DefaultTableModel;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class FeaturesPreferencesDialog extends javax.swing.JDialog {
+public class FeaturesExportDialog extends javax.swing.JDialog {
 
     /**
      * PeptideShaker main GUI.
@@ -49,7 +48,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      *
      * @param peptideShakerGUI the PeptideShaker GUI parent
      */
-    public FeaturesPreferencesDialog(PeptideShakerGUI peptideShakerGUI) {
+    public FeaturesExportDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();

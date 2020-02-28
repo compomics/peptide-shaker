@@ -359,7 +359,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
 
         for (String spectrumFileName : projectDetails.getSpectrumFileNames()) {
 
-            File providedSpectrumLocation = projectDetails.getSpectrumFile(spectrumFileName);
+            File providedSpectrumLocation = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
             File projectFolder = cpsFile.getParentFile();
             File dataFolder = new File(projectFolder, "data");
 
@@ -372,15 +372,21 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
 
                 if (fileInProjectFolder.exists()) {
 
-                    projectDetails.addSpectrumFile(fileInProjectFolder);
+                    projectDetails.addSpectrumFilePath(
+                            fileInProjectFolder.getAbsolutePath()
+                    );
 
                 } else if (fileInDataFolder.exists()) {
 
-                    projectDetails.addSpectrumFile(fileInDataFolder);
+                    projectDetails.addSpectrumFilePath(
+                            fileInDataFolder.getAbsolutePath()
+                    );
 
                 } else if (fileInGivenFolder.exists()) {
 
-                    projectDetails.addSpectrumFile(fileInDataFolder);
+                    projectDetails.addSpectrumFilePath(
+                            fileInDataFolder.getAbsolutePath()
+                    );
 
                 } else {
 
@@ -389,7 +395,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
                 }
             }
 
-            File spectrumFile = projectDetails.getSpectrumFile(spectrumFileName);
+            File spectrumFile = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
             msFileHandler.register(spectrumFile);
 
         }
@@ -416,7 +422,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
             WaitingHandler waitingHandler
     ) throws IOException {
 
-        File providedSpectrumLocation = projectDetails.getSpectrumFile(spectrumFileName);
+        File providedSpectrumLocation = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
         File projectFolder = cpsFile.getParentFile();
         File dataFolder = new File(projectFolder, "data");
 
@@ -428,11 +434,15 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
 
             if (fileInProjectFolder.exists()) {
 
-                projectDetails.addSpectrumFile(fileInProjectFolder);
+                projectDetails.addSpectrumFilePath(
+                        fileInProjectFolder.getAbsolutePath()
+                );
 
             } else if (fileInDataFolder.exists()) {
 
-                projectDetails.addSpectrumFile(fileInDataFolder);
+                projectDetails.addSpectrumFilePath(
+                        fileInDataFolder.getAbsolutePath()
+                );
 
             } else {
 
@@ -441,7 +451,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
             }
         }
 
-        File spectrumFile = projectDetails.getSpectrumFile(spectrumFileName);
+        File spectrumFile = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
         msFileHandler.register(spectrumFile);
         spectrumFiles.add(spectrumFile);
 
@@ -460,8 +470,10 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
             File spectrumFile
     ) throws IOException {
 
-        projectDetails.addSpectrumFile(spectrumFile);
-        msFileHandler.register(spectrumFile); 
+        projectDetails.addSpectrumFilePath(
+                spectrumFile.getAbsolutePath()
+        );
+        msFileHandler.register(spectrumFile);
 
     }
 
@@ -1015,9 +1027,12 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
 
             report.append("<br><b>Spectrum Files:</b><br>");
 
-            for (String mgfFileNames : projectDetails.getSpectrumFileNames()) {
+            for (String spectrumFileNames : projectDetails.getSpectrumFileNames()) {
 
-                report.append(projectDetails.getSpectrumFile(mgfFileNames).getAbsolutePath()).append("<br>");
+                report.append(
+                        projectDetails.getSpectrumFilePath(spectrumFileNames)
+                )
+                        .append("<br>");
 
             }
 

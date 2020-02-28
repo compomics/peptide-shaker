@@ -169,13 +169,12 @@ public class ProjectDetails extends DbObject {
     /**
      * Attaches a spectrum file to the project.
      *
-     * @param spectrumFile the spectrum file to add
+     * @param spectrumFilePath the spectrum file to add
      */
-    public void addSpectrumFile(File spectrumFile) {
+    public void addSpectrumFilePath(String spectrumFilePath) {
         writeDBMode();
-        String path = spectrumFile.getAbsolutePath();
-        String fileName = IoUtil.getFileName(path);
-        spectrumFiles.put(fileName, path);
+        String fileName = IoUtil.getFileName(spectrumFilePath);
+        spectrumFiles.put(fileName, spectrumFilePath);
     }
 
     /**
@@ -191,16 +190,16 @@ public class ProjectDetails extends DbObject {
     }
 
     /**
-     * Returns the file corresponding to the given name.
+     * Returns the path to the file corresponding to the given name. Null if not found.
      *
      * @param fileName the name of the desired file
      *
      * @return the corresponding file, null if not found.
      */
-    public File getSpectrumFile(String fileName) {
+    public String getSpectrumFilePath(String fileName) {
 
         readDBMode();
-        return new File(spectrumFiles.get(fileName));
+        return spectrumFiles.get(fileName);
 
     }
 

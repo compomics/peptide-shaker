@@ -2516,13 +2516,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     showSparkLines(peptideShakerGUI.showSparklines());
                     progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
-                    ArrayList<String> spectrumFileNames = identification.getFractions();
-                    String[] filesArray = new String[spectrumFileNames.size()];
-                    int cpt = 0;
-
-                    for (String tempName : spectrumFileNames) {
-                        filesArray[cpt++] = tempName;
-                    }
+                    String[] filesArray = identification.getFractions()
+                            .toArray(new String[identification.getFractions().size()]);
                     fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
 
                     // update the slider tooltips
