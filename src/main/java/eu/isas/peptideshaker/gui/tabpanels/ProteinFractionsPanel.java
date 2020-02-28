@@ -24,7 +24,7 @@ import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanelParent;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
-import com.compomics.util.gui.file_handling.FileChooserUtils;
+import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportScheme;
@@ -1823,7 +1823,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             String excelFileFilterDescription = "Excel Workbook (.xls)";
             String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
 
-            FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(
+            FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(
                     this, 
                     new String[]{".xls", ".txt", ".gz"},
                     new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription}, 

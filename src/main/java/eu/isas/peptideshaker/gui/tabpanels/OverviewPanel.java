@@ -54,7 +54,7 @@ import com.compomics.util.experiment.identification.validation.MatchValidationLe
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.SpectrumUtil;
-import com.compomics.util.gui.file_handling.FileChooserUtils;
+import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportScheme;
@@ -6187,7 +6187,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     break;
             }
 
-            FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(
+            FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(
                     this,
                     new String[]{".xls", ".txt", ".gz"},
                     new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription},

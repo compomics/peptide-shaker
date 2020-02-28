@@ -13,7 +13,7 @@ import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
-import com.compomics.util.gui.file_handling.FileChooserUtils;
+import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.UtilitiesUserParameters;
@@ -502,7 +502,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
         
-        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(
                 this, 
                 new String[]{".psdb", ".zip"},
                 new String[]{cpsFileFilterDescription, zipFileFilterDescription}, 
@@ -1053,7 +1053,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         if (installPath == null) {
             installPath = "user.home";
-            downloadFolder = FileChooserUtils.getUserSelectedFolder(
+            downloadFolder = FileChooserUtil.getUserSelectedFolder(
                     this, 
                     "Select SearchGUI Folder", 
                     installPath, 

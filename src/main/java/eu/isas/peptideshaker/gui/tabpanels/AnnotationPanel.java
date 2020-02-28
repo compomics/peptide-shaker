@@ -6,7 +6,7 @@ import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
-import com.compomics.util.gui.file_handling.FileChooserUtils;
+import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportFormat;
@@ -1143,7 +1143,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                     String gzipFileFilterDescription = "Gzipped tab separated text file (.gz)";
                     String excelFileFilterDescription = "Excel Workbook (.xls)";
                     String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-                    FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".xls", ".txt", ".gz"},
+                    FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(this, new String[]{".xls", ".txt", ".gz"},
                             new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription}, "Export Report", lastSelectedFolderPath, "All Validated Proteins", false, true, false, 1);
 
                     if (selectedFileAndFilter != null) {

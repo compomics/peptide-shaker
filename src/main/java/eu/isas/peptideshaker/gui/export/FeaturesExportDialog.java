@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui.export;
 import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.gui.export.report.ReportEditor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
-import com.compomics.util.gui.file_handling.FileChooserUtils;
+import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportFormat;
 import eu.isas.peptideshaker.export.PSExportFactory;
@@ -13,13 +13,12 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * Dialog for exporting protein, peptide, PSMs and search engine features.
+ * Dialog for exporting identification features.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -511,7 +510,7 @@ public class FeaturesExportDialog extends javax.swing.JDialog {
         String excelFileFilterDescription = "Excel Workbook (.xls)";
         String[] fileFiltersDescriptionsOptions = new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription};
         
-        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(
                 this, 
                 extensionsOptions,
                 fileFiltersDescriptionsOptions, 
@@ -547,10 +546,13 @@ public class FeaturesExportDialog extends javax.swing.JDialog {
 
             }
 
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+            progressDialog = new ProgressDialogX(
+                    this, 
+                    peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
+                    true
+            );
             progressDialog.setTitle("Exporting Report. Please Wait...");
 
             final String filePath = selectedFile.getPath();
@@ -589,6 +591,7 @@ public class FeaturesExportDialog extends javax.swing.JDialog {
                                 peptideShakerGUI.getIdentificationParameters(),
                                 peptideShakerGUI.getSequenceProvider(), 
                                 peptideShakerGUI.getProteinDetailsProvider(), 
+                                peptideShakerGUI.getSpectrumProvider(), 
                                 peptideShakerGUI.getSpectrumCountingParameters(), 
                                 progressDialog
                         );
@@ -599,12 +602,6 @@ public class FeaturesExportDialog extends javax.swing.JDialog {
                         if (!processCancelled) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
-                    } catch (FileNotFoundException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "An error occurred while generating the output. Please make sure "
-                                + "that the destination file is not opened by another application.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
                     } catch (IllegalArgumentException e) {
                         if (e.getMessage().contains("Invalid row number (65536)")) {
                             progressDialog.setRunFinished();
@@ -636,7 +633,7 @@ public class FeaturesExportDialog extends javax.swing.JDialog {
         String textFileFilterDescription = "Tab separated text file (.txt)";
         String excelFileFilterDescription = "Excel Workbook (.xls)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".txt", ".xls"},
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(this, new String[]{".txt", ".xls"},
                 new String[]{textFileFilterDescription, excelFileFilterDescription}, "Export Report", lastSelectedFolderPath, schemeName + "_documentation", false, true, false, 0);
 
         if (selectedFileAndFilter != null) {

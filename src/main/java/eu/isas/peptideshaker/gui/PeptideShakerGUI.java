@@ -19,7 +19,7 @@ import com.compomics.util.experiment.identification.spectrum_assumptions.Peptide
 import eu.isas.peptideshaker.gui.filtering.FiltersDialog;
 import com.compomics.util.gui.error_handlers.notification.NotificationDialogParent;
 import eu.isas.peptideshaker.gui.export.FeaturesExportDialog;
-import eu.isas.peptideshaker.gui.export.FollowupPreferencesDialog;
+import eu.isas.peptideshaker.gui.export.FollowUpExportDialog;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
@@ -112,7 +112,7 @@ import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.mass_spectrometry.mgf.MgfFileWriter;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
-import com.compomics.util.gui.file_handling.FileChooserUtils;
+import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.gui.parameters.SparklineColorsDialog;
 import com.compomics.util.gui.parameters.identification.advanced.BackgroundSpeciesDialog;
 import com.compomics.util.io.IoUtil;
@@ -2682,7 +2682,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         String cpsFileFilterDescription = "PeptideShaker (.psdb)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
-        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(
                 this,
                 new String[]{".psdb", ".zip"},
                 new String[]{cpsFileFilterDescription, zipFileFilterDescription},
@@ -2784,7 +2784,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void followUpAnalysisMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followUpAnalysisMenuItemActionPerformed
 
-        new FollowupPreferencesDialog(this);
+        new FollowUpExportDialog(this);
 
     }//GEN-LAST:event_followUpAnalysisMenuItemActionPerformed
 
@@ -7778,7 +7778,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             boolean openDialog
     ) {
 
-        File selectedFile = FileChooserUtils.getUserSelectedFile(
+        File selectedFile = FileChooserUtil.getUserSelectedFile(
                 this,
                 aFileEnding,
                 aFileFormatDescription,

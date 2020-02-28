@@ -6,7 +6,7 @@ import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.identification.MzIdentMLVersion;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.error_handlers.HelpDialog;
-import com.compomics.util.gui.file_handling.FileChooserUtils;
+import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.file.LastSelectedFolder;
@@ -572,7 +572,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
         }
 
-        FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(this, new String[]{".mzid.gzip", ".mzid.gzip"},
+        FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(this, new String[]{".mzid.gzip", ".mzid.gzip"},
                 versionsDescriptions, "Select Export File",
                 folder, peptideShakerGUI.getProjectParameters().getProjectUniqueName(), false, true, false, defaultFilterIndex);
 

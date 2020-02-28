@@ -34,7 +34,7 @@ import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
-import com.compomics.util.gui.file_handling.FileChooserUtils;
+import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportScheme;
@@ -3328,7 +3328,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     break;
             }
 
-            FileAndFileFilter selectedFileAndFilter = FileChooserUtils.getUserSelectedFile(
+            FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(
                     this,
                     new String[]{".xls", ".txt", ".gz"},
                     new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription},
