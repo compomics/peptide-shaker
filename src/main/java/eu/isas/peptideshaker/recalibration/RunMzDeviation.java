@@ -255,15 +255,15 @@ public class RunMzDeviation {
             double precursorRT,
             double[] originalMz
     ) {
-        
+
         double[] result = new double[originalMz.length];
-        
-        for (int i = 0 ; i < originalMz.length ; i++) {
-            
+
+        for (int i = 0; i < originalMz.length; i++) {
+
             double mz = originalMz[i];
             double correction = getFragmentMzError(precursorRT, mz);
             result[i] = mz - correction;
-            
+
         }
 
         return result;
@@ -547,7 +547,7 @@ public class RunMzDeviation {
                 precursorSlopes.put(rtRef, slope);
                 precursorOffsets.put(rtRef, offset);
 
-                fragmentsRtDeviations.put(rtRef, new HashMap<>());
+                fragmentsRtDeviations.put(rtRef, new TreeMap<>());
                 mzToErrorMap = new TreeMap<>();
 
                 for (HashMap<Double, ArrayList<Double>> errors : fragmentTempMap.values()) {
@@ -779,8 +779,8 @@ public class RunMzDeviation {
                 return;
             }
 
-            fragmentsRtDeviations.put(rtRef, new HashMap<>());
-            
+            fragmentsRtDeviations.put(rtRef, new TreeMap<>());
+
             mz1 = new ArrayList<>();
             mz2 = new ArrayList<>();
             err1 = new ArrayList<>();
@@ -794,9 +794,9 @@ public class RunMzDeviation {
 
                 mz1.add(entry.getKey());
                 err1.addAll(entry.getValue());
-                
+
                 if (err1.size() >= mzBinSize) {
-                
+
                     double mzRef = BasicMathFunctions.median(mz1);
                     double error = BasicMathFunctions.median(err1);
                     fragmentsRtDeviations.get(rtRef).put(mzRef, error);
@@ -804,7 +804,7 @@ public class RunMzDeviation {
                     err2.addAll(err1);
                     mz1.clear();
                     err1.clear();
-                    
+
                 }
             }
 
@@ -813,15 +813,15 @@ public class RunMzDeviation {
             }
 
             if (!mz1.isEmpty()) {
-                
+
                 TreeMap<Double, Double> rtDeviationAtRtRef = fragmentsRtDeviations.get(rtRef);
-                
+
                 mz1.addAll(mz2);
                 err1.addAll(err2);
                 double mzRef = BasicMathFunctions.median(mz1);
                 double error = BasicMathFunctions.median(err1);
                 rtDeviationAtRtRef.put(mzRef, error);
-                
+
             }
         }
 
@@ -831,6 +831,6 @@ public class RunMzDeviation {
 
         precursorRTList = new ArrayList<>(precursorSlopes.keySet());
         Collections.sort(precursorRTList);
-        
+
     }
 }
