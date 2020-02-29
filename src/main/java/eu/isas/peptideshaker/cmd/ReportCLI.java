@@ -83,54 +83,88 @@ public class ReportCLI extends CpsParent {
         String inputFilePath = null;
 
         try {
+
             if (reportCLIInputBean.getZipFile() != null) {
+
                 inputFilePath = reportCLIInputBean.getZipFile().getAbsolutePath();
                 loadCpsFromZipFile(reportCLIInputBean.getZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
+
             } else if (reportCLIInputBean.getCpsFile() != null) {
+
                 inputFilePath = reportCLIInputBean.getCpsFile().getAbsolutePath();
                 cpsFile = reportCLIInputBean.getCpsFile();
                 loadCpsFile(PeptideShaker.getMatchesFolder(), waitingHandler);
+
             } else {
+
                 waitingHandler.appendReport("PeptideShaker project input missing.", true, true);
                 return 1;
+
             }
+
         } catch (IOException e) {
+
             waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
             e.printStackTrace();
+
             try {
+
                 PeptideShakerCLI.closePeptideShaker(identification);
+
             } catch (Exception e2) {
                 // Ignore
             }
+
             return 1;
+
         }
 
         // load the spectrum files
         try {
+            
             if (!loadSpectrumFiles(waitingHandler)) {
+
                 if (identification.getFractions().size() > 1) {
+
                     waitingHandler.appendReport("The spectrum files were not found. Please provide their location in the command line parameters.", true, true);
+
                 } else {
+
                     waitingHandler.appendReport("The spectrum file was not found. Please provide its location in the command line parameters.", true, true);
+
                 }
                 try {
+
                     PeptideShakerCLI.closePeptideShaker(identification);
+
                 } catch (Exception e2) {
+
                     waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
                     e2.printStackTrace();
+
                 }
+
                 return 1;
+
             }
         } catch (Exception e) {
+
             waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
             e.printStackTrace();
+
             try {
+
                 PeptideShakerCLI.closePeptideShaker(identification);
+
             } catch (Exception e2) {
+
                 waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
                 e2.printStackTrace();
+
             }
+
             return 1;
+
         }
 
         // If not available on the computer, parse summary information about the fasta file
@@ -155,45 +189,69 @@ public class ReportCLI extends CpsParent {
 
         // export report(s)
         if (reportCLIInputBean.exportNeeded()) {
-            int nSurroundingAAs = 2; //@TODO: this shall not be hard coded
+            
+            int nSurroundingAAs = 2; //@TODO: this should not be hard coded
+            
             for (String reportType : reportCLIInputBean.getReportTypes()) {
+                
                 try {
+                    
                     CLIExportMethods.exportReport(
-                            reportCLIInputBean, 
-                            reportType, 
-                            projectParameters.getProjectUniqueName(), 
-                            projectDetails, 
-                            identification, 
-                            geneMaps, 
-                            identificationFeaturesGenerator, 
-                            identificationParameters, 
-                            sequenceProvider, 
-                            proteinDetailsProvider, 
-                            nSurroundingAAs, 
-                            spectrumCountingParameters, 
+                            reportCLIInputBean,
+                            reportType,
+                            projectParameters.getProjectUniqueName(),
+                            projectDetails,
+                            identification,
+                            geneMaps,
+                            identificationFeaturesGenerator,
+                            identificationParameters,
+                            sequenceProvider,
+                            proteinDetailsProvider,
+                            msFileHandler,
+                            nSurroundingAAs,
+                            spectrumCountingParameters,
                             waitingHandler
                     );
+                    
                 } catch (Exception e) {
-                    waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
+                    
+                    waitingHandler.appendReport(
+                            "An error occurred while exporting the " + reportType + ".", 
+                            true, 
+                            true
+                    );
+                    
                     e.printStackTrace();
                     waitingHandler.setRunCanceled();
+                
                 }
             }
         }
 
         // export documentation(s)
         if (reportCLIInputBean.documentationExportNeeded()) {
+
             for (String reportType : reportCLIInputBean.getReportTypes()) {
+
                 try {
+
                     CLIExportMethods.exportDocumentation(
-                            reportCLIInputBean, 
-                            reportType, 
+                            reportCLIInputBean,
+                            reportType,
                             waitingHandler
                     );
+
                 } catch (Exception e) {
-                    waitingHandler.appendReport("An error occurred while exporting the documentation for " + reportType + ".", true, true);
+
+                    waitingHandler.appendReport(
+                            "An error occurred while exporting the documentation for " + reportType + ".", 
+                            true, 
+                            true
+                    );
+                    
                     e.printStackTrace();
                     waitingHandler.setRunCanceled();
+
                 }
             }
         }

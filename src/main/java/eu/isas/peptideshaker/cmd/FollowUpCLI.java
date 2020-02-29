@@ -44,8 +44,12 @@ public class FollowUpCLI extends CpsParent {
      *
      * @param followUpCLIInputBean the follow-up options
      */
-    public FollowUpCLI(FollowUpCLIInputBean followUpCLIInputBean) {
+    public FollowUpCLI(
+            FollowUpCLIInputBean followUpCLIInputBean
+    ) {
+
         this.followUpCLIInputBean = followUpCLIInputBean;
+
     }
 
     /**
@@ -73,55 +77,125 @@ public class FollowUpCLI extends CpsParent {
         String inputFilePath = null;
 
         try {
+
             if (followUpCLIInputBean.getZipFile() != null) {
+
                 inputFilePath = followUpCLIInputBean.getZipFile().getAbsolutePath();
-                loadCpsFromZipFile(followUpCLIInputBean.getZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
+                loadCpsFromZipFile(
+                        followUpCLIInputBean.getZipFile(),
+                        PeptideShaker.getMatchesFolder(),
+                        waitingHandler
+                );
+
             } else if (followUpCLIInputBean.getCpsFile() != null) {
+
                 inputFilePath = followUpCLIInputBean.getCpsFile().getAbsolutePath();
                 cpsFile = followUpCLIInputBean.getCpsFile();
                 loadCpsFile(PeptideShaker.getMatchesFolder(), waitingHandler);
+
             } else {
-                waitingHandler.appendReport("PeptideShaker project input missing.", true, true);
+
+                waitingHandler.appendReport(
+                        "PeptideShaker project input missing.",
+                        true,
+                        true
+                );
                 return 1;
+
             }
+
         } catch (IOException e) {
-            waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
+
+            waitingHandler.appendReport(
+                    "An error occurred while reading: " + inputFilePath + ".",
+                    true,
+                    true
+            );
             e.printStackTrace();
+
             try {
+
                 PeptideShakerCLI.closePeptideShaker(identification);
+
             } catch (Exception e2) {
-                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+
+                waitingHandler.appendReport(
+                        "An error occurred while closing PeptideShaker.",
+                        true,
+                        true
+                );
                 e2.printStackTrace();
+
             }
             return 1;
         }
 
         // load the spectrum files
         try {
+
             if (!loadSpectrumFiles(waitingHandler)) {
+
                 if (identification.getFractions().size() > 1) {
-                    waitingHandler.appendReport("The spectrum files were not found. Please provide their location in the command line parameters.", true, true);
+
+                    waitingHandler.appendReport(
+                            "The spectrum files were not found. Please provide their location in the command line parameters.",
+                            true,
+                            true
+                    );
+
                 } else {
-                    waitingHandler.appendReport("The spectrum file was not found. Please provide its location in the command line parameters", true, true);
+
+                    waitingHandler.appendReport(
+                            "The spectrum file was not found. Please provide its location in the command line parameters",
+                            true,
+                            true
+                    );
+
                 }
                 try {
+
                     PeptideShakerCLI.closePeptideShaker(identification);
+
                 } catch (Exception e2) {
-                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+
+                    waitingHandler.appendReport(
+                            "An error occurred while closing PeptideShaker.",
+                            true,
+                            true
+                    );
                     e2.printStackTrace();
+
                 }
+
                 return 1;
+
             }
         } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
+
+            waitingHandler.appendReport(
+                    "An error occurred while loading the spectrum file(s).",
+                    true,
+                    true
+            );
             e.printStackTrace();
+
             try {
+
                 PeptideShakerCLI.closePeptideShaker(identification);
+
             } catch (Exception e2) {
-                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+
+                waitingHandler.appendReport(
+                        "An error occurred while closing PeptideShaker.",
+                        true,
+                        true
+                );
                 e2.printStackTrace();
+
             }
+
             return 1;
+
         }
 
         // if not available on the computer, parse summary information about the FASTA file
@@ -132,8 +206,15 @@ public class FollowUpCLI extends CpsParent {
         } catch (IOException e) {
 
             e.printStackTrace();
-            waitingHandler.appendReport("An error occurred while parsing the FASTA file.", true, true);
+
+            waitingHandler.appendReport(
+                    "An error occurred while parsing the FASTA file.",
+                    true,
+                    true
+            );
+
             waitingHandler.setRunCanceled();
+
             return 1;
 
         }
@@ -146,103 +227,256 @@ public class FollowUpCLI extends CpsParent {
 
         // recalibrate spectra
         if (followUpCLIInputBean.recalibrationNeeded()) {
+
             try {
-                CLIExportMethods.recalibrateSpectra(followUpCLIInputBean, identification, sequenceProvider, identificationParameters, waitingHandler);
-                waitingHandler.appendReport("Recalibration process completed.", true, true);
+
+                CLIExportMethods.recalibrateSpectra(
+                        followUpCLIInputBean,
+                        identification,
+                        sequenceProvider,
+                        msFileHandler,
+                        identificationParameters,
+                        waitingHandler
+                );
+                waitingHandler.appendReport(
+                        "Recalibration process completed.",
+                        true,
+                        true
+                );
+
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
+
+                waitingHandler.appendReport(
+                        "An error occurred while recalibrating the spectra.",
+                        true,
+                        true
+                );
+
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
+
             }
         }
 
         // export spectra
         if (followUpCLIInputBean.spectrumExportNeeded()) {
+
             try {
-                CLIExportMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingParameters());
-                waitingHandler.appendReport("Spectrum export completed.", true, true);
+
+                CLIExportMethods.exportSpectra(
+                        followUpCLIInputBean,
+                        identification,
+                        msFileHandler,
+                        waitingHandler,
+                        identificationParameters.getSequenceMatchingParameters()
+                );
+
+                waitingHandler.appendReport(
+                        "Spectrum export completed.",
+                        true,
+                        true
+                );
+
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
+
+                waitingHandler.appendReport(
+                        "An error occurred while exporting the spectra.",
+                        true,
+                        true
+                );
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
+
             }
         }
 
         // export protein accessions
         if (followUpCLIInputBean.accessionExportNeeded()) {
+
             try {
-                CLIExportMethods.exportAccessions(followUpCLIInputBean, identification, sequenceProvider, waitingHandler, filterParameters);
-                waitingHandler.appendReport("Protein accessions export completed.", true, true);
+
+                CLIExportMethods.exportAccessions(
+                        followUpCLIInputBean,
+                        identification,
+                        sequenceProvider,
+                        waitingHandler,
+                        filterParameters
+                );
+                waitingHandler.appendReport(
+                        "Protein accessions export completed.",
+                        true,
+                        true
+                );
+
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
+
+                waitingHandler.appendReport(
+                        "An error occurred while exporting the protein accessions.",
+                        true,
+                        true
+                );
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
+
             }
         }
 
         // export protein details
         if (followUpCLIInputBean.proteinSequencesExportNeeded()) {
+
             try {
-                CLIExportMethods.exportProteinSequences(followUpCLIInputBean, identification, sequenceProvider, waitingHandler, filterParameters);
-                waitingHandler.appendReport("Protein details export completed.", true, true);
+
+                CLIExportMethods.exportProteinSequences(
+                        followUpCLIInputBean,
+                        identification,
+                        sequenceProvider,
+                        waitingHandler,
+                        filterParameters
+                );
+                waitingHandler.appendReport(
+                        "Protein details export completed.",
+                        true,
+                        true
+                );
+
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
+
+                waitingHandler.appendReport(
+                        "An error occurred while exporting the protein details.",
+                        true,
+                        true
+                );
+
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
+
             }
         }
 
         // progenesis export
         if (followUpCLIInputBean.progenesisExportNeeded()) {
+
             try {
-                CLIExportMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, sequenceProvider, proteinDetailsProvider, identificationParameters.getSequenceMatchingParameters());
-                waitingHandler.appendReport("Progenesis export completed.", true, true);
+
+                CLIExportMethods.exportProgenesis(
+                        followUpCLIInputBean,
+                        identification,
+                        waitingHandler,
+                        sequenceProvider,
+                        proteinDetailsProvider,
+                        identificationParameters.getSequenceMatchingParameters()
+                );
+                waitingHandler.appendReport(
+                        "Progenesis export completed.",
+                        true,
+                        true
+                );
+
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
+
+                waitingHandler.appendReport(
+                        "An error occurred while exporting the Progenesis file.",
+                        true,
+                        true
+                );
+
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
+
             }
         }
 
         // inclusion list export
         if (followUpCLIInputBean.inclusionListNeeded()) {
+
             try {
-                CLIExportMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterParameters);
+
+                CLIExportMethods.exportInclusionList(
+                        followUpCLIInputBean,
+                        identification,
+                        identificationFeaturesGenerator,
+                        msFileHandler,
+                        identificationParameters.getSearchParameters(),
+                        waitingHandler,
+                        filterParameters
+                );
+
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
+
+                waitingHandler.appendReport(
+                        "An error occurred while generating the inclusion list.",
+                        true,
+                        true
+                );
+
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
+
             }
         }
 
         // proteoforms export
         if (followUpCLIInputBean.proteoformsNeeded()) {
+
             try {
-                CLIExportMethods.exportProteoforms(followUpCLIInputBean, identification, waitingHandler);
+
+                CLIExportMethods.exportProteoforms(
+                        followUpCLIInputBean,
+                        identification,
+                        waitingHandler
+                );
+
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while generating the proteoforms list.", true, true);
+
+                waitingHandler.appendReport(
+                        "An error occurred while generating the proteoforms list.",
+                        true,
+                        true
+                );
+
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
+
             }
         }
 
         try {
+
             PeptideShakerCLI.closePeptideShaker(identification);
+
         } catch (Exception e2) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+
+            waitingHandler.appendReport(
+                    "An error occurred while closing PeptideShaker.",
+                    true,
+                    true
+            );
+
             e2.printStackTrace();
             waitingHandler.setRunCanceled();
+
         }
 
         if (!waitingHandler.isRunCanceled()) {
-            waitingHandler.appendReport("Follow-up export completed.", true, true);
+
+            waitingHandler.appendReport(
+                    "Follow-up export completed.",
+                    true,
+                    true
+            );
+
             System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+
             // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
             return 0;
+
         } else {
+
             System.exit(1); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+
             // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
             return 1;
+
         }
     }
 
