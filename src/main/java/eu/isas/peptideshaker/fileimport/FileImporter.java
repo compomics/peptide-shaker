@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
-import eu.isas.peptideshaker.gui.IdToSpectrumFileMappingDialog;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identification.IdfileReader;
@@ -30,7 +29,6 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.protein_inference.TagMapper;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
-import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.io.IoUtil;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -202,13 +200,11 @@ public class FileImporter {
      * Imports the identifications from the files.
      *
      * @param idFiles the identification files
-     * @param spectrumFiles the spectrum files
      *
      * @return 0 if success, 1 if not
      */
     public int importFiles(
-            ArrayList<File> idFiles,
-            ArrayList<File> spectrumFiles
+            ArrayList<File> idFiles
     ) {
 
         ArrayList<File> sortedIdFiles = idFiles.stream()

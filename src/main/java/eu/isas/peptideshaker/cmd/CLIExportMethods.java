@@ -24,6 +24,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import eu.isas.peptideshaker.utils.CpsParent;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import eu.isas.peptideshaker.followup.ProteoformExport;
 import java.io.File;
 import java.io.IOException;
@@ -46,21 +47,23 @@ public class CLIExportMethods {
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param sequenceProvider the sequence provider
+     * @param spectrumProvider The spectrum provider.
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler to display progress
      * @return ArrayList files containing the recalibrated spectra
-
+     *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      */
     public static ArrayList<File> recalibrateSpectra(
-            FollowUpCLIInputBean followUpCLIInputBean, 
+            FollowUpCLIInputBean followUpCLIInputBean,
             Identification identification,
-            SequenceProvider sequenceProvider, 
-            IdentificationParameters identificationParameters, 
+            SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
+            IdentificationParameters identificationParameters,
             WaitingHandler waitingHandler
     ) throws IOException {
-    
+
         File recalibrationFolder = followUpCLIInputBean.getRecalibrationFolder();
         if (!recalibrationFolder.exists()) {
             recalibrationFolder.mkdir();
@@ -73,12 +76,13 @@ public class CLIExportMethods {
             ms1 = false;
         }
         ArrayList<File> recalibratedSpectra = RecalibrationExporter.writeRecalibratedSpectra(
-                ms1, 
-                ms2, 
-                recalibrationFolder, 
-                identification, 
-                sequenceProvider, 
-                identificationParameters, 
+                ms1,
+                ms2,
+                recalibrationFolder,
+                identification,
+                sequenceProvider,
+                spectrumProvider,
+                identificationParameters,
                 waitingHandler
         );
         return recalibratedSpectra;
@@ -89,10 +93,11 @@ public class CLIExportMethods {
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
+     * @param spectrumProvider The spectrum provider.
      * @param waitingHandler a waiting handler to display progress
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @return ArrayList files containing the spectra
-
+     *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      * @throws InterruptedException exception thrown whenever a threading issue
@@ -105,32 +110,36 @@ public class CLIExportMethods {
      * occurred while reading an mzML file
      */
     public static ArrayList<File> exportSpectra(
-            FollowUpCLIInputBean followUpCLIInputBean, 
-            Identification identification, 
-            WaitingHandler waitingHandler, 
+            FollowUpCLIInputBean followUpCLIInputBean,
+            Identification identification,
+            SpectrumProvider spectrumProvider,
+            WaitingHandler waitingHandler,
             SequenceMatchingParameters sequenceMatchingPreferences
     ) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
-    
+
         File exportFolder = followUpCLIInputBean.getSpectrumExportFolder();
-        
+
         if (!exportFolder.exists()) {
 
             exportFolder.mkdir();
 
         }
 
-        SpectrumExporter spectrumExporter = new SpectrumExporter(identification);
+        SpectrumExporter spectrumExporter = new SpectrumExporter(
+                identification,
+                spectrumProvider
+        );
         ArrayList<File> exportedSpectra = spectrumExporter.exportSpectra(
-                exportFolder, 
-                waitingHandler, 
+                exportFolder,
+                waitingHandler,
                 SpectrumExporter.ExportType.getTypeFromIndex(
                         followUpCLIInputBean.getSpectrumExportTypeIndex()
-                ), 
+                ),
                 sequenceMatchingPreferences
         );
-        
+
         return exportedSpectra;
-    
+
     }
 
     /**
@@ -142,15 +151,15 @@ public class CLIExportMethods {
      * @param waitingHandler a waiting handler to display progress
      * @param filteringPreferences the filtering preferences
      * @return File file containing accessions
-     * 
+     *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      */
     public static File exportAccessions(
-            FollowUpCLIInputBean followUpCLIInputBean, 
-            Identification identification, 
-            SequenceProvider sequenceProvider, 
-            WaitingHandler waitingHandler, 
+            FollowUpCLIInputBean followUpCLIInputBean,
+            Identification identification,
+            SequenceProvider sequenceProvider,
+            WaitingHandler waitingHandler,
             FilterParameters filteringPreferences
     ) throws IOException {
 
@@ -164,13 +173,13 @@ public class CLIExportMethods {
 
         File destinationFile = destinationFileTemp;
         FastaExport.export(
-                destinationFile, 
-                sequenceProvider, 
-                identification, 
+                destinationFile,
+                sequenceProvider,
+                identification,
                 FastaExport.ExportType.getTypeFromIndex(
                         followUpCLIInputBean.getAccessionsExportTypeIndex()
-                ), 
-                waitingHandler, 
+                ),
+                waitingHandler,
                 true
         );
         return destinationFile;
@@ -186,15 +195,15 @@ public class CLIExportMethods {
      * @param waitingHandler a waiting handler to display progress
      * @param filteringPreferences the filtering preferences
      * @return File file containing the protein details in FASTA format
-
+     *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      */
     public static File exportProteinSequences(
-            FollowUpCLIInputBean followUpCLIInputBean, 
-            Identification identification, 
-            SequenceProvider sequenceProvider, 
-            WaitingHandler waitingHandler, 
+            FollowUpCLIInputBean followUpCLIInputBean,
+            Identification identification,
+            SequenceProvider sequenceProvider,
+            WaitingHandler waitingHandler,
             FilterParameters filteringPreferences
     ) throws IOException {
 
@@ -208,13 +217,13 @@ public class CLIExportMethods {
 
         File destinationFile = destinationFileTemp;
         FastaExport.export(
-                destinationFile, 
-                sequenceProvider, 
-                identification, 
+                destinationFile,
+                sequenceProvider,
+                identification,
                 FastaExport.ExportType.getTypeFromIndex(
                         followUpCLIInputBean.getProteinSequencesExportTypeIndex()
-                ), 
-                waitingHandler, 
+                ),
+                waitingHandler,
                 false
         );
         return destinationFile;
@@ -229,17 +238,18 @@ public class CLIExportMethods {
      * @param sequenceProvider the sequence provider
      * @param proteinDetailsProvider the protein details provider
      * @param sequenceMatchingPreferences the sequence matching preferences
-     * @return File file containing the identification data in a Progenesis compatible format
+     * @return File file containing the identification data in a Progenesis
+     * compatible format
      *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      */
     public static File exportProgenesis(
-            FollowUpCLIInputBean followUpCLIInputBean, 
-            Identification identification, 
-            WaitingHandler waitingHandler, 
-            SequenceProvider sequenceProvider, 
-            ProteinDetailsProvider proteinDetailsProvider, 
+            FollowUpCLIInputBean followUpCLIInputBean,
+            Identification identification,
+            WaitingHandler waitingHandler,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
             SequenceMatchingParameters sequenceMatchingPreferences
     ) throws IOException {
 
@@ -253,39 +263,39 @@ public class CLIExportMethods {
 
         File destinationFile = destinationFileTemp;
         ProgenesisExport.writeProgenesisExport(
-                destinationFile, 
-                sequenceProvider, 
-                proteinDetailsProvider, 
-                identification, 
+                destinationFile,
+                sequenceProvider,
+                proteinDetailsProvider,
+                identification,
                 ProgenesisExport.ExportType.getTypeFromIndex(
                         followUpCLIInputBean.getProgenesisExportTypeIndex()
-                ), 
-                waitingHandler, 
-                followUpCLIInputBean.getProgenesisTargetedPTMs(), 
+                ),
+                waitingHandler,
+                followUpCLIInputBean.getProgenesisTargetedPTMs(),
                 sequenceMatchingPreferences
         );
         return destinationFile;
     }
-    
+
     /**
      * Exports proteoforms.
-     * 
+     *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param waitingHandler a waiting handler to display progress
      * @return File file containing the proteoforms data
      */
     public static File exportProteoforms(
-            FollowUpCLIInputBean followUpCLIInputBean, 
-            Identification identification, 
+            FollowUpCLIInputBean followUpCLIInputBean,
+            Identification identification,
             WaitingHandler waitingHandler
     ) {
-        
+
         File destinationFile = followUpCLIInputBean.getProteoformsFile();
-        
+
         ProteoformExport.writeProteoforms(
-                destinationFile, 
-                identification, 
+                destinationFile,
+                identification,
                 waitingHandler
         );
         return destinationFile;
@@ -298,20 +308,22 @@ public class CLIExportMethods {
      * @param identification the identification
      * @param identificationFeaturesGenerator the identification features
      * generator
+     * @param spectrumProvider The spectrum provider.
      * @param searchParameters the search parameters
      * @param waitingHandler a waiting handler to display progress
      * @param filterPreferences the filter preferences
      * @return File file containing the inclusion list
-
+     *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
      */
     public static File exportInclusionList(
-            FollowUpCLIInputBean followUpCLIInputBean, 
-            Identification identification, 
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            SearchParameters searchParameters, 
-            WaitingHandler waitingHandler, 
+            FollowUpCLIInputBean followUpCLIInputBean,
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SpectrumProvider spectrumProvider,
+            SearchParameters searchParameters,
+            WaitingHandler waitingHandler,
             FilterParameters filterPreferences
     ) throws IOException {
 
@@ -333,17 +345,18 @@ public class CLIExportMethods {
 
         File destinationFile = destinationFileTemp;
         InclusionListExport.exportInclusionList(
-                destinationFile, 
-                identification, 
-                identificationFeaturesGenerator, 
-                followUpCLIInputBean.getInclusionProteinFilter(), 
-                peptideFilterType, 
+                destinationFile,
+                identification,
+                identificationFeaturesGenerator,
+                spectrumProvider,
+                followUpCLIInputBean.getInclusionProteinFilter(),
+                peptideFilterType,
                 InclusionListExport.ExportFormat.getTypeFromIndex(
                         followUpCLIInputBean.getInclusionFormat()
-                ), 
-                searchParameters, 
-                followUpCLIInputBean.getInclusionRtWindow(), 
-                waitingHandler, 
+                ),
+                searchParameters,
+                followUpCLIInputBean.getInclusionRtWindow(),
+                waitingHandler,
                 filterPreferences
         );
         return destinationFile;
@@ -364,6 +377,7 @@ public class CLIExportMethods {
      * @param identificationParameters the identification parameters used
      * @param sequenceProvider the sequence provider
      * @param proteinDetailsProvider the protein details provider
+     * @param spectrumProvider The spectrum provider.
      * @param nSurroundingAA the number of amino acids to export on the side of
      * peptide sequences
      * @param spectrumCountingPreferences the spectrum counting preferences
@@ -374,18 +388,19 @@ public class CLIExportMethods {
      * while reading or writing to a file
      */
     public static File exportReport(
-            ReportCLIInputBean reportCLIInputBean, 
-            String reportType, 
-            String experiment, 
-            ProjectDetails projectDetails, 
+            ReportCLIInputBean reportCLIInputBean,
+            String reportType,
+            String experiment,
+            ProjectDetails projectDetails,
             Identification identification,
-            GeneMaps geneMaps, 
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            IdentificationParameters identificationParameters, 
+            GeneMaps geneMaps,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            IdentificationParameters identificationParameters,
             SequenceProvider sequenceProvider,
-            ProteinDetailsProvider proteinDetailsProvider, 
-            int nSurroundingAA, 
-            SpectrumCountingParameters spectrumCountingPreferences, 
+            ProteinDetailsProvider proteinDetailsProvider,
+            SpectrumProvider spectrumProvider,
+            int nSurroundingAA,
+            SpectrumCountingParameters spectrumCountingPreferences,
             WaitingHandler waitingHandler
     ) throws IOException {
 
@@ -402,26 +417,27 @@ public class CLIExportMethods {
 
         //@TODO: allow format selection
         PSExportFactory.writeExport(
-                exportScheme, 
-                reportFile, 
-                ExportFormat.text, 
-                reportCLIInputBean.isGzip(), 
-                experiment, 
-                projectDetails, 
-                identification, 
-                identificationFeaturesGenerator, 
+                exportScheme,
+                reportFile,
+                ExportFormat.text,
+                reportCLIInputBean.isGzip(),
+                experiment,
+                projectDetails,
+                identification,
+                identificationFeaturesGenerator,
                 geneMaps,
-                null, 
-                null, 
-                null, 
-                nSurroundingAA, 
-                identificationParameters, 
-                sequenceProvider, 
-                proteinDetailsProvider, 
-                spectrumCountingPreferences, 
+                null,
+                null,
+                null,
+                nSurroundingAA,
+                identificationParameters,
+                sequenceProvider,
+                proteinDetailsProvider,
+                spectrumProvider,
+                spectrumCountingPreferences,
                 waitingHandler
         );
-        
+
         return reportFile;
     }
 
@@ -437,8 +453,8 @@ public class CLIExportMethods {
      * while reading or writing to a file
      */
     public static void exportDocumentation(
-            ReportCLIInputBean reportCLIInputBean, 
-            String reportType, 
+            ReportCLIInputBean reportCLIInputBean,
+            String reportType,
             WaitingHandler waitingHandler
     ) throws IOException {
 
@@ -448,8 +464,8 @@ public class CLIExportMethods {
 
         //@TODO: allow format selection
         PSExportFactory.writeDocumentation(
-                exportScheme, 
-                ExportFormat.text, 
+                exportScheme,
+                ExportFormat.text,
                 reportFile
         );
     }
@@ -467,8 +483,8 @@ public class CLIExportMethods {
      * while reading or writing to a file
      */
     public static void exportMzId(
-            MzidCLIInputBean mzidCLIInputBean, 
-            CpsParent cpsParent, 
+            MzidCLIInputBean mzidCLIInputBean,
+            CpsParent cpsParent,
             WaitingHandler waitingHandler
     ) throws IOException {
 
@@ -490,17 +506,18 @@ public class CLIExportMethods {
                 identificationParameters.getFastaParameters(), waitingHandler);
 
         MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(
-                PeptideShaker.getVersion(), 
-                cpsParent.getIdentification(), 
+                PeptideShaker.getVersion(),
+                cpsParent.getIdentification(),
                 cpsParent.getProjectDetails(),
-                identificationParameters, 
-                cpsParent.getSequenceProvider(), 
-                cpsParent.getProteinDetailsProvider(), 
-                fastaSummary, 
+                identificationParameters,
+                cpsParent.getSequenceProvider(),
+                cpsParent.getProteinDetailsProvider(),
+                cpsParent.getSpectrumProvider(),
+                fastaSummary,
                 cpsParent.getIdentificationFeaturesGenerator(),
-                mzidCLIInputBean.getOutputFile(), 
-                mzidCLIInputBean.getIncludeProteinSequences(), 
-                waitingHandler, 
+                mzidCLIInputBean.getOutputFile(),
+                mzidCLIInputBean.getIncludeProteinSequences(),
+                waitingHandler,
                 mzidCLIInputBean.isGzip()
         );
 

@@ -88,7 +88,7 @@ public class PsmScorer {
      *
      * @param identification the object containing the identification matches
      * @param inputMap the input map scores
-     * @param processingPreferences the processing preferences
+     * @param processingParameters the processing preferences
      * @param identificationParameters identification parameters used
      * @param waitingHandler the handler displaying feedback to the user
      * @param exceptionHandler a handler for exceptions
@@ -101,7 +101,7 @@ public class PsmScorer {
     public void estimateIntermediateScores(
             Identification identification,
             InputMap inputMap,
-            ProcessingParameters processingPreferences,
+            ProcessingParameters processingParameters,
             IdentificationParameters identificationParameters,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
@@ -118,11 +118,11 @@ public class PsmScorer {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-        ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
+        ExecutorService pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
         SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(null);
-        ArrayList<PsmScorerRunnable> psmScorerRunnables = new ArrayList<>(processingPreferences.getnThreads());
+        ArrayList<PsmScorerRunnable> psmScorerRunnables = new ArrayList<>(processingParameters.getnThreads());
 
-        for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
+        for (int i = 1; i <= processingParameters.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
 
             PsmScorerRunnable runnable = new PsmScorerRunnable(
                     psmIterator,
@@ -152,8 +152,8 @@ public class PsmScorer {
 
         }
 
-        ArrayList<HashMap<Double, Integer>> aHistograms = new ArrayList<>(processingPreferences.getnThreads());
-        ArrayList<HashMap<Double, Integer>> bHistograms = new ArrayList<>(processingPreferences.getnThreads());
+        ArrayList<HashMap<Double, Integer>> aHistograms = new ArrayList<>(processingParameters.getnThreads());
+        ArrayList<HashMap<Double, Integer>> bHistograms = new ArrayList<>(processingParameters.getnThreads());
         HashMap<Long, ArrayList<Integer>> missingValuesMap = new HashMap<>();
 
         for (PsmScorerRunnable runnable : psmScorerRunnables) {
@@ -176,9 +176,9 @@ public class PsmScorer {
 
             long[] spectrumKeys = missingValuesMap.keySet().stream().mapToLong(Long::longValue).toArray();
             psmIterator = identification.getSpectrumMatchesIterator(spectrumKeys, null);
-            pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
+            pool = Executors.newFixedThreadPool(processingParameters.getnThreads());
 
-            for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
+            for (int i = 1; i <= processingParameters.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
 
                 MissingEValueEstimatorRunnable runnable = new MissingEValueEstimatorRunnable(
                         missingValuesMap,
