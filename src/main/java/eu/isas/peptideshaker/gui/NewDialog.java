@@ -14,6 +14,7 @@ import com.compomics.util.experiment.identification.identification_parameters.Id
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.biology.protein.ProteinDatabase;
+import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.JOptionEditorPane;
@@ -57,11 +58,11 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The modification factory.
      */
-    private ModificationFactory modificationFactory = ModificationFactory.getInstance();
+    private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
     /**
      * A reference to the main frame.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private final PeptideShakerGUI peptideShakerGUI;
     /**
      * The list of identification files.
      */
@@ -69,7 +70,7 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The XML modification files found.
      */
-    private ArrayList<File> modificationFiles = new ArrayList<>();
+    private final ArrayList<File> modificationFiles = new ArrayList<>();
     /**
      * A file where the input FASTA and mgf files are stored.
      */
@@ -105,7 +106,7 @@ public class NewDialog extends javax.swing.JDialog {
     /*
      * The welcome dialog parent, can be null.
      */
-    private WelcomeDialog welcomeDialog;
+    private final WelcomeDialog welcomeDialog;
     /**
      * The spectrum counting preferences.
      */
@@ -117,7 +118,11 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * The identification parameters factory.
      */
-    private IdentificationParametersFactory identificationParametersFactory = IdentificationParametersFactory.getInstance();
+    private final IdentificationParametersFactory identificationParametersFactory = IdentificationParametersFactory.getInstance();
+    /**
+     * The handler for mass spectrometry files.
+     */
+    private MsFileHandler msFileHandler = new MsFileHandler();
 
     /**
      * Creates a new open dialog.
@@ -125,7 +130,10 @@ public class NewDialog extends javax.swing.JDialog {
      * @param peptideShakerGui a reference to the main frame
      * @param modal boolean indicating whether the dialog is modal
      */
-    public NewDialog(PeptideShakerGUI peptideShakerGui, boolean modal) {
+    public NewDialog(
+            PeptideShakerGUI peptideShakerGui,
+            boolean modal
+    ) {
         super(peptideShakerGui, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = null;
@@ -145,7 +153,11 @@ public class NewDialog extends javax.swing.JDialog {
      * @param peptideShakerGui a reference to the main frame
      * @param modal boolean indicating whether the dialog is modal
      */
-    public NewDialog(WelcomeDialog welcomeDialog, PeptideShakerGUI peptideShakerGui, boolean modal) {
+    public NewDialog(
+            WelcomeDialog welcomeDialog,
+            PeptideShakerGUI peptideShakerGui,
+            boolean modal
+    ) {
         super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = welcomeDialog;
@@ -666,10 +678,17 @@ public class NewDialog extends javax.swing.JDialog {
                 // Do something here?
             }
 
-            WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI,
+            WaitingDialog waitingDialog = new WaitingDialog(
+                    peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true, tips, "Importing Data", "PeptideShaker", PeptideShaker.getVersion(), true);
+                    true,
+                    tips,
+                    "Importing Data",
+                    "PeptideShaker",
+                    PeptideShaker.getVersion(),
+                    true
+            );
             waitingDialog.setCloseDialogWhenImportCompletes(true, true);
 
             int progressCounter = idFiles.size() + spectrumFiles.size();
@@ -705,12 +724,15 @@ public class NewDialog extends javax.swing.JDialog {
                     public void run() {
                         try {
 
-                            ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingDialog, "https://github.com/compomics/peptide-shaker/issues");
+                            ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler(
+                                    (WaitingDialog) waitingDialog,
+                                    "https://github.com/compomics/peptide-shaker/issues"
+                            );
 
                             int outcome = peptideShaker.importFiles(
                                     waitingDialog,
                                     idFiles,
-                                    spectrumFiles,
+                                    msFileHandler,
                                     identificationParameters,
                                     projectDetails,
                                     processingParameters,
@@ -723,6 +745,7 @@ public class NewDialog extends javax.swing.JDialog {
                                         identificationParameters,
                                         processingParameters,
                                         spectrumCountingPreferences,
+                                        msFileHandler,
                                         projectDetails,
                                         projectType,
                                         waitingDialog,
@@ -844,7 +867,12 @@ public class NewDialog extends javax.swing.JDialog {
 
             if (fastaFile.getName().contains(" ")) {
 
-                JOptionPane.showMessageDialog(this, "Your FASTA file name contains white space and ougth to be renamed.", "File Name Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Your FASTA file name contains white space and ougth to be renamed.",
+                        "File Name Warning",
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
 
         }
@@ -859,9 +887,12 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void clearSpectraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearSpectraActionPerformed
+
         spectrumFiles = new ArrayList<>();
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
+        msFileHandler = new MsFileHandler();
         validateInput();
+
 }//GEN-LAST:event_clearSpectraActionPerformed
 
     /**
@@ -882,12 +913,13 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
                 return myFile.getName().toLowerCase().endsWith(".mgf")
+                        || myFile.getName().toLowerCase().endsWith(".mgf.gz")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "Mascot Generic Format (.mgf)";
+                return "Mascot Generic Format (.mgf, .mg.gz)";
             }
         };
 
@@ -897,21 +929,58 @@ public class NewDialog extends javax.swing.JDialog {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
             // get the files
+            ArrayList<File> selectedFiles = new ArrayList<>();
+
             for (File newFile : fileChooser.getSelectedFiles()) {
+
                 if (newFile.isDirectory()) {
+
                     File[] tempFiles = newFile.listFiles();
+
                     for (File file : tempFiles) {
-                        if (file.getName().toLowerCase().endsWith(".mgf")) {
-                            spectrumFiles.add(file);
+
+                        if (file.getName().toLowerCase().endsWith(".mgf") || file.getName().toLowerCase().endsWith(".mgf.gz")) {
+
+                            selectedFiles.add(file);
+
                         }
                     }
                 } else {
-                    spectrumFiles.add(newFile);
+
+                    selectedFiles.add(newFile);
+
                 }
             }
 
-            spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
-            validateInput();
+            // Load the files
+            boolean allLoaded = true;
+
+            for (File file : selectedFiles) {
+
+                try {
+
+                    msFileHandler.register(file);
+
+                } catch (Exception e) {
+
+                    allLoaded = false;
+
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "An error occurred while reading the following file.\n" + file.getAbsolutePath() + "\n\nError:\n" + e.getLocalizedMessage(),
+                            "File error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+
+            if (allLoaded) {
+
+                spectrumFiles.addAll(selectedFiles);
+                spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
+                validateInput();
+
+            }
         }
 }//GEN-LAST:event_browseSpectraActionPerformed
 
@@ -947,7 +1016,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || myFile.getName().equalsIgnoreCase("usermods.xml")) {
                     return false;
                 }
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".omx")
@@ -987,7 +1056,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter zipFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".zip")
@@ -1004,7 +1073,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter omssaFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".omx")
@@ -1022,7 +1091,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter andromedaFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".res")
@@ -1040,7 +1109,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter tandemFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".t.xml")
@@ -1058,7 +1127,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter pepXMLFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".pep.xml")
@@ -1076,7 +1145,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter mzidFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".mzid")
@@ -1094,7 +1163,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter msAmandaFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".csv")
@@ -1112,7 +1181,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter tideFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".tide-search.target.txt")
@@ -1130,7 +1199,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter direcTagFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".tags")
@@ -1148,7 +1217,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter pNovoFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".pnovo.txt")
@@ -1166,7 +1235,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter novorFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".novor.csv")
@@ -1184,7 +1253,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter onyaseFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".psm")
@@ -1201,7 +1270,7 @@ public class NewDialog extends javax.swing.JDialog {
         FileFilter mascotFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                
+
                 String fileName = myFile.getName().toLowerCase();
 
                 return fileName.endsWith(".dat")
@@ -1233,10 +1302,13 @@ public class NewDialog extends javax.swing.JDialog {
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+            progressDialog = new ProgressDialogX(
+                    this,
+                    peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
+                    true
+            );
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Loading Files. Please Wait...");
 
@@ -1264,9 +1336,16 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSettingsButtonActionPerformed
+
         IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
-                this, peptideShakerGUI, identificationParameters, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), true);
+                this,
+                peptideShakerGUI,
+                identificationParameters,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                peptideShakerGUI.getLastSelectedFolder(),
+                true
+        );
 
         if (!identificationParametersEditionDialog.isCanceled()) {
             setIdentificationParameters(identificationParametersEditionDialog.getIdentificationParameters());
@@ -1279,10 +1358,18 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void projectSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectSettingsButtonActionPerformed
-        ProjectParametersDialog preferencesDialog = new ProjectParametersDialog(peptideShakerGUI, spectrumCountingPreferences, displayPreferences);
+
+        ProjectParametersDialog preferencesDialog = new ProjectParametersDialog(
+                peptideShakerGUI,
+                spectrumCountingPreferences,
+                displayPreferences
+        );
+
         if (!preferencesDialog.isCanceled()) {
+
             spectrumCountingPreferences = preferencesDialog.getSpectrumCountingParameters();
             displayPreferences = preferencesDialog.getDisplayParameters();
+
         }
     }//GEN-LAST:event_projectSettingsButtonActionPerformed
 
@@ -1310,10 +1397,19 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editProcessingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProcessingButtonActionPerformed
-        ProcessingParametersDialog processingPreferencesDialog = new ProcessingParametersDialog(this, peptideShakerGUI, processingParameters, true);
+
+        ProcessingParametersDialog processingPreferencesDialog = new ProcessingParametersDialog(
+                this,
+                peptideShakerGUI,
+                processingParameters,
+                true
+        );
+
         if (!processingPreferencesDialog.isCanceled()) {
+
             processingParameters = processingPreferencesDialog.getProcessingParameters();
             processingTxt.setText(processingParameters.getnThreads() + " cores");
+
         }
     }//GEN-LAST:event_editProcessingButtonActionPerformed
 
@@ -1413,9 +1509,16 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt the action event
      */
     private void addSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSettingsButtonActionPerformed
+        
         IdentificationParametersEditionDialog identificationParametersEditionDialog = new IdentificationParametersEditionDialog(
-                this, peptideShakerGUI, null, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), peptideShakerGUI.getLastSelectedFolder(), true);
+                this, 
+                peptideShakerGUI, 
+                null, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), 
+                peptideShakerGUI.getLastSelectedFolder(), 
+                true
+        );
 
         if (!identificationParametersEditionDialog.isCanceled()) {
             setIdentificationParameters(identificationParametersEditionDialog.getIdentificationParameters());
@@ -1439,7 +1542,12 @@ public class NewDialog extends javax.swing.JDialog {
 
                 if (!IdentificationParameters.supportedVersion(identificationParametersFile)) {
 
-                    JOptionPane.showMessageDialog(null, "The identification parameters were generated using an older version, please update the parameters.", "File error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "The identification parameters were generated using an older version, please update the parameters.",
+                            "File error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
 
                 } else {
 
@@ -1450,10 +1558,12 @@ public class NewDialog extends javax.swing.JDialog {
 
                     if (error != null) {
 
-                        JOptionPane.showMessageDialog(peptideShakerGUI,
+                        JOptionPane.showMessageDialog(
+                                peptideShakerGUI,
                                 error,
-                                "Modification Definition Changed", JOptionPane.WARNING_MESSAGE);
-
+                                "Modification Definition Changed", 
+                                JOptionPane.WARNING_MESSAGE
+                        );
                     }
 
                     setIdentificationParameters(identificationParameters);
@@ -1461,11 +1571,14 @@ public class NewDialog extends javax.swing.JDialog {
                 }
             } catch (Exception e) {
 
-                JOptionPane.showMessageDialog(null,
-                        "Failed to import search parameters from: " + identificationParametersFile.getAbsolutePath() + ".", "Search Parameters",
-                        JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Failed to import search parameters from: " + identificationParametersFile.getAbsolutePath() + ".", 
+                        "Search Parameters",
+                        JOptionPane.WARNING_MESSAGE
+                );
                 e.printStackTrace();
-
+                
             }
         }
 
@@ -1645,7 +1758,11 @@ public class NewDialog extends javax.swing.JDialog {
      * @throws java.lang.ClassNotFoundException exception thrown whenever an
      * error occurred while importing the search parameters
      */
-    public void importSearchParameters(File file, ArrayList<File> dataFolders, ProgressDialogX progressDialog) throws IOException, FileNotFoundException, ClassNotFoundException {
+    public void importSearchParameters(
+            File file, 
+            ArrayList<File> dataFolders, 
+            ProgressDialogX progressDialog
+    ) throws IOException, FileNotFoundException, ClassNotFoundException {
 
         progressDialog.setTitle("Importing Search Parameters. Please Wait...");
 
@@ -1653,7 +1770,12 @@ public class NewDialog extends javax.swing.JDialog {
         SearchParameters searchParameters = tempIdentificationParameters.getSearchParameters();
         String toCheck = PeptideShaker.loadModifications(searchParameters);
         if (toCheck != null) {
-            JOptionPane.showMessageDialog(this, toCheck, "Modification Definition Changed", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    this, 
+                    toCheck, 
+                    "Modification Definition Changed", 
+                    JOptionPane.WARNING_MESSAGE
+            );
         }
 
         ModificationParameters modificationProfile = searchParameters.getModificationParameters();
@@ -1671,13 +1793,25 @@ public class NewDialog extends javax.swing.JDialog {
         }
         if (!missing.isEmpty()) {
             if (missing.size() == 1) {
-                JOptionPane.showMessageDialog(this, "The following modification is currently not recognized by PeptideShaker: "
-                        + missing.get(0) + ".\nPlease import it by editing the search parameters.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this, 
+                        "The following modification is currently not recognized by PeptideShaker: "
+                        + missing.get(0) + ".\nPlease import it by editing the search parameters.", 
+                        "Modification Not Found", 
+                        JOptionPane.WARNING_MESSAGE
+                );
             } else {
+                
                 String output = "The following modifications are currently not recognized by PeptideShaker:\n"
                         + String.join(", ", missing)
                         + ".\nPlease import it by editing the search parameters.";
-                JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+                
+                JOptionPane.showMessageDialog(
+                        this, 
+                        output, 
+                        "Modification Not Found", 
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
         }
 
@@ -1713,7 +1847,8 @@ public class NewDialog extends javax.swing.JDialog {
 
             if (parametersChanged && !matchesValidationAdded) {
 
-                int value = JOptionPane.showOptionDialog(null,
+                int value = JOptionPane.showOptionDialog(
+                        null,
                         "A settings file with the name \'" + tempIdentificationParameters.getName() + "\' already exists.\n"
                         + "What do you want to do?",
                         "Identification Settings",
@@ -1721,7 +1856,8 @@ public class NewDialog extends javax.swing.JDialog {
                         JOptionPane.QUESTION_MESSAGE,
                         null,
                         new String[]{"Replace File", "Use Existing File", "Keep Both Files"},
-                        "default");
+                        "default"
+                );
 
                 switch (value) {
                     case JOptionPane.YES_OPTION:
@@ -1836,20 +1972,20 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         for (String path : neededFastaAndMgfs) {
-            
+
             if (path.toLowerCase().endsWith(".mgf")) {
-                
+
                 File tempMgfFile = new File(path);
                 String mgfFileName = tempMgfFile.getName();
-                
+
                 if (!mgfFileNames.contains(tempMgfFile.getName())) {
-                    
+
                     if (tempMgfFile.exists()) {
                         spectrumFiles.add(tempMgfFile);
                     } else {
-                        
+
                         boolean found = false;
-                        
+
                         for (File folder : dataFolders) {
                             for (File file : folder.listFiles()) {
                                 if (file.getName().equals(mgfFileName)) {
@@ -1862,7 +1998,7 @@ public class NewDialog extends javax.swing.JDialog {
                                 break;
                             }
                         }
-                        
+
                         if (!found) {
                             nMissingMgfFiles++;
                             missing += tempMgfFile.getName() + "\n";
@@ -1870,24 +2006,24 @@ public class NewDialog extends javax.swing.JDialog {
                     }
                 }
             } else if (path.toLowerCase().endsWith(".fasta") || path.toLowerCase().endsWith(".fas")) {
-                
+
                 tempFastaFile = path;
                 File providedFastaFile = new File(tempFastaFile);
-                
+
                 if (providedFastaFile.exists()) {
-                    
+
                     fastaFile = providedFastaFile;
                     fastaFileTxt.setText(fastaFile.getName());
                     fastaFileFound = true;
-                    
+
                 } else {
-                    
+
                     boolean found = false;
-                    
+
                     for (File folder : dataFolders) {
-                        
+
                         for (File tempFile : folder.listFiles()) {
-                            
+
                             if (tempFile.getName().equals(providedFastaFile.getName())) {
                                 fastaFile = tempFile;
                                 fastaFileTxt.setText(fastaFile.getName());
@@ -1895,12 +2031,12 @@ public class NewDialog extends javax.swing.JDialog {
                                 break;
                             }
                         }
-                        
+
                         if (found) {
                             break;
                         }
                     }
-                    
+
                 }
             }
         }
@@ -1946,21 +2082,26 @@ public class NewDialog extends javax.swing.JDialog {
                 showDataBaseHelpDialog();
             }
             if (!fastaParameters.isTargetDecoy()) {
-                JOptionPane.showMessageDialog(this, "PeptideShaker validation requires the use of a taget-decoy database.\n"
+                JOptionPane.showMessageDialog(
+                        this, 
+                        "PeptideShaker validation requires the use of a taget-decoy database.\n"
                         + "Some features will be limited if using other types of databases.\n\n"
                         + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
                         + "See the PeptideShaker home page for details.",
                         "No Decoys Found",
-                        JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.INFORMATION_MESSAGE
+                );
             }
 
         } catch (IOException e) {
 
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(
+                    this,
                     "An error occurred while parsing the fasta file.",
                     "Error while parsing the file",
-                    JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.INFORMATION_MESSAGE
+            );
 
         }
     }
@@ -1970,11 +2111,15 @@ public class NewDialog extends javax.swing.JDialog {
      * display a link to the Database Help web page.
      */
     private void showDataBaseHelpDialog() {
-        JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+        JOptionPane.showMessageDialog(
+                this, 
+                JOptionEditorPane.getJOptionEditorPane(
                 "We strongly recommend the use of UniProt databases. Some<br>"
                 + "features will be limited if using other databases.<br><br>"
                 + "See <a href=\"https://compomics.github.io/projects/searchgui/wiki/databasehelp.html\">Database Help</a> for details."),
-                "Database Information", JOptionPane.WARNING_MESSAGE);
+                "Database Information", 
+                JOptionPane.WARNING_MESSAGE
+        );
     }
 
     /**
@@ -2015,9 +2160,12 @@ public class NewDialog extends javax.swing.JDialog {
             settingsComboBox.setSelectedItem(identificationParameters.getName());
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,
-                    "Failed to import identification parameters from: " + newIdentificationParameters.getName() + ".", "Identification Parameters",
-                    JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Failed to import identification parameters from: " + newIdentificationParameters.getName() + ".", 
+                    "Identification Parameters",
+                    JOptionPane.WARNING_MESSAGE
+            );
             e.printStackTrace();
 
             // set the search settings to default
@@ -2177,7 +2325,12 @@ public class NewDialog extends javax.swing.JDialog {
 
                     if (!IdentificationParameters.supportedVersion(parameterFile)) {
 
-                        JOptionPane.showMessageDialog(null, "The parameters were generated using an older version. Please update the parameters.", "Outdated Parameters", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(
+                                null, 
+                                "The parameters were generated using an older version. Please update the parameters.", 
+                                "Outdated Parameters", 
+                                JOptionPane.WARNING_MESSAGE
+                        );
 
                     } else {
 
@@ -2186,7 +2339,12 @@ public class NewDialog extends javax.swing.JDialog {
                     }
                 } catch (Exception e) {
 
-                    JOptionPane.showMessageDialog(null, "Error occurred while reading " + parameterFile + ". Please verify the search parameters.", "File Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            null, 
+                            "Error occurred while reading " + parameterFile + ". Please verify the search parameters.", 
+                            "File Error", 
+                            JOptionPane.ERROR_MESSAGE
+                    );
                     e.printStackTrace();
 
                 }
@@ -2214,9 +2372,15 @@ public class NewDialog extends javax.swing.JDialog {
      * @param dataFolders list of the folders where the mgf and FASTA files
      * could possibly be
      * @param inputFiles list of the input files found
+     * 
      * @return true of the zipping completed without any issues
      */
-    private boolean loadZipFile(File file, HashMap<String, File> parameterFiles, ArrayList<File> dataFolders, ArrayList<File> inputFiles) {
+    private boolean loadZipFile(
+            File file, 
+            HashMap<String, File> parameterFiles, 
+            ArrayList<File> dataFolders, 
+            ArrayList<File> inputFiles
+    ) {
 
         String newName = PsZipUtils.getTempFolderName(file.getName());
         String parentFolder = PsZipUtils.getUnzipParentFolder();
@@ -2293,7 +2457,11 @@ public class NewDialog extends javax.swing.JDialog {
      * @param parameterFiles a map of the parameters files found indexed by name
      * @param inputFiles list of the input files found
      */
-    private void loadIdFile(File file, HashMap<String, File> parameterFiles, ArrayList<File> inputFiles) {
+    private void loadIdFile(
+            File file, 
+            HashMap<String, File> parameterFiles, 
+            ArrayList<File> inputFiles
+    ) {
 
         // add searchGUI_input.txt
         if (file.getName().equals(SEARCHGUI_INPUT)) {

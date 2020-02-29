@@ -207,7 +207,6 @@ public class ValidationPanel extends javax.swing.JPanel {
 
         // initialize target/decoy plot
         // @TODO: do something here?
-
         // initialize cost/benefit plot
         NumberAxis benefitAxis = new NumberAxis("Coverage (1-FNR) [%]");
         NumberAxis costAxis = new NumberAxis("False Discovery Rate (FDR) [%]");
@@ -1503,7 +1502,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
                         if (peptideShakerGUI.getProjectType() == ProjectType.protein) {
-                        
+
                             ProteinProcessor proteinProcessor = new ProteinProcessor(
                                     peptideShakerGUI.getIdentification(),
                                     peptideShakerGUI.getIdentificationParameters(),
@@ -2304,7 +2303,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                 pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
                 int cpt = 0;
-                
+
                 if (null != peptideShakerGUI.getProjectType()) {
                     switch (peptideShakerGUI.getProjectType()) {
                         case protein:
@@ -2907,9 +2906,15 @@ public class ValidationPanel extends javax.swing.JPanel {
                 try {
 
                     PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters());
-                    miniShaker.spectrumMapChanged(peptideShakerGUI.getIdentification(), progressDialog,
-                            peptideShakerGUI.getProcessingParameters(), peptideShakerGUI.getIdentificationParameters(),
-                            peptideShakerGUI.getSequenceProvider(), peptideShakerGUI.getProjectType());
+                    miniShaker.spectrumMapChanged(
+                            peptideShakerGUI.getIdentification(),
+                            progressDialog,
+                            peptideShakerGUI.getProcessingParameters(),
+                            peptideShakerGUI.getIdentificationParameters(),
+                            peptideShakerGUI.getSequenceProvider(),
+                            peptideShakerGUI.getSpectrumProvider(),
+                            peptideShakerGUI.getProjectType()
+                    );
 
                     // update the tracking of probabilities modifications
                     for (String key : modifiedMaps.keySet()) {
@@ -2917,10 +2922,15 @@ public class ValidationPanel extends javax.swing.JPanel {
                     }
 
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
-                            "An identification conflict occured. If you can reproduce the error <br>"
-                            + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
-                            "Identification Conflict", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            peptideShakerGUI,
+                            JOptionEditorPane.getJOptionEditorPane(
+                                    "An identification conflict occured. If you can reproduce the error <br>"
+                                    + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."
+                            ),
+                            "Identification Conflict",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                     e.printStackTrace();
                 }
 
@@ -2934,10 +2944,12 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void recalculateProteins() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI,
+        progressDialog = new ProgressDialogX(
+                peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
+                true
+        );
         progressDialog.setTitle("Recalculating. Please Wait...");
         progressDialog.setPrimaryProgressCounterIndeterminate(false);
 
@@ -2958,12 +2970,22 @@ public class ValidationPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters());
 
                 try {
-                    miniShaker.peptideMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSequenceProvider());
+                    miniShaker.peptideMapChanged(
+                            peptideShakerGUI.getIdentification(),
+                            progressDialog,
+                            peptideShakerGUI.getIdentificationParameters(),
+                            peptideShakerGUI.getSequenceProvider(),
+                            peptideShakerGUI.getSpectrumProvider()
+                    );
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
-                            "An identification conflict occured. If you can reproduce the error <br>"
-                            + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."),
-                            "Identification Conflict", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
+                                    "An identification conflict occured. If you can reproduce the error <br>"
+                                    + "Please <a href=\"https://github.com/compomics/peptide-shaker/issues\">contact the developers</a>."
+                            ),
+                            "Identification Conflict",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                     e.printStackTrace();
                 }
 
@@ -2980,10 +3002,12 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void applyProteins() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI,
+        progressDialog = new ProgressDialogX(
+                peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
+                true
+        );
         progressDialog.setTitle("Recalculating. Please Wait...");
         progressDialog.setPrimaryProgressCounterIndeterminate(false);
 
@@ -3005,7 +3029,12 @@ public class ValidationPanel extends javax.swing.JPanel {
 
                     PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters());
 
-                    miniShaker.proteinMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSequenceProvider());
+                    miniShaker.proteinMapChanged(
+                            peptideShakerGUI.getIdentification(), 
+                            progressDialog, 
+                            peptideShakerGUI.getIdentificationParameters(), 
+                            peptideShakerGUI.getSequenceProvider()
+                    );
                     modifiedMaps.put("Proteins", false);
 
                 } catch (Exception e) {
@@ -3076,7 +3105,13 @@ public class ValidationPanel extends javax.swing.JPanel {
     private void applyThreshold(String selectedGroup, double threshold, int thresholdType) {
 
         if (threshold < 0 || threshold > 100) {
-            JOptionPane.showMessageDialog(this, "Please verify the given threshold. Interval: [0, 100].", "Threshold Error", JOptionPane.WARNING_MESSAGE);
+            
+            JOptionPane.showMessageDialog(
+                    this, 
+                    "Please verify the given threshold. Interval: [0, 100].", 
+                    "Threshold Error", 
+                    JOptionPane.WARNING_MESSAGE
+            );
         } else {
             currentTargetDecoyMap = getTargetDecoyMap(selectedGroup);
             targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
