@@ -882,6 +882,19 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
     }
 
     /**
+     * Sets the mass spectrometry file handler.
+     * 
+     * @param msFileHandler The mass spectrometry file handler.
+     */
+    public void setMsFileHandler(
+            MsFileHandler msFileHandler
+    ) {
+   
+        this.msFileHandler = msFileHandler;
+    
+    }
+
+    /**
      * Sets the sequence provider.
      *
      * @param sequenceProvider the sequence provider
@@ -1083,7 +1096,10 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
     @Override
     public void close() {
 
-        msFileHandler.close();
+        if (msFileHandler != null) {
 
+            msFileHandler.close();
+
+        }
     }
 }

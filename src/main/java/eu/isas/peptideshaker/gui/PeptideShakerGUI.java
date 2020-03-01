@@ -109,6 +109,7 @@ import eu.isas.peptideshaker.utils.CpsParent;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
+import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.experiment.io.mass_spectrometry.mgf.MgfFileWriter;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
@@ -4538,6 +4539,19 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         cpsParent.setProteinDetailsProvider(proteinDetailsProvider);
 
+    }
+
+    /**
+     * Sets the mass spectrometry file handler.
+     * 
+     * @param msFileHandler The mass spectrometry file handler.
+     */
+    public void setMsFileHandler(
+            MsFileHandler msFileHandler
+    ) {
+   
+        cpsParent.setMsFileHandler(msFileHandler);
+    
     }
 
     /**
