@@ -53,7 +53,6 @@ import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
-import com.compomics.util.experiment.mass_spectrometry.spectra.SpectrumUtil;
 import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportFormat;
