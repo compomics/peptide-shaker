@@ -746,7 +746,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
         File fastaFile = null;
 
-        // export data from zip files, try to find the search parameter and mgf files
+        // export data from zip files, try to find the search parameter and spectrum files
         ArrayList<File> identificationFiles = new ArrayList<>();
         IdentificationParameters tempIdentificationParameters = null;
 
@@ -757,6 +757,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 dataFolders.add(parentFile);
             }
             File dataFolder = new File(parentFile, "mgf");
+            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                dataFolders.add(dataFolder);
+            }
+            dataFolder = new File(parentFile, "mzml");
             if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                 dataFolders.add(dataFolder);
             }
@@ -791,6 +795,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     dataFolders.add(dataFolder);
                 }
                 dataFolder = new File(destinationFolder, ".mgf");
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                dataFolder = new File(parentFile, "mzml");
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
@@ -863,7 +871,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
                 String name = file.getName();
 
-                if (name.endsWith(".mgf") || name.endsWith(".mgf.gz")) {
+                if (name.endsWith(".mgf") || name.endsWith(".mgf.gz")
+                        || name.endsWith(".mzml") || name.endsWith(".mzml.gz")) {
 
                     if (!names.contains(name)) {
 
@@ -887,7 +896,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // Load the spectrum files
         for (File spectrumFile : spectrumFiles) {
 
-            msFileHandler.register(spectrumFile);
+            msFileHandler.register(spectrumFile, waitingHandler);
 
         }
 

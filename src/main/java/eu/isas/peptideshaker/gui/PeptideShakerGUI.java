@@ -375,7 +375,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param args the arguments
      */
     public static void main(String[] args) {
-
+        
         // set the look and feel
         boolean numbusLookAndFeelSet = false;
 
@@ -6727,7 +6727,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                                             if (spectrumFileName2.equals(fileName)) {
 
-                                                cpsParent.loadSpectrumFile(file);
+                                                cpsParent.loadSpectrumFile(file, progressDialog);
                                                 spectrumFiles.add(file);
 
                                             }

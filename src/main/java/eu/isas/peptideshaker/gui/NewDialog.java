@@ -905,7 +905,6 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void browseSpectraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseSpectraActionPerformed
 
-        // @TODO: implement mzML support
         JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder());
         fileChooser.setDialogTitle("Select Spectrum File(s)");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -916,12 +915,14 @@ public class NewDialog extends javax.swing.JDialog {
             public boolean accept(File myFile) {
                 return myFile.getName().toLowerCase().endsWith(".mgf")
                         || myFile.getName().toLowerCase().endsWith(".mgf.gz")
+                        || myFile.getName().toLowerCase().endsWith(".mzml")
+                        || myFile.getName().toLowerCase().endsWith(".mzml.gz")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "Mascot Generic Format (.mgf, .mg.gz)";
+                return "mgf or mzML (.mgf, .mg.gz, .mzml, .mzml.gz)";
             }
         };
 
@@ -941,7 +942,8 @@ public class NewDialog extends javax.swing.JDialog {
 
                     for (File file : tempFiles) {
 
-                        if (file.getName().toLowerCase().endsWith(".mgf") || file.getName().toLowerCase().endsWith(".mgf.gz")) {
+                        if (file.getName().toLowerCase().endsWith(".mgf") || file.getName().toLowerCase().endsWith(".mgf.gz")
+                                || file.getName().toLowerCase().endsWith(".mzml") || file.getName().toLowerCase().endsWith(".mzml.gz")) {
 
                             selectedFiles.add(file);
 
@@ -955,34 +957,67 @@ public class NewDialog extends javax.swing.JDialog {
             }
 
             // Load the files
-            boolean allLoaded = true;
+            progressDialog = new ProgressDialogX(
+                    this,
+                    peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true
+            );
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+            progressDialog.setTitle("Loading Files. Please Wait...");
 
-            for (File file : selectedFiles) {
-
-                try {
-
-                    msFileHandler.register(file);
-
-                } catch (Exception e) {
-
-                    allLoaded = false;
-
-                    JOptionPane.showMessageDialog(
-                            null,
-                            "An error occurred while reading the following file.\n" + file.getAbsolutePath() + "\n\nError:\n" + e.getLocalizedMessage(),
-                            "File error",
-                            JOptionPane.ERROR_MESSAGE
-                    );
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
                 }
-            }
+            }, "ProgressDialog").start();
 
-            if (allLoaded) {
+            new Thread("loadingThread") {
+                public void run() {
 
-                spectrumFiles.addAll(selectedFiles);
-                spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
-                validateInput();
+                    boolean allLoaded = true;
 
-            }
+                    for (File file : selectedFiles) {
+
+                        try {
+
+                            msFileHandler.register(file, progressDialog);
+
+                        } catch (Exception e) {
+
+                            progressDialog.setRunCanceled();
+                            
+                            allLoaded = false;
+
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "An error occurred while reading the following file.\n"
+                                    + file.getAbsolutePath() + "\n\nError:\n" + e.getLocalizedMessage(),
+                                    "File error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+
+                            e.printStackTrace();
+                        }
+                    }
+                    
+                    progressDialog.setRunFinished();
+
+                    if (allLoaded) {
+
+                        spectrumFiles.addAll(selectedFiles);
+                        spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
+                        validateInput();
+
+                    }
+
+                }
+            }.start();
         }
 }//GEN-LAST:event_browseSpectraActionPerformed
 
@@ -1326,9 +1361,9 @@ public class NewDialog extends javax.swing.JDialog {
 
             new Thread("importThread") {
                 public void run() {
-                    
+
                     loadIdInputFiles(fileChooser.getSelectedFiles());
-                
+
                 }
             }.start();
         }
@@ -1504,34 +1539,67 @@ public class NewDialog extends javax.swing.JDialog {
                 ArrayList<File> selectedFiles = fileDisplayDialog.getSelectedFiles();
 
                 // Load the files
-                boolean allLoaded = true;
+                progressDialog = new ProgressDialogX(
+                        this,
+                        peptideShakerGUI,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true
+                );
+                progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                progressDialog.setTitle("Loading Files. Please Wait...");
 
-                for (File file : selectedFiles) {
-
-                    try {
-
-                        msFileHandler.register(file);
-
-                    } catch (Exception e) {
-
-                        allLoaded = false;
-
-                        JOptionPane.showMessageDialog(
-                                null,
-                                "An error occurred while reading the following file.\n" + file.getAbsolutePath() + "\n\nError:\n" + e.getLocalizedMessage(),
-                                "File error",
-                                JOptionPane.ERROR_MESSAGE
-                        );
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            progressDialog.setVisible(true);
+                        } catch (IndexOutOfBoundsException e) {
+                            // ignore
+                        }
                     }
-                }
+                }, "ProgressDialog").start();
 
-                if (allLoaded) {
+                new Thread("loadingThread") {
+                    public void run() {
 
-                    spectrumFiles = selectedFiles;
-                    spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
-                    validateInput();
+                        boolean allLoaded = true;
 
-                }
+                        for (File file : selectedFiles) {
+
+                            try {
+
+                                msFileHandler.register(file, progressDialog);
+
+                            } catch (Exception e) {
+
+                                progressDialog.setRunCanceled();
+                                
+                                allLoaded = false;
+
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "An error occurred while reading the following file.\n"
+                                        + file.getAbsolutePath() + "\n\nError:\n" + e.getLocalizedMessage(),
+                                        "File error",
+                                        JOptionPane.ERROR_MESSAGE
+                                );
+
+                                e.printStackTrace();
+                            }
+                        }
+
+                        progressDialog.setRunFinished();
+                        
+                        if (allLoaded) {
+
+                            spectrumFiles.addAll(selectedFiles);
+                            spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
+                            validateInput();
+
+                        }
+
+                    }
+                }.start();
             }
         }
     }//GEN-LAST:event_spectrumFilesTxtMouseClicked
@@ -1943,7 +2011,7 @@ public class NewDialog extends javax.swing.JDialog {
      *
      * @return a list of FASTA and mgf input files
      */
-    private ArrayList<String> getFastaAndMgfFiles(ArrayList<File> searchguiInputFiles) {
+    private ArrayList<String> getFastaAndSpectrumFiles(ArrayList<File> searchguiInputFiles) {
 
         ArrayList<String> result = new ArrayList<>();
 
@@ -1996,9 +2064,9 @@ public class NewDialog extends javax.swing.JDialog {
         progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Loading Spectrum Files. Please Wait...");
 
-        ArrayList<String> neededFastaAndSpectrumFiles = getFastaAndMgfFiles(inputFiles);
+        ArrayList<String> neededFastaAndSpectrumFiles = getFastaAndSpectrumFiles(inputFiles);
         String missing = "";
-        int nMissingMgfFiles = 0;
+        int nMissingSpectrumFiles = 0;
         boolean fastaFileFound = false;
         String tempFastaFile = null;
 
@@ -2009,22 +2077,23 @@ public class NewDialog extends javax.swing.JDialog {
 
         for (String path : neededFastaAndSpectrumFiles) {
 
-            if (path.toLowerCase().endsWith(".mgf") || path.toLowerCase().endsWith(".mgf.gz")) {
+            if (path.toLowerCase().endsWith(".mgf") || path.toLowerCase().endsWith(".mgf.gz")
+                    || path.toLowerCase().endsWith(".mzml") || path.toLowerCase().endsWith(".mzml.gz")) {
 
-                File tempMgfFile = new File(path);
-                String mgfFileName = tempMgfFile.getName();
+                File tempSpectrumFile = new File(path);
+                String spectrumFileName = tempSpectrumFile.getName();
 
-                if (!spectrumFileNames.contains(tempMgfFile.getName())) {
+                if (!spectrumFileNames.contains(tempSpectrumFile.getName())) {
 
                     boolean loaded = false;
 
-                    if (tempMgfFile.exists()) {
+                    if (tempSpectrumFile.exists()) {
 
                         try {
 
-                            msFileHandler.register(tempMgfFile);
+                            msFileHandler.register(tempSpectrumFile, progressDialog);
                             loaded = true;
-                            spectrumFiles.add(tempMgfFile);
+                            spectrumFiles.add(tempSpectrumFile);
 
                         } catch (Exception e) {
 
@@ -2036,14 +2105,14 @@ public class NewDialog extends javax.swing.JDialog {
                     if (!loaded) {
 
                         for (File folder : dataFolders) {
-                            
+
                             for (File file : folder.listFiles()) {
-                            
-                                if (file.getName().equals(mgfFileName)) {
+
+                                if (file.getName().equals(spectrumFileName)) {
 
                                     try {
 
-                                        msFileHandler.register(file);
+                                        msFileHandler.register(file, progressDialog);
                                         loaded = true;
                                         spectrumFiles.add(file);
                                         break;
@@ -2062,8 +2131,8 @@ public class NewDialog extends javax.swing.JDialog {
                         }
 
                         if (!loaded) {
-                            nMissingMgfFiles++;
-                            missing += tempMgfFile.getName() + "\n";
+                            nMissingSpectrumFiles++;
+                            missing += tempSpectrumFile.getName() + "\n";
                         }
                     }
                 }
@@ -2087,12 +2156,12 @@ public class NewDialog extends javax.swing.JDialog {
                         for (File tempFile : folder.listFiles()) {
 
                             if (tempFile.getName().equals(providedFastaFile.getName())) {
-                                
+
                                 fastaFile = tempFile;
                                 fastaFileTxt.setText(fastaFile.getName());
                                 found = true;
                                 break;
-                                
+
                             }
                         }
 
@@ -2116,13 +2185,13 @@ public class NewDialog extends javax.swing.JDialog {
             }
         }
 
-        if (nMissingMgfFiles > 0) {
-            if (nMissingMgfFiles < 11) {
+        if (nMissingSpectrumFiles > 0) {
+            if (nMissingSpectrumFiles < 11) {
                 JOptionPane.showMessageDialog(
                         this,
                         "Spectrum file(s) not found:\n" + missing
-                        + "\nPlease locate them manually.",
-                        "Spectrum File Not Found",
+                        + "\nPlease locate it/them manually.",
+                        "Spectrum File(s) Not Found",
                         JOptionPane.WARNING_MESSAGE
                 );
             } else {
@@ -2300,7 +2369,7 @@ public class NewDialog extends javax.swing.JDialog {
                 }
 
                 File[] tempFiles = newFile.listFiles();
-                
+
                 for (File file : tempFiles) {
 
                     String lowerCaseName = file.getName().toLowerCase();
@@ -2350,9 +2419,9 @@ public class NewDialog extends javax.swing.JDialog {
                 if (lowerCaseName.endsWith(".zip")) {
 
                     loadCanceled = !loadZipFile(
-                            newFile, 
-                            parameterFiles, 
-                            dataFolders, 
+                            newFile,
+                            parameterFiles,
+                            dataFolders,
                             inputFiles
                     );
 
@@ -2361,10 +2430,10 @@ public class NewDialog extends javax.swing.JDialog {
                     }
 
                 } else {
-                    
+
                     loadIdFile(
-                            newFile, 
-                            parameterFiles, 
+                            newFile,
+                            parameterFiles,
                             inputFiles
                     );
                 }
@@ -2453,9 +2522,9 @@ public class NewDialog extends javax.swing.JDialog {
                 }
             }
 
-            // load the fasta and mgf files from searchGUI_input.txt 
+            // load the fasta and spectrum files from searchGUI_input.txt 
             loadFastaAndSpectrumFiles(
-                    inputFiles, 
+                    inputFiles,
                     dataFolders
             );
 

@@ -8,24 +8,18 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
-import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import static com.compomics.util.experiment.personalization.ExperimentObject.NO_KEY;
 import com.compomics.util.threading.SimpleSemaphore;
-import com.google.common.collect.Lists;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.Semaphore;
 
 /**
  * A Jump To panel for use in the menu bar in the main frame.

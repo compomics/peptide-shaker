@@ -107,10 +107,6 @@ public class FileImporter {
      */
     private long nRetained = 0;
     /**
-     * The number of spectra.
-     */
-    private long nSpectra = 0;
-    /**
      * The input map.
      */
     private final InputMap inputMap = new InputMap();
@@ -303,6 +299,12 @@ public class FileImporter {
 
                     return 1;
 
+                }
+
+                // get the total number of spectra
+                int nSpectra = 0;
+                for (String spectrumFileName : identification.getFractions()) {
+                    nSpectra += spectrumProvider.getSpectrumTitles(spectrumFileName).length;
                 }
 
                 waitingHandler.appendReport(

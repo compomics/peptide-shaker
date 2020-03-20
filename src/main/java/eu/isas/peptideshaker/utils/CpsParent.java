@@ -396,7 +396,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
             }
 
             File spectrumFile = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
-            msFileHandler.register(spectrumFile);
+            msFileHandler.register(spectrumFile, waitingHandler);
 
         }
 
@@ -452,7 +452,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
         }
 
         File spectrumFile = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
-        msFileHandler.register(spectrumFile);
+        msFileHandler.register(spectrumFile, waitingHandler);
         spectrumFiles.add(spectrumFile);
 
         return true;
@@ -462,18 +462,20 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
      * Adds a spectrum file to the spectrum provider.
      *
      * @param spectrumFile The spectrum file to add.
+     * @param waitingHandler The waiting handler.
      *
      * @throws IOException Exception thrown whenever an error occurred while
      * reading or writing a file
      */
     public void loadSpectrumFile(
-            File spectrumFile
+            File spectrumFile,
+            WaitingHandler waitingHandler
     ) throws IOException {
 
         projectDetails.addSpectrumFilePath(
                 spectrumFile.getAbsolutePath()
         );
-        msFileHandler.register(spectrumFile);
+        msFileHandler.register(spectrumFile, waitingHandler);
 
     }
 
