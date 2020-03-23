@@ -4095,7 +4095,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     currentSpectrum.mz,
                     intensityArray,
                     precursor.mz,
-                    Charge.getChargeAsFormattedString(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge()),
+                    Charge.toString(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge()),
                     "",
                     40,
                     false,

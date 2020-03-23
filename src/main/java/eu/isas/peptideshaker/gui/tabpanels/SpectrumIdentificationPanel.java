@@ -3081,7 +3081,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                             if (currentAssumption != null) {
 
-                                selectedIndexes.add((i + 1) + " " + Charge.getChargeAsFormattedString(currentAssumption.getIdentificationCharge()));
+                                selectedIndexes.add((i + 1) + " " + Charge.toString(currentAssumption.getIdentificationCharge()));
 
                                 if (currentAssumption instanceof PeptideAssumption) {
 
