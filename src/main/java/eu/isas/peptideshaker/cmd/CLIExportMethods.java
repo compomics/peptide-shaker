@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class groups standard methods used by the different command line
@@ -106,8 +105,6 @@ public class CLIExportMethods {
      * while interacting with the database
      * @throws ClassNotFoundException exception thrown whenever an exception
      * occurred while deserializing an object
-     * @throws MzMLUnmarshallerException exception thrown whenever an exception
-     * occurred while reading an mzML file
      */
     public static ArrayList<File> exportSpectra(
             FollowUpCLIInputBean followUpCLIInputBean,
@@ -115,7 +112,7 @@ public class CLIExportMethods {
             SpectrumProvider spectrumProvider,
             WaitingHandler waitingHandler,
             SequenceMatchingParameters sequenceMatchingPreferences
-    ) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+    ) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         File exportFolder = followUpCLIInputBean.getSpectrumExportFolder();
 
