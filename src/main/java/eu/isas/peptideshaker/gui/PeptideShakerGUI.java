@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
 import eu.isas.peptideshaker.gui.parameters.ProjectDetailsDialog;
 import eu.isas.peptideshaker.gui.parameters.SpectrumColorsDialog;
@@ -154,6 +156,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import org.slf4j.LoggerFactory;
 
 /**
  * The main PeptideShaker frame.
@@ -375,6 +378,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param args the arguments
      */
     public static void main(String[] args) {
+        
+        // turn off the zoodb logging
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.zoodb");
+        logger.setLevel(Level.toLevel("ERROR"));
         
         // set the look and feel
         boolean numbusLookAndFeelSet = false;

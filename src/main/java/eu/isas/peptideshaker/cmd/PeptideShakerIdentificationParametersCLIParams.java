@@ -270,6 +270,10 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANDROMEDA_MAX_PSMS.id) + " " + IdentificationParametersCLIParams.ANDROMEDA_MAX_PSMS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANDROMEDA_DECOY_MODE.id) + " " + IdentificationParametersCLIParams.ANDROMEDA_DECOY_MODE.description + "\n";
         
+        output += "\n\nMetaMorpheus advanced parameters:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.METAMORPHEUS_MIN_PEP_LENGTH.id) + " " + IdentificationParametersCLIParams.METAMORPHEUS_MIN_PEP_LENGTH.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.METAMORPHEUS_MAX_PEP_LENGTH.id) + " " + IdentificationParametersCLIParams.METAMORPHEUS_MAX_PEP_LENGTH.description + "\n";
+        
         output += "\n\nNovor:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.NOVOR_FRAGMENTATION.id) + " " + IdentificationParametersCLIParams.NOVOR_FRAGMENTATION.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.NOVOR_MASS_ANALYZER.id) + " " + IdentificationParametersCLIParams.NOVOR_MASS_ANALYZER.description + "\n";
