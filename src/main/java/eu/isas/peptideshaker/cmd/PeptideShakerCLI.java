@@ -29,6 +29,7 @@ import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
+import eu.isas.peptideshaker.utils.CmsUtils;
 import eu.isas.peptideshaker.utils.Properties;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
@@ -894,9 +895,12 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // Load the spectrum files
+        
         for (File spectrumFile : spectrumFiles) {
+            
+            File folder = CmsUtils.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsUtils.getParentFolder());
 
-            msFileHandler.register(spectrumFile, waitingHandler);
+            msFileHandler.register(spectrumFile, folder, waitingHandler);
 
         }
 

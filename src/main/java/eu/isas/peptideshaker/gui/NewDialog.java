@@ -35,6 +35,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
+import eu.isas.peptideshaker.utils.CmsUtils;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
 import eu.isas.peptideshaker.validation.MatchesValidator;
@@ -986,7 +987,9 @@ public class NewDialog extends javax.swing.JDialog {
 
                         try {
 
-                            msFileHandler.register(file, progressDialog);
+            File folder = CmsUtils.getParentFolder() == null ? file.getParentFile() : new File(CmsUtils.getParentFolder());
+
+                            msFileHandler.register(file, folder, progressDialog);
 
                         } catch (Exception e) {
 
@@ -1568,7 +1571,9 @@ public class NewDialog extends javax.swing.JDialog {
 
                             try {
 
-                                msFileHandler.register(file, progressDialog);
+            File folder = CmsUtils.getParentFolder() == null ? file.getParentFile() : new File(CmsUtils.getParentFolder());
+            
+                                msFileHandler.register(file, folder, progressDialog);
 
                             } catch (Exception e) {
 
@@ -2091,7 +2096,9 @@ public class NewDialog extends javax.swing.JDialog {
 
                         try {
 
-                            msFileHandler.register(tempSpectrumFile, progressDialog);
+            File folder = CmsUtils.getParentFolder() == null ? tempSpectrumFile.getParentFile() : new File(CmsUtils.getParentFolder());
+            
+                            msFileHandler.register(tempSpectrumFile, folder, progressDialog);
                             loaded = true;
                             spectrumFiles.add(tempSpectrumFile);
 
@@ -2112,7 +2119,9 @@ public class NewDialog extends javax.swing.JDialog {
 
                                     try {
 
-                                        msFileHandler.register(file, progressDialog);
+             folder = CmsUtils.getParentFolder() == null ? file.getParentFile() : new File(CmsUtils.getParentFolder());
+
+                                        msFileHandler.register(file, folder, progressDialog);
                                         loaded = true;
                                         spectrumFiles.add(file);
                                         break;

@@ -396,7 +396,9 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
             }
 
             File spectrumFile = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
-            msFileHandler.register(spectrumFile, waitingHandler);
+
+            folder = CmsUtils.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsUtils.getParentFolder());
+            msFileHandler.register(spectrumFile, folder, waitingHandler);
 
         }
 
@@ -452,7 +454,9 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
         }
 
         File spectrumFile = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
-        msFileHandler.register(spectrumFile, waitingHandler);
+
+        File folder = CmsUtils.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsUtils.getParentFolder());
+        msFileHandler.register(spectrumFile, folder, waitingHandler);
         spectrumFiles.add(spectrumFile);
 
         return true;
@@ -475,7 +479,9 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
         projectDetails.addSpectrumFilePath(
                 spectrumFile.getAbsolutePath()
         );
-        msFileHandler.register(spectrumFile, waitingHandler);
+
+        File folder = CmsUtils.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsUtils.getParentFolder());
+        msFileHandler.register(spectrumFile, folder, waitingHandler);
 
     }
 
@@ -885,15 +891,15 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
 
     /**
      * Sets the mass spectrometry file handler.
-     * 
+     *
      * @param msFileHandler The mass spectrometry file handler.
      */
     public void setMsFileHandler(
             MsFileHandler msFileHandler
     ) {
-   
+
         this.msFileHandler = msFileHandler;
-    
+
     }
 
     /**
