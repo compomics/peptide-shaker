@@ -6,7 +6,7 @@ import com.compomics.util.io.flat.SimpleFileReader;
 import com.compomics.util.io.flat.SimpleFileWriter;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.PSExportFactory;
-import eu.isas.peptideshaker.utils.CmsUtils;
+import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFolder;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -169,7 +169,7 @@ public class PeptideShakerPathParameters {
 
                 if (!line.equals("") && !line.startsWith("#")) {
 
-                    loadPathPreferenceFromLine(line);
+                    loadPathParametersFromLine(line);
 
                 }
             }
@@ -180,9 +180,10 @@ public class PeptideShakerPathParameters {
      * Loads a path to be set from a line.
      *
      * @param line the line where to read the path from
+     * 
      * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
-    public static void loadPathPreferenceFromLine(
+    public static void loadPathParametersFromLine(
             String line
     ) throws FileNotFoundException, IOException {
 
@@ -256,7 +257,7 @@ public class PeptideShakerPathParameters {
                 return PsZipUtils.getUnzipParentFolder();
                 
             case cmsFolder:
-                return CmsUtils.getParentFolder();
+                return CmsFolder.getParentFolder();
 
             default:
                 throw new UnsupportedOperationException("Path " + peptideShakerPathKey.id + " not implemented.");
@@ -296,7 +297,7 @@ public class PeptideShakerPathParameters {
                 return;
                 
             case cmsFolder:
-                CmsUtils.setParentFolder(path);
+                CmsFolder.setParentFolder(path);
 
             default:
                 throw new UnsupportedOperationException("Path " + peptideShakerPathKey.id + " not implemented.");
@@ -481,7 +482,7 @@ public class PeptideShakerPathParameters {
                 
             case cmsFolder:
 
-                toWrite = CmsUtils.getParentFolder();
+                toWrite = CmsFolder.getParentFolder();
 
                 if (toWrite == null) {
 

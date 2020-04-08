@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.utils;
 
+import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFolder;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
@@ -13,7 +14,7 @@ import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
-import com.compomics.util.gui.file_handling.TempFilesManager;
+import com.compomics.util.experiment.io.temp.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -397,7 +398,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
 
             File spectrumFile = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
 
-            folder = CmsUtils.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsUtils.getParentFolder());
+            folder = CmsFolder.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
             msFileHandler.register(spectrumFile, folder, waitingHandler);
 
         }
@@ -455,7 +456,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
 
         File spectrumFile = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
 
-        File folder = CmsUtils.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsUtils.getParentFolder());
+        File folder = CmsFolder.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
         msFileHandler.register(spectrumFile, folder, waitingHandler);
         spectrumFiles.add(spectrumFile);
 
@@ -480,7 +481,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
                 spectrumFile.getAbsolutePath()
         );
 
-        File folder = CmsUtils.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsUtils.getParentFolder());
+        File folder = CmsFolder.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
         msFileHandler.register(spectrumFile, folder, waitingHandler);
 
     }
