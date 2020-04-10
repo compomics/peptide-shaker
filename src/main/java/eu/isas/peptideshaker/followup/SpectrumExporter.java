@@ -88,7 +88,7 @@ public class SpectrumExporter {
 
             File destinationFile = getDestinationFile(destinationFolder, fileName, exportType);
 
-            try ( BufferedWriter bw = new BufferedWriter(new FileWriter(destinationFile))) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(destinationFile))) {
 
                 for (String spectrumTitle : spectrumTitles) {
 
@@ -210,7 +210,10 @@ public class SpectrumExporter {
 
                 }
 
-                return !identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide().getKey()).stream()
+                peptideMatchKey = spectrumMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingParameters);
+                peptideMatch = identification.getPeptideMatch(peptideMatchKey);
+
+                return !identification.getProteinMatches(peptideMatch.getKey()).stream()
                         .anyMatch(
                                 key -> ((PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy)).getMatchValidationLevel().isValidated()
                         );
@@ -254,7 +257,7 @@ public class SpectrumExporter {
 
                 }
 
-                return !identification.getProteinMatches(spectrumMatch.getBestPeptideAssumption().getPeptide().getKey()).stream()
+                return !identification.getProteinMatches(peptideMatch.getKey()).stream()
                         .anyMatch(
                                 key -> ((PSParameter) identification.getProteinMatch(key).getUrParam(PSParameter.dummy)).getMatchValidationLevel().isValidated()
                         );
@@ -342,7 +345,7 @@ public class SpectrumExporter {
          * @param index
          */
         private ExportType(
-                int index, 
+                int index,
                 String description
         ) {
             this.index = index;
