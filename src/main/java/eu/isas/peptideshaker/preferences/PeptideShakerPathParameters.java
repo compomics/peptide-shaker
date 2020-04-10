@@ -298,6 +298,7 @@ public class PeptideShakerPathParameters {
                 
             case cmsFolder:
                 CmsFolder.setParentFolder(path);
+                return;
 
             default:
                 throw new UnsupportedOperationException("Path " + peptideShakerPathKey.id + " not implemented.");
