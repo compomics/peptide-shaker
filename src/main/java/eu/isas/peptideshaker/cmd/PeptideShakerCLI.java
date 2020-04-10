@@ -17,7 +17,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.gui.DummyFrame;
-import com.compomics.util.gui.file_handling.TempFilesManager;
+import com.compomics.util.experiment.io.temp.TempFilesManager;
 import com.compomics.util.io.IoUtil;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -29,6 +29,7 @@ import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
+import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFolder;
 import eu.isas.peptideshaker.utils.Properties;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
@@ -894,9 +895,12 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // Load the spectrum files
+        
         for (File spectrumFile : spectrumFiles) {
+            
+            File folder = CmsFolder.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
 
-            msFileHandler.register(spectrumFile, waitingHandler);
+            msFileHandler.register(spectrumFile, folder, waitingHandler);
 
         }
 

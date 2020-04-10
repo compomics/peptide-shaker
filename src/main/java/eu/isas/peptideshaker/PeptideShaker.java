@@ -77,7 +77,7 @@ public class PeptideShaker {
     /**
      * The PTM scorer responsible for scoring PTM localization.
      */
-    private ModificationLocalizationScorer modificationLocalizationScorer = new ModificationLocalizationScorer();
+    private final ModificationLocalizationScorer modificationLocalizationScorer = new ModificationLocalizationScorer();
     /**
      * The id importer will import and process the identifications.
      */
@@ -85,7 +85,7 @@ public class PeptideShaker {
     /**
      * User preferences file.
      */
-    private static String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences_2.0.cpf"; // @TODO: should not default to user.home!
+    private static String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences_2.0.cpf";
     /**
      * Default PeptideShaker modifications.
      */
@@ -111,7 +111,7 @@ public class PeptideShaker {
     /**
      * Metrics to be picked when loading the identification.
      */
-    private Metrics metrics = new Metrics();
+    private final Metrics metrics = new Metrics();
     /**
      * The gene maps.
      */

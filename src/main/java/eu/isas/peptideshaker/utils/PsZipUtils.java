@@ -16,13 +16,13 @@ public class PsZipUtils {
      */
     private static String unzipParentFolder = null;
     /**
-     * The sub folder where the information will be stored.
+     * The sub folder where the unzipped files should be stored.
      */
-    private static final String unzipSubFolder = ".PeptideShaker_unzip_temp";
+    private static final String UNZIP_SUB_FOLDER = ".PeptideShaker_unzip_temp";
     /**
      * Suffix for folders where the content of zip files should be extracted.
      */
-    public final static String tempFolderName = "PeptideShaker_temp";
+    public final static String TEMP_FOLDER_NAME = "PeptideShaker_temp";
     /**
      * Returns the parent folder where to unzip files. Null if not set.
      * 
@@ -37,7 +37,7 @@ public class PsZipUtils {
      * @return the sub-folder where to unzip files
      */
     public static String getUnzipSubFolder() {
-        return unzipSubFolder;
+        return UNZIP_SUB_FOLDER;
     }
     
     /**
@@ -57,6 +57,6 @@ public class PsZipUtils {
      * @return the folder name associated to the zip file
      */
     public static String getTempFolderName(String fileName) {
-        return IoUtil.removeExtension(fileName) + "_" + tempFolderName;
+        return IoUtil.removeExtension(fileName) + "_" + TEMP_FOLDER_NAME;
     }
 }

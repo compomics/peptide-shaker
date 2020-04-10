@@ -44,7 +44,7 @@ import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.PrivacyParametersDialog;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.error_handlers.notification.NotesDialog;
-import com.compomics.util.gui.file_handling.TempFilesManager;
+import com.compomics.util.experiment.io.temp.TempFilesManager;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.parameters.UtilitiesUserParameters;

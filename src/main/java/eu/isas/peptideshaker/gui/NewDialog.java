@@ -18,7 +18,7 @@ import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.JOptionEditorPane;
-import com.compomics.util.gui.file_handling.TempFilesManager;
+import com.compomics.util.experiment.io.temp.TempFilesManager;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -35,6 +35,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
+import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFolder;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
 import eu.isas.peptideshaker.validation.MatchesValidator;
@@ -986,7 +987,9 @@ public class NewDialog extends javax.swing.JDialog {
 
                         try {
 
-                            msFileHandler.register(file, progressDialog);
+            File folder = CmsFolder.getParentFolder() == null ? file.getParentFile() : new File(CmsFolder.getParentFolder());
+
+                            msFileHandler.register(file, folder, progressDialog);
 
                         } catch (Exception e) {
 
@@ -1568,7 +1571,9 @@ public class NewDialog extends javax.swing.JDialog {
 
                             try {
 
-                                msFileHandler.register(file, progressDialog);
+            File folder = CmsFolder.getParentFolder() == null ? file.getParentFile() : new File(CmsFolder.getParentFolder());
+            
+                                msFileHandler.register(file, folder, progressDialog);
 
                             } catch (Exception e) {
 
@@ -2091,7 +2096,9 @@ public class NewDialog extends javax.swing.JDialog {
 
                         try {
 
-                            msFileHandler.register(tempSpectrumFile, progressDialog);
+            File folder = CmsFolder.getParentFolder() == null ? tempSpectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
+            
+                            msFileHandler.register(tempSpectrumFile, folder, progressDialog);
                             loaded = true;
                             spectrumFiles.add(tempSpectrumFile);
 
@@ -2112,7 +2119,9 @@ public class NewDialog extends javax.swing.JDialog {
 
                                     try {
 
-                                        msFileHandler.register(file, progressDialog);
+             folder = CmsFolder.getParentFolder() == null ? file.getParentFile() : new File(CmsFolder.getParentFolder());
+
+                                        msFileHandler.register(file, folder, progressDialog);
                                         loaded = true;
                                         spectrumFiles.add(file);
                                         break;
