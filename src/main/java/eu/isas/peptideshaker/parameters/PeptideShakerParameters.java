@@ -13,7 +13,6 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 
 /**
@@ -69,7 +68,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     private final ProjectType projectType;
     /**
-     * The key of the object when stored in settings table of a cps file.
+     * The key of the object when stored in settings table of a psdb file.
      */
     public static final long KEY = ExperimentObject.asLong("PeptideShaker_parameters");
     

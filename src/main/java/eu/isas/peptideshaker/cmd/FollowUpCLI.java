@@ -7,7 +7,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.utils.CpsParent;
+import eu.isas.peptideshaker.utils.PsdbParent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,12 +16,12 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
 /**
- * Command line interface to run follow-up analysis on cps files.
+ * Command line interface to run follow-up analysis on psdb files.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class FollowUpCLI extends CpsParent {
+public class FollowUpCLI extends PsdbParent {
 
     /**
      * The follow up options.
@@ -81,17 +81,17 @@ public class FollowUpCLI extends CpsParent {
             if (followUpCLIInputBean.getZipFile() != null) {
 
                 inputFilePath = followUpCLIInputBean.getZipFile().getAbsolutePath();
-                loadCpsFromZipFile(
+                loadPsdbFromZipFile(
                         followUpCLIInputBean.getZipFile(),
                         PeptideShaker.getMatchesFolder(),
                         waitingHandler
                 );
 
-            } else if (followUpCLIInputBean.getCpsFile() != null) {
+            } else if (followUpCLIInputBean.getPsdbFile() != null) {
 
-                inputFilePath = followUpCLIInputBean.getCpsFile().getAbsolutePath();
-                cpsFile = followUpCLIInputBean.getCpsFile();
-                loadCpsFile(PeptideShaker.getMatchesFolder(), waitingHandler);
+                inputFilePath = followUpCLIInputBean.getPsdbFile().getAbsolutePath();
+                psdbFile = followUpCLIInputBean.getPsdbFile();
+                loadPsdbFile(PeptideShaker.getMatchesFolder(), waitingHandler);
 
             } else {
 
@@ -485,7 +485,7 @@ public class FollowUpCLI extends CpsParent {
      */
     private static String getHeader() {
         return System.getProperty("line.separator")
-                + "The PeptideShaker follow-up command line takes a cpsx file and generates various types of output files." + System.getProperty("line.separator")
+                + "The PeptideShaker follow-up command line takes a psdb file and generates various types of output files." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "For further help see https://compomics.github.io/projects/peptide-shaker.html and https://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
@@ -509,14 +509,14 @@ public class FollowUpCLI extends CpsParent {
         if (aLine.getOptions().length == 0) {
             return false;
         }
-        if (!aLine.hasOption(FollowUpCLIParams.CPS_FILE.id) || ((String) aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id)).equals("")) {
-            System.out.println("\n" + FollowUpCLIParams.CPS_FILE.description + " not specified.\n");
+        if (!aLine.hasOption(FollowUpCLIParams.PSDB_FILE.id) || ((String) aLine.getOptionValue(FollowUpCLIParams.PSDB_FILE.id)).equals("")) {
+            System.out.println("\n" + FollowUpCLIParams.PSDB_FILE.description + " not specified.\n");
             return false;
         } else {
-            String fileTxt = aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id);
+            String fileTxt = aLine.getOptionValue(FollowUpCLIParams.PSDB_FILE.id);
             File testFile = new File(fileTxt.trim());
             if (!testFile.exists()) {
-                System.out.println("\n" + FollowUpCLIParams.CPS_FILE.description + " \'" + testFile.getAbsolutePath() + "\' not found.\n");
+                System.out.println("\n" + FollowUpCLIParams.PSDB_FILE.description + " \'" + testFile.getAbsolutePath() + "\' not found.\n");
                 return false;
             }
         }

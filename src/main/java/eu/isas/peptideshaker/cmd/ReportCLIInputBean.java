@@ -16,9 +16,9 @@ import org.apache.commons.cli.CommandLine;
 public class ReportCLIInputBean {
 
     /**
-     * The cps file to work on.
+     * The psdb file to work on.
      */
-    private File cpsFile = null;
+    private File psdbFile = null;
     /**
      * The zip file.
      */
@@ -55,10 +55,10 @@ public class ReportCLIInputBean {
      */
     public ReportCLIInputBean(CommandLine aLine) {
 
-        if (aLine.hasOption(ReportCLIParams.CPS_FILE.id)) {
-            String file = aLine.getOptionValue(ReportCLIParams.CPS_FILE.id);
-            if (file.toLowerCase().endsWith(".cpsx")) {
-                cpsFile = new File(file);
+        if (aLine.hasOption(ReportCLIParams.PSDB_FILE.id)) {
+            String file = aLine.getOptionValue(ReportCLIParams.PSDB_FILE.id);
+            if (file.toLowerCase().endsWith(".psdb")) {
+                psdbFile = new File(file);
             } else if (file.toLowerCase().endsWith(".zip")) {
                 zipFile = new File(file);
             } else {
@@ -94,12 +94,12 @@ public class ReportCLIInputBean {
     }
 
     /**
-     * Returns the cps file from which the information can be obtained.
+     * Returns the psdb file from which the information can be obtained.
      *
-     * @return the cps file from which the information can be obtained
+     * @return the psdb file from which the information can be obtained
      */
-    public File getCpsFile() {
-        return cpsFile;
+    public File getPsdbFile() {
+        return psdbFile;
     }
 
     /**

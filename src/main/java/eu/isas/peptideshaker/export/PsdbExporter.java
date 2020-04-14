@@ -21,16 +21,16 @@ import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.io.*;
 
 /**
- * This class exports a PeptideShaker project as cpsx file.
+ * This class exports a PeptideShaker project as pdsb file.
  *
  * @author Marc Vaudel
  */
-public class CpsExporter {
+public class PsdbExporter {
 
     /**
-     * Saves the given data in a cps file.
+     * Saves the given data in a psdb file.
      *
-     * @param destinationFile the destination cps file
+     * @param destinationFile the destination psdb file
      * @param waitingHandler a waiting handler used to cancel the saving
      * @param identification the identification to save
      * @param sequenceProvider the sequence provider

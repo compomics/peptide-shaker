@@ -22,7 +22,7 @@ import eu.isas.peptideshaker.followup.SpectrumExporter;
 import com.compomics.util.gui.filtering.FilterParameters;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
-import eu.isas.peptideshaker.utils.CpsParent;
+import eu.isas.peptideshaker.utils.PsdbParent;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import eu.isas.peptideshaker.followup.ProteoformExport;
@@ -471,7 +471,7 @@ public class CLIExportMethods {
      * Exports the project in the mzIdentML format.
      *
      * @param mzidCLIInputBean the user input
-     * @param cpsParent a cps file parent allowing accessing the information it
+     * @param psbdParent a psbd file parent allowing accessing the information it
      * contains
      * @param waitingHandler a waiting handler allowing display of progress and
      * interruption of the export
@@ -481,11 +481,11 @@ public class CLIExportMethods {
      */
     public static void exportMzId(
             MzidCLIInputBean mzidCLIInputBean,
-            CpsParent cpsParent,
+            PsdbParent psbdParent,
             WaitingHandler waitingHandler
     ) throws IOException {
 
-        ProjectDetails projectDetails = cpsParent.getProjectDetails();
+        ProjectDetails projectDetails = psbdParent.getProjectDetails();
         projectDetails.setContactFirstName(mzidCLIInputBean.getContactFirstName());
         projectDetails.setContactLastName(mzidCLIInputBean.getContactLastName());
         projectDetails.setContactEmail(mzidCLIInputBean.getContactEmail());
@@ -498,20 +498,20 @@ public class CLIExportMethods {
         projectDetails.setIncludeProteinSequences(mzidCLIInputBean.getIncludeProteinSequences());
         projectDetails.setPrideOutputFolder(mzidCLIInputBean.getOutputFile().getAbsolutePath());
 
-        IdentificationParameters identificationParameters = cpsParent.getIdentificationParameters();
+        IdentificationParameters identificationParameters = psbdParent.getIdentificationParameters();
         FastaSummary fastaSummary = FastaSummary.getSummary(projectDetails.getFastaFile(),
                 identificationParameters.getFastaParameters(), waitingHandler);
 
         MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(
                 PeptideShaker.getVersion(),
-                cpsParent.getIdentification(),
-                cpsParent.getProjectDetails(),
+                psbdParent.getIdentification(),
+                psbdParent.getProjectDetails(),
                 identificationParameters,
-                cpsParent.getSequenceProvider(),
-                cpsParent.getProteinDetailsProvider(),
-                cpsParent.getSpectrumProvider(),
+                psbdParent.getSequenceProvider(),
+                psbdParent.getProteinDetailsProvider(),
+                psbdParent.getSpectrumProvider(),
                 fastaSummary,
-                cpsParent.getIdentificationFeaturesGenerator(),
+                psbdParent.getIdentificationFeaturesGenerator(),
                 mzidCLIInputBean.getOutputFile(),
                 mzidCLIInputBean.getIncludeProteinSequences(),
                 waitingHandler,

@@ -14,7 +14,7 @@ import org.apache.commons.cli.Options;
  */
 public enum FollowUpCLIParams {
 
-    CPS_FILE("in", "PeptideShaker project (.cpsx or .zip file)", true, true),
+    PSDB_FILE("in", "PeptideShaker project (.psdb or .zip file)", true, true),
     RECALIBRATION_FOLDER("recalibration_folder", "Output folder for the recalibrated files. (Existing files will be overwritten.)", true, false),
     RECALIBRATION_MODE("recalibration_mode", "Recalibration type. 0: precursor and fragment ions (default), 1: precursor only, 2: fragment ions only.", true, false),
     SPECTRUM_FOLDER("spectrum_folder", "Output folder for the spectra. (Existing files will be overwritten.)", true, false),
@@ -96,7 +96,7 @@ public enum FollowUpCLIParams {
         String formatter = "%-35s";
 
         output += "Mandatory Parameter:\n\n";
-        output += "-" + String.format(formatter, CPS_FILE.id) + " " + CPS_FILE.description + "\n";
+        output += "-" + String.format(formatter, PSDB_FILE.id) + " " + PSDB_FILE.description + "\n";
 
         output += "\n\nOptional Output Parameters:\n";
         output += getOutputOptionsAsString();

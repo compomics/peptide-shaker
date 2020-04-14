@@ -752,6 +752,7 @@ public class NewDialog extends javax.swing.JDialog {
                                         projectDetails,
                                         projectType,
                                         waitingDialog,
+                                        true,
                                         exceptionHandler
                                 );
 

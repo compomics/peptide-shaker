@@ -18,7 +18,7 @@ import com.compomics.util.experiment.io.temp.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import eu.isas.peptideshaker.export.CpsExporter;
+import eu.isas.peptideshaker.export.PsdbExporter;
 import eu.isas.peptideshaker.parameters.PeptideShakerParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.gui.filtering.FilterParameters;
@@ -41,12 +41,12 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
- * Implementing this abstract class allows interacting with a cps files.
+ * Implementing this abstract class allows interacting with a psdb files.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class CpsParent extends UserPreferencesParent implements AutoCloseable {
+public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
 
     /**
      * The identification.
@@ -101,9 +101,9 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
      */
     protected File dbFolder;
     /**
-     * The currently loaded cps file.
+     * The currently loaded psdb file.
      */
-    protected File cpsFile = null;
+    protected File psdbFile = null;
     /**
      * All parameters of a project.
      */
@@ -116,7 +116,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
     /**
      * Empty constructor for instantiation purposes.
      */
-    public CpsParent() {
+    public PsdbParent() {
 
     }
 
@@ -125,7 +125,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
      *
      * @param dbFolder the folder where the database is stored.
      */
-    public CpsParent(
+    public PsdbParent(
             File dbFolder
     ) {
 
@@ -134,16 +134,16 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
     }
 
     /**
-     * Loads the information from a cps file.
+     * Loads the information from a psdb file.
      *
-     * @param zipFile the zip file containing the cps file
+     * @param zipFile the zip file containing the psdb file
      * @param dbFolder the folder where to extract the project
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
      *
      * @throws IOException thrown if an error occurred while reading the file
      */
-    public void loadCpsFromZipFile(
+    public void loadPsdbFromZipFile(
             File zipFile,
             File dbFolder,
             WaitingHandler waitingHandler
@@ -169,8 +169,8 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
 
                 if (file.getName().toLowerCase().endsWith(".psdb")) {
 
-                    cpsFile = file;
-                    loadCpsFile(dbFolder, waitingHandler);
+                    psdbFile = file;
+                    loadPsdbFile(dbFolder, waitingHandler);
                     return;
 
                 }
@@ -179,7 +179,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
     }
 
     /**
-     * Loads the information from a cps file.
+     * Loads the information from a psdb file.
      *
      * @param dbFolder the folder where to untar the project
      * @param waitingHandler a waiting handler displaying feedback to the user.
@@ -188,7 +188,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
      * @throws IOException thrown of IOException occurs exception thrown
      * whenever an error occurred while reading or writing a file
      */
-    public void loadCpsFile(
+    public void loadPsdbFile(
             File dbFolder,
             WaitingHandler waitingHandler
     ) throws IOException { // @TODO: use the waiting handler!
@@ -212,8 +212,8 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
 
         File destinationFile = new File(dbFolder.getAbsolutePath(), dbName);
 
-        IoUtil.copyFile(cpsFile, destinationFile);
-        //GzUtils.gunzipFile(cpsFile, destinationFile, false); // @TODO: re-add when the zipping works
+        IoUtil.copyFile(psdbFile, destinationFile);
+        //GzUtils.gunzipFile(psdbFile, destinationFile, false); // @TODO: re-add when the zipping works
 
         ObjectsDB objectsDB = new ObjectsDB(
                 dbFolder.getAbsolutePath(),
@@ -274,13 +274,13 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
         }
 
         loadUserParameters();
-        userPreferences.addRecentProject(cpsFile);
+        userPreferences.addRecentProject(psdbFile);
         saveUserParameters();
 
     }
 
     /**
-     * Saves the project in the cps file.
+     * Saves the project in the psdb file.
      *
      * @param waitingHandler waiting handler displaying feedback to the user.
      * can be null.
@@ -294,8 +294,8 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
             boolean emptyCache
     ) throws IOException {
 
-        CpsExporter.saveAs(
-                cpsFile,
+        PsdbExporter.saveAs(
+                psdbFile,
                 waitingHandler,
                 identification,
                 identificationParameters,
@@ -314,7 +314,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
         );
 
         loadUserParameters();
-        userPreferences.addRecentProject(cpsFile);
+        userPreferences.addRecentProject(psdbFile);
         saveUserParameters();
 
     }
@@ -361,7 +361,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
         for (String spectrumFileName : projectDetails.getSpectrumFileNames()) {
 
             File providedSpectrumLocation = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
-            File projectFolder = cpsFile.getParentFile();
+            File projectFolder = psdbFile.getParentFile();
             File dataFolder = new File(projectFolder, "data");
 
             // try to locate the spectrum file
@@ -426,7 +426,7 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
     ) throws IOException {
 
         File providedSpectrumLocation = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
-        File projectFolder = cpsFile.getParentFile();
+        File projectFolder = psdbFile.getParentFile();
         File dataFolder = new File(projectFolder, "data");
 
         // try to locate the spectrum file
@@ -507,9 +507,9 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
 
             boolean fastaFileFound = false;
 
-            if (cpsFile != null) {
+            if (psdbFile != null) {
 
-                File projectFolder = cpsFile.getParentFile();
+                File projectFolder = psdbFile.getParentFile();
                 File dataFolder = new File(projectFolder, "data");
 
                 File fileInProjectFolder = new File(projectFolder, providedFastaLocation.getName());
@@ -627,13 +627,13 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
     }
 
     /**
-     * Returns the cps file.
+     * Returns the psdb file.
      *
-     * @return the cps file
+     * @return the psdb file
      */
-    public File getCpsFile() {
+    public File getPsdbFile() {
 
-        return cpsFile;
+        return psdbFile;
 
     }
 
@@ -759,15 +759,15 @@ public class CpsParent extends UserPreferencesParent implements AutoCloseable {
     }
 
     /**
-     * Sets the cps file.
+     * Sets the psdb file.
      *
-     * @param cpsFile the cps file
+     * @param psdbFile the psdb file
      */
-    public void setCpsFile(
-            File cpsFile
+    public void setPsdbFile(
+            File psdbFile
     ) {
 
-        this.cpsFile = cpsFile;
+        this.psdbFile = psdbFile;
 
     }
 

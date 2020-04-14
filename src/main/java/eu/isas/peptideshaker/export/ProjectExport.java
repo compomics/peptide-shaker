@@ -34,7 +34,7 @@ public class ProjectExport {
      * @param zipFile the destination file
      * @param fastaFile path to the FASTA file
      * @param spectrumProvider the spectrum provider
-     * @param cpsFile the cps file
+     * @param psdbFile the psdb file
      * @param moveFilesIntoZip if true, the files will be moved into the zip
      * file, i.e. not just copied
      * @param waitingHandler a waiting handler to display progress to the user
@@ -47,7 +47,7 @@ public class ProjectExport {
             File zipFile,
             File fastaFile,
             SpectrumProvider spectrumProvider,
-            File cpsFile,
+            File psdbFile,
             boolean moveFilesIntoZip,
             WaitingHandler waitingHandler
     ) throws IOException {
@@ -59,7 +59,7 @@ public class ProjectExport {
                 null,
                 null,
                 null,
-                cpsFile,
+                psdbFile,
                 moveFilesIntoZip,
                 waitingHandler
         );
@@ -74,7 +74,7 @@ public class ProjectExport {
      * @param followupAnalysisFiles followup analysis files
      * @param reportFiles the identification features report files
      * @param mzidFile the mzid file
-     * @param cpsFile the cps file
+     * @param psdbFile the psdb file
      * @param moveFilesIntoZip if true, the files will be moved into the zip
      * file, i.e. not just copied
      * @param waitingHandler a waiting handler to display progress to the user
@@ -90,7 +90,7 @@ public class ProjectExport {
             ArrayList<File> followupAnalysisFiles,
             ArrayList<File> reportFiles,
             File mzidFile,
-            File cpsFile,
+            File psdbFile,
             boolean moveFilesIntoZip,
             WaitingHandler waitingHandler
     ) throws IOException {
@@ -153,8 +153,8 @@ public class ProjectExport {
 
             // get the total uncompressed size
             long totalUncompressedSize = 0;
-            if (cpsFile != null) {
-                totalUncompressedSize += cpsFile.length();
+            if (psdbFile != null) {
+                totalUncompressedSize += psdbFile.length();
             }
             for (String dataFilePath : dataFiles) {
                 totalUncompressedSize += new File(dataFilePath).length();
@@ -296,16 +296,16 @@ public class ProjectExport {
                 }
             }
 
-            // move the cps file to the zip
-            if (cpsFile != null) {
+            // move the psdb file to the zip
+            if (psdbFile != null) {
                 ZipUtils.addFileToZip(
-                        cpsFile,
+                        psdbFile,
                         out,
                         waitingHandler,
                         totalUncompressedSize
                 );
                 if (moveFilesIntoZip) {
-                    cpsFile.delete();
+                    psdbFile.delete();
                 }
             }
 

@@ -546,13 +546,14 @@ public class FileImporter {
 
                 for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
 
-                    String spectrumFile = spectrumMatch.getSpectrumFile();
+                    String spectrumFile = IoUtil.removeExtension(spectrumMatch.getSpectrumFile());
                     HashSet<String> titles = loadedSpectraMap.get(spectrumFile);
-
+                    
                     if (titles == null) {
 
                         waitingHandler.appendReport(
-                                "Spectrum file named \'" + spectrumFile + "\' required to parse \'" + IoUtil.getFileName(idFile) + "\' not found.",
+                                "Spectrum file named \'" + spectrumMatch.getSpectrumFile() 
+                                        + "\' required to parse \'" + IoUtil.getFileName(idFile) + "\' not found.",
                                 true,
                                 true
                         );

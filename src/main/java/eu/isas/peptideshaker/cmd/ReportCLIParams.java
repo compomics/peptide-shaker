@@ -11,7 +11,7 @@ import org.apache.commons.cli.Options;
  */
 public enum ReportCLIParams {
 
-    CPS_FILE("in", "PeptideShaker project (.cpsx or .zip file)", true, true),
+    PSDB_FILE("in", "PeptideShaker project (.psdb or .zip file)", true, true),
     EXPORT_FOLDER("out_reports", "Output folder for report files. (Existing files will be overwritten.)", true, true),
     EXPORT_PREFIX("report_prefix", "Prefix added to the report file name.", false, true),
     REPORT_TYPE("reports", "Comma separated list of types of report to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false, true),
@@ -77,7 +77,7 @@ public enum ReportCLIParams {
         String formatter = "%-35s";
 
         output += "Mandatory parameters:\n\n";
-        output += "-" + String.format(formatter, CPS_FILE.id) + CPS_FILE.description + "\n";
+        output += "-" + String.format(formatter, PSDB_FILE.id) + PSDB_FILE.description + "\n";
         output += "-" + String.format(formatter, EXPORT_FOLDER.id) + EXPORT_FOLDER.description + "\n";
 
         output += "\n\nOptional output parameters:\n";
