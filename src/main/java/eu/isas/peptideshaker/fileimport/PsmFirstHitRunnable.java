@@ -10,7 +10,6 @@ import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssu
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
