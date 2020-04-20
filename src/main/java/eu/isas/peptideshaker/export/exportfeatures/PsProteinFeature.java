@@ -53,6 +53,13 @@ public enum PsProteinFeature implements ExportFeature {
     spectrum_counting_empai_fmol("Spectrum Counting emPAI [fmol]", "exponentially modified Protein Abundance Index (emPAI) in femtomol.", false),
     mw("MW [kDa]", "Molecular Weight [kDa].", false),
     proteinLength("Protein Length", "The length of the protein.", false),
+    peptidesPerFraction("#Peptides Fraction", "The number of peptides per fraction.", true, false),
+    spectraPerFraction("#Spectra Fraction", "The number of spectra per fraction.", true, false),
+    averagePrecursorIntensty("Average Fraction Precursor Intensity", "The average precursor intensity per fraction.", true, false),
+    fractionMinMwPeptideRange("Min Fraction MW Validated Peptides", "The minimum MW of Validatred Peptides per fraction.", false),
+    fractionMaxMwPeptideRange("Max Fraction MW Validated Peptides", "The maximum MW of Validatred Peptides per fraction.", false),
+    fractionMinMwSpectraRange("Min Fraction MW Validated Spectra", "The minimum MW of Validatred Spectra per fraction.", false),
+    fractionMaxMwSpectraRange("Max Fraction MW Validated Spectra", "The maximum MW of Validatred Spectra per fraction.", false),
     score("Score", "Score of the protein group.", true),
     raw_score("Raw Score", "Protein group score before log transformation.", true),
     confidence("Confidence [%]", "Confidence in percent associated to the protein group.", false),
@@ -76,6 +83,10 @@ public enum PsProteinFeature implements ExportFeature {
      * Indicates whether a feature is for advanced user only.
      */
     private final boolean advanced;
+    /**
+     * Indicates whether a feature is to be exported per fraction.
+     */
+    public final boolean perFraction;
 
     /**
      * Constructor.
@@ -88,6 +99,23 @@ public enum PsProteinFeature implements ExportFeature {
         this.title = title;
         this.description = description;
         this.advanced = advanced;
+        this.perFraction = false;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param title title of the feature
+     * @param description description of the feature
+     * @param perFraction indicates whether a feature is to be exported per
+     * fraction
+     * @param advanced indicates whether a feature is for advanced user only
+     */
+    private PsProteinFeature(String title, String description, boolean perFraction, boolean advanced) {
+        this.title = title;
+        this.description = description;
+        this.advanced = advanced;
+        this.perFraction = perFraction;
     }
 
     @Override
@@ -118,5 +146,14 @@ public enum PsProteinFeature implements ExportFeature {
     @Override
     public boolean isAdvanced() {
         return advanced;
+    }
+
+    /**
+     * Returns true if the feature is to be exported per fraction.
+     *
+     * @return true if the feature is to be exported per fraction
+     */
+    public boolean isPerFraction() {
+        return perFraction;
     }
 }

@@ -14,7 +14,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
@@ -48,7 +47,6 @@ import com.compomics.util.parameters.identification.advanced.IdMatchValidationPa
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -2289,15 +2287,15 @@ public class MatchesValidator {
 
                         for (String fraction : peptideMatchPsParameter.getFractions()) {
 
-                            Integer peptideValue = peptideMatchPsParameter.getFractionValidatedSpectra(fraction);
+                            Integer psmValue = peptideMatchPsParameter.getFractionValidatedSpectra(fraction);
 
-                            if (peptideValue != null) {
+                            if (psmValue != null) {
 
                                 Integer value = validatedPsmsPerFraction.get(fraction);
 
-                                int newValue = value == null ? peptideValue : peptideValue + value;
+                                int newValue = value == null ? psmValue : psmValue + value;
 
-                                validatedPeptidesPerFraction.put(fraction, newValue);
+                                validatedPsmsPerFraction.put(fraction, newValue);
 
                                 if (newValue > maxValidatedSpectraFractionLevel) {
 

@@ -5,10 +5,12 @@ import com.compomics.util.gui.export.report.ReportEditor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportFormat;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import com.compomics.util.io.export.ExportScheme;
 import com.google.common.collect.Lists;
+import eu.isas.peptideshaker.export.exportfeatures.PsProteinFeature;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -489,10 +491,10 @@ public class FeaturesExportDialog extends javax.swing.JDialog {
      * factory.
      */
     private void updateReportsList() {
-        
+
         exportSchemesNames = Lists.newArrayList(PSExportFactory.getDefaultExportSchemesNames());
         exportSchemesNames.addAll(exportFactory.getUserSchemesNames());
-    
+
     }
 
     /**
@@ -502,24 +504,24 @@ public class FeaturesExportDialog extends javax.swing.JDialog {
 
         final String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        
+
         String[] extensionsOptions = new String[]{".xls", ".txt", ".gz"};
-        
+
         String textFileFilterDescription = "Tab separated text file (.txt)";
         String gzipFileFilterDescription = "Gzipped tab separated text file (.gz)";
         String excelFileFilterDescription = "Excel Workbook (.xls)";
         String[] fileFiltersDescriptionsOptions = new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription};
-        
+
         FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(
-                this, 
+                this,
                 extensionsOptions,
-                fileFiltersDescriptionsOptions, 
-                "Export Report", 
-                lastSelectedFolderPath, 
-                schemeName, 
-                false, 
-                true, 
-                false, 
+                fileFiltersDescriptionsOptions,
+                "Export Report",
+                lastSelectedFolderPath,
+                schemeName,
+                false,
+                true,
+                false,
                 1
         );
 
@@ -547,7 +549,7 @@ public class FeaturesExportDialog extends javax.swing.JDialog {
             }
 
             progressDialog = new ProgressDialogX(
-                    this, 
+                    this,
                     peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
@@ -575,24 +577,24 @@ public class FeaturesExportDialog extends javax.swing.JDialog {
                         ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
                         progressDialog.setTitle("Exporting. Please Wait...");
                         PSExportFactory.writeExport(
-                                exportScheme, 
-                                selectedFile, 
-                                exportFormat, 
-                                gzip, 
+                                exportScheme,
+                                selectedFile,
+                                exportFormat,
+                                gzip,
                                 peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
-                                peptideShakerGUI.getProjectDetails(), 
+                                peptideShakerGUI.getProjectDetails(),
                                 peptideShakerGUI.getIdentification(),
-                                peptideShakerGUI.getIdentificationFeaturesGenerator(), 
-                                peptideShakerGUI.getGeneMaps(), 
-                                null, 
-                                null, 
+                                peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                                peptideShakerGUI.getGeneMaps(),
                                 null,
-                                peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(), 
+                                null,
+                                null,
+                                peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(),
                                 peptideShakerGUI.getIdentificationParameters(),
-                                peptideShakerGUI.getSequenceProvider(), 
-                                peptideShakerGUI.getProteinDetailsProvider(), 
-                                peptideShakerGUI.getSpectrumProvider(), 
-                                peptideShakerGUI.getSpectrumCountingParameters(), 
+                                peptideShakerGUI.getSequenceProvider(),
+                                peptideShakerGUI.getProteinDetailsProvider(),
+                                peptideShakerGUI.getSpectrumProvider(),
+                                peptideShakerGUI.getSpectrumCountingParameters(),
                                 progressDialog
                         );
 
