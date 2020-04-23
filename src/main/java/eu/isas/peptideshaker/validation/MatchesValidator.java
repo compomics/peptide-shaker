@@ -1650,69 +1650,81 @@ public class MatchesValidator {
             try {
 
                 PeptideMatch peptideMatch;
+
                 while ((peptideMatch = peptideMatchesIterator.next()) != null && !waitingHandler.isRunCanceled()) {
 
                     String peptideKey = peptideMatch.getKey();
 
-                    updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, geneMaps, identificationParameters, peptideMap, peptideKey);
+                    updatePeptideMatchValidationLevel(
+                            identification, 
+                            identificationFeaturesGenerator, 
+                            geneMaps, 
+                            identificationParameters, 
+                            peptideMap, 
+                            peptideKey
+                    );
 
-                    // set the fraction details
                     PSParameter psParameter = new PSParameter();
                     psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
+                    // update the validated peptide lengths
                     if (psParameter.getMatchValidationLevel().isValidated()) {
                         double length = Peptide.getSequence(peptideKey).length();
                         validatedPeptideLengths.add(length);
                     }
 
-                    // @TODO: could be a better more elegant way of doing this?
-                    HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>(psParameter.getFractions().size());
-                    HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionPeptideLevel = new HashMap<String, ArrayList<Double>>(psParameter.getFractions().size());
+                    // set the fraction details
+                    if (identification.getSpectrumFiles().size() > 1) {
 
-                    for (String fractionName : psParameter.getFractions()) {
+                        // @TODO: could be a better more elegant way of doing this?
+                        HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>(psParameter.getFractions().size());
+                        HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionPeptideLevel = new HashMap<String, ArrayList<Double>>(psParameter.getFractions().size());
 
-                        ArrayList<Double> precursorIntensities = new ArrayList<Double>();
+                        for (String fractionName : psParameter.getFractions()) {
 
-                        String peptideFractionKey = fractionName + "_" + peptideKey;
-                        if (metrics.getFractionPsmMatches().get(peptideFractionKey) != null) {
-                            ArrayList<String> spectrumKeys = metrics.getFractionPsmMatches().get(peptideFractionKey);
+                            ArrayList<Double> precursorIntensities = new ArrayList<Double>();
 
-                            for (String spectrumKey : spectrumKeys) {
+                            String peptideFractionKey = fractionName + "_" + peptideKey;
+                            if (metrics.getFractionPsmMatches().get(peptideFractionKey) != null) {
+                                ArrayList<String> spectrumKeys = metrics.getFractionPsmMatches().get(peptideFractionKey);
 
-                                PSParameter psParameter2 = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                                if (psParameter2.getMatchValidationLevel().isValidated()) {
-                                    if (validatedPsmsPerFraction.containsKey(fractionName)) {
-                                        Integer value = validatedPsmsPerFraction.get(fractionName);
-                                        validatedPsmsPerFraction.put(fractionName, value + 1);
-                                    } else {
-                                        validatedPsmsPerFraction.put(fractionName, 1);
+                                for (String spectrumKey : spectrumKeys) {
+
+                                    PSParameter psParameter2 = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                                    if (psParameter2.getMatchValidationLevel().isValidated()) {
+                                        if (validatedPsmsPerFraction.containsKey(fractionName)) {
+                                            Integer value = validatedPsmsPerFraction.get(fractionName);
+                                            validatedPsmsPerFraction.put(fractionName, value + 1);
+                                        } else {
+                                            validatedPsmsPerFraction.put(fractionName, 1);
+                                        }
+                                        if (SpectrumFactory.getInstance().getPrecursor(spectrumKey).getIntensity() > 0) {
+                                            // @TODO: replace by an mgf index map? (have to add intensity map to the index first...)
+                                            precursorIntensities.add(SpectrumFactory.getInstance().getPrecursor(spectrumKey).getIntensity());
+                                        }
                                     }
-                                    if (SpectrumFactory.getInstance().getPrecursor(spectrumKey).getIntensity() > 0) {
-                                        // @TODO: replace by an mgf index map? (have to add intensity map to the index first...)
-                                        precursorIntensities.add(SpectrumFactory.getInstance().getPrecursor(spectrumKey).getIntensity());
-                                    }
-                                }
-                                if (waitingHandler != null) {
-                                    if (waitingHandler.isRunCanceled()) {
-                                        return;
+                                    if (waitingHandler != null) {
+                                        if (waitingHandler.isRunCanceled()) {
+                                            return;
+                                        }
                                     }
                                 }
                             }
+
+                            precursorIntensitesPerFractionPeptideLevel.put(fractionName, precursorIntensities);
+
+                            // save the total number of peptides per fraction
+                            if (psParameter.getMatchValidationLevel().isValidated()) {
+                                addValidatedPeptideForFraction(fractionName);
+                            }
                         }
 
-                        precursorIntensitesPerFractionPeptideLevel.put(fractionName, precursorIntensities);
+                        // set the number of validated spectra per fraction for each peptide
+                        psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
+                        psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionPeptideLevel);
 
-                        // save the total number of peptides per fraction
-                        if (psParameter.getMatchValidationLevel().isValidated()) {
-                            addValidatedPeptideForFraction(fractionName);
-                        }
+                        identification.updatePeptideMatchParameter(peptideKey, psParameter);
                     }
-
-                    // set the number of validated spectra per fraction for each peptide
-                    psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
-                    psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionPeptideLevel);
-
-                    identification.updatePeptideMatchParameter(peptideKey, psParameter);
                     if (waitingHandler != null) {
                         waitingHandler.increaseSecondaryProgressCounter();
                     }
@@ -1870,10 +1882,19 @@ public class MatchesValidator {
                 while ((proteinMatch = proteinMatchesIterator.next()) != null && !waitingHandler.isRunCanceled()) {
 
                     String proteinKey = proteinMatch.getKey();
-                    updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, geneMaps, identificationParameters,
-                            targetDecoyMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
+                    updateProteinMatchValidationLevel(
+                            identification, 
+                            identificationFeaturesGenerator, 
+                            geneMaps, 
+                            identificationParameters,
+                            targetDecoyMap, 
+                            proteinThreshold, 
+                            nTargetLimit, 
+                            proteinConfidentThreshold, 
+                            noValidated, 
+                            proteinKey
+                    );
 
-                    // set the fraction details
                     PSParameter psParameter = new PSParameter();
                     psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
 
@@ -1895,80 +1916,84 @@ public class MatchesValidator {
                         identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                     }
 
-                    // @TODO: could be a better more elegant way of doing this?
-                    HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
-                    HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<String, Integer>();
-                    HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionProteinLevel = new HashMap<String, ArrayList<Double>>();
-                    ArrayList<String> peptideKeys = identification.getProteinMatch(proteinKey).getPeptideMatchesKeys();
+                    // set the fraction details
+                    if (identification.getSpectrumFiles().size() > 1) {
 
-                    for (String currentPeptideKey : peptideKeys) {
+                        // @TODO: could be a better more elegant way of doing this?
+                        HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
+                        HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<String, Integer>();
+                        HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionProteinLevel = new HashMap<String, ArrayList<Double>>();
+                        ArrayList<String> peptideKeys = identification.getProteinMatch(proteinKey).getPeptideMatchesKeys();
 
-                        PSParameter psParameter2 = (PSParameter) identification.getPeptideMatchParameter(currentPeptideKey, psParameter);
+                        for (String currentPeptideKey : peptideKeys) {
 
-                        for (String fraction : psParameter2.getFractions()) {
+                            PSParameter psParameter2 = (PSParameter) identification.getPeptideMatchParameter(currentPeptideKey, psParameter);
 
-                            if (psParameter2.getFractionValidatedSpectra(fraction) != null) {
-                                if (validatedPsmsPerFraction.containsKey(fraction)) {
-                                    Integer value = validatedPsmsPerFraction.get(fraction);
-                                    validatedPsmsPerFraction.put(fraction, value + psParameter2.getFractionValidatedSpectra(fraction));
-                                } else {
-                                    validatedPsmsPerFraction.put(fraction, psParameter2.getFractionValidatedSpectra(fraction));
+                            for (String fraction : psParameter2.getFractions()) {
+
+                                if (psParameter2.getFractionValidatedSpectra(fraction) != null) {
+                                    if (validatedPsmsPerFraction.containsKey(fraction)) {
+                                        Integer value = validatedPsmsPerFraction.get(fraction);
+                                        validatedPsmsPerFraction.put(fraction, value + psParameter2.getFractionValidatedSpectra(fraction));
+                                    } else {
+                                        validatedPsmsPerFraction.put(fraction, psParameter2.getFractionValidatedSpectra(fraction));
+                                    }
+
+                                    if (validatedPsmsPerFraction.get(fraction) > maxValidatedSpectraFractionLevel) {
+                                        maxValidatedSpectraFractionLevel = validatedPsmsPerFraction.get(fraction);
+                                    }
                                 }
 
-                                if (validatedPsmsPerFraction.get(fraction) > maxValidatedSpectraFractionLevel) {
-                                    maxValidatedSpectraFractionLevel = validatedPsmsPerFraction.get(fraction);
+                                ArrayList<Double> peptideIntensities = psParameter2.getPrecursorIntensityPerFraction(fraction);
+                                if (peptideIntensities != null) {
+                                    ArrayList<Double> proteinIntensities = precursorIntensitesPerFractionProteinLevel.get(fraction);
+                                    if (proteinIntensities != null) {
+                                        proteinIntensities.addAll(peptideIntensities);
+                                    } else {
+                                        precursorIntensitesPerFractionProteinLevel.put(fraction, new ArrayList<Double>(peptideIntensities));
+                                    }
+                                }
+
+                                if (psParameter2.getMatchValidationLevel().isValidated()) {
+                                    if (validatedPeptidesPerFraction.containsKey(fraction)) {
+                                        Integer value = validatedPeptidesPerFraction.get(fraction);
+                                        validatedPeptidesPerFraction.put(fraction, value + 1);
+                                    } else {
+                                        validatedPeptidesPerFraction.put(fraction, 1);
+                                    }
+
+                                    if (validatedPeptidesPerFraction.get(fraction) > maxValidatedPeptidesFractionLevel) {
+                                        maxValidatedPeptidesFractionLevel = validatedPeptidesPerFraction.get(fraction);
+                                    }
                                 }
                             }
 
-                            ArrayList<Double> peptideIntensities = psParameter2.getPrecursorIntensityPerFraction(fraction);
-                            if (peptideIntensities != null) {
-                                ArrayList<Double> proteinIntensities = precursorIntensitesPerFractionProteinLevel.get(fraction);
-                                if (proteinIntensities != null) {
-                                    proteinIntensities.addAll(peptideIntensities);
-                                } else {
-                                    precursorIntensitesPerFractionProteinLevel.put(fraction, new ArrayList<Double>(peptideIntensities));
-                                }
-                            }
-
-                            if (psParameter2.getMatchValidationLevel().isValidated()) {
-                                if (validatedPeptidesPerFraction.containsKey(fraction)) {
-                                    Integer value = validatedPeptidesPerFraction.get(fraction);
-                                    validatedPeptidesPerFraction.put(fraction, value + 1);
-                                } else {
-                                    validatedPeptidesPerFraction.put(fraction, 1);
-                                }
-
-                                if (validatedPeptidesPerFraction.get(fraction) > maxValidatedPeptidesFractionLevel) {
-                                    maxValidatedPeptidesFractionLevel = validatedPeptidesPerFraction.get(fraction);
+                            if (waitingHandler != null) {
+                                if (waitingHandler.isRunCanceled()) {
+                                    return;
                                 }
                             }
                         }
 
-                        if (waitingHandler != null) {
-                            if (waitingHandler.isRunCanceled()) {
-                                return;
+                        // set the number of validated spectra and peptides per fraction for each protein
+                        if (psParameter.getFractions().size() > 0) {
+                            psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
+                            psParameter.setFractionValidatedPeptides(validatedPeptidesPerFraction);
+                            psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionProteinLevel);
+                            for (String fraction : psParameter.getFractions()) {
+                                if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) != null) {
+                                    if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinAveragePrecursorIntensity) {
+                                        maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensityAveragePerFraction(fraction);
+                                    }
+                                    if (psParameter.getPrecursorIntensitySummedPerFraction(fraction) != null && psParameter.getPrecursorIntensitySummedPerFraction(fraction) > maxProteinSummedPrecursorIntensity) {
+                                        maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensitySummedPerFraction(fraction);
+                                    }
+                                }
                             }
                         }
+
+                        identification.updateProteinMatchParameter(proteinKey, psParameter);
                     }
-
-                    // set the number of validated spectra and peptides per fraction for each protein
-                    if (psParameter.getFractions().size() > 1) {
-                        psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
-                        psParameter.setFractionValidatedPeptides(validatedPeptidesPerFraction);
-                        psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionProteinLevel);
-                        for (String fraction : psParameter.getFractions()) {
-                            if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) != null) {
-                                if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinAveragePrecursorIntensity) {
-                                    maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensityAveragePerFraction(fraction);
-                                }
-                                if (psParameter.getPrecursorIntensitySummedPerFraction(fraction) != null && psParameter.getPrecursorIntensitySummedPerFraction(fraction) > maxProteinSummedPrecursorIntensity) {
-                                    maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensitySummedPerFraction(fraction);
-                                }
-                            }
-                        }
-                    }
-
-                    identification.updateProteinMatchParameter(proteinKey, psParameter);
 
                     if (waitingHandler != null) {
                         waitingHandler.increaseSecondaryProgressCounter();
@@ -1976,7 +2001,14 @@ public class MatchesValidator {
                 }
 
                 // set the max values in the metrics
-                setMaxValues(maxValidatedPeptidesFractionLevel, maxValidatedSpectraFractionLevel, maxProteinAveragePrecursorIntensity, maxProteinSummedPrecursorIntensity);
+                if (identification.getSpectrumFiles().size() > 1) {
+                    setMaxValues(
+                            maxValidatedPeptidesFractionLevel, 
+                            maxValidatedSpectraFractionLevel, 
+                            maxProteinAveragePrecursorIntensity, 
+                            maxProteinSummedPrecursorIntensity
+                    );
+                }
 
             } catch (Exception e) {
                 exceptionHandler.catchException(e);
