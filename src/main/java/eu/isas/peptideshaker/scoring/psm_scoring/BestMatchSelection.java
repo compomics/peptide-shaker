@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.scoring.psm_scoring;
 
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
@@ -115,11 +116,13 @@ public class BestMatchSelection {
      * @param spectrumMatch The spectrum match.
      * @param inputMap The input map.
      * @param psmTargetDecoyMap The PSM target decoy map.
+     * @param identifictation the identification clas
      */
     public void selectBestHit(
             SpectrumMatch spectrumMatch,
             InputMap inputMap,
-            TargetDecoyMap psmTargetDecoyMap
+            TargetDecoyMap psmTargetDecoyMap,
+            Identification identification
     ) {
 
         boolean multiSE = inputMap.isMultipleAlgorithms();
@@ -371,6 +374,7 @@ public class BestMatchSelection {
             );
 
             spectrumMatch.setBestPeptideAssumption(psAssumption);
+            identification.updateObject(spectrumMatch.getKey(), spectrumMatch);
 
             psmParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
             psmParameter.setScore(bestP);
@@ -396,6 +400,7 @@ public class BestMatchSelection {
             Entry<Double, ArrayList<TagAssumption>> firstEntry = tagAssumptions.firstEntry();
             double bestEvalue = firstEntry.getKey();
             TagAssumption bestAssumption = firstEntry.getValue().get(0);
+            identification.updateObject(spectrumMatch.getKey(), spectrumMatch);
             spectrumMatch.setBestTagAssumption(bestAssumption);
 
             if (spectrumMatch.getBestPeptideAssumption() == null) {

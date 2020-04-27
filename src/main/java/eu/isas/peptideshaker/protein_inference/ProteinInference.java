@@ -223,9 +223,11 @@ public class ProteinInference {
                 proteinMatchParameter.setProteinInferenceClass(PSParameter.UNRELATED);
 
                 for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-
-                    PSParameter peptideParameter = (PSParameter) (identification.getPeptideMatch(peptideKey)).getUrParam(PSParameter.dummy);
+                    PeptideMatch peptideMatch = (PeptideMatch)identification.getPeptideMatch(peptideKey);
+                    PSParameter peptideParameter = (PSParameter)peptideMatch.getUrParam(PSParameter.dummy);
                     peptideParameter.setProteinInferenceClass(PSParameter.UNRELATED);
+                    
+                    identification.updateObject(peptideKey, peptideMatch);
 
                 }
 
@@ -234,10 +236,10 @@ public class ProteinInference {
                 proteinMatchParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
 
                 for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-
-                    PSParameter peptideParameter = (PSParameter) (identification.getPeptideMatch(peptideKey)).getUrParam(PSParameter.dummy);
+                    PeptideMatch peptideMatch = (PeptideMatch)identification.getPeptideMatch(peptideKey);
+                    PSParameter peptideParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
                     peptideParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
-
+                    identification.updateObject(peptideKey, peptideMatch);
                 }
 
             } else {
@@ -272,6 +274,7 @@ public class ProteinInference {
                         peptideParameter.setProteinInferenceClass(PSParameter.RELATED);
 
                     }
+                    identification.updateObject(peptideKey, peptideMatch);
                 }
             }
 
@@ -313,6 +316,7 @@ public class ProteinInference {
                     peptideParameter.setProteinInferenceClass(PSParameter.UNRELATED);
 
                 }
+                identification.updateObject(peptideKey, peptideMatch);
             }
         }
 
@@ -321,6 +325,7 @@ public class ProteinInference {
             if (!proteinMatch.getLeadingAccession().equals(mainAccession)) {
 
                 proteinMatch.setLeadingAccession(mainAccession);
+                identification.updateObject(proteinMatch.getKey(), proteinMatch);
 
             }
         }
@@ -631,7 +636,7 @@ public class ProteinInference {
                                             )) {
 
                                 proteinMatch.addPeptideMatchKey(peptideMatchKey);
-
+                                identification.updateObject(proteinMatch.getKey(), proteinMatch);
                             }
                         }
                     }

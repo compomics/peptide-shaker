@@ -392,6 +392,7 @@ public class PsmScorer {
             }
         }
 
+        identification.updateObject(spectrumMatch.getKey(), spectrumMatch);
         return missingEvalue;
 
     }
@@ -576,6 +577,7 @@ public class PsmScorer {
             waitingHandler.increaseSecondaryProgressCounter();
 
         }
+        identification.updateObject(spectrumMatch.getKey(), spectrumMatch);
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 

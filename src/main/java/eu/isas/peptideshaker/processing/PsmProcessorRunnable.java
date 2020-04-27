@@ -185,7 +185,8 @@ public class PsmProcessorRunnable implements Runnable {
         bestMatchSelection.selectBestHit(
                 spectrumMatch, 
                 inputMap, 
-                matchesValidator.getPsmMap()
+                matchesValidator.getPsmMap(),
+                identification
         );
 
         if (spectrumMatch.getBestPeptideAssumption() != null) {

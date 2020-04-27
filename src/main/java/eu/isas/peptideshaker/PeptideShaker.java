@@ -1062,6 +1062,7 @@ public class PeptideShaker {
             );
 
         }
+        identification.updateObject(spectrumMatch.getKey(), spectrumMatch);
 
         waitingHandler.increaseSecondaryProgressCounter();
 
