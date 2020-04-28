@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.scoring.psm_scoring;
 
 import com.compomics.util.experiment.identification.matches.IonMatch;
+import com.compomics.util.experiment.identification.matches.PeptideVariantMatches;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.SpecificAnnotationParameters;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -13,8 +14,10 @@ import com.compomics.util.parameters.identification.advanced.SequenceMatchingPar
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This class breaks ties between equally scoring peptides.
@@ -39,6 +42,10 @@ public class TieBreaker {
      * The modification parameters.
      */
     private final ModificationParameters modificationParameters;
+    /**
+     * The sequence matching parameters.
+     */
+    private final SequenceMatchingParameters sequenceMatchingParameters;
     /**
      * The sequence matching parameters for modifications.
      */
@@ -76,6 +83,7 @@ public class TieBreaker {
         this.annotationParameters = identificationParameters.getAnnotationParameters();
         this.searchParameters = identificationParameters.getSearchParameters();
         this.modificationParameters = searchParameters.getModificationParameters();
+        this.sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
         this.modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
         this.peptideSpectrumAnnotator = peptideSpectrumAnnotator;
         this.sequenceProvider = sequenceProvider;
@@ -104,24 +112,50 @@ public class TieBreaker {
             boolean silentFail
     ) {
 
-        int proteinMaxOccurrence1 = peptideAssumption1.getPeptide().getProteinMapping().navigableKeySet().stream()
-                .filter(
-                        accession -> proteinCount.containsKey(accession)
-                )
-                .mapToInt(
-                        accession -> proteinCount.get(accession)
-                )
-                .max()
-                .orElse(1);
-        int proteinMaxOccurrence2 = peptideAssumption1.getPeptide().getProteinMapping().navigableKeySet().stream()
-                .filter(
-                        accession -> proteinCount.containsKey(accession)
-                )
-                .mapToInt(
-                        accession -> proteinCount.get(accession)
-                )
-                .max()
-                .orElse(1);
+        long matchingKey1 = peptideAssumption1.getPeptide().getMatchingKey(sequenceMatchingParameters);
+        long matchingKey2 = peptideAssumption2.getPeptide().getMatchingKey(sequenceMatchingParameters);
+
+        if (matchingKey1 == matchingKey2) {
+
+            if (silentFail) {
+
+                return peptideAssumption1;
+
+            } else {
+
+                throw new IllegalArgumentException("Tie during best match selection in spectrum " + spectrumTitle + " of file " + spectrumFile + "(" + peptideAssumption1.getPeptide().getSequence() + " provided twice.");
+
+            }
+        }
+
+        int variantCount1 = variantsCount(peptideAssumption1);
+        int variantCount2 = variantsCount(peptideAssumption2);
+
+        if (variantCount1 < variantCount2) {
+
+            return peptideAssumption1;
+
+        } else if (variantCount1 > variantCount2) {
+
+            return peptideAssumption2;
+
+        }
+
+        int modCount1 = peptideAssumption1.getPeptide().getNVariableModifications();
+        int modCount2 = peptideAssumption2.getPeptide().getNVariableModifications();
+
+        if (modCount1 < modCount2) {
+
+            return peptideAssumption1;
+
+        } else if (modCount1 > modCount2) {
+
+            return peptideAssumption2;
+
+        }
+
+        int proteinMaxOccurrence1 = proteinCount(peptideAssumption1);
+        int proteinMaxOccurrence2 = proteinCount(peptideAssumption2);
 
         if (proteinMaxOccurrence1 > proteinMaxOccurrence2) {
 
@@ -142,13 +176,15 @@ public class TieBreaker {
                 spectrumFile,
                 spectrumTitle,
                 peptideAssumption1,
-                spectrum
+                spectrum,
+                true
         );
         int nCoveredAminoAcids2 = nCoveredAminoAcids(
                 spectrumFile,
                 spectrumTitle,
                 peptideAssumption2,
-                spectrum
+                spectrum,
+                true
         );
 
         if (nCoveredAminoAcids1 > nCoveredAminoAcids2) {
@@ -167,7 +203,8 @@ public class TieBreaker {
                         searchParameters.isPrecursorAccuracyTypePpm(),
                         searchParameters.getMinIsotopicCorrection(),
                         searchParameters.getMaxIsotopicCorrection()
-                ));
+                )
+        );
 
         double massError2 = Math.abs(
                 peptideAssumption2.getDeltaMass(
@@ -175,7 +212,8 @@ public class TieBreaker {
                         searchParameters.isPrecursorAccuracyTypePpm(),
                         searchParameters.getMinIsotopicCorrection(),
                         searchParameters.getMaxIsotopicCorrection()
-                ));
+                )
+        );
 
         if (massError1 < massError2) {
 
@@ -187,13 +225,115 @@ public class TieBreaker {
 
         }
 
-        if (silentFail) {
+        nCoveredAminoAcids1 = nCoveredAminoAcids(
+                spectrumFile,
+                spectrumTitle,
+                peptideAssumption1,
+                spectrum,
+                false
+        );
+        nCoveredAminoAcids2 = nCoveredAminoAcids(
+                spectrumFile,
+                spectrumTitle,
+                peptideAssumption2,
+                spectrum,
+                false
+        );
+
+        if (nCoveredAminoAcids1 > nCoveredAminoAcids2) {
 
             return peptideAssumption1;
 
+        } else if (nCoveredAminoAcids1 < nCoveredAminoAcids2) {
+
+            return peptideAssumption2;
+
         }
 
-        throw new IllegalArgumentException("Tie during best match selection in spectrum " + spectrumTitle + " of file " + spectrumFile + "(" + peptideAssumption1.getPeptide().getSequence() + " vs. " + peptideAssumption2.getPeptide().getSequence() + ".");
+        double annotatedIntensity1 = shareOfIntensityAnnotated(
+                spectrumFile,
+                spectrumTitle,
+                peptideAssumption1,
+                spectrum
+        );
+        double annotatedIntensity2 = shareOfIntensityAnnotated(
+                spectrumFile,
+                spectrumTitle,
+                peptideAssumption2,
+                spectrum
+        );
+
+        if (annotatedIntensity1 > annotatedIntensity2) {
+
+            return peptideAssumption1;
+
+        } else if (annotatedIntensity1 < annotatedIntensity2) {
+
+            return peptideAssumption2;
+
+        }
+
+        return matchingKey1 < matchingKey2 ? peptideAssumption1 : peptideAssumption2;
+
+    }
+
+    /**
+     * Returns the minimal number of variants found for the given peptide.
+     *
+     * @param peptideAssumption The peptide assumption.
+     *
+     * @return The minimal number of variants found for the given peptide.
+     */
+    private int variantsCount(
+            PeptideAssumption peptideAssumption
+    ) {
+
+        HashMap<String, HashMap<Integer, PeptideVariantMatches>> variantMatchesMap = peptideAssumption
+                .getPeptide()
+                .getVariantMatches();
+
+        return variantMatchesMap == null ? 0
+                : variantMatchesMap.values()
+                        .stream()
+                        .flatMap(
+                                variantMap -> variantMap
+                                        .values()
+                                        .stream()
+                        )
+                        .mapToInt(
+                                variantMatches -> variantMatches.getVariantMatches().size()
+                        )
+                        .min()
+                        .orElse(0);
+
+    }
+
+    /**
+     * Returns the maximal number of peptides found for a protein the given
+     * peptide can map to.
+     *
+     * @param peptideAssumption The peptide assumption.
+     *
+     * @return The maximal number of peptides found for a protein the given
+     * peptide can map to.
+     */
+    private int proteinCount(
+            PeptideAssumption peptideAssumption
+    ) {
+
+        return peptideAssumption
+                .getPeptide()
+                .getProteinMapping()
+                .navigableKeySet()
+                .stream()
+                .filter(
+                        accession -> proteinCount.containsKey(accession)
+                )
+                .mapToInt(
+                        accession -> proteinCount.get(accession)
+                )
+                .max()
+                .orElse(1);
 
     }
 
@@ -204,6 +344,7 @@ public class TieBreaker {
      * @param spectrumTitle The spectrum title.
      * @param peptideAssumption The peptide assumption.
      * @param spectrum The spectrum.
+     * @param spectrum If true lower intensities are filtered out.
      *
      * @return The number of amino acids covered by the fragment ions.
      */
@@ -211,7 +352,8 @@ public class TieBreaker {
             String spectrumFile,
             String spectrumTitle,
             PeptideAssumption peptideAssumption,
-            Spectrum spectrum
+            Spectrum spectrum,
+            boolean intensityLimit
     ) {
 
         SpecificAnnotationParameters specificAnnotationPreferences = annotationParameters.getSpecificAnnotationParameters(
@@ -233,9 +375,69 @@ public class TieBreaker {
                 modificationParameters,
                 sequenceProvider,
                 modificationSequenceMatchingParameters,
-                true
+                intensityLimit
         );
         return coveredAminoAcids.size();
+
+    }
+
+    /**
+     * Returns the share of spectrum intensity annotated.
+     *
+     * @param spectrumFile The spectrum file name.
+     * @param spectrumTitle The spectrum title.
+     * @param peptideAssumption The peptide assumption.
+     * @param spectrum The spectrum.
+     *
+     * @return The number of amino acids covered by the fragment ions.
+     */
+    private double shareOfIntensityAnnotated(
+            String spectrumFile,
+            String spectrumTitle,
+            PeptideAssumption peptideAssumption,
+            Spectrum spectrum
+    ) {
+
+        SpecificAnnotationParameters specificAnnotationPreferences = annotationParameters.getSpecificAnnotationParameters(
+                spectrumFile,
+                spectrumTitle,
+                peptideAssumption,
+                modificationParameters,
+                sequenceProvider,
+                modificationSequenceMatchingParameters,
+                peptideSpectrumAnnotator
+        );
+
+        IonMatch[] ionMatches = peptideSpectrumAnnotator.getSpectrumAnnotation(
+                annotationParameters,
+                specificAnnotationPreferences,
+                spectrumFile,
+                spectrumTitle,
+                spectrum,
+                peptideAssumption.getPeptide(),
+                modificationParameters,
+                sequenceProvider,
+                modificationSequenceMatchingParameters,
+                false
+        );
+
+        double annotatedIntensity = Arrays.stream(ionMatches)
+                .collect(
+                        Collectors.toMap(
+                                ionMatch -> ionMatch.peakMz,
+                                ionMatch -> ionMatch.peakIntensity,
+                                (a, b) -> a,
+                                HashMap::new
+                        )
+                )
+                .values()
+                .stream()
+                .mapToDouble(
+                        a -> a
+                )
+                .sum();
+
+        return annotatedIntensity / spectrum.getTotalIntensity();
 
     }
 
