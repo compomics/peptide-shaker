@@ -18,9 +18,9 @@ import org.apache.commons.cli.CommandLine;
 public class FollowUpCLIInputBean {
 
     /**
-     * The cpsx file to work on.
+     * The psdb file to work on.
      */
-    private File cpsFile = null;
+    private File psdbFile = null;
     /**
      * The zip file.
      */
@@ -107,10 +107,10 @@ public class FollowUpCLIInputBean {
      */
     public FollowUpCLIInputBean(CommandLine aLine) {
 
-        if (aLine.hasOption(FollowUpCLIParams.CPS_FILE.id)) {
-            String file = aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id);
-            if (file.toLowerCase().endsWith(".cpsx")) {
-                cpsFile = new File(file);
+        if (aLine.hasOption(FollowUpCLIParams.PSDB_FILE.id)) {
+            String file = aLine.getOptionValue(FollowUpCLIParams.PSDB_FILE.id);
+            if (file.toLowerCase().endsWith(".psdb")) {
+                psdbFile = new File(file);
             } else if (file.toLowerCase().endsWith(".zip")) {
                 zipFile = new File(file);
             } else {
@@ -189,12 +189,12 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * The cps file selected by the user. Null if not set.
+     * The psdb file selected by the user. Null if not set.
      *
-     * @return cps file selected by the user
+     * @return psdb file selected by the user
      */
-    public File getCpsFile() {
-        return cpsFile;
+    public File getPsdbFile() {
+        return psdbFile;
     }
 
     /**

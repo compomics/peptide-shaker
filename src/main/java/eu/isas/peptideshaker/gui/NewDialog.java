@@ -752,6 +752,7 @@ public class NewDialog extends javax.swing.JDialog {
                                         projectDetails,
                                         projectType,
                                         waitingDialog,
+                                        true,
                                         exceptionHandler
                                 );
 
@@ -987,14 +988,14 @@ public class NewDialog extends javax.swing.JDialog {
 
                         try {
 
-            File folder = CmsFolder.getParentFolder() == null ? file.getParentFile() : new File(CmsFolder.getParentFolder());
+                            File folder = CmsFolder.getParentFolder() == null ? file.getParentFile() : new File(CmsFolder.getParentFolder());
 
                             msFileHandler.register(file, folder, progressDialog);
 
                         } catch (Exception e) {
 
                             progressDialog.setRunCanceled();
-                            
+
                             allLoaded = false;
 
                             JOptionPane.showMessageDialog(
@@ -1008,7 +1009,7 @@ public class NewDialog extends javax.swing.JDialog {
                             e.printStackTrace();
                         }
                     }
-                    
+
                     progressDialog.setRunFinished();
 
                     if (allLoaded) {
@@ -1571,14 +1572,14 @@ public class NewDialog extends javax.swing.JDialog {
 
                             try {
 
-            File folder = CmsFolder.getParentFolder() == null ? file.getParentFile() : new File(CmsFolder.getParentFolder());
-            
+                                File folder = CmsFolder.getParentFolder() == null ? file.getParentFile() : new File(CmsFolder.getParentFolder());
+
                                 msFileHandler.register(file, folder, progressDialog);
 
                             } catch (Exception e) {
 
                                 progressDialog.setRunCanceled();
-                                
+
                                 allLoaded = false;
 
                                 JOptionPane.showMessageDialog(
@@ -1594,7 +1595,7 @@ public class NewDialog extends javax.swing.JDialog {
                         }
 
                         progressDialog.setRunFinished();
-                        
+
                         if (allLoaded) {
 
                             spectrumFiles.addAll(selectedFiles);
@@ -2080,11 +2081,15 @@ public class NewDialog extends javax.swing.JDialog {
             spectrumFileNames.add(file.getName());
         }
 
+        int cpt = 0, total = neededFastaAndSpectrumFiles.size() - 1;
+
         for (String path : neededFastaAndSpectrumFiles) {
 
             if (path.toLowerCase().endsWith(".mgf") || path.toLowerCase().endsWith(".mgf.gz")
                     || path.toLowerCase().endsWith(".mzml") || path.toLowerCase().endsWith(".mzml.gz")) {
 
+                progressDialog.setTitle("Loading Spectrum Files (" + ++cpt + " of " + total + "). Please Wait...");
+                
                 File tempSpectrumFile = new File(path);
                 String spectrumFileName = tempSpectrumFile.getName();
 
@@ -2096,8 +2101,8 @@ public class NewDialog extends javax.swing.JDialog {
 
                         try {
 
-            File folder = CmsFolder.getParentFolder() == null ? tempSpectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
-            
+                            File folder = CmsFolder.getParentFolder() == null ? tempSpectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
+
                             msFileHandler.register(tempSpectrumFile, folder, progressDialog);
                             loaded = true;
                             spectrumFiles.add(tempSpectrumFile);
@@ -2119,7 +2124,7 @@ public class NewDialog extends javax.swing.JDialog {
 
                                     try {
 
-             folder = CmsFolder.getParentFolder() == null ? file.getParentFile() : new File(CmsFolder.getParentFolder());
+                                        folder = CmsFolder.getParentFolder() == null ? file.getParentFile() : new File(CmsFolder.getParentFolder());
 
                                         msFileHandler.register(file, folder, progressDialog);
                                         loaded = true;

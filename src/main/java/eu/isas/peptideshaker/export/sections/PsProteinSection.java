@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import no.uib.jsparklines.data.XYDataPoint;
 
 /**
  * This class outputs the protein related export features.
@@ -158,7 +159,7 @@ public class PsProteinSection {
 
         if (header) {
 
-            writeHeader();
+            writeHeader(identification.getFractions());
 
         }
 
@@ -223,8 +224,18 @@ public class PsProteinSection {
 
                         }
 
-                        PsProteinFeature tempProteinFeatures = (PsProteinFeature) exportFeature;
-                        writer.write(getFeature(identificationFeaturesGenerator,
+                        PsProteinFeature tempProteinFeature = (PsProteinFeature) exportFeature;
+
+                        if (tempProteinFeature.isPerFraction()) {
+                            for (int fractionsCount = 0; fractionsCount < identification.getFractions().size(); fractionsCount++) {
+
+                                String fractionName = identification.getFractions().get(fractionsCount);
+
+                                if (fractionsCount > 0) {
+                                    writer.addSeparator();
+                                }
+
+                                writer.write(getFeature(identificationFeaturesGenerator,
                                         sequenceProvider,
                                         proteinDetailsProvider,
                                         geneMaps,
@@ -232,11 +243,31 @@ public class PsProteinSection {
                                         nSurroundingAa,
                                         key,
                                         proteinMatch,
+                                        fractionName,
                                         psParameter,
-                                        tempProteinFeatures,
+                                        tempProteinFeature,
                                         waitingHandler
                                 )
-                        );
+                                );
+                            }
+                        } else {
+
+                            writer.write(getFeature(identificationFeaturesGenerator,
+                                    sequenceProvider,
+                                    proteinDetailsProvider,
+                                    geneMaps,
+                                    identificationParameters,
+                                    nSurroundingAa,
+                                    key,
+                                    proteinMatch,
+                                    psParameter,
+                                    tempProteinFeature,
+                                    waitingHandler
+                            )
+                            );
+
+                        }
+
                     }
 
                     writer.newLine();
@@ -292,9 +323,57 @@ public class PsProteinSection {
      * @param geneMaps the gene maps
      * @param identificationParameters the identification parameters
      * @param nSurroundingAas in case a peptide export is included with
-     * surrounding amino-acids, the number of surrounding amino acids to use
+     * surrounding amino acids, the number of surrounding amino acids to use
      * @param proteinKey the key of the protein match being written
      * @param proteinMatch the protein match, can be null if not needed
+     * @param psParameter the protein match parameter containing the
+     * PeptideShaker parameters, can be null if not needed
+     * @param tempProteinFeatures the protein feature to write
+     * @param waitingHandler the waiting handler
+     *
+     * @return the string to write
+     */
+    public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SequenceProvider sequenceProvider,
+            ProteinDetailsProvider proteinDetailsProvider,
+            GeneMaps geneMaps,
+            IdentificationParameters identificationParameters,
+            int nSurroundingAas,
+            long proteinKey,
+            ProteinMatch proteinMatch,
+            PSParameter psParameter,
+            PsProteinFeature tempProteinFeatures,
+            WaitingHandler waitingHandler
+    ) {
+
+        return getFeature(identificationFeaturesGenerator,
+                sequenceProvider,
+                proteinDetailsProvider,
+                geneMaps,
+                identificationParameters,
+                nSurroundingAas,
+                proteinKey,
+                proteinMatch,
+                null,
+                psParameter,
+                tempProteinFeatures,
+                waitingHandler);
+    }
+
+    /**
+     * Returns the part of the desired section.
+     *
+     * @param identificationFeaturesGenerator the identification features
+     * generator of the project
+     * @param sequenceProvider the sequence provider
+     * @param proteinDetailsProvider the protein details provider
+     * @param geneMaps the gene maps
+     * @param identificationParameters the identification parameters
+     * @param nSurroundingAas in case a peptide export is included with
+     * surrounding amino acids, the number of surrounding amino acids to use
+     * @param proteinKey the key of the protein match being written
+     * @param proteinMatch the protein match, can be null if not needed
+     * @param fractionName the name of the fraction
      * @param psParameter the protein match parameter containing the
      * PeptideShaker parameters, can be null if not needed
      * @param tempProteinFeatures the protein feature to write
@@ -311,6 +390,7 @@ public class PsProteinSection {
             int nSurroundingAas,
             long proteinKey,
             ProteinMatch proteinMatch,
+            String fractionName,
             PSParameter psParameter,
             PsProteinFeature tempProteinFeatures,
             WaitingHandler waitingHandler
@@ -575,6 +655,54 @@ public class PsProteinSection {
                                 sequenceProvider.getSequence(
                                         proteinMatch.getLeadingAccession())));
 
+            case peptidesPerFraction:
+
+                return Integer.toString(psParameter.getFractionValidatedPeptides(fractionName));
+
+            case spectraPerFraction:
+
+                return Integer.toString(psParameter.getFractionValidatedSpectra(fractionName));
+
+            case averagePrecursorIntensty:
+
+                if (psParameter.getPrecursorIntensityAveragePerFraction(fractionName) != null) {
+                    return Double.toString(psParameter.getPrecursorIntensityAveragePerFraction(fractionName));
+                } else {
+                    return "";
+                }
+
+            case fractionMinMwPeptideRange:
+
+                if (psParameter.getFractionValidatedPeptides(fractionName) > 0) {
+                    return getMinMaxMw(identificationParameters, fractionName, true);
+                } else {
+                    return "";
+                }
+
+            case fractionMaxMwPeptideRange:
+
+                if (psParameter.getFractionValidatedPeptides(fractionName) > 0) {
+                    return getMinMaxMw(identificationParameters, fractionName, false);
+                } else {
+                    return "";
+                }
+
+            case fractionMinMwSpectraRange:
+
+                if (psParameter.getFractionValidatedSpectra(fractionName) > 0) {
+                    return getMinMaxMw(identificationParameters, fractionName, true);
+                } else {
+                    return "";
+                }
+
+            case fractionMaxMwSpectraRange:
+
+                if (psParameter.getFractionValidatedSpectra(fractionName) > 0) {
+                    return getMinMaxMw(identificationParameters, fractionName, false);
+                } else {
+                    return "";
+                }
+
             case proteinLength:
 
                 return Double.toString(
@@ -735,10 +863,12 @@ public class PsProteinSection {
     /**
      * Writes the header of the protein section.
      *
+     * @param fractions the fraction names
+     *
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */
-    public void writeHeader() throws IOException {
+    public void writeHeader(ArrayList<String> fractions) throws IOException {
 
         if (indexes) {
 
@@ -749,7 +879,7 @@ public class PsProteinSection {
 
         boolean firstColumn = true;
 
-        for (ExportFeature exportFeature : proteinFeatures) {
+        for (PsProteinFeature exportFeature : proteinFeatures) {
 
             if (firstColumn) {
 
@@ -761,11 +891,74 @@ public class PsProteinSection {
 
             }
 
-            writer.writeHeaderText(exportFeature.getTitle());
+            if (exportFeature.isPerFraction()) {
+
+                for (int i = 0; i < fractions.size(); i++) {
+
+                    if (i > 0) {
+                        writer.addSeparator();
+                    }
+
+                    writer.writeHeaderText(exportFeature.getTitle() + " " + fractions.get(i));
+
+                }
+
+            } else {
+
+                writer.writeHeaderText(exportFeature.getTitle());
+
+            }
 
         }
 
         writer.newLine();
 
+    }
+
+    /**
+     * Returns the minimum or maximum molecular weight for the given fraction.
+     *
+     * @param identificationParameters the identification parameters
+     * @param fractionName the fraction name
+     * @param minimum if true, the minimum molecular weight is returned, if
+     * false, the maximum molecular weight is returned
+     *
+     * @return the minimum or maximum molecular weight for the given fraction
+     */
+    private static String getMinMaxMw(IdentificationParameters identificationParameters, String fractionName, boolean minimum) {
+
+        double maxMw = Double.MIN_VALUE;
+        double minMw = Double.MAX_VALUE;
+
+        HashMap<String, XYDataPoint> expectedMolecularWeightRanges
+                = identificationParameters.getFractionParameters().getFractionMolecularWeightRanges();
+
+        if (expectedMolecularWeightRanges != null && expectedMolecularWeightRanges.get(fractionName) != null) {
+
+            double lower = expectedMolecularWeightRanges.get(fractionName).getX();
+            double upper = expectedMolecularWeightRanges.get(fractionName).getY();
+
+            if (lower < minMw) {
+                minMw = lower;
+            }
+
+            if (upper > maxMw) {
+                maxMw = upper;
+            }
+        }
+
+        if (minimum) {
+            if (minMw != Double.MIN_VALUE) {
+                return Double.toString(minMw);
+            } else {
+                return "";
+            }
+        } else {
+            if (maxMw != Double.MAX_VALUE) {
+                return Double.toString(maxMw);
+            } else {
+                return "";
+            }
+        }
     }
 }

@@ -57,6 +57,7 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
+import com.compomics.util.io.IoUtil;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Rectangle;
@@ -2577,7 +2578,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 dm.getDataVector().removeAllElements();
                 dm.fireTableDataChanged();
 
-                fileSelected = (String) fileNamesCmb.getSelectedItem();
+                fileSelected = IoUtil.removeExtension((String) fileNamesCmb.getSelectedItem());
                 SpectrumProvider spectrumProvider = peptideShakerGUI.getSpectrumProvider();
                 double maxMz = spectrumProvider.getMaxPrecMz(fileSelected);
                 int nSpectra = spectrumProvider.getSpectrumTitles(fileSelected).length;
@@ -3670,7 +3671,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 fileSelected,
                                 spectrumTitle
                         );
-                        return precursor == null ? null : precursor.intensity;
+                        return precursor == null ? null : precursor.intensity > 0 ? precursor.intensity : null;
 
                     case 6:
                         precursor = peptideShakerGUI.getSpectrumProvider().getPrecursor(

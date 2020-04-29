@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
@@ -9,7 +8,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.io.IoUtil;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.utils.CpsParent;
+import eu.isas.peptideshaker.utils.PsdbParent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,7 +22,7 @@ import org.apache.commons.cli.Options;
  *
  * @author Marc Vaudel
  */
-public class ReportCLI extends CpsParent {
+public class ReportCLI extends PsdbParent {
 
     /**
      * The report command line options.
@@ -87,13 +86,13 @@ public class ReportCLI extends CpsParent {
             if (reportCLIInputBean.getZipFile() != null) {
 
                 inputFilePath = reportCLIInputBean.getZipFile().getAbsolutePath();
-                loadCpsFromZipFile(reportCLIInputBean.getZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
+                loadPsdbFromZipFile(reportCLIInputBean.getZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
 
-            } else if (reportCLIInputBean.getCpsFile() != null) {
+            } else if (reportCLIInputBean.getPsdbFile() != null) {
 
-                inputFilePath = reportCLIInputBean.getCpsFile().getAbsolutePath();
-                cpsFile = reportCLIInputBean.getCpsFile();
-                loadCpsFile(PeptideShaker.getMatchesFolder(), waitingHandler);
+                inputFilePath = reportCLIInputBean.getPsdbFile().getAbsolutePath();
+                psdbFile = reportCLIInputBean.getPsdbFile();
+                loadPsdbFile(PeptideShaker.getMatchesFolder(), waitingHandler);
 
             } else {
 
@@ -280,7 +279,7 @@ public class ReportCLI extends CpsParent {
      */
     private static String getHeader() {
         return System.getProperty("line.separator")
-                + "The PeptideShaker report command line takes a cpsx file and generates various types of reports." + System.getProperty("line.separator")
+                + "The PeptideShaker report command line takes a psdb file and generates various types of reports." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "For further help see https://compomics.github.io/projects/peptide-shaker.html and https://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
@@ -306,14 +305,14 @@ public class ReportCLI extends CpsParent {
         if (aLine.getOptions().length == 0) {
             return false;
         }
-        if (!aLine.hasOption(ReportCLIParams.CPS_FILE.id) || ((String) aLine.getOptionValue(ReportCLIParams.CPS_FILE.id)).equals("")) {
-            System.out.println("\n" + ReportCLIParams.CPS_FILE.description + " not specified.\n");
+        if (!aLine.hasOption(ReportCLIParams.PSDB_FILE.id) || ((String) aLine.getOptionValue(ReportCLIParams.PSDB_FILE.id)).equals("")) {
+            System.out.println("\n" + ReportCLIParams.PSDB_FILE.description + " not specified.\n");
             return false;
         } else {
-            String fileTxt = aLine.getOptionValue(ReportCLIParams.CPS_FILE.id);
+            String fileTxt = aLine.getOptionValue(ReportCLIParams.PSDB_FILE.id);
             File testFile = new File(fileTxt.trim());
             if (!testFile.exists()) {
-                System.out.println("\n" + ReportCLIParams.CPS_FILE.description + " \'" + testFile.getAbsolutePath() + "\' not found.\n");
+                System.out.println("\n" + ReportCLIParams.PSDB_FILE.description + " \'" + testFile.getAbsolutePath() + "\' not found.\n");
                 return false;
             }
         }

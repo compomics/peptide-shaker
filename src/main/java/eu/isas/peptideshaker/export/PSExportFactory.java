@@ -1278,6 +1278,57 @@ public class PSExportFactory implements ExportFactory {
                 true, 
                 false
         );
+        
+        ///////////////////////////
+        // Default fractions report
+        ///////////////////////////
+        exportFeatures = new HashMap<>();
+        sectionContent = new ArrayList<>();
+
+        // protein accessions and protein inferences 
+        sectionContent.add(PsProteinFeature.accession);
+        sectionContent.add(PsProteinFeature.protein_description);
+        sectionContent.add(PsProteinFeature.gene_name);
+        sectionContent.add(PsProteinFeature.chromosome);
+        sectionContent.add(PsProteinFeature.pi);
+        sectionContent.add(PsProteinFeature.other_proteins);
+        sectionContent.add(PsProteinFeature.protein_group);
+        
+        // peptide and spectrum counts
+        sectionContent.add(PsProteinFeature.peptides);
+        sectionContent.add(PsProteinFeature.validated_peptides);
+        
+        // protein coverage
+        sectionContent.add(PsProteinFeature.coverage);
+        sectionContent.add(PsProteinFeature.possible_coverage);
+
+        // protein scores
+        sectionContent.add(PsProteinFeature.confidence);
+        sectionContent.add(PsProteinFeature.validated);
+        
+        // fraction information
+        sectionContent.add(PsProteinFeature.peptidesPerFraction);
+        sectionContent.add(PsProteinFeature.spectraPerFraction);
+        sectionContent.add(PsProteinFeature.averagePrecursorIntensty);
+        sectionContent.add(PsProteinFeature.fractionMinMwPeptideRange);
+        sectionContent.add(PsProteinFeature.fractionMaxMwPeptideRange);
+        sectionContent.add(PsProteinFeature.fractionMinMwSpectraRange);
+        sectionContent.add(PsProteinFeature.fractionMaxMwSpectraRange);
+
+        exportFeatures.put(PsProteinFeature.type, sectionContent);
+
+        ExportScheme fractionsReport = new ExportScheme(
+                "Fractions Report", 
+                false, 
+                exportFeatures, 
+                "\t", 
+                true, 
+                true, 
+                0, 
+                false, 
+                true, 
+                false
+        );
 
         ///////////////////////////
         // Certificate of analysis
@@ -1347,6 +1398,7 @@ public class PSExportFactory implements ExportFactory {
         defaultSchemes.put(proteinWithNonValidatedReport.getName(), proteinWithNonValidatedReport);
         defaultSchemes.put(peptideWithNonValidatedReport.getName(), peptideWithNonValidatedReport);
         defaultSchemes.put(psmWithNonValidatedReport.getName(), psmWithNonValidatedReport);
+        defaultSchemes.put(fractionsReport.getName(), fractionsReport);
         
         return defaultSchemes;
         

@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.genes.ProteinGeneDetailsProvider;
@@ -13,6 +15,7 @@ import com.compomics.cli.identification_parameters.IdentificationParametersInput
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
+import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
@@ -26,7 +29,7 @@ import com.compomics.util.parameters.UtilitiesUserParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.export.ProjectExport;
-import eu.isas.peptideshaker.utils.CpsParent;
+import eu.isas.peptideshaker.utils.PsdbParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFolder;
@@ -46,6 +49,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
+import org.slf4j.LoggerFactory;
 
 /**
  * A command line interface to run PeptideShaker.
@@ -53,7 +57,7 @@ import java.util.concurrent.TimeoutException;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class PeptideShakerCLI extends CpsParent implements Callable {
+public class PeptideShakerCLI extends PsdbParent implements Callable {
 
     /**
      * The Progress messaging handler reports the status throughout all
@@ -157,6 +161,34 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             }
 
+            // @TODO: improve the primary progress display?
+            int progressCounter = cliInputBean.getIdFiles().size() + cliInputBean.getSpectrumFiles().size();
+            progressCounter++; // establishing the database connection
+            progressCounter++; // the FASTA file
+            progressCounter++; // the peptide to protein map
+            progressCounter += 6; // computing probabilities etc
+            progressCounter++; // simplify protein groups
+            progressCounter++; // resolving protein inference
+            progressCounter += 4; // correcting protein probabilities, Validating identifications at 1% FDR, Scoring PTMs in peptides, Scoring PTMs in proteins.
+            progressCounter += 2; // scoring PTMs in PSMs. Estimating PTM FLR.
+            progressCounter++; // peptide inference
+
+            // project zipping
+            if (cliInputBean.getZipExport() != null) {
+                progressCounter++;
+            }
+
+            // add one more just to not start at 0%
+            progressCounter++;
+
+            waitingHandler.setMaxPrimaryProgressCounter(progressCounter);
+            waitingHandler.increasePrimaryProgressCounter(); // just to not start at 0%
+
+            // turn off the zoodb logging
+            LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+            ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.zoodb");
+            logger.setLevel(Level.toLevel("ERROR"));
+
             setDbFolder(PeptideShaker.getMatchesFolder());
 
             // Load user parameters
@@ -179,7 +211,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
                 speciesFactory.initiate(PeptideShaker.getJarFilePath());
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while loading the species mapping. Gene annotation might be impaired. " + getLogFileMessage(), true, true);
+                waitingHandler.appendReport("An error occurred while loading the "
+                        + "species mapping. Gene annotation might be impaired. "
+                        + getLogFileMessage(), true, true);
                 e.printStackTrace();
             }
 
@@ -187,7 +221,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             try {
                 createProject();
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while creating the PeptideShaker project. " + getLogFileMessage(), true, true);
+                waitingHandler.appendReport("An error occurred while creating the "
+                        + "PeptideShaker project. " + getLogFileMessage(), true, true);
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
             }
@@ -204,21 +239,24 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 return 1;
             } else {
                 waitingHandler.appendReport("Project successfully created.", true, true);
+                waitingHandler.increasePrimaryProgressCounter();
             }
 
             // save project
             if (cliInputBean.getOutput() != null) {
                 try {
-                    cpsFile = cliInputBean.getOutput();
+                    psdbFile = cliInputBean.getOutput();
                     waitingHandler.appendReport("Saving results.", true, true);
                     saveProject(waitingHandler, true);
-                    waitingHandler.appendReport("Results saved to " + cpsFile.getAbsolutePath() + ".", true, true);
+                    waitingHandler.appendReport("Results saved to " + psdbFile.getAbsolutePath() + ".", true, true);
                     waitingHandler.appendReportEndLine();
                 } catch (Exception e) {
                     waitingHandler.appendReport("An exception occurred while saving the project. " + getLogFileMessage(), true, true);
                     e.printStackTrace();
                     waitingHandler.setRunCanceled();
                 }
+
+                waitingHandler.increasePrimaryProgressCounter();
             }
 
             // finished
@@ -411,7 +449,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             if (reportCLIInputBean.exportNeeded()) {
 
-                // see if output folder is set, and if not set to the same folder as the cps file
+                // see if output folder is set, and if not set to the same folder as the psdb file
                 boolean reportOutputFolderSet = reportCLIInputBean.getReportOutputFolder() != null;
 
                 if (!reportOutputFolderSet) {
@@ -570,7 +608,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                             followupAnalysisFiles,
                             reportFiles,
                             mzidFile,
-                            cpsFile,
+                            psdbFile,
                             true,
                             waitingHandler
                     );
@@ -582,6 +620,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                             true,
                             true
                     );
+
+                    waitingHandler.increasePrimaryProgressCounter();
 
                 } catch (IOException e) {
 
@@ -649,7 +689,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     }
 
     /**
-     * Save the peptide shaker report next to the cps file.
+     * Save the peptide shaker report next to the psdb file.
      */
     private void saveReport() {
 
@@ -678,9 +718,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 File logReportFile = null;
                 PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
 
-                if (getCpsFile() != null) {
-                    String fileName = "PeptideShaker Report " + getCpsFile().getName() + " " + df.format(new Date()) + ".html";
-                    psReportFile = new File(getCpsFile().getParentFile(), fileName);
+                if (getPsdbFile() != null) {
+                    String fileName = "PeptideShaker Report " + getPsdbFile().getName() + " " + df.format(new Date()) + ".html";
+                    psReportFile = new File(getPsdbFile().getParentFile(), fileName);
                     if (pathSettingsCLIInputBean.getLogFolder() != null) {
                         logReportFile = new File(pathSettingsCLIInputBean.getLogFolder(), fileName);
                     }
@@ -741,6 +781,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         projectDetails.setCreationDate(new Date());
         projectDetails.setPeptideShakerVersion(new Properties().getVersion());
 
+        // set up spectrum provider
+        msFileHandler = new MsFileHandler();
+
         // get the input files
         ArrayList<File> identificationFilesInput = cliInputBean.getIdFiles();
         ArrayList<File> dataFolders = new ArrayList<>();
@@ -762,6 +805,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 dataFolders.add(dataFolder);
             }
             dataFolder = new File(parentFile, "mzml");
+            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                dataFolders.add(dataFolder);
+            }
+            dataFolder = new File(parentFile, "cms");
             if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                 dataFolders.add(dataFolder);
             }
@@ -800,6 +847,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     dataFolders.add(dataFolder);
                 }
                 dataFolder = new File(parentFile, "mzml");
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                dataFolder = new File(destinationFolder, ".cms");
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
@@ -859,13 +910,12 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // list the spectrum files found
-        HashSet<String> names = new HashSet<>();
+        HashSet<String> dataFileNamesRequired = new HashSet<>();
 
         for (File spectrumFile : spectrumFiles) {
-
-            names.add(IoUtil.getFileName(spectrumFile));
-
+            dataFileNamesRequired.add(IoUtil.getFileName(spectrumFile));
         }
+
         for (File dataFolder : dataFolders) {
 
             for (File file : dataFolder.listFiles()) {
@@ -873,21 +923,22 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 String name = file.getName();
 
                 if (name.endsWith(".mgf") || name.endsWith(".mgf.gz")
-                        || name.endsWith(".mzml") || name.endsWith(".mzml.gz")) {
+                        || name.endsWith(".mzml") || name.endsWith(".mzml.gz")
+                        || name.endsWith(".cms")) {
 
-                    if (!names.contains(name)) {
+                    if (!dataFileNamesRequired.contains(name)) {
 
                         spectrumFiles.add(file);
-                        names.add(name);
+                        dataFileNamesRequired.add(name);
 
                     }
 
                 } else if (name.endsWith(".fasta")) {
 
-                    if (!names.contains(name)) {
+                    if (!dataFileNamesRequired.contains(name)) {
 
                         fastaFile = file;
-                        names.add(name);
+                        dataFileNamesRequired.add(name);
 
                     }
                 }
@@ -895,9 +946,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // Load the spectrum files
-        
         for (File spectrumFile : spectrumFiles) {
-            
+
             File folder = CmsFolder.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
 
             msFileHandler.register(spectrumFile, folder, waitingHandler);
@@ -911,12 +961,15 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // get the identification parameters
         IdentificationParametersInputBean identificationParametersInputBean = cliInputBean.getIdentificationParametersInputBean();
+
         if (tempIdentificationParameters != null && identificationParametersInputBean.getInputFile() == null) {
             identificationParametersInputBean.setIdentificationParameters(tempIdentificationParameters);
             identificationParametersInputBean.updateIdentificationParameters();
         }
+
         identificationParameters = identificationParametersInputBean.getIdentificationParameters();
         ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
+
         if (validationQCParameters == null
                 || validationQCParameters.getPsmFilters() == null
                 || validationQCParameters.getPeptideFilters() == null
@@ -926,6 +979,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 && validationQCParameters.getProteinFilters().isEmpty()) {
             MatchesValidator.setDefaultMatchesQCFilters(validationQCParameters);
         }
+
         if (identificationParameters == null) {
             waitingHandler.appendReport(
                     "Identification parameters not found!",
@@ -934,8 +988,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             );
             waitingHandler.setRunCanceled();
         }
+
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         String error = PeptideShaker.loadModifications(searchParameters);
+
         if (error != null) {
             System.out.println(error);
         }
@@ -1049,6 +1105,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     projectDetails,
                     projectType,
                     waitingHandler,
+                    false,
                     exceptionHandler
             );
 
@@ -1145,7 +1202,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      */
     private static String getHeader() {
         return System.getProperty("line.separator")
-                + "The PeptideShaker command line takes identification files from search engines and creates a PeptideShaker project saved as cpsx file. Various exports can be generated from the project." + System.getProperty("line.separator")
+                + "The PeptideShaker command line takes identification files from search engines and creates a PeptideShaker project saved as psdb file. Various exports can be generated from the project." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "For further help see https://compomics.github.io/projects/peptide-shaker.html and https://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")

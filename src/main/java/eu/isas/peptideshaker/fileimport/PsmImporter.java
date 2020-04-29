@@ -44,7 +44,7 @@ public class PsmImporter {
     /**
      * Mutex for the X!Tandem modifications check.
      */
-    private final static SimpleSemaphore xTandemModsCheckMutex = new SimpleSemaphore(1);
+    private final static SimpleSemaphore XTANDEM_MODS_CHECK_MUTEX = new SimpleSemaphore(1);
     /**
      * The number of first hits.
      */
@@ -281,7 +281,7 @@ public class PsmImporter {
 
         if (!xTandemModsCheck) {
 
-            xTandemModsCheckMutex.acquire();
+            XTANDEM_MODS_CHECK_MUTEX.acquire();
 
             if (!xTandemModsCheck) {
 
@@ -324,7 +324,7 @@ public class PsmImporter {
 
             }
 
-            xTandemModsCheckMutex.release();
+            XTANDEM_MODS_CHECK_MUTEX.release();
 
         }
     }

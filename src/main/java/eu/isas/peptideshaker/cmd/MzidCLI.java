@@ -7,7 +7,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.utils.CpsParent;
+import eu.isas.peptideshaker.utils.PsdbParent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,11 +16,11 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
 /**
- * Command line interface to export mzid files from cps files.
+ * Command line interface to export mzid files from psdb files.
  *
  * @author Marc Vaudel
  */
-public class MzidCLI extends CpsParent {
+public class MzidCLI extends PsdbParent {
 
     /**
      * The mzid creation options.
@@ -82,11 +82,11 @@ public class MzidCLI extends CpsParent {
         try {
             if (mzidCLIInputBean.getZipFile() != null) {
                 inputFilePath = mzidCLIInputBean.getZipFile().getAbsolutePath();
-                loadCpsFromZipFile(mzidCLIInputBean.getZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
-            } else if (mzidCLIInputBean.getCpsFile() != null) {
-                inputFilePath = mzidCLIInputBean.getCpsFile().getAbsolutePath();
-                cpsFile = mzidCLIInputBean.getCpsFile();
-                loadCpsFile(PeptideShaker.getMatchesFolder(), waitingHandler);
+                loadPsdbFromZipFile(mzidCLIInputBean.getZipFile(), PeptideShaker.getMatchesFolder(), waitingHandler);
+            } else if (mzidCLIInputBean.getPsdbFile() != null) {
+                inputFilePath = mzidCLIInputBean.getPsdbFile().getAbsolutePath();
+                psdbFile = mzidCLIInputBean.getPsdbFile();
+                loadPsdbFile(PeptideShaker.getMatchesFolder(), waitingHandler);
             } else {
                 waitingHandler.appendReport("PeptideShaker project input missing.", true, true);
                 return 1;
@@ -189,7 +189,7 @@ public class MzidCLI extends CpsParent {
      */
     private static String getHeader() {
         return System.getProperty("line.separator")
-                + "The PeptideShaker mzid command line takes a cpsx file and export the identification results in the mzIdentML format." + System.getProperty("line.separator")
+                + "The PeptideShaker mzid command line takes a psdb file and export the identification results in the mzIdentML format." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "For further help see https://compomics.github.io/projects/peptide-shaker.html and https://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
@@ -220,10 +220,10 @@ public class MzidCLI extends CpsParent {
                 return false;
             }
         }
-        String fileTxt = aLine.getOptionValue(MzidCLIParams.CPS_FILE.id);
+        String fileTxt = aLine.getOptionValue(MzidCLIParams.PSDB_FILE.id);
         File testFile = new File(fileTxt.trim());
         if (!testFile.exists()) {
-            System.out.println("\n" + MzidCLIParams.CPS_FILE.description + " \'" + testFile.getAbsolutePath() + "\' not found.\n");
+            System.out.println("\n" + MzidCLIParams.PSDB_FILE.description + " \'" + testFile.getAbsolutePath() + "\' not found.\n");
             return false;
         }
 

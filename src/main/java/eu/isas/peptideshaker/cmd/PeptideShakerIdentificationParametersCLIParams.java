@@ -1,8 +1,8 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.cli.identification_parameters.IdentificationParametersCLIParams;
-import static com.compomics.software.cli.CommandLineUtils.formatter;
 import org.apache.commons.cli.Options;
+import static com.compomics.software.cli.CommandLineUtils.FORMATTER;
 
 /**
  * This class provides the parameters which can be used for the identification
@@ -40,8 +40,8 @@ public class PeptideShakerIdentificationParametersCLIParams {
         String output = "";
 
         output += "Parameters Files:\n\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.OUT.id) + " " + IdentificationParametersCLIParams.OUT.description + ". (Mandatory)\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.id) + " " + IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.description + " (Optional)\n";
+        output += "-" + String.format(FORMATTER, IdentificationParametersCLIParams.OUT.id) + " " + IdentificationParametersCLIParams.OUT.description + ". (Mandatory)\n";
+        output += "-" + String.format(FORMATTER, IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.id) + " " + IdentificationParametersCLIParams.IDENTIFICATION_PARAMETERS.description + " (Optional)\n";
         output += getParametersOptionsAsString();
         return output;
     }
@@ -398,7 +398,7 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.FASTA_DECOY_FILE_TAG.id) + " " + IdentificationParametersCLIParams.FASTA_DECOY_FILE_TAG.description + "\n";
         
 //        output += "\n\nQuality Control:\n\n";
-//        output += "-" + String.format(formatter, IdentificationParametersCLIParams.ANNOTATION_LEVEL.id) + IdentificationParametersCLIParams.ANNOTATION_LEVEL.description + "\n";
+//        output += "-" + String.format(FORMATTER, IdentificationParametersCLIParams.ANNOTATION_LEVEL.id) + IdentificationParametersCLIParams.ANNOTATION_LEVEL.description + "\n";
         output += "\n\nHelp:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MODS.id) + IdentificationParametersCLIParams.MODS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.USAGE.id) + IdentificationParametersCLIParams.USAGE.description + "\n";

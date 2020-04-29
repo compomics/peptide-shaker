@@ -14,9 +14,9 @@ import org.apache.commons.cli.CommandLine;
 public class MzidCLIInputBean {
 
     /**
-     * The PeptideShaker cpsx file.
+     * The PeptideShaker psdb file.
      */
-    private File cpsFile;
+    private File psdbFile;
     /**
      * The zip file.
      */
@@ -85,10 +85,10 @@ public class MzidCLIInputBean {
      */
     public MzidCLIInputBean(CommandLine aLine) {
 
-        if (aLine.hasOption(MzidCLIParams.CPS_FILE.id)) {
-            String file = aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id);
-            if (file.toLowerCase().endsWith(".cpsx")) {
-                cpsFile = new File(file);
+        if (aLine.hasOption(MzidCLIParams.PSDB_FILE.id)) {
+            String file = aLine.getOptionValue(FollowUpCLIParams.PSDB_FILE.id);
+            if (file.toLowerCase().endsWith(".psdb")) {
+                psdbFile = new File(file);
             } else if (file.toLowerCase().endsWith(".zip")) {
                 zipFile = new File(file);
             } else {
@@ -144,12 +144,12 @@ public class MzidCLIInputBean {
     }
 
     /**
-     * Returns the cps file.
+     * Returns the psdb file.
      *
-     * @return the cps file
+     * @return the psdb file
      */
-    public File getCpsFile() {
-        return cpsFile;
+    public File getPsdbFile() {
+        return psdbFile;
     }
 
     /**

@@ -498,14 +498,14 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void openJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJButtonActionPerformed
 
-        String cpsFileFilterDescription = "PeptideShaker Database (.psdb)";
+        String psdbFileFilterDescription = "PeptideShaker Database (.psdb)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
         
         FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(
                 this, 
                 new String[]{".psdb", ".zip"},
-                new String[]{cpsFileFilterDescription, zipFileFilterDescription}, 
+                new String[]{psdbFileFilterDescription, zipFileFilterDescription}, 
                 "Open PeptideShaker Project", 
                 lastSelectedFolderPath, 
                 null, 

@@ -14,6 +14,7 @@ import java.util.ArrayList;
  * Options instance.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PeptideShakerCLIInputBean {
 
@@ -90,7 +91,7 @@ public class PeptideShakerCLIInputBean {
      * Construct a PeptideShakerCLIInputBean from an Apache CLI instance.
      *
      * @param aLine the command line
-     * 
+     *
      * @throws IOException thrown of IOException occurs
      * @throws ClassNotFoundException thrown of ClassNotFoundException occurs
      */
@@ -102,7 +103,7 @@ public class PeptideShakerCLIInputBean {
             String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
             spectrumFiles = getSpectrumFiles(filesTxt);
         }
-        
+
         if (aLine.hasOption(PeptideShakerCLIParams.FASTA_FILE.id)) {
             fastaFile = new File(aLine.getOptionValue(PeptideShakerCLIParams.FASTA_FILE.id));
         }
@@ -173,18 +174,18 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the cps output file. Null if not set.
+     * Returns the psdb output file. Null if not set.
      *
-     * @return the cps output file
+     * @return the psdb output file
      */
     public File getOutput() {
         return output;
     }
 
     /**
-     * Sets the cps output file.
+     * Sets the psdb output file.
      *
-     * @param output the cps output file
+     * @param output the psdb output file
      */
     public void setOutput(File output) {
         this.output = output;
@@ -279,7 +280,7 @@ public class PeptideShakerCLIInputBean {
     public void setSpectrumFiles(ArrayList<File> spectrumFiles) {
         this.spectrumFiles = spectrumFiles;
     }
-    
+
     /**
      * Returns the FASTA file.
      *
@@ -308,8 +309,13 @@ public class PeptideShakerCLIInputBean {
      * found
      */
     public static ArrayList<File> getSpectrumFiles(String optionInput) throws FileNotFoundException {
+
         ArrayList<String> extentions = new ArrayList<>();
+
         extentions.add(".mgf");
+        extentions.add(".mzML");
+        extentions.add(".cms");
+
         return CommandLineUtils.getFiles(optionInput, extentions);
     }
 
@@ -323,15 +329,22 @@ public class PeptideShakerCLIInputBean {
      * found
      */
     public static ArrayList<File> getIdentificationFiles(String optionInput) throws FileNotFoundException {
+
         ArrayList<String> extentions = new ArrayList<>();
+
         extentions.add(".dat");
         extentions.add(".omx");
         extentions.add(".t.xml");
+        extentions.add(".pep.xml");
         extentions.add(".mzid");
         extentions.add(".csv");
+        extentions.add(".res");
         extentions.add(".txt");
-        extentions.add(".pep.xml");
+        extentions.add(".tags");
+        extentions.add(".psm");
+        extentions.add(".gz");
         extentions.add(".zip");
+
         return CommandLineUtils.getFiles(optionInput, extentions);
     }
 

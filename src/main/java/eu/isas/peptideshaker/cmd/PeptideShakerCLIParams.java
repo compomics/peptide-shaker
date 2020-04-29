@@ -17,9 +17,9 @@ public enum PeptideShakerCLIParams {
     // https://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html
     ///////////////////////////////////////////////////////////////////////////
     REFERENCE("reference", "The reference of the project.", true),
-    SPECTRUM_FILES("spectrum_files", "Spectrum files (mgf format), comma separated list or an entire folder.", false),
+    SPECTRUM_FILES("spectrum_files", "Spectrum files, comma separated list or an entire folder.", false),
     FASTA_FILE("fasta_file", "The complete path to the FASTA file.", false),
-    IDENTIFICATION_FILES("identification_files", "Identification files (.t.xml, .mzid, .cvs, .omx, .dat, .txt, .pep.xml, .zip), comma separated list or an entire folder.", true),
+    IDENTIFICATION_FILES("identification_files", "Identification files, comma separated list or an entire folder.", true),
     PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", false),
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is '0').", false),
     ZIP("zip", "Exports the entire project as a zip file in the file specified.", false),
