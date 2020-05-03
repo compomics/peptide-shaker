@@ -221,8 +221,8 @@ public class ModificationLocalizationScorer extends DbObject {
 
         }
 
-        HashMap<Double, ArrayList<Modification>> modificationsMap = new HashMap<>();
-        HashMap<Double, Integer> nMod = new HashMap<>();
+        HashMap<Double, ArrayList<Modification>> modificationsMap = new HashMap<>(1);
+        HashMap<Double, Integer> nMod = new HashMap<>(1);
         PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
         Peptide peptide = bestPeptideAssumption.getPeptide();
 
