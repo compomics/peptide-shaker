@@ -348,12 +348,9 @@ public class PsmImportRunnable implements Runnable {
     ) {
 
         PeptideAssumptionFilter peptideAssumptionFilter = identificationParameters.getPeptideAssumptionFilter();
-        SequenceMatchingParameters sequenceMatchingPreferences = identificationParameters.getSequenceMatchingParameters();
-        SequenceMatchingParameters modificationSequenceMatchingPreferences = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+        SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
+        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-
-        String spectrumFile = spectrumMatch.getSpectrumFile();
-        String spectrumTitle = spectrumMatch.getSpectrumTitle();
 
         HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptions = spectrumMatch.getPeptideAssumptionsMap();
 
@@ -402,12 +399,11 @@ public class PsmImportRunnable implements Runnable {
 
                         for (ModificationMatch modMatch : modificationMatches) {
 
-                            HashMap<Integer, HashSet<String>> tempNames = ModificationNameMapper.getPossibleModificationNames(
-                                    peptide, 
+                            HashMap<Integer, HashSet<String>> tempNames = ModificationNameMapper.getPossibleModificationNames(peptide, 
                                     modMatch, 
                                     fileReader, 
                                     searchParameters, 
-                                    modificationSequenceMatchingPreferences, 
+                                    modificationSequenceMatchingParameters, 
                                     sequenceProvider, 
                                     modificationFactory
                             );
@@ -458,10 +454,9 @@ public class PsmImportRunnable implements Runnable {
 
                         }
 
-                        if (peptideAssumptionFilter.validateModifications(
-                                peptide,
-                                sequenceMatchingPreferences,
-                                modificationSequenceMatchingPreferences,
+                        if (peptideAssumptionFilter.validateModifications(peptide,
+                                sequenceMatchingParameters,
+                                modificationSequenceMatchingParameters,
                                 searchParameters.getModificationParameters()
                         )) {
 
@@ -469,10 +464,9 @@ public class PsmImportRunnable implements Runnable {
                             peptide.setKey(Peptide.getKey(peptide.getSequence(), peptide.getVariableModifications()));
 
                             // Estimate mass
-                            peptide.getMass(
-                                    modificationParameters, 
+                            peptide.getMass(modificationParameters, 
                                     sequenceProvider, 
-                                    modificationSequenceMatchingPreferences
+                                    modificationSequenceMatchingParameters
                             );
 
                             // Add new assumption
