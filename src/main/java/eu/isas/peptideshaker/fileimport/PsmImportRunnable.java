@@ -469,7 +469,11 @@ public class PsmImportRunnable implements Runnable {
                             peptide.setKey(Peptide.getKey(peptide.getSequence(), peptide.getVariableModifications()));
 
                             // Estimate mass
-                            peptide.getMass(modificationParameters, sequenceProvider, modificationSequenceMatchingPreferences);
+                            peptide.getMass(
+                                    modificationParameters, 
+                                    sequenceProvider, 
+                                    modificationSequenceMatchingPreferences
+                            );
 
                             // Add new assumption
                             newAssumptions.add(peptideAssumption);

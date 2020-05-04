@@ -534,7 +534,11 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
             }
         }
 
-        return FastaSummary.getSummary(projectDetails.getFastaFile(), identificationParameters.getFastaParameters(), waitingHandler);
+        return FastaSummary.getSummary(
+                projectDetails.getFastaFile(), 
+                identificationParameters.getFastaParameters(), 
+                waitingHandler
+        );
 
     }
 
