@@ -99,8 +99,8 @@ public class PsdbExporter {
             }
 
             // add the identification keys
-            if (!identification.contains(IdentificationKeys.key)) {
-                identification.addObject(IdentificationKeys.key, identification.getIdentificationKeys());
+            if (!identification.contains(IdentificationKeys.KEY)) {
+                identification.addObject(IdentificationKeys.KEY, identification.getIdentificationKeys());
             }
 
             PSMaps psMaps = new PSMaps();

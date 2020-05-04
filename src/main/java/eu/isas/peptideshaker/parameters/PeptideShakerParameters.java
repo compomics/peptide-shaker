@@ -26,7 +26,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
     /**
      * The identification parameters.
      */
-    private final IdentificationParameters identificationParameters ;
+    private final IdentificationParameters identificationParameters;
     /**
      * The spectrum counting preferences.
      */
@@ -71,7 +71,24 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      * The key of the object when stored in settings table of a psdb file.
      */
     public static final long KEY = ExperimentObject.asLong("PeptideShaker_parameters");
-    
+
+    /**
+     * Empty default constructor.
+     */
+    public PeptideShakerParameters() {
+        identificationParameters = null;
+        spectrumCountingPreferences = null;
+        projectDetails = null;
+        filterParameters = null;
+        displayParameters = null;
+        metrics = null;
+        sequenceProvider = null;
+        proteinDetailsProvider = null;
+        geneMaps = null;
+        identificationFeaturesCache = null;
+        projectType = null;
+    }
+
     /**
      * Constructor for a PeptideShaker Settings class.
      *
@@ -100,7 +117,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
             ProjectType projectType,
             IdentificationFeaturesCache identificationFeaturesCache
     ) {
-        
+
         this.identificationParameters = identificationParameters;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.projectDetails = projectDetails;
@@ -112,7 +129,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
         this.geneMaps = geneMaps;
         this.projectType = projectType;
         this.identificationFeaturesCache = identificationFeaturesCache;
-    
+
     }
 
     /**
@@ -121,11 +138,11 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      * @return the identification parameters
      */
     public IdentificationParameters getIdentificationParameters() {
-        
+
         readDBMode();
-        
+
         return identificationParameters;
-    
+
     }
 
     /**
@@ -134,24 +151,24 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      * @return the spectrum counting preferences of the project
      */
     public SpectrumCountingParameters getSpectrumCountingPreferences() {
-    
+
         readDBMode();
-        
+
         return spectrumCountingPreferences;
-    
+
     }
-    
+
     /**
      * Returns the project details.
      *
      * @return the project details
      */
     public ProjectDetails getProjectDetails() {
-        
+
         readDBMode();
-        
+
         return projectDetails;
-        
+
     }
 
     /**
@@ -160,11 +177,11 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      * @return the GUI display parameters
      */
     public FilterParameters getFilterParameters() {
-        
+
         readDBMode();
-        
+
         return filterParameters;
-    
+
     }
 
     /**
@@ -173,11 +190,11 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      * @return the GUI display parameters
      */
     public DisplayParameters getDisplayParameters() {
-        
+
         readDBMode();
-        
+
         return displayParameters;
-    
+
     }
 
     /**
@@ -186,11 +203,11 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      * @return the metrics saved when loading the files
      */
     public Metrics getMetrics() {
-        
+
         readDBMode();
-        
+
         return metrics;
-    
+
     }
 
     /**
@@ -199,37 +216,37 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      * @return the sequence provider saved when loading the files
      */
     public SequenceProvider getSequenceProvider() {
-        
+
         readDBMode();
-        
+
         return sequenceProvider;
-    
+
     }
 
     /**
      * Returns the protein details provider.
-     * 
+     *
      * @return the protein details provider
      */
     public ProteinDetailsProvider getProteinDetailsProvider() {
-        
+
         readDBMode();
-        
+
         return proteinDetailsProvider;
-        
+
     }
-    
+
     /**
      * Returns the gene maps.
      *
      * @return the gene maps
      */
     public GeneMaps getGeneMaps() {
-        
+
         readDBMode();
-        
+
         return geneMaps;
-    
+
     }
 
     /**
@@ -239,11 +256,11 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      * @return the identification features cache
      */
     public IdentificationFeaturesCache getIdentificationFeaturesCache() {
-        
+
         readDBMode();
-        
+
         return identificationFeaturesCache;
-    
+
     }
 
     @Override
@@ -253,15 +270,14 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
 
     /**
      * Returns the project type.
-     * 
+     *
      * @return the project type
      */
     public ProjectType getProjectType() {
-        
+
         readDBMode();
-        
+
         return projectType;
     }
-    
-    
+
 }
