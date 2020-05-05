@@ -29,7 +29,7 @@ public class ProjectDetails extends DbObject {
      */
     private HashMap<String, HashMap<String, ArrayList<String>>> identificationAlgorithms = new HashMap<>();
     /**
-     * Map of the spectrum files paths indexed by name.
+     * Map of the spectrum files paths indexed by name without extension.
      */
     private HashMap<String, String> spectrumFiles = new HashMap<>();
     /**
@@ -174,7 +174,7 @@ public class ProjectDetails extends DbObject {
     public void addSpectrumFilePath(String spectrumFilePath) {
         writeDBMode();
         String fileName = IoUtil.getFileName(spectrumFilePath);
-        spectrumFiles.put(fileName, spectrumFilePath);
+        spectrumFiles.put(IoUtil.removeExtension(fileName), spectrumFilePath);
     }
 
     /**
@@ -192,7 +192,7 @@ public class ProjectDetails extends DbObject {
     /**
      * Returns the path to the file corresponding to the given name. Null if not found.
      *
-     * @param fileName the name of the desired file
+     * @param fileName the name without extension of the desired file
      *
      * @return the corresponding file, null if not found.
      */

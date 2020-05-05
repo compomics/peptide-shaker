@@ -116,7 +116,7 @@ public class BestMatchSelection {
      * @param spectrumMatch The spectrum match.
      * @param inputMap The input map.
      * @param psmTargetDecoyMap The PSM target decoy map.
-     * @param identifictation the identification clas
+     * @param identification The identification class.
      */
     public void selectBestHit(
             SpectrumMatch spectrumMatch,
@@ -133,10 +133,6 @@ public class BestMatchSelection {
 
         String spectrumFile = spectrumMatch.getSpectrumFile();
         String spectrumTitle = spectrumMatch.getSpectrumTitle();
-        
-        if (spectrumTitle.equals("controllerType=0 controllerNumber=1 scan=105")) {
-            int debug = 1;
-        }
 
         HashSet<Long> ids = new HashSet<>(2);
         ArrayList<PeptideAssumption> assumptions = new ArrayList<>(4);
@@ -254,19 +250,19 @@ public class BestMatchSelection {
         if (!assumptions.isEmpty()) {
 
             PeptideAssumption bestPeptideAssumption;
-            
+
             try {
                 bestPeptideAssumption = getBestMatch(
-                    spectrumFile, 
-                    spectrumTitle, 
-                    assumptions
-            );
+                        spectrumFile,
+                        spectrumTitle,
+                        assumptions
+                );
             } catch (Exception e) {
                 bestPeptideAssumption = getBestMatch(
-                    spectrumFile, 
-                    spectrumTitle, 
-                    assumptions
-            );
+                        spectrumFile,
+                        spectrumTitle,
+                        assumptions
+                );
             }
 
             psmParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
@@ -457,7 +453,7 @@ public class BestMatchSelection {
         return getBestMatch(
                 spectrumFile,
                 spectrumTitle,
-                assumptions, 
+                assumptions,
                 false
         );
 
@@ -489,21 +485,21 @@ public class BestMatchSelection {
             PeptideAssumption peptideAssumption = assumptions.get(i);
 
             try {
-            bestPeptideAssumption = tieBreaker.getBestPeptideAssumption(
-                    spectrumFile,
-                    spectrumTitle,
-                    bestPeptideAssumption,
-                    peptideAssumption,
-                    silentFail
-            );
+                bestPeptideAssumption = tieBreaker.getBestPeptideAssumption(
+                        spectrumFile,
+                        spectrumTitle,
+                        bestPeptideAssumption,
+                        peptideAssumption,
+                        silentFail
+                );
             } catch (Exception e) {
                 bestPeptideAssumption = tieBreaker.getBestPeptideAssumption(
-                    spectrumFile,
-                    spectrumTitle,
-                    bestPeptideAssumption,
-                    peptideAssumption,
-                    silentFail
-            );
+                        spectrumFile,
+                        spectrumTitle,
+                        bestPeptideAssumption,
+                        peptideAssumption,
+                        silentFail
+                );
             }
 
         }
