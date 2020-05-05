@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.stirred.modules;
 
+import com.compomics.util.experiment.io.identification.writers.SimpleMzIdentMLExporter;
 import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.proteins.Peptide;
@@ -20,7 +21,6 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.io.identification.IdfileReader;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
-import com.compomics.util.io.flat.SimpleFileWriter;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.ModificationLocalizationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
@@ -55,7 +55,7 @@ public class StirAndExportRunnable implements Runnable {
 
     private final String spectrumFileName;
 
-    private final SimpleFileWriter writer;
+    private final SimpleMzIdentMLExporter writer;
 
     private final IdentificationParameters identificationParameters;
 
@@ -71,7 +71,7 @@ public class StirAndExportRunnable implements Runnable {
             ConcurrentLinkedQueue<SpectrumMatch> spectrumMatches,
             IdfileReader idfileReader,
             String spectrumFileName,
-            SimpleFileWriter writer,
+            SimpleMzIdentMLExporter writer,
             IdentificationParameters identificationParameters,
             FastaMapper fastaMapper,
             SequenceProvider sequenceProvider,

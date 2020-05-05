@@ -5,16 +5,24 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex;
 import com.compomics.util.experiment.io.identification.IdfileReader;
 import com.compomics.util.experiment.io.identification.IdfileReaderFactory;
+import com.compomics.util.experiment.io.identification.writers.SimpleMzIdentMLExporter;
 import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.io.IoUtil;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.stirred.modules.IdImport;
+import eu.isas.peptideshaker.stirred.modules.IdImporter;
+import eu.isas.peptideshaker.stirred.modules.StirAndExportRunnable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.IntStream;
 
 /**
  * This class imports the results of a search engine from SearchGUI in the
@@ -59,7 +67,7 @@ public class Stirred {
 
     }
 
-    public void run() throws IOException {
+    public void run() throws InterruptedException, TimeoutException, IOException {
 
         // Import identification parameters
         cliLogger.logMessage("Importing identification parameters file");
@@ -80,23 +88,54 @@ public class Stirred {
         cliLogger.logMessage("Importing spectra");
         MsFileHandler msFileHandler = new MsFileHandler();
         msFileHandler.register(
-                fastaFile, 
-                tempFolder, 
+                fastaFile,
+                tempFolder,
                 waitingHandler
         );
 
         // Import identification results
-        ArrayList<SpectrumMatch> spectrumMatches = IdImport.loadSpectrumMatches(
-                searchEngineResultsFile, 
-                identificationParameters, 
-                msFileHandler, 
-                cliLogger, 
+        IdImporter idImporter = new IdImporter(
+                searchEngineResultsFile,
+                cliLogger
+        );
+        ArrayList<SpectrumMatch> spectrumMatches = idImporter.loadSpectrumMatches(
+                identificationParameters,
+                msFileHandler,
                 waitingHandler
         );
-        
+
         // Stir peptides and export
-        
-        
-        
+        try ( SimpleMzIdentMLExporter simpleMzIdentMLExporter = new SimpleMzIdentMLExporter(ouputFile)) {
+
+            ConcurrentLinkedQueue<SpectrumMatch> spectrumMatchesQueue = new ConcurrentLinkedQueue<>(spectrumMatches);
+
+            ExecutorService pool = Executors.newFixedThreadPool(nThreads);
+
+            IntStream.range(0, nThreads)
+                    .mapToObj(
+                            i -> new StirAndExportRunnable(
+                                    spectrumMatchesQueue,
+                                    idImporter.getIdFileReader(),
+                                    IoUtil.getFileName(spectrumFile),
+                                    simpleMzIdentMLExporter,
+                                    identificationParameters,
+                                    fmIndex,
+                                    fmIndex,
+                                    msFileHandler
+                            )
+                    )
+                    .forEach(
+                            worker -> pool.submit(worker)
+                    );
+
+            pool.shutdown();
+
+            if (!pool.awaitTermination(timeOutDays, TimeUnit.DAYS)) {
+
+                throw new TimeoutException("Analysis timed out (time out: " + timeOutDays + " days)");
+
+            }
+        }
+
     }
 }
