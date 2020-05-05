@@ -14,7 +14,6 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
-import com.compomics.util.threading.ConcurrentIterator;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.protein_inference.PeptideChecker;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This class processes PSMs.
@@ -36,7 +36,7 @@ public class PsmProcessorRunnable implements Runnable {
     /**
      * Iterator for the spectrum matches to import.
      */
-    private final ConcurrentIterator<Long> spectrumMatchKeysIterator;
+    private final ConcurrentLinkedQueue<Long> spectrumMatchKeysQueue;
     /**
      * The identification object.
      */
@@ -98,7 +98,7 @@ public class PsmProcessorRunnable implements Runnable {
      * @param exceptionHandler The exception handler.
      */
     public PsmProcessorRunnable(
-            ConcurrentIterator<Long> spectrumMatchKeysIterator,
+            ConcurrentLinkedQueue<Long> spectrumMatchKeysIterator,
             Identification identification,
             IdentificationParameters identificationParameters,
             InputMap inputMap,
@@ -111,7 +111,7 @@ public class PsmProcessorRunnable implements Runnable {
             ExceptionHandler exceptionHandler
     ) {
 
-        this.spectrumMatchKeysIterator = spectrumMatchKeysIterator;
+        this.spectrumMatchKeysQueue = spectrumMatchKeysIterator;
         this.identification = identification;
         this.identificationParameters = identificationParameters;
         this.inputMap = inputMap;
@@ -137,7 +137,7 @@ public class PsmProcessorRunnable implements Runnable {
         try {
 
             Long spectrumMatchKey;
-            while ((spectrumMatchKey = spectrumMatchKeysIterator.next()) != null) {
+            while ((spectrumMatchKey = spectrumMatchKeysQueue.poll()) != null) {
 
                 processPsm(spectrumMatchKey);
 

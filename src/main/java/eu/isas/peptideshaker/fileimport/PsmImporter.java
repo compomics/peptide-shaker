@@ -15,7 +15,6 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
-import com.compomics.util.threading.ConcurrentIterator;
 import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
 import static eu.isas.peptideshaker.PeptideShaker.TIMEOUT_DAYS;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -154,9 +154,10 @@ public class PsmImporter {
             int nThreads,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
-    ) throws InterruptedException, TimeoutException {
+    ) 
+            throws InterruptedException, TimeoutException {
 
-        ConcurrentIterator<SpectrumMatch> spectrumMatchIterator = new ConcurrentIterator<>(spectrumMatches);
+        ConcurrentLinkedQueue<SpectrumMatch> spectrumMatchQueue = new ConcurrentLinkedQueue<>(spectrumMatches);
 
         ExecutorService importPool = Executors.newFixedThreadPool(nThreads);
 
@@ -164,9 +165,8 @@ public class PsmImporter {
 
         for (int i = 0; i < nThreads; i++) {
 
-            importRunnables.add(
-                    new PsmImportRunnable(
-                            spectrumMatchIterator,
+            importRunnables.add(new PsmImportRunnable(
+                            spectrumMatchQueue,
                             identificationParameters,
                             fileReader,
                             idFile,
@@ -187,8 +187,9 @@ public class PsmImporter {
 
         if (!importPool.awaitTermination(TIMEOUT_DAYS, TimeUnit.DAYS)) {
 
-            throw new TimeoutException("Analysis timed out (time out: " + TIMEOUT_DAYS + " days)");
-
+            throw new TimeoutException(
+                    "Analysis timed out (time out: " + TIMEOUT_DAYS + " days)"
+            );
         }
 
         // Gather metrics from each thread
@@ -217,7 +218,7 @@ public class PsmImporter {
             }
         }
 
-        spectrumMatchIterator = new ConcurrentIterator<>(spectrumMatches);
+        spectrumMatchQueue = new ConcurrentLinkedQueue<>(spectrumMatches);
 
         ExecutorService firstHitPool = Executors.newFixedThreadPool(nThreads);
 
@@ -227,7 +228,7 @@ public class PsmImporter {
 
             firstHitRunnables.add(
                     new PsmFirstHitRunnable(
-                            spectrumMatchIterator,
+                            spectrumMatchQueue,
                             identificationParameters,
                             sequenceProvider,
                             spectrumProvider,
@@ -247,7 +248,9 @@ public class PsmImporter {
 
         if (!firstHitPool.awaitTermination(TIMEOUT_DAYS, TimeUnit.DAYS)) {
 
-            throw new TimeoutException("Analysis timed out (time out: " + TIMEOUT_DAYS + " days)");
+            throw new TimeoutException(
+                    "Analysis timed out (time out: " + TIMEOUT_DAYS + " days)"
+            );
 
         }
 

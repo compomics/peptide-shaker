@@ -20,7 +20,6 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.io.identification.IdfileReader;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
-import com.compomics.util.io.flat.SimpleFileReader;
 import com.compomics.util.io.flat.SimpleFileWriter;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.ModificationLocalizationParameters;
@@ -34,7 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -49,6 +48,10 @@ public class StirAndExportRunnable implements Runnable {
      * The modification factory.
      */
     private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
+
+    private final IdfileReader idfileReader;
+
+    private final ConcurrentLinkedQueue<SpectrumMatch> spectrumMatches;
 
     private final String spectrumFileName;
 
@@ -65,6 +68,8 @@ public class StirAndExportRunnable implements Runnable {
     private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
     public StirAndExportRunnable(
+            ConcurrentLinkedQueue<SpectrumMatch> spectrumMatches,
+            IdfileReader idfileReader,
             String spectrumFileName,
             SimpleFileWriter writer,
             IdentificationParameters identificationParameters,
@@ -73,6 +78,8 @@ public class StirAndExportRunnable implements Runnable {
             SpectrumProvider spectrumProvider
     ) {
 
+        this.spectrumMatches = spectrumMatches;
+        this.idfileReader = idfileReader;
         this.spectrumFileName = spectrumFileName;
         this.writer = writer;
         this.identificationParameters = identificationParameters;
@@ -85,14 +92,16 @@ public class StirAndExportRunnable implements Runnable {
     @Override
     public void run() {
 
-        String line;
+        SpectrumMatch spectrumMatch;
 
-        while ((line = reader.readLine()) != null) {
+        while ((spectrumMatch = spectrumMatches.poll()) != null) {
+
+            processSpectrumMatch(spectrumMatch);
 
         }
     }
 
-    private void processSpectrumMatch(IdfileReader idfileReader, SpectrumMatch spectrumMatch) {
+    private void processSpectrumMatch(SpectrumMatch spectrumMatch) {
 
         for (Map.Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry : spectrumMatch.getPeptideAssumptionsMap().entrySet()) {
 
@@ -114,7 +123,6 @@ public class StirAndExportRunnable implements Runnable {
                     )
                     .forEach(
                             peptideAssumption -> processPeptideAssumption(
-                                    idfileReader,
                                     spectrumMatch,
                                     peptideAssumption
                             )
@@ -123,7 +131,6 @@ public class StirAndExportRunnable implements Runnable {
     }
 
     private void processPeptideAssumption(
-            IdfileReader idfileReader,
             SpectrumMatch spectrumMatch,
             PeptideAssumption peptideAssumption
     ) {
@@ -212,7 +219,7 @@ public class StirAndExportRunnable implements Runnable {
                 sequenceProvider,
                 modificationSequenceMatchingParameters
         );
-        
+
         // Modification localization scores
         TreeMap<Double, HashMap<Integer, Double>> modificationLocalizationScores = scoreModificationLocalization(spectrumMatch, peptideAssumption);
 
@@ -278,14 +285,13 @@ public class StirAndExportRunnable implements Runnable {
             SpectrumMatch spectrumMatch,
             PeptideAssumption peptideAssumption
     ) {
-        
+
         AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
         SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         ModificationLocalizationParameters modificationLocalizationParameters = identificationParameters.getModificationLocalizationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = modificationLocalizationParameters.getSequenceMatchingParameters();
 
-        
         Peptide peptide = peptideAssumption.getPeptide();
         String spectrumFile = spectrumMatch.getSpectrumFile();
         String spectrumTitle = spectrumMatch.getSpectrumTitle();
@@ -346,7 +352,6 @@ public class StirAndExportRunnable implements Runnable {
                                 TreeMap::new
                         )
                 );
-
     }
 
 }

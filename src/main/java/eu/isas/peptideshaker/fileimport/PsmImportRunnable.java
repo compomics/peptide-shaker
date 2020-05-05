@@ -1,9 +1,7 @@
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
-import com.compomics.util.experiment.biology.modifications.ModificationType;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -11,7 +9,6 @@ import com.compomics.util.experiment.identification.filtering.PeptideAssumptionF
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideVariantMatches;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.modification.ModificationSiteMapping;
 import com.compomics.util.experiment.identification.modification.mapping.ModificationLocalizationMapper;
 import com.compomics.util.experiment.identification.modification.mapping.ModificationNameMapper;
 import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
@@ -24,9 +21,6 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.parameters.identification.tool_specific.AndromedaParameters;
-import com.compomics.util.parameters.identification.tool_specific.OmssaParameters;
-import com.compomics.util.threading.ConcurrentIterator;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.File;
 import java.util.ArrayList;
@@ -36,6 +30,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -57,7 +52,7 @@ public class PsmImportRunnable implements Runnable {
     /**
      * Iterator for the spectrum matches to import.
      */
-    private final ConcurrentIterator<SpectrumMatch> spectrumMatchIterator;
+    private final ConcurrentLinkedQueue<SpectrumMatch> spectrumMatchQueue;
     /**
      * Map of the objects to add to the database.
      */
@@ -123,7 +118,7 @@ public class PsmImportRunnable implements Runnable {
     /**
      * Constructor.
      *
-     * @param spectrumMatchIterator the spectrum matches iterator to use
+     * @param spectrumMatchQueue the spectrum matches iterator to use
      * @param identificationParameters the identification parameters
      * @param fileReader the reader of the file which the matches are imported
      * from
@@ -137,7 +132,7 @@ public class PsmImportRunnable implements Runnable {
      * @param exceptionHandler The handler of exceptions.
      */
     public PsmImportRunnable(
-            ConcurrentIterator<SpectrumMatch> spectrumMatchIterator,
+            ConcurrentLinkedQueue<SpectrumMatch> spectrumMatchQueue,
             IdentificationParameters identificationParameters,
             IdfileReader fileReader,
             File idFile,
@@ -148,7 +143,7 @@ public class PsmImportRunnable implements Runnable {
             ExceptionHandler exceptionHandler
     ) {
 
-        this.spectrumMatchIterator = spectrumMatchIterator;
+        this.spectrumMatchQueue = spectrumMatchQueue;
         this.identificationParameters = identificationParameters;
         this.fileReader = fileReader;
         this.idFile = idFile;
@@ -166,7 +161,7 @@ public class PsmImportRunnable implements Runnable {
         try {
 
             SpectrumMatch spectrumMatch;
-            while ((spectrumMatch = spectrumMatchIterator.next()) != null) {
+            while ((spectrumMatch = spectrumMatchQueue.poll()) != null) {
 
                 importPsm(spectrumMatch);
 

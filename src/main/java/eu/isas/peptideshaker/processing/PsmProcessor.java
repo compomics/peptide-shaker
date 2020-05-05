@@ -5,7 +5,6 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import com.compomics.util.threading.ConcurrentIterator;
 import com.compomics.util.waiting.WaitingHandler;
 import static eu.isas.peptideshaker.PeptideShaker.TIMEOUT_DAYS;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
@@ -13,6 +12,7 @@ import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -81,12 +81,10 @@ public class PsmProcessor {
             ExceptionHandler exceptionHandler
     ) throws InterruptedException, TimeoutException {
 
-        ArrayList<Long> spectrumKeys = new ArrayList<>(identification.getSpectrumIdentificationKeys());
+        ConcurrentLinkedQueue<Long> spectrumMatchKeysIterator = new ConcurrentLinkedQueue<>(identification.getSpectrumIdentificationKeys());
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressCounter(spectrumKeys.size());
-
-        ConcurrentIterator<Long> spectrumMatchKeysIterator = new ConcurrentIterator<>(spectrumKeys);
+        waitingHandler.setMaxSecondaryProgressCounter(spectrumMatchKeysIterator.size());
 
         ExecutorService importPool = Executors.newFixedThreadPool(nThreads);
 
