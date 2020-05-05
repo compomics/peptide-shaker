@@ -32,6 +32,8 @@ public class Stirred {
     private final File tempFolder;
     private final CliLogger cliLogger;
     private final WaitingHandler waitingHandler = new WaitingHandlerCLIImpl();
+    private final int nThreads;
+    private final int timeOutDays;
 
     public Stirred(
             File searchEngineResultsFile,
@@ -40,7 +42,9 @@ public class Stirred {
             File ouputFile,
             File identificationParametersFile,
             File tempFolder,
-            CliLogger cliLogger
+            CliLogger cliLogger,
+            int nThreads,
+            int timeOutDays
     ) {
 
         this.searchEngineResultsFile = searchEngineResultsFile;
@@ -50,6 +54,8 @@ public class Stirred {
         this.identificationParametersFile = identificationParametersFile;
         this.tempFolder = tempFolder;
         this.cliLogger = cliLogger;
+        this.nThreads = nThreads;
+        this.timeOutDays = timeOutDays;
 
     }
 
@@ -88,7 +94,8 @@ public class Stirred {
                 waitingHandler
         );
         
-        // 
+        // Stir peptides and export
+        
         
         
     }

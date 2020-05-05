@@ -23,7 +23,6 @@ import com.compomics.util.experiment.identification.matches_iterators.ProteinMat
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.modification.ModificationLocalizationScore;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
