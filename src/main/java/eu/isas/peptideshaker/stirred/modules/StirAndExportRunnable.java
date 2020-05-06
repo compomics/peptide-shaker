@@ -221,8 +221,17 @@ public class StirAndExportRunnable implements Runnable {
         );
 
         // Modification localization scores
-        TreeMap<Double, HashMap<Integer, Double>> modificationLocalizationScores = scoreModificationLocalization(spectrumMatch, peptideAssumption);
-
+        TreeMap<Double, HashMap<Integer, Double>> modificationLocalizationScores = scoreModificationLocalization(
+                spectrumMatch, 
+                peptideAssumption
+        );
+        
+        writer.addPeptideAssumption(
+                spectrumMatch.getSpectrumFile(), 
+                spectrumMatch.getSpectrumTitle(), 
+                peptideAssumption.getPeptide(), 
+                modificationLocalizationScores
+        );
     }
 
     /**
