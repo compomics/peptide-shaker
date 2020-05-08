@@ -620,7 +620,8 @@ public class MatchesValidator {
     ) {
 
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) ((ProteinMatch) identification.retrieveObject(proteinKey)).getUrParam(psParameter);
+        ProteinMatch proteinMatch = (ProteinMatch) identification.retrieveObject(proteinKey);
+        psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
         psParameter.resetQcResults();
         ValidationQcParameters validationQCParameters = identificationParameters.getIdValidationParameters().getValidationQCParameters();
 
@@ -677,6 +678,7 @@ public class MatchesValidator {
                 psParameter.setMatchValidationLevel(MatchValidationLevel.none);
 
             }
+            identification.updateObject(proteinKey, proteinMatch);
         }
     }
 
@@ -776,6 +778,8 @@ public class MatchesValidator {
             psParameter.setMatchValidationLevel(MatchValidationLevel.none);
 
         }
+        
+        identification.updateObject(peptideKey, peptideMatch);
     }
 
     /**
@@ -887,6 +891,7 @@ public class MatchesValidator {
             psParameter.setMatchValidationLevel(MatchValidationLevel.none);
 
         }
+        identification.updateObject(spectrumMatchKey, spectrumMatch);
     }
 
     /**
@@ -1224,6 +1229,7 @@ public class MatchesValidator {
 
                 }
             }
+            identification.updateObject(peptideKey, peptideMatch);
 
             waitingHandler.increaseSecondaryProgressCounter();
 
@@ -1438,6 +1444,7 @@ public class MatchesValidator {
                 }
             }
 
+            identification.updateObject(proteinMatch.getKey(), proteinMatch);
             waitingHandler.increaseSecondaryProgressCounter();
 
             if (waitingHandler.isRunCanceled()) {
@@ -2062,6 +2069,7 @@ public class MatchesValidator {
                         psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionPeptideLevel);
                     }
 
+                    identification.updateObject(peptideKey, peptideMatch);
                     waitingHandler.increaseSecondaryProgressCounter();
 
                 }
@@ -2383,6 +2391,7 @@ public class MatchesValidator {
                         }
                     }
 
+                    identification.updateObject(proteinKey, proteinMatch);
                     waitingHandler.increaseSecondaryProgressCounter();
 
                 }

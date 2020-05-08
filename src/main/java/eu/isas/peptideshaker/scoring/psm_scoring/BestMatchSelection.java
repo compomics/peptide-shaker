@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.scoring.psm_scoring;
 
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
@@ -115,11 +116,13 @@ public class BestMatchSelection {
      * @param spectrumMatch The spectrum match.
      * @param inputMap The input map.
      * @param psmTargetDecoyMap The PSM target decoy map.
+     * @param identification The identification class.
      */
     public void selectBestHit(
             SpectrumMatch spectrumMatch,
             InputMap inputMap,
-            TargetDecoyMap psmTargetDecoyMap
+            TargetDecoyMap psmTargetDecoyMap,
+            Identification identification
     ) {
 
         boolean multiSE = inputMap.isMultipleAlgorithms();
@@ -130,10 +133,6 @@ public class BestMatchSelection {
 
         String spectrumFile = spectrumMatch.getSpectrumFile();
         String spectrumTitle = spectrumMatch.getSpectrumTitle();
-        
-        if (spectrumTitle.equals("controllerType=0 controllerNumber=1 scan=105")) {
-            int debug = 1;
-        }
 
         HashSet<Long> ids = new HashSet<>(2);
         ArrayList<PeptideAssumption> assumptions = new ArrayList<>(4);
@@ -251,19 +250,19 @@ public class BestMatchSelection {
         if (!assumptions.isEmpty()) {
 
             PeptideAssumption bestPeptideAssumption;
-            
+
             try {
                 bestPeptideAssumption = getBestMatch(
-                    spectrumFile, 
-                    spectrumTitle, 
-                    assumptions
-            );
+                        spectrumFile,
+                        spectrumTitle,
+                        assumptions
+                );
             } catch (Exception e) {
                 bestPeptideAssumption = getBestMatch(
-                    spectrumFile, 
-                    spectrumTitle, 
-                    assumptions
-            );
+                        spectrumFile,
+                        spectrumTitle,
+                        assumptions
+                );
             }
 
             psmParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
@@ -385,6 +384,7 @@ public class BestMatchSelection {
             );
 
             spectrumMatch.setBestPeptideAssumption(psAssumption);
+            identification.updateObject(spectrumMatch.getKey(), spectrumMatch);
 
             psmParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
             psmParameter.setScore(bestP);
@@ -410,6 +410,7 @@ public class BestMatchSelection {
             Entry<Double, ArrayList<TagAssumption>> firstEntry = tagAssumptions.firstEntry();
             double bestEvalue = firstEntry.getKey();
             TagAssumption bestAssumption = firstEntry.getValue().get(0);
+            identification.updateObject(spectrumMatch.getKey(), spectrumMatch);
             spectrumMatch.setBestTagAssumption(bestAssumption);
 
             if (spectrumMatch.getBestPeptideAssumption() == null) {
@@ -452,7 +453,7 @@ public class BestMatchSelection {
         return getBestMatch(
                 spectrumFile,
                 spectrumTitle,
-                assumptions, 
+                assumptions,
                 false
         );
 
@@ -484,21 +485,21 @@ public class BestMatchSelection {
             PeptideAssumption peptideAssumption = assumptions.get(i);
 
             try {
-            bestPeptideAssumption = tieBreaker.getBestPeptideAssumption(
-                    spectrumFile,
-                    spectrumTitle,
-                    bestPeptideAssumption,
-                    peptideAssumption,
-                    silentFail
-            );
+                bestPeptideAssumption = tieBreaker.getBestPeptideAssumption(
+                        spectrumFile,
+                        spectrumTitle,
+                        bestPeptideAssumption,
+                        peptideAssumption,
+                        silentFail
+                );
             } catch (Exception e) {
                 bestPeptideAssumption = tieBreaker.getBestPeptideAssumption(
-                    spectrumFile,
-                    spectrumTitle,
-                    bestPeptideAssumption,
-                    peptideAssumption,
-                    silentFail
-            );
+                        spectrumFile,
+                        spectrumTitle,
+                        bestPeptideAssumption,
+                        peptideAssumption,
+                        silentFail
+                );
             }
 
         }

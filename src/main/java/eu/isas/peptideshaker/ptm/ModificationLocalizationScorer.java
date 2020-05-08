@@ -183,7 +183,7 @@ public class ModificationLocalizationScorer extends DbObject {
             }
 
             spectrumMatch.addUrParam(modificationScores);
-
+            identification.updateObject(spectrumMatch.getKey(), spectrumMatch);
         }
     }
 
@@ -196,13 +196,15 @@ public class ModificationLocalizationScorer extends DbObject {
      * @param spectrumProvider the spectrum provider
      * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator the peptide spectrum annotator
+     * @param identification the identification object
      */
     private void attachProbabilisticScore(
             SpectrumMatch spectrumMatch, 
             SequenceProvider sequenceProvider, 
             SpectrumProvider spectrumProvider,
             IdentificationParameters identificationParameters,
-            PeptideSpectrumAnnotator peptideSpectrumAnnotator
+            PeptideSpectrumAnnotator peptideSpectrumAnnotator,
+            Identification identification
     ) {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
@@ -376,7 +378,7 @@ public class ModificationLocalizationScorer extends DbObject {
             }
 
             spectrumMatch.addUrParam(modificationScores);
-
+            identification.updateObject(spectrumMatch.getKey(), spectrumMatch);
         }
     }
 
@@ -415,7 +417,8 @@ public class ModificationLocalizationScorer extends DbObject {
                     sequenceProvider, 
                     spectrumProvider, 
                     identificationParameters, 
-                    peptideSpectrumAnnotator
+                    peptideSpectrumAnnotator,
+                    identification
             );
         }
     }
@@ -1022,6 +1025,11 @@ public class ModificationLocalizationScorer extends DbObject {
                 throw new IllegalArgumentException("Attempting to create duplicate peptide key: " + newKey + " from peptide " + originalKey + ".");
 
             }
+            identification.removeObject(originalKey);
+            identification.addObject(newKey, peptideMatch);
+        }
+        else {
+            identification.updateObject(originalKey, peptideMatch);
         }
     }
 

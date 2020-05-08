@@ -226,7 +226,7 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
         identification = new Identification(objectsDB);
 
         // load identification attributes
-        IdentificationKeys identificationKeys = (IdentificationKeys) objectsDB.retrieveObject(IdentificationKeys.key);
+        IdentificationKeys identificationKeys = (IdentificationKeys) objectsDB.retrieveObject(IdentificationKeys.KEY);
         identification.setIdentificationKeys(identificationKeys);
 
         PSMaps psMaps = new PSMaps();

@@ -744,13 +744,13 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                 return;
                                             }
 
-                                            long psmKey = SpectrumMatch.getKey(spectrumfile, spectrumTitle);
+                                            long psmKey = SpectrumMatch.getKey(fileName, spectrumTitle);
 
-                                            if (spectrumTitle.toLowerCase().contains(inputLowerCase) || spectrumfile.toLowerCase().contains(inputLowerCase)) {
+                                            if (spectrumTitle.toLowerCase().contains(inputLowerCase) || fileName.toLowerCase().contains(inputLowerCase)) {
 
                                                 spectrumKeysFound.add(psmKey);
 
-                                            } else if (spectrumfile != null) {
+                                            } else {
 
                                                 double precusorMz = spectrumProvider.getPrecursorMz(
                                                         fileName,
