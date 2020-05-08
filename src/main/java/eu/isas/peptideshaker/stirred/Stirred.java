@@ -1,22 +1,23 @@
 package eu.isas.peptideshaker.stirred;
 
 import com.compomics.software.log.CliLogger;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex;
-import com.compomics.util.experiment.io.identification.IdfileReader;
-import com.compomics.util.experiment.io.identification.IdfileReaderFactory;
+import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.identification.writers.SimpleMzIdentMLExporter;
 import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.io.IoUtil;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.stirred.modules.IdImporter;
-import eu.isas.peptideshaker.stirred.modules.StirAndExportRunnable;
+import eu.isas.peptideshaker.stirred.modules.StirRunnable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,6 +33,13 @@ import java.util.stream.IntStream;
  */
 public class Stirred {
 
+    public final String SOFTWARE_NAME = "PeptideShaker";
+    public final String SOFTWARE_VERSION = PeptideShaker.getVersion();
+    public final String SOFTWARE_URL = "https://compomics.github.io/projects/peptide-shaker.html";
+    /**
+     * The compomics PTM factory.
+     */
+    private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
     private final File searchEngineResultsFile;
     private final File spectrumFile;
     private final File fastaFile;
@@ -42,6 +50,13 @@ public class Stirred {
     private final WaitingHandler waitingHandler = new WaitingHandlerCLIImpl();
     private final int nThreads;
     private final int timeOutDays;
+    private final String contactFirstName;
+    private final String contactLastName;
+    private final String contactAddress;
+    private final String contactEmail;
+    private final String contactOrganizationName;
+    private final String contactOrganizationAddress;
+    private final String contactOrganizationEmail;
 
     public Stirred(
             File searchEngineResultsFile,
@@ -52,7 +67,14 @@ public class Stirred {
             File tempFolder,
             CliLogger cliLogger,
             int nThreads,
-            int timeOutDays
+            int timeOutDays,
+            String contactFirstName,
+            String contactLastName,
+            String contactAddress,
+            String contactEmail,
+            String contactOrganizationName,
+            String contactOrganizationAddress,
+            String contactOrganizationEmail
     ) {
 
         this.searchEngineResultsFile = searchEngineResultsFile;
@@ -64,6 +86,13 @@ public class Stirred {
         this.cliLogger = cliLogger;
         this.nThreads = nThreads;
         this.timeOutDays = timeOutDays;
+        this.contactFirstName = contactFirstName;
+        this.contactLastName = contactLastName;
+        this.contactAddress = contactAddress;
+        this.contactEmail = contactEmail;
+        this.contactOrganizationName = contactOrganizationName;
+        this.contactOrganizationAddress = contactOrganizationAddress;
+        this.contactOrganizationEmail = contactOrganizationEmail;
 
     }
 
@@ -82,6 +111,11 @@ public class Stirred {
                 true,
                 identificationParameters.getSearchParameters().getModificationParameters(),
                 identificationParameters.getPeptideVariantsParameters()
+        );
+        FastaSummary fastaSummary = FastaSummary.getSummary(
+                fastaFile.getAbsolutePath(),
+                identificationParameters.getFastaParameters(),
+                null
         );
 
         // Import spectrum file
@@ -103,9 +137,33 @@ public class Stirred {
                 msFileHandler,
                 waitingHandler
         );
+        HashMap<String, ArrayList<String>> softwareVersions = idImporter.getIdFileReader().getSoftwareVersions();
 
         // Stir peptides and export
-        try ( SimpleMzIdentMLExporter simpleMzIdentMLExporter = new SimpleMzIdentMLExporter(ouputFile)) {
+        try ( SimpleMzIdentMLExporter simpleMzIdentMLExporter = new SimpleMzIdentMLExporter(
+                SOFTWARE_NAME,
+                SOFTWARE_VERSION,
+                SOFTWARE_URL,
+                tempFolder,
+                ouputFile,
+                spectrumFile,
+                searchEngineResultsFile,
+                softwareVersions,
+                fastaFile,
+                identificationParameters,
+                fmIndex,
+                fmIndex,
+                msFileHandler,
+                modificationFactory,
+                fastaSummary,
+                contactFirstName,
+                contactLastName,
+                contactAddress,
+                contactEmail,
+                contactOrganizationName,
+                contactOrganizationAddress,
+                contactOrganizationEmail
+        )) {
 
             ConcurrentLinkedQueue<SpectrumMatch> spectrumMatchesQueue = new ConcurrentLinkedQueue<>(spectrumMatches);
 
@@ -113,7 +171,7 @@ public class Stirred {
 
             IntStream.range(0, nThreads)
                     .mapToObj(
-                            i -> new StirAndExportRunnable(
+                            i -> new StirRunnable(
                                     spectrumMatchesQueue,
                                     idImporter.getIdFileReader(),
                                     IoUtil.getFileName(spectrumFile),
@@ -136,6 +194,5 @@ public class Stirred {
 
             }
         }
-
     }
 }

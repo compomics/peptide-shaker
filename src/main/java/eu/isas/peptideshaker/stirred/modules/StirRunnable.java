@@ -42,7 +42,7 @@ import java.util.stream.IntStream;
  *
  * @author Marc Vaudel
  */
-public class StirAndExportRunnable implements Runnable {
+public class StirRunnable implements Runnable {
 
     /**
      * The modification factory.
@@ -67,7 +67,7 @@ public class StirAndExportRunnable implements Runnable {
 
     private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
-    public StirAndExportRunnable(
+    public StirRunnable(
             ConcurrentLinkedQueue<SpectrumMatch> spectrumMatches,
             IdfileReader idfileReader,
             String spectrumFileName,
@@ -103,6 +103,9 @@ public class StirAndExportRunnable implements Runnable {
 
     private void processSpectrumMatch(SpectrumMatch spectrumMatch) {
 
+        ArrayList<PeptideAssumption> peptideAssumptions = new ArrayList<>();
+        ArrayList<TreeMap<Double, HashMap<Integer, Double>>> modificationScores = new ArrayList<>();
+
         for (Map.Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry : spectrumMatch.getPeptideAssumptionsMap().entrySet()) {
 
             // Check that X!Tandem refinement modifications are set in the parameters, add them otherwise.
@@ -122,15 +125,29 @@ public class StirAndExportRunnable implements Runnable {
                             assumptionsAtScore -> assumptionsAtScore.stream()
                     )
                     .forEach(
-                            peptideAssumption -> processPeptideAssumption(
-                                    spectrumMatch,
-                                    peptideAssumption
-                            )
+                            peptideAssumption
+                            -> {
+                        peptideAssumptions.add(peptideAssumption);
+                        TreeMap<Double, HashMap<Integer, Double>> peptideModificationScores = processPeptideAssumption(
+                                spectrumMatch,
+                                peptideAssumption
+                        );
+                        modificationScores.add(peptideModificationScores);
+                    }
                     );
         }
+        
+        writer.addSpectrum(
+                spectrumMatch.getSpectrumFile(), 
+                spectrumMatch.getSpectrumTitle(), 
+                peptideAssumptions, 
+                modificationScores, 
+                peptideSpectrumAnnotator
+        );
+        
     }
 
-    private void processPeptideAssumption(
+    private TreeMap<Double, HashMap<Integer, Double>> processPeptideAssumption(
             SpectrumMatch spectrumMatch,
             PeptideAssumption peptideAssumption
     ) {
@@ -211,7 +228,11 @@ public class StirAndExportRunnable implements Runnable {
         }
 
         // Set peptide key
-        peptide.setKey(Peptide.getKey(peptide.getSequence(), peptide.getVariableModifications()));
+        peptide.setKey(
+                Peptide.getKey(peptide.getSequence(),
+                        peptide.getVariableModifications()
+                )
+        );
 
         // Estimate mass
         peptide.getMass(
@@ -222,16 +243,12 @@ public class StirAndExportRunnable implements Runnable {
 
         // Modification localization scores
         TreeMap<Double, HashMap<Integer, Double>> modificationLocalizationScores = scoreModificationLocalization(
-                spectrumMatch, 
+                spectrumMatch,
                 peptideAssumption
         );
-        
-        writer.addPeptideAssumption(
-                spectrumMatch.getSpectrumFile(), 
-                spectrumMatch.getSpectrumTitle(), 
-                peptideAssumption.getPeptide(), 
-                modificationLocalizationScores
-        );
+
+        return modificationLocalizationScores;
+
     }
 
     /**

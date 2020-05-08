@@ -61,7 +61,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.zip.GZIPOutputStream;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
@@ -192,9 +191,6 @@ public class MzIdentMLExport {
      * @param waitingHandler The waiting handler used to display progress to the
      * user and interrupt the process.
      * @param gzip If true export as gzipped file.
-     *
-     * @throws IOException Exception thrown whenever an error occurred while
-     * reading/writing a file.
      */
     public MzIdentMLExport(
             String peptideShakerVersion,
@@ -211,13 +207,7 @@ public class MzIdentMLExport {
             boolean includeProteinSequences,
             WaitingHandler waitingHandler,
             boolean gzip
-    ) throws IOException {
-
-        if (outputFile.getParent() == null) {
-
-            throw new FileNotFoundException("The file " + outputFile + " does not have a valid parent folder. Please make sure that the parent folder exists.");
-
-        }
+    ) {
 
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
@@ -265,14 +255,11 @@ public class MzIdentMLExport {
     /**
      * Creates the mzIdentML file.
      *
-     * @param mzIdentMLVersion The version of mzIdentML to use
-     *
-     * @throws IOException exception thrown whenever an error occurred while
-     * reading/writing a file
+     * @param mzIdentMLVersion The version of mzIdentML to use.
      */
     public void createMzIdentMLFile(
             MzIdentMLVersion mzIdentMLVersion
-    ) throws IOException {
+    ) {
 
         this.mzIdentMLVersion = mzIdentMLVersion;
         switch (mzIdentMLVersion) {
@@ -332,11 +319,8 @@ public class MzIdentMLExport {
 
     /**
      * Writes the CV list.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
      */
-    private void writeCvList() throws IOException {
+    private void writeCvList() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<cvList>");
@@ -376,11 +360,8 @@ public class MzIdentMLExport {
 
     /**
      * Write the software list.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
      */
-    private void writeAnalysisSoftwareList() throws IOException {
+    private void writeAnalysisSoftwareList() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<AnalysisSoftwareList>");
@@ -405,7 +386,14 @@ public class MzIdentMLExport {
         writer.newLine();
         tabCounter++;
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1001267", "software vendor", null));
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS", 
+                        "MS:1001267", 
+                        "software vendor", 
+                        null
+                )
+        );
         tabCounter--;
 
         writer.write(getCurrentTabSpace());
@@ -422,7 +410,14 @@ public class MzIdentMLExport {
         writer.newLine();
         tabCounter++;
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1002458", "PeptideShaker", null));
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS", 
+                        "MS:1002458", 
+                        "PeptideShaker", 
+                        null
+                )
+        );
         tabCounter--;
 
         writer.write(getCurrentTabSpace());
@@ -447,11 +442,8 @@ public class MzIdentMLExport {
 
     /**
      * Write the provider details.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
      */
-    private void writeProviderDetails() throws IOException {
+    private void writeProviderDetails() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<Provider id=\"PROVIDER\">");
@@ -468,7 +460,15 @@ public class MzIdentMLExport {
         writer.newLine();
         tabCounter++;
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1001271", "researcher", null)); // @TODO: add user defined provider role?
+         // @TODO: add user defined provider role?
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS", 
+                        "MS:1001271", 
+                        "researcher", 
+                        null
+                )
+        );
         tabCounter--;
 
         writer.write(getCurrentTabSpace());
@@ -489,11 +489,8 @@ public class MzIdentMLExport {
 
     /**
      * Write the audit collection.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
      */
-    private void writeAuditCollection() throws IOException {
+    private void writeAuditCollection() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<AuditCollection>");
@@ -509,15 +506,38 @@ public class MzIdentMLExport {
         writer.newLine();
         tabCounter++;
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", StringEscapeUtils.escapeHtml4(projectDetails.getContactAddress())));
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS", 
+                        "MS:1000587", 
+                        "contact address", 
+                        StringEscapeUtils.escapeHtml4(
+                                projectDetails.getContactAddress()
+                        )
+                )
+        );
 
         if (projectDetails.getContactUrl() != null && !projectDetails.getContactUrl().isEmpty()) {
 
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact URL", projectDetails.getContactUrl()));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS", 
+                            "MS:1000588", 
+                            "contact URL", 
+                            projectDetails.getContactUrl()
+                    )
+            );
 
         }
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000589", "contact email", projectDetails.getContactEmail()));
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS", 
+                        "MS:1000589", 
+                        "contact email", 
+                        projectDetails.getContactEmail()
+                )
+        );
 
         writer.write(getCurrentTabSpace());
         writer.write("<Affiliation organization_ref=\"ORG_DOC_OWNER\"/>");
@@ -535,16 +555,44 @@ public class MzIdentMLExport {
         writer.newLine();
         tabCounter++;
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationName())));
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationAddress())));
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS", 
+                        "MS:1000586", 
+                        "contact name", 
+                        StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationName())
+                )
+        );
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS", 
+                        "MS:1000587", 
+                        "contact address", 
+                        StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationAddress())
+                )
+        );
 
         if (projectDetails.getOrganizationUrl() != null && !projectDetails.getOrganizationUrl().isEmpty()) {
 
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact URL", projectDetails.getOrganizationUrl()));
+            writeCvTerm(
+                    new CvTerm(
+                            "PSI-MS", 
+                            "MS:1000588", 
+                            "contact URL", 
+                            projectDetails.getOrganizationUrl()
+                    )
+            );
 
         }
 
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000589", "contact email", projectDetails.getOrganizationEmail()));
+        writeCvTerm(
+                new CvTerm(
+                        "PSI-MS", 
+                        "MS:1000589", 
+                        "contact email", 
+                        projectDetails.getOrganizationEmail()
+                )
+        );
         tabCounter--;
 
         writer.write(getCurrentTabSpace());
@@ -604,11 +652,8 @@ public class MzIdentMLExport {
 
     /**
      * Write the sequence collection.
-     *
-     * @throws IOException exception thrown whenever an error occurred while
-     * reading/writing a file
      */
-    private void writeSequenceCollection() throws IOException {
+    private void writeSequenceCollection() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<SequenceCollection>");
@@ -822,10 +867,10 @@ public class MzIdentMLExport {
             long peptideKey = peptideMatch.getKey();
             Peptide peptide = peptideMatch.getPeptide();
 
-            // get the possible parent proteins
+            // get the possible proteins
             TreeMap<String, int[]> proteinMapping = peptide.getProteinMapping();
 
-            // iterate the possible protein parents
+            // iterate the possible proteins
             for (Entry<String, int[]> entry : proteinMapping.entrySet()) {
 
                 String accession = entry.getKey();
@@ -945,7 +990,8 @@ public class MzIdentMLExport {
                 + peptideKeyAsString.length() + 2
         );
 
-        pepEvidenceKeybuilder.append(accession)
+        pepEvidenceKeybuilder
+                .append(accession)
                 .append('_')
                 .append(peptideStartAsString)
                 .append('_')
@@ -956,11 +1002,8 @@ public class MzIdentMLExport {
 
     /**
      * Write the analysis collection.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
      */
-    private void writeAnalysisCollection() throws IOException {
+    private void writeAnalysisCollection() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<AnalysisCollection>");
@@ -1019,11 +1062,8 @@ public class MzIdentMLExport {
 
     /**
      * Write the analysis protocol.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
      */
-    private void writeAnalysisProtocol() throws IOException {
+    private void writeAnalysisProtocol() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<AnalysisProtocolCollection>");
@@ -1859,11 +1899,8 @@ public class MzIdentMLExport {
 
     /**
      * Write the data collection.
-     *
-     * @throws IOException exception thrown whenever an error occurred while
-     * reading/writing a file
      */
-    private void writeDataCollection() throws IOException {
+    private void writeDataCollection() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<DataCollection>");
@@ -1882,11 +1919,8 @@ public class MzIdentMLExport {
 
     /**
      * Write the data analysis section.
-     *
-     * @throws IOException exception thrown whenever an error occurred while
-     * reading/writing a file
      */
-    private void writeDataAnalysis() throws IOException {
+    private void writeDataAnalysis() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<AnalysisData>");
@@ -1945,11 +1979,8 @@ public class MzIdentMLExport {
 
     /**
      * Write the protein groups.
-     *
-     * @throws IOException exception thrown whenever an error occurred while
-     * reading/writing a file
      */
-    private void writeProteinDetectionList() throws IOException {
+    private void writeProteinDetectionList() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<ProteinDetectionList id=\"Protein_groups\">");
@@ -2178,16 +2209,12 @@ public class MzIdentMLExport {
      * @param spectrumFile The name of the spectrum file.
      * @param spectrumTitle The title of the spectrum.
      * @param spectrumMatchIndex The index of the spectrum match.
-     *
-     * @throws IOException exception thrown whenever an error occurred while
-     * reading/writing a file
      */
     private void writeSpectrumIdentificationResult(
             String spectrumFile,
             String spectrumTitle,
             int spectrumMatchIndex
-    )
-            throws IOException {
+    ) {
 
         long spectrumKey = SpectrumMatch.getKey(spectrumFile, spectrumTitle);
         SpectrumMatch spectrumMatch = (SpectrumMatch) identification.retrieveObject(spectrumKey);
@@ -2969,12 +2996,9 @@ public class MzIdentMLExport {
     }
 
     /**
-     * Write the fragmentation table. (Note: all hard coded.)
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
+     * Write the fragmentation table.
      */
-    private void writeFragmentationTable() throws IOException {
+    private void writeFragmentationTable() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<FragmentationTable>");
@@ -3034,11 +3058,8 @@ public class MzIdentMLExport {
 
     /**
      * Write the input file details.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
      */
-    private void writeInputFileDetails() throws IOException {
+    private void writeInputFileDetails() {
 
         writer.write(getCurrentTabSpace());
         writer.write("<Inputs>");
@@ -3312,11 +3333,8 @@ public class MzIdentMLExport {
 
     /**
      * Writes the mzIdentML start tag.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
      */
-    private void writeMzIdentMLStartTag() throws IOException {
+    private void writeMzIdentMLStartTag() {
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -3325,23 +3343,25 @@ public class MzIdentMLExport {
         switch (mzIdentMLVersion) {
 
             case v1_1:
-                writer.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\""
+                writer.writeLine(
+                        "<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\""
                         + " xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\""
                         //+ " xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd\""
                         + " xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\""
                         + " version=\"1.1.0\" "
-                        + "creationDate=\"" + df.format(new Date()) + "\">");
-                writer.newLine();
+                        + "creationDate=\"" + df.format(new Date()) + "\">"
+                );
                 break;
 
             case v1_2:
-                writer.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\""
+                writer.writeLine(
+                        "<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\""
                         + " xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\" "
                         //+ " xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.2 http://www.psidev.info/files/mzIdentML1.2.0.xsd\""
                         + " xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.2\""
                         + " version=\"1.2.0\" "
-                        + "creationDate=\"" + df.format(new Date()) + "\">");
-                writer.newLine();
+                        + "creationDate=\"" + df.format(new Date()) + "\">"
+                );
                 break;
 
             default:
@@ -3355,11 +3375,8 @@ public class MzIdentMLExport {
 
     /**
      * Writes the mzIdentML end tag.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
      */
-    private void writeMzIdentMLEndTag() throws IOException {
+    private void writeMzIdentMLEndTag() {
 
         tabCounter--;
         writer.write("</MzIdentML>");
@@ -3367,7 +3384,7 @@ public class MzIdentMLExport {
     }
 
     /**
-     * Convenience method returning the tabs in the beginning of each line
+     * Convenience method returning the tabs at the beginning of each line
      * depending on the tabCounter.
      *
      * @return the tabs in the beginning of each line as a string
@@ -3415,11 +3432,8 @@ public class MzIdentMLExport {
      * Convenience method writing a CV term.
      *
      * @param cvTerm the CV term
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
      */
-    private void writeCvTerm(CvTerm cvTerm) throws IOException {
+    private void writeCvTerm(CvTerm cvTerm) {
 
         writeCvTerm(cvTerm, true);
 
@@ -3431,14 +3445,11 @@ public class MzIdentMLExport {
      * @param cvTerm the CV term
      * @param showValue decides if the CV terms value (if existing) is printed
      * or not
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * writing to the file
      */
     private void writeCvTerm(
             CvTerm cvTerm, 
             boolean showValue
-    ) throws IOException {
+    ) {
 
         writer.write(getCurrentTabSpace());
         writer.write("<cvParam cvRef=\"");
@@ -3459,14 +3470,11 @@ public class MzIdentMLExport {
      * @param cvTerm the CV term
      * @param showValue decides if the CV terms value (if existing) is printed
      * or not
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * writing to the file
      */
     private void writeCvTermValue(
             CvTerm cvTerm, 
             boolean showValue
-    ) throws IOException {
+    ) {
 
         String value = cvTerm.getValue();
 
@@ -3490,13 +3498,10 @@ public class MzIdentMLExport {
      * Convenience method writing a user parameter.
      *
      * @param userParamAsString the user parameter as a string
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * writing to the file
      */
     private void writeUserParam(
             String userParamAsString
-    ) throws IOException {
+    ) {
 
         writer.write(getCurrentTabSpace());
         writer.write("<userParam name=\"");
@@ -3512,14 +3517,11 @@ public class MzIdentMLExport {
      *
      * @param name the name of the user parameter
      * @param value the value of the user parameter
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * writing to the file
      */
     private void writeUserParam(
             String name, 
             String value
-    ) throws IOException {
+    ) {
 
         writer.write(getCurrentTabSpace());
         writer.write("<userParam name=\"");
