@@ -18,9 +18,20 @@ import java.util.ArrayList;
  */
 public class IdImporter {
     
+    /**
+     * The search engine results file.
+     */
     private final File searchEngineResultsFile;
+    /**
+     * The identification file reader to use.
+     */
     private final IdfileReader idFileReader;
-    
+    /**
+     * Constructor.
+     * 
+     * @param searchEngineResultsFile The search engine results file.
+     * @param cliLogger The logger to use for CLI report.
+     */
     public IdImporter(
             File searchEngineResultsFile,
             CliLogger cliLogger
@@ -55,6 +66,15 @@ public class IdImporter {
         }
     }
 
+    /**
+     * Parses the spectrum matches and returns them in an ArrayList.
+     * 
+     * @param identificationParameters The identification parameters to use.
+     * @param spectrumProvider The spectrum provider to use.
+     * @param waitingHandler The waiting handler to use.
+     * 
+     * @return The spectrum matches in an ArrayList.
+     */
     public ArrayList<SpectrumMatch> loadSpectrumMatches(
             IdentificationParameters identificationParameters,
             SpectrumProvider spectrumProvider,
@@ -91,10 +111,12 @@ public class IdImporter {
         }
     }
 
+    /**
+     * Returns the identification file reader used.
+     * 
+     * @return The identification file reader.
+     */
     public IdfileReader getIdFileReader() {
         return idFileReader;
     }
-
-    
-
 }

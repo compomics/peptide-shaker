@@ -33,31 +33,111 @@ import java.util.stream.IntStream;
  */
 public class Stirred {
 
+    /**
+     * The name of the software to annotate in the mzIdentML file.
+     */
     public final String SOFTWARE_NAME = "PeptideShaker";
+    /**
+     * The version of the software to annotate in the mzIdentML file.
+     */
     public final String SOFTWARE_VERSION = PeptideShaker.getVersion();
+    /**
+     * The URL of the software to annotate in the mzIdentML file.
+     */
     public final String SOFTWARE_URL = "https://compomics.github.io/projects/peptide-shaker.html";
     /**
      * The compomics PTM factory.
      */
     private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
+    /**
+     * The search engine results file.
+     */
     private final File searchEngineResultsFile;
+    /**
+     * The spectrum file.
+     */
     private final File spectrumFile;
+    /**
+     * The fasta file.
+     */
     private final File fastaFile;
+    /**
+     * The output file.
+     */
     private final File ouputFile;
+    /**
+     * The identification parameters file.
+     */
     private final File identificationParametersFile;
+    /**
+     * The temp folder to use for temp files.
+     */
     private final File tempFolder;
+    /**
+     * The logger for CLI feedback.
+     */
     private final CliLogger cliLogger;
+    /**
+     * The waiting handler to use.
+     */
     private final WaitingHandler waitingHandler = new WaitingHandlerCLIImpl();
+    /**
+     * The number of threads to use.
+     */
     private final int nThreads;
+    /**
+     * Timeout time in days.
+     */
     private final int timeOutDays;
+    /**
+     * The first name of the contact to annotate in the mzIdentML file.
+     */
     private final String contactFirstName;
+    /**
+     * The last name of the contact to annotate in the mzIdentML file.
+     */
     private final String contactLastName;
+    /**
+     * The address of the contact to annotate in the mzIdentML file.
+     */
     private final String contactAddress;
+    /**
+     * The email of the contact to annotate in the mzIdentML file.
+     */
     private final String contactEmail;
+    /**
+     * The name of the organization of the contact to annotate in the mzIdentML file.
+     */
     private final String contactOrganizationName;
+    /**
+     * The address of the organization of the contact to annotate in the mzIdentML file.
+     */
     private final String contactOrganizationAddress;
+    /**
+     * The email of the organization of the contact to annotate in the mzIdentML file.
+     */
     private final String contactOrganizationEmail;
 
+    /**
+     * Constructor.
+     * 
+     * @param searchEngineResultsFile The search engine results file.
+     * @param spectrumFile The spectrum file.
+     * @param fastaFile The fasta file.
+     * @param ouputFile The output file.
+     * @param identificationParametersFile The identification parameters file.
+     * @param tempFolder The temp folder to use for temp files.
+     * @param cliLogger The temp folder to use for temp files.
+     * @param nThreads The number of threads to use.
+     * @param timeOutDays Timeout time in days.
+     * @param contactFirstName The first name of the contact to annotate in the mzIdentML file.
+     * @param contactLastName The last name of the contact to annotate in the mzIdentML file.
+     * @param contactAddress The address of the contact to annotate in the mzIdentML file.
+     * @param contactEmail The email of the contact to annotate in the mzIdentML file.
+     * @param contactOrganizationName The name of the organization of the contact to annotate in the mzIdentML file.
+     * @param contactOrganizationAddress The address of the organization of the contact to annotate in the mzIdentML file.
+     * @param contactOrganizationEmail The email of the organization of the contact to annotate in the mzIdentML file.
+     */
     public Stirred(
             File searchEngineResultsFile,
             File spectrumFile,

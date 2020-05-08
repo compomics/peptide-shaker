@@ -48,25 +48,55 @@ public class StirRunnable implements Runnable {
      * The modification factory.
      */
     private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
-
+    /**
+     * The id file reader.
+     */
     private final IdfileReader idfileReader;
-
+    /**
+     * The spectrum matches to process.
+     */
     private final ConcurrentLinkedQueue<SpectrumMatch> spectrumMatches;
-
+    /**
+     * The name of the spectrum file.
+     */
     private final String spectrumFileName;
-
+    /**
+     * The mzIdentML writer.
+     */
     private final SimpleMzIdentMLExporter writer;
-
+    /**
+     * The identification parameters.
+     */
     private final IdentificationParameters identificationParameters;
-
+    /**
+     * The sequence mapper.
+     */
     private final FastaMapper fastaMapper;
-
+    /**
+     * The sequence provider.
+     */
     private final SequenceProvider sequenceProvider;
-
+    /**
+     * The spectrum provider.
+     */
     private final SpectrumProvider spectrumProvider;
-
+    /**
+     * The peptide spectrum annotator to use.
+     */
     private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
+    /**
+     * Constructor.
+     *
+     * @param spectrumMatches The spectrum matches to process.
+     * @param idfileReader The id file reader.
+     * @param spectrumFileName The name of the spectrum file.
+     * @param writer The mzIdentML writer.
+     * @param identificationParameters The identification parameters.
+     * @param fastaMapper The sequence mapper.
+     * @param sequenceProvider The sequence provider.
+     * @param spectrumProvider The spectrum provider.
+     */
     public StirRunnable(
             ConcurrentLinkedQueue<SpectrumMatch> spectrumMatches,
             IdfileReader idfileReader,
@@ -101,6 +131,11 @@ public class StirRunnable implements Runnable {
         }
     }
 
+    /**
+     * Processes the given spectrum match.
+     *
+     * @param spectrumMatch The spectrum match.
+     */
     private void processSpectrumMatch(SpectrumMatch spectrumMatch) {
 
         ArrayList<PeptideAssumption> peptideAssumptions = new ArrayList<>();
@@ -136,17 +171,27 @@ public class StirRunnable implements Runnable {
                     }
                     );
         }
-        
+
         writer.addSpectrum(
-                spectrumMatch.getSpectrumFile(), 
-                spectrumMatch.getSpectrumTitle(), 
-                peptideAssumptions, 
-                modificationScores, 
+                spectrumMatch.getSpectrumFile(),
+                spectrumMatch.getSpectrumTitle(),
+                peptideAssumptions,
+                modificationScores,
                 peptideSpectrumAnnotator
         );
-        
+
     }
 
+    /**
+     * Processes the given peptide and returns the modification localization
+     * scores. The scores are returned in a map: modification mass to
+     * modification site to modification score.
+     *
+     * @param spectrumMatch The spectrum match.
+     * @param peptideAssumption The peptide assumption.
+     *
+     * @return The modification localization scores.
+     */
     private TreeMap<Double, HashMap<Integer, Double>> processPeptideAssumption(
             SpectrumMatch spectrumMatch,
             PeptideAssumption peptideAssumption
@@ -307,6 +352,16 @@ public class StirRunnable implements Runnable {
 
     }
 
+    /**
+     * Scores the modification localization for the given peptide in the given
+     * spectrum match. The scores are returned in a map: modification mass to
+     * modification site to modification score.
+     *
+     * @param spectrumMatch The spectrum match.
+     * @param peptideAssumption The peptide assumption.
+     *
+     * @return The modification localization scores in a map.
+     */
     private TreeMap<Double, HashMap<Integer, Double>> scoreModificationLocalization(
             SpectrumMatch spectrumMatch,
             PeptideAssumption peptideAssumption
@@ -379,5 +434,4 @@ public class StirRunnable implements Runnable {
                         )
                 );
     }
-
 }
