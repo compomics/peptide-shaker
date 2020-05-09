@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.cmd;
 import com.compomics.software.log.CliLogger;
 import com.compomics.util.Util;
 import static com.compomics.util.Util.LINE_SEPARATOR;
+import eu.isas.peptideshaker.stirred.Stirred;
 import java.io.PrintWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -48,10 +49,10 @@ public class StirredCLI {
             CommandLineParser parser = new DefaultParser();
             CommandLine commandLine = parser.parse(lOptions, args);
 
-            StirredOptionsBean modificationScoreOptionsBean = new StirredOptionsBean(commandLine);
+            StirredOptionsBean optionBean = new StirredOptionsBean(commandLine);
 
             try ( CliLogger cliLogger = new CliLogger(
-                    modificationScoreOptionsBean.logFile,
+                    optionBean.logFile,
                     "compomics-utilities",
                     Util.getVersion()
             )) {
@@ -61,10 +62,26 @@ public class StirredCLI {
                 cliLogger.writeComment("CLI", "ModificationScoreCLI");
                 cliLogger.writeComment("Command", String.join(" ", args));
 
-                run(
-                        modificationScoreOptionsBean,
-                        cliLogger
+                Stirred stirred = new Stirred(
+                        optionBean.inputFile,
+                        optionBean.spectrumFile,
+                        optionBean.fastaFile,
+                        optionBean.outputFile,
+                        optionBean.identificationParametersFile,
+                        optionBean.tempFolder,
+                        cliLogger,
+                        optionBean.nThreads,
+                        optionBean.timeOutDays,
+                        optionBean.contactFirstName,
+                        optionBean.contactLastName,
+                        optionBean.contactAddress,
+                        optionBean.contactEmail,
+                        optionBean.contactOrganizationName,
+                        optionBean.contactOrganizationAddress,
+                        optionBean.contactOrganizationEmail
                 );
+                
+                stirred.run();
 
             }
 
@@ -75,20 +92,6 @@ public class StirredCLI {
     }
 
     /**
-     * Runs the command.
-     *
-     * @param bean the bean of command line parameters
-     */
-    private static void run(
-            StirredOptionsBean bean,
-            CliLogger cliLogger
-    ) {
-
-        
-
-    }
-
-    /**
      * Prints basic help
      */
     private static void printHelp() {
@@ -96,12 +99,12 @@ public class StirredCLI {
         try ( PrintWriter lPrintWriter = new PrintWriter(System.out)) {
             lPrintWriter.print(LINE_SEPARATOR);
             lPrintWriter.print("==================================" + LINE_SEPARATOR);
-            lPrintWriter.print("       CompOmics Utilities        " + LINE_SEPARATOR);
+            lPrintWriter.print("          PeptideShaker           " + LINE_SEPARATOR);
             lPrintWriter.print("               ****               " + LINE_SEPARATOR);
-            lPrintWriter.print("        Modification Score        " + LINE_SEPARATOR);
+            lPrintWriter.print("              Stirred             " + LINE_SEPARATOR);
             lPrintWriter.print("==================================" + LINE_SEPARATOR);
             lPrintWriter.print(LINE_SEPARATOR
-                    + "The Modification Score CLI scores the modification localization of peptides." + LINE_SEPARATOR
+                    + "The Stirred CLI maps peptides to proteins, scores modification localization, and exports mzIdentML from search engine results." + LINE_SEPARATOR
                     + LINE_SEPARATOR
                     + "For documentation and bug report please refer to our code repository github.com/compomics/compomics-utilities/." + LINE_SEPARATOR
                     + LINE_SEPARATOR
