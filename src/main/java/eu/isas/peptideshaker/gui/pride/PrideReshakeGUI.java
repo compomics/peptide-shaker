@@ -772,6 +772,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         filesHelpLabel = new javax.swing.JLabel();
         reshakableCheckBox = new javax.swing.JCheckBox();
         downloadAllLabel = new javax.swing.JLabel();
+        downloadSelectedLabel = new javax.swing.JLabel();
         aboutButton = new javax.swing.JButton();
         peptideShakerPublicationLabel = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
@@ -911,7 +912,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         .addComponent(projectSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(clearProjectFiltersLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 203, Short.MAX_VALUE)
                         .addComponent(browsePublicDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(dataTypeSeparatorLabel)
@@ -924,7 +925,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(projectsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(accessPrivateDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1005,7 +1006,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             assaysPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(assaysPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(assayTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                .addComponent(assayTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(assayHelpLabel)
                 .addContainerGap())
@@ -1049,7 +1050,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             }
         });
         filesTable.setOpaque(false);
-        filesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        filesTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         filesTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 filesTableMouseMoved(evt);
@@ -1066,7 +1067,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         filesTableScrollPane.setViewportView(filesTable);
 
         filesHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        filesHelpLabel.setText("When you have found the wanted assays click Reshake PRIDE Data to start re-analyzing. Supported formats: peak lists, raw data and PRIDE XML.");
+        filesHelpLabel.setText("Click Reshake PRIDE Data to start re-analyzing. Supported formats: peak lists, raw data and PRIDE XML.");
 
         reshakableCheckBox.setSelected(true);
         reshakableCheckBox.setText("Reshakeable Files Only");
@@ -1093,6 +1094,21 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             }
         });
 
+        downloadSelectedLabel.setText("<html><a href=\\\"dummy\\\">Download Selected</a></html>");
+        downloadSelectedLabel.setToolTipText("Download the selected files in the table");
+        downloadSelectedLabel.setEnabled(false);
+        downloadSelectedLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                downloadSelectedLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                downloadSelectedLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                downloadSelectedLabelMouseReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout filesPanelLayout = new javax.swing.GroupLayout(filesPanel);
         filesPanel.setLayout(filesPanelLayout);
         filesPanelLayout.setHorizontalGroup(
@@ -1100,9 +1116,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             .addGroup(filesPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(filesHelpLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 116, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(downloadSelectedLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(downloadAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(reshakableCheckBox)
                 .addGap(20, 20, 20))
             .addGroup(filesPanelLayout.createSequentialGroup()
@@ -1114,12 +1132,13 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             filesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                .addComponent(filesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(filesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(filesHelpLabel)
                     .addComponent(reshakableCheckBox)
-                    .addComponent(downloadAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(downloadAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(downloadSelectedLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -1655,6 +1674,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         }
 
         downloadAllLabel.setEnabled(filesTable.getRowCount() > 0);
+        downloadSelectedLabel.setEnabled(filesTable.getRowCount() > 0);
 
         // fix the index column
         for (int i = 0; i < filesTable.getRowCount(); i++) {
@@ -1767,6 +1787,39 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_downloadAllLabelMouseReleased
 
     /**
+     * Change the cursor to a hand icon.
+     *
+     * @param evt
+     */
+    private void downloadSelectedLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadSelectedLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_downloadSelectedLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void downloadSelectedLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadSelectedLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_downloadSelectedLabelMouseExited
+
+    /**
+     * Download the selected files in the table.
+     *
+     * @param evt
+     */
+    private void downloadSelectedLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadSelectedLabelMouseReleased
+        ArrayList<Integer> fileRowIndexes = new ArrayList<>();
+        
+        for (int i = 0; i < filesTable.getSelectedRows().length; i++) {
+            fileRowIndexes.add(filesTable.getSelectedRows()[i]);
+        }
+
+        downloadFiles(fileRowIndexes);
+    }//GEN-LAST:event_downloadSelectedLabelMouseReleased
+
+    /**
      * Update the file list based on the selected project.
      */
     private void updateProjectFileList() {
@@ -1779,6 +1832,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         filesTableModel.fireTableDataChanged();
         reshakeButton.setEnabled(false);
         downloadAllLabel.setEnabled(false);
+        downloadSelectedLabel.setEnabled(false);
 
         String projectAccession = null;
         int selectedRow = projectsTable.getSelectedRow();
@@ -1932,6 +1986,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         }
 
         downloadAllLabel.setEnabled(filesTable.getRowCount() > 0);
+        downloadSelectedLabel.setEnabled(filesTable.getRowCount() > 0);
 
         enableReshake();
 
@@ -1952,6 +2007,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         filesTableModel.fireTableDataChanged();
         reshakeButton.setEnabled(false);
         downloadAllLabel.setEnabled(false);
+        downloadSelectedLabel.setEnabled(false);
 
         String assayAccession = null;
         int selectedRow = assaysTable.getSelectedRow();
@@ -2088,6 +2144,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         }
 
         downloadAllLabel.setEnabled(filesTable.getRowCount() > 0);
+        downloadSelectedLabel.setEnabled(filesTable.getRowCount() > 0);
 
         enableReshake();
 
@@ -2470,7 +2527,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     int numberOfPages = (int) Math.ceil(((double) numberOfProjects) / projectBatchSize);
 
                     progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                    progressDialog.setMaxPrimaryProgressCounter(numberOfProjects + 1);
+                    progressDialog.setMaxPrimaryProgressCounter(numberOfPages + 1);
                     progressDialog.increasePrimaryProgressCounter();
 
                     speciesAll = new ArrayList<>();
@@ -3724,6 +3781,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     private javax.swing.JLabel clearProjectFiltersLabel;
     private javax.swing.JLabel dataTypeSeparatorLabel;
     private javax.swing.JLabel downloadAllLabel;
+    private javax.swing.JLabel downloadSelectedLabel;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
