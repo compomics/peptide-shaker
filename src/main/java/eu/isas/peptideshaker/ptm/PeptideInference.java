@@ -151,7 +151,7 @@ public class PeptideInference {
 
         HashSet<Integer> oldLocalization = getModificationSites(peptide, modMass, modificationProvider);
 
-        HashSet<Integer> newLocalizationCandidates = new HashSet<>(oldLocalization.size());
+        HashSet<Integer> newLocalizationCandidates = new HashSet<>(nMod - oldLocalization.size());
 
         HashMap<String, HashSet<Long>> modConfidentPeptides = confidentPeptideInference.get(modMass);
 
@@ -188,6 +188,12 @@ public class PeptideInference {
 
             // Map the most likely inferred sites
             if (!newLocalizationCandidates.isEmpty()) {
+                
+                try {
+                    
+                    if (spectrumKey == -3414592219850203985l) {
+                        int debug = 1;
+                    }
 
                 mapInferredSites(
                         spectrumKey,
@@ -195,12 +201,29 @@ public class PeptideInference {
                         peptide,
                         newLocalizationCandidates,
                         modMass,
+                        nMod,
                         searchParameters,
                         modificationSequenceMatchingParameters,
                         sequenceProvider,
                         modificationProvider
                 );
 
+                } catch (Exception e) {
+
+                mapInferredSites(
+                        spectrumKey,
+                        spectrumMatch,
+                        peptide,
+                        newLocalizationCandidates,
+                        modMass,
+                        nMod,
+                        searchParameters,
+                        modificationSequenceMatchingParameters,
+                        sequenceProvider,
+                        modificationProvider
+                );
+                    
+                }
             }
         }
     }
@@ -532,6 +555,7 @@ public class PeptideInference {
             Peptide peptide,
             HashSet<Integer> newLocalizationCandidates,
             double modMass,
+            int nMod,
             SearchParameters searchParameters,
             SequenceMatchingParameters modificationSequenceMatchingParameters,
             SequenceProvider sequenceProvider,
@@ -601,11 +625,19 @@ public class PeptideInference {
 
                     }
 
+                    String previousName = modificationMatch.getModification();
                     modificationMatch.setSite(newLocalization);
                     modificationMatch.setModification(candidateName);
                     PSModificationScores psmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
 
-                    psmScores.changeRepresentativeSite(candidateName, oldLocalization, newLocalization);
+                    psmScores.changeRepresentativeSite(
+                            candidateName,
+                            previousName,
+                            oldLocalization,
+                            newLocalization,
+                            nMod,
+                            modificationProvider
+                    );
 
                 }
 
