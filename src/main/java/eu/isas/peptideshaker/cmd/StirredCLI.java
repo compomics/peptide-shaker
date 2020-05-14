@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.cmd;
 import com.compomics.software.log.CliLogger;
 import com.compomics.util.Util;
 import static com.compomics.util.Util.LINE_SEPARATOR;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.stirred.Stirred;
 import java.io.PrintWriter;
 import org.apache.commons.cli.CommandLine;
@@ -53,13 +54,13 @@ public class StirredCLI {
 
             try ( CliLogger cliLogger = new CliLogger(
                     optionBean.logFile,
-                    "compomics-utilities",
+                    "PeptideShaker",
                     Util.getVersion()
             )) {
 
-                cliLogger.writeComment("Software", "compomics-utilities");
-                cliLogger.writeComment("Version", Util.getVersion());
-                cliLogger.writeComment("CLI", "ModificationScoreCLI");
+                cliLogger.writeComment("Software", "PeptideShaker");
+                cliLogger.writeComment("Version", PeptideShaker.getVersion());
+                cliLogger.writeComment("CLI", "StirredCLI");
                 cliLogger.writeComment("Command", String.join(" ", args));
 
                 Stirred stirred = new Stirred(
@@ -80,7 +81,7 @@ public class StirredCLI {
                         optionBean.contactOrganizationAddress,
                         optionBean.contactOrganizationEmail
                 );
-                
+
                 stirred.run();
 
             }

@@ -202,12 +202,13 @@ public class Stirred {
         cliLogger.logMessage("Importing spectra");
         MsFileHandler msFileHandler = new MsFileHandler();
         msFileHandler.register(
-                fastaFile,
+                spectrumFile,
                 tempFolder,
                 waitingHandler
         );
 
         // Import identification results
+        cliLogger.logMessage("Parsing identification results");
         IdImporter idImporter = new IdImporter(
                 searchEngineResultsFile,
                 cliLogger
@@ -218,8 +219,10 @@ public class Stirred {
                 waitingHandler
         );
         HashMap<String, ArrayList<String>> softwareVersions = idImporter.getIdFileReader().getSoftwareVersions();
+        System.out.println();
 
         // Stir peptides and export
+        cliLogger.logMessage("Processing peptides from " + spectrumMatches.size() + " spectra.");
         try ( SimpleMzIdentMLExporter simpleMzIdentMLExporter = new SimpleMzIdentMLExporter(
                 SOFTWARE_NAME,
                 SOFTWARE_VERSION,
@@ -259,7 +262,8 @@ public class Stirred {
                                     identificationParameters,
                                     fmIndex,
                                     fmIndex,
-                                    msFileHandler
+                                    msFileHandler,
+                                    cliLogger
                             )
                     )
                     .forEach(

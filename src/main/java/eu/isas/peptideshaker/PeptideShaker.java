@@ -43,6 +43,7 @@ import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.processing.ProteinProcessor;
 import eu.isas.peptideshaker.processing.PsmProcessor;
 import eu.isas.peptideshaker.protein_inference.GroupSimplification;
+import eu.isas.peptideshaker.ptm.PeptideInference;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 
 import java.io.File;
@@ -423,16 +424,20 @@ public class PeptideShaker {
         System.gc();
 
         if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
+            
+            PeptideInference peptideInference = new PeptideInference();
 
             ModificationLocalizationParameters modificationScoringPreferences = identificationParameters.getModificationLocalizationParameters();
 
             if (modificationScoringPreferences.getAlignNonConfidentModifications()) {
 
                 waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
-                modificationLocalizationScorer.peptideInference(
+                
+                peptideInference.peptideInference(
                         identification,
-                        sequenceProvider,
                         identificationParameters,
+                        sequenceProvider,
+                        modificationFactory,
                         waitingHandler
                 );
 

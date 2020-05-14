@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.stirred.modules;
 
+import com.compomics.software.log.CliLogger;
 import com.compomics.util.experiment.io.identification.writers.SimpleMzIdentMLExporter;
 import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
@@ -84,6 +85,10 @@ public class StirRunnable implements Runnable {
      * The peptide spectrum annotator to use.
      */
     private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+    /**
+     * The logger for CLI feedback.
+     */
+    private final CliLogger cliLogger;
 
     /**
      * Constructor.
@@ -96,6 +101,7 @@ public class StirRunnable implements Runnable {
      * @param fastaMapper The sequence mapper.
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
+     * @param cliLogger The logger for CLI feedback.
      */
     public StirRunnable(
             ConcurrentLinkedQueue<SpectrumMatch> spectrumMatches,
@@ -105,7 +111,8 @@ public class StirRunnable implements Runnable {
             IdentificationParameters identificationParameters,
             FastaMapper fastaMapper,
             SequenceProvider sequenceProvider,
-            SpectrumProvider spectrumProvider
+            SpectrumProvider spectrumProvider,
+            CliLogger cliLogger
     ) {
 
         this.spectrumMatches = spectrumMatches;
@@ -116,17 +123,28 @@ public class StirRunnable implements Runnable {
         this.fastaMapper = fastaMapper;
         this.sequenceProvider = sequenceProvider;
         this.spectrumProvider = spectrumProvider;
+        this.cliLogger = cliLogger;
 
     }
 
     @Override
     public void run() {
 
-        SpectrumMatch spectrumMatch;
+        try {
 
-        while ((spectrumMatch = spectrumMatches.poll()) != null) {
+            SpectrumMatch spectrumMatch;
 
-            processSpectrumMatch(spectrumMatch);
+            while ((spectrumMatch = spectrumMatches.poll()) != null) {
+
+                processSpectrumMatch(spectrumMatch);
+
+            }
+        } catch (Throwable t) {
+
+            t.printStackTrace();
+
+            cliLogger.logError("An error occurred while processing the spectrum matches.");
+            cliLogger.logError(t.getLocalizedMessage());
 
         }
     }
@@ -136,7 +154,9 @@ public class StirRunnable implements Runnable {
      *
      * @param spectrumMatch The spectrum match.
      */
-    private void processSpectrumMatch(SpectrumMatch spectrumMatch) {
+    private void processSpectrumMatch(
+            SpectrumMatch spectrumMatch
+    ) {
 
         ArrayList<PeptideAssumption> peptideAssumptions = new ArrayList<>();
         ArrayList<TreeMap<Double, HashMap<Integer, Double>>> modificationScores = new ArrayList<>();
@@ -257,6 +277,9 @@ public class StirRunnable implements Runnable {
                     }
                 }
             }
+            
+            modMatch.setConfident(true);
+            
         }
 
         if (peptide.getVariableModifications().length > 0) {
@@ -274,7 +297,8 @@ public class StirRunnable implements Runnable {
 
         // Set peptide key
         peptide.setKey(
-                Peptide.getKey(peptide.getSequence(),
+                Peptide.getKey(
+                        peptide.getSequence(),
                         peptide.getVariableModifications()
                 )
         );

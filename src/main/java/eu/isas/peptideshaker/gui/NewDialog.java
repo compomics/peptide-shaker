@@ -725,12 +725,13 @@ public class NewDialog extends javax.swing.JDialog {
 
                 new Thread(new Runnable() {
                     public void run() {
-                        try {
 
                             ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler(
                                     (WaitingDialog) waitingDialog,
                                     "https://github.com/compomics/peptide-shaker/issues"
                             );
+                            
+                        try {
 
                             int outcome = peptideShaker.importFiles(
                                     waitingDialog,
@@ -762,8 +763,12 @@ public class NewDialog extends javax.swing.JDialog {
 
                             }
                         } catch (Exception e) {
-                            System.out.println("Failed to import data or create the project!");
-                            e.printStackTrace();
+                        
+                            exceptionHandler.catchException(e);
+                            waitingDialog.setRunCanceled();
+                            
+                            waitingDialog.setWaitingText("Failed to import data or create the project!");
+                        
                         }
                     }
                 }, "Import data and create project").start();

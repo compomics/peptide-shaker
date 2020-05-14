@@ -65,15 +65,18 @@ public class StirredOptionsBean {
      */
     public String contactEmail = "Unknown";
     /**
-     * The name of the organization of the contact to annotate in the mzIdentML file.
+     * The name of the organization of the contact to annotate in the mzIdentML
+     * file.
      */
     public String contactOrganizationName = "Unknown";
     /**
-     * The address of the organization of the contact to annotate in the mzIdentML file.
+     * The address of the organization of the contact to annotate in the
+     * mzIdentML file.
      */
     public String contactOrganizationAddress = "Unknown";
     /**
-     * The email of the organization of the contact to annotate in the mzIdentML file.
+     * The email of the organization of the contact to annotate in the mzIdentML
+     * file.
      */
     public String contactOrganizationEmail = "Unknown";
 
@@ -114,6 +117,26 @@ public class StirredOptionsBean {
 
         // Output file
         arg = aLine.getOptionValue(StirredOptions.output.opt);
+
+        if (!arg.endsWith(".mzid.gz")) {
+            
+            if (arg.endsWith(".gz")) {
+                
+                arg = arg.substring(0, arg.length() - 3);
+                
+            }
+
+            if (!arg.endsWith(".mzid")) {
+
+                arg = arg + ".mzid.gz";
+
+            } else {
+
+                arg = arg + ".gz";
+
+            }
+        }
+
         outputFile = new File(arg);
 
         // Log file
@@ -200,49 +223,49 @@ public class StirredOptionsBean {
         if (aLine.hasOption(StirredOptions.contactFirstName.opt)) {
 
             contactFirstName = aLine.getOptionValue(StirredOptions.contactFirstName.opt);
-            
+
         }
 
         // The contact last name
         if (aLine.hasOption(StirredOptions.contactLastName.opt)) {
 
             contactLastName = aLine.getOptionValue(StirredOptions.contactLastName.opt);
-            
+
         }
 
         // The contact address
         if (aLine.hasOption(StirredOptions.contactAddress.opt)) {
 
             contactAddress = aLine.getOptionValue(StirredOptions.contactAddress.opt);
-            
+
         }
 
         // The contact email
         if (aLine.hasOption(StirredOptions.contactEmail.opt)) {
 
             contactEmail = aLine.getOptionValue(StirredOptions.contactEmail.opt);
-            
+
         }
 
         // The contact organization name
         if (aLine.hasOption(StirredOptions.contactOrganizationName.opt)) {
 
             contactOrganizationName = aLine.getOptionValue(StirredOptions.contactOrganizationName.opt);
-            
+
         }
 
         // The contact organization address
         if (aLine.hasOption(StirredOptions.contactOrganizationAddress.opt)) {
 
             contactOrganizationAddress = aLine.getOptionValue(StirredOptions.contactOrganizationAddress.opt);
-            
+
         }
 
         // The contact organization email
         if (aLine.hasOption(StirredOptions.contactOrganizationEmail.opt)) {
 
             contactOrganizationEmail = aLine.getOptionValue(StirredOptions.contactOrganizationEmail.opt);
-            
+
         }
     }
 }
