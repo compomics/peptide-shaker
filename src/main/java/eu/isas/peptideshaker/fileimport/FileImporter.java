@@ -928,8 +928,6 @@ public class FileImporter {
      *
      * @throws java.io.IOException exception thrown if an error occurred while
      * reading the FASTA file
-     * @throws Exception exception thrown if an error occurred while
-     * reading the FASTA file
      */
     public void importSequences(
             SequenceMatchingParameters sequenceMatchingPreferences,
@@ -938,7 +936,7 @@ public class FileImporter {
             PeptideVariantsParameters peptideVariantsPreferences,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
-    ) throws IOException, Exception {
+    ) throws IOException {
 
         String fastaFilePath = projectDetails.getFastaFile();
         File fastaFile = new File(fastaFilePath);
