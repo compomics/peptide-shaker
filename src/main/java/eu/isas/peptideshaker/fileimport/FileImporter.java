@@ -548,12 +548,12 @@ public class FileImporter {
 
                     String spectrumFile = IoUtil.removeExtension(spectrumMatch.getSpectrumFile());
                     HashSet<String> titles = loadedSpectraMap.get(spectrumFile);
-                    
+
                     if (titles == null) {
 
                         waitingHandler.appendReport(
-                                "Spectrum file named \'" + spectrumMatch.getSpectrumFile() 
-                                        + "\' required to parse \'" + IoUtil.getFileName(idFile) + "\' not found.",
+                                "Spectrum file named \'" + spectrumMatch.getSpectrumFile()
+                                + "\' required to parse \'" + IoUtil.getFileName(idFile) + "\' not found.",
                                 true,
                                 true
                         );
@@ -928,6 +928,8 @@ public class FileImporter {
      *
      * @throws java.io.IOException exception thrown if an error occurred while
      * reading the FASTA file
+     * @throws Exception exception thrown if an error occurred while
+     * reading the FASTA file
      */
     public void importSequences(
             SequenceMatchingParameters sequenceMatchingPreferences,
@@ -936,8 +938,7 @@ public class FileImporter {
             PeptideVariantsParameters peptideVariantsPreferences,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
-    )
-            throws IOException {
+    ) throws IOException, Exception {
 
         String fastaFilePath = projectDetails.getFastaFile();
         File fastaFile = new File(fastaFilePath);
