@@ -64,18 +64,17 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
      */
     private void populateGUI(SpectrumCountingParameters spectrumCountingPreferences) {
 
-        // The spectrum couting method
+        // the spectrum couting method
         if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingMethod.NSAF) {
-            methodCmb.setSelectedIndex(0);
             validationLevelLbl.setText("Spectra Considered:");
         } else {
-            methodCmb.setSelectedIndex(1);
             validationLevelLbl.setText("Peptides Considered:");
         }
+        methodCmb.setSelectedItem(spectrumCountingPreferences.getSelectedMethod());
+        
         validationLevelCmb.setSelectedIndex(spectrumCountingPreferences.getMatchValidationLevel());
-        validationLevelCmb.setEnabled(false); //@TODO: enable when supported
 
-        // The Normalization
+        // the normalization
         if (!spectrumCountingPreferences.getNormalize() || spectrumCountingPreferences.getUnit() == null) {
             normalizationCmb.setSelectedIndex(0);
             unitCmb.setEnabled(false);
@@ -189,20 +188,14 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Returns the spectrum couting preferences as set by the user.
+     * Returns the spectrum counting preferences as set by the user.
      *
-     * @return the spectrum couting preferences as set by the user
+     * @return the spectrum counting preferences as set by the user
      */
     public SpectrumCountingParameters getSpectrumCountingPreferences() {
 
         SpectrumCountingParameters spectrumCountingPreferences = new SpectrumCountingParameters();
-        if (methodCmb.getSelectedIndex() == 0) {
-            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingMethod.NSAF);
-        } else if (methodCmb.getSelectedIndex() == 1) {
-            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingMethod.EMPAI);
-        } else {
-            throw new UnsupportedOperationException("Option " + methodCmb.getSelectedIndex() + "not supported.");
-        }
+        spectrumCountingPreferences.setSelectedMethod((SpectrumCountingMethod) methodCmb.getSelectedItem());
 
         spectrumCountingPreferences.setMatchValidationLevel(validationLevelCmb.getSelectedIndex());
 
@@ -262,7 +255,7 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Quantification Method");
 
-        methodCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "NSAF+", "emPAI" }));
+        methodCmb.setModel(new DefaultComboBoxModel(SpectrumCountingMethod.values()));
         methodCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 methodCmbActionPerformed(evt);
@@ -283,7 +276,7 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
                     .addGroup(quantificationOptionsPanelLayout.createSequentialGroup()
                         .addComponent(validationLevelLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(validationLevelCmb, 0, 143, Short.MAX_VALUE))
+                        .addComponent(validationLevelCmb, 0, 174, Short.MAX_VALUE))
                     .addGroup(quantificationOptionsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -447,17 +440,23 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void normalizationCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_normalizationCmbActionPerformed
-        if (normalizationCmb.getSelectedIndex() == 0) {
-            unitCmb.setEnabled(false);
-            referenceTxt.setEnabled(false);
-        } else if (normalizationCmb.getSelectedIndex() == 1) {
-            unitCmb.setModel(new DefaultComboBoxModel(getUnits(StandardUnit.mol)));
-            unitCmb.setEnabled(true);
-            referenceTxt.setEnabled(true);
-        } else if (normalizationCmb.getSelectedIndex() == 2) {
-            unitCmb.setModel(new DefaultComboBoxModel(getRelativeUnits()));
-            unitCmb.setEnabled(true);
-            referenceTxt.setEnabled(false);
+        switch (normalizationCmb.getSelectedIndex()) {
+            case 0:
+                unitCmb.setEnabled(false);
+                referenceTxt.setEnabled(false);
+                break;
+            case 1:
+                unitCmb.setModel(new DefaultComboBoxModel(getUnits(StandardUnit.mol)));
+                unitCmb.setEnabled(true);
+                referenceTxt.setEnabled(true);
+                break;
+            case 2:
+                unitCmb.setModel(new DefaultComboBoxModel(getRelativeUnits()));
+                unitCmb.setEnabled(true);
+                referenceTxt.setEnabled(false);
+                break;
+            default:
+                break;
         }
     }//GEN-LAST:event_normalizationCmbActionPerformed
 

@@ -107,7 +107,7 @@
                           <Group type="102" attributes="0">
                               <Component id="validationLevelLbl" min="-2" pref="150" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="validationLevelCmb" pref="143" max="32767" attributes="0"/>
+                              <Component id="validationLevelCmb" pref="174" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <Component id="jLabel1" min="-2" pref="150" max="-2" attributes="0"/>
@@ -145,11 +145,8 @@
             </Component>
             <Component class="javax.swing.JComboBox" name="methodCmb">
               <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="2">
-                    <StringItem index="0" value="NSAF+"/>
-                    <StringItem index="1" value="emPAI"/>
-                  </StringArray>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new DefaultComboBoxModel(SpectrumCountingMethod.values())" type="code"/>
                 </Property>
               </Properties>
               <Events>
