@@ -385,6 +385,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.zoodb");
         logger.setLevel(Level.toLevel("ERROR"));
         
+        logger = loggerContext.getLogger("org.springframework");
+        logger.setLevel(Level.toLevel("ERROR"));
+        
         // set the look and feel
         boolean numbusLookAndFeelSet = false;
 

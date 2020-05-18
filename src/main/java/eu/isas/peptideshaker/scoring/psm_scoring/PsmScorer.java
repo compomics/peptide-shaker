@@ -497,7 +497,6 @@ public class PsmScorer {
         while ((spectrumMatch = psmIterator.next()) != null) {
 
             String spectrumFile = spectrumMatch.getSpectrumFile();
-            String spectrumTitle = spectrumMatch.getSpectrumTitle();
 
             HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptions = spectrumMatch.getPeptideAssumptionsMap();
 
@@ -576,9 +575,9 @@ public class PsmScorer {
 
             waitingHandler.increaseSecondaryProgressCounter();
 
+            identification.updateObject(spectrumMatch.getKey(), spectrumMatch);
         }
-        identification.updateObject(spectrumMatch.getKey(), spectrumMatch);
-
+        
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
     }

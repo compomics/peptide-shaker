@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.gui.pride;
 
-import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.converters.DecoyConverter;
