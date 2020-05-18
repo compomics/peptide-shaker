@@ -2539,7 +2539,7 @@ public class MzIdentMLExport {
 
                     ModificationLocalizationParameters modificationLocalicationParameters = identificationParameters.getModificationLocalizationParameters();
                     PeptideMatch peptideMatch = (PeptideMatch) identification.retrieveObject(peptideMatchKey);
-                    PSModificationScores psModificationScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
+                    PSModificationScores psModificationScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
 
                     if (psModificationScores != null) {
 
@@ -2689,7 +2689,7 @@ public class MzIdentMLExport {
                             )
                     );
 
-                    psModificationScores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
+                    psModificationScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
 
                     if (psModificationScores != null) {
 

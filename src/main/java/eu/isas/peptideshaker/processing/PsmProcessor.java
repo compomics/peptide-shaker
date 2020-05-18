@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.processing;
 
 import com.compomics.util.exceptions.ExceptionHandler;
+import com.compomics.util.experiment.biology.modifications.ModificationProvider;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
@@ -57,6 +58,7 @@ public class PsmProcessor {
      * scorer.
      * @param sequenceProvider Protein sequence provider.
      * @param spectrumProvider The spectrum provider.
+         * @param modificationProvider The modification provider to use.
      * @param proteinCount Map of the protein occurrence.
      * @param nThreads The number of threads to use.
      * @param waitingHandler Waiting handler to display progress and allow
@@ -75,6 +77,7 @@ public class PsmProcessor {
             ModificationLocalizationScorer modificationLocalizationScorer,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
+            ModificationProvider modificationProvider,
             HashMap<String, Integer> proteinCount,
             int nThreads,
             WaitingHandler waitingHandler,
@@ -102,6 +105,7 @@ public class PsmProcessor {
                             modificationLocalizationScorer,
                             sequenceProvider,
                             spectrumProvider,
+                            modificationProvider,
                             proteinCount,
                             waitingHandler,
                             exceptionHandler

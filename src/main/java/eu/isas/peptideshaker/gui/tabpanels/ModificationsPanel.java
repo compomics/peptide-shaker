@@ -4516,8 +4516,8 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
 
                 case 4:
-                    PSModificationScores ptmScores = new PSModificationScores();
-                    ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
+                    
+                    PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
                     if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
                         ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
                         return ptmScoring.getMinimalLocalizationConfidence();
@@ -4622,8 +4622,8 @@ public class ModificationsPanel extends javax.swing.JPanel {
                             );
 
                 case 4:
-                    PSModificationScores ptmScores = new PSModificationScores();
-                    ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
+                    
+                    PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
                     if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
                         ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
                         return ptmScoring.getMinimalLocalizationConfidence();
@@ -4750,8 +4750,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                                     true
                             );
                 case 3:
-                    PSModificationScores ptmScores = new PSModificationScores();
-                    ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
+                   PSModificationScores ptmScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
                     if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
                         ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
                         return ptmScoring.getMinimalLocalizationConfidence();
@@ -4824,7 +4823,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
             SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
-            PSModificationScores scores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
+            PSModificationScores scores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
             ArrayList<com.compomics.util.gui.protein.ModificationProfile> profiles = getModificationProfile(peptideMatch.getPeptide(), scores);
 
             Peptide peptide = peptideMatch.getPeptide();
@@ -5335,9 +5334,8 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     for (int i = 0; i < peptideMatch.getSpectrumMatchesKeys().length; i++) {
 
                         long spectrumMatchKey = peptideMatch.getSpectrumMatchesKeys()[i];
-                        PSModificationScores ptmScores = new PSModificationScores();
                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
-                        ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
+                       PSModificationScores ptmScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
                         ((DefaultTableModel) psmAScoresTable.getModel()).addRow(new Object[]{(i + 1)});
                         ((DefaultTableModel) psmDeltaScoresTable.getModel()).addRow(new Object[]{(i + 1)});
 

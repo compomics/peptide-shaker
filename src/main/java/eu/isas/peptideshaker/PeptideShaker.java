@@ -108,7 +108,7 @@ public class PeptideShaker {
     /**
      * The compomics PTM factory.
      */
-    private ModificationFactory modificationFactory = ModificationFactory.getInstance();
+    private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
     /**
      * Metrics to be picked when loading the identification.
      */
@@ -394,6 +394,7 @@ public class PeptideShaker {
                 modificationLocalizationScorer,
                 sequenceProvider,
                 spectrumProvider,
+                modificationFactory,
                 proteinCount,
                 processingParameters.getnThreads(),
                 waitingHandler,
@@ -741,6 +742,7 @@ public class PeptideShaker {
             );
             modificationLocalizationScorer.scorePeptidePtms(
                     identification,
+                    modificationFactory,
                     waitingHandler,
                     identificationParameters
             );
@@ -795,6 +797,7 @@ public class PeptideShaker {
                 proteinProcessor.processProteins(
                         modificationLocalizationScorer,
                         metrics,
+                        modificationFactory,
                         waitingHandler,
                         exceptionHandler,
                         processingParameters

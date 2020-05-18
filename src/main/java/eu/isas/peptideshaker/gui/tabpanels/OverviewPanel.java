@@ -4476,8 +4476,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 Identification identification = peptideShakerGUI.getIdentification();
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                PSModificationScores psPtmScores = new PSModificationScores();
-                psPtmScores = (PSModificationScores) proteinMatch.getUrParam(psPtmScores);
+                PSModificationScores psPtmScores = (PSModificationScores) proteinMatch.getUrParam(PSModificationScores.dummy);
 
                 String sequence = peptideShakerGUI.getSequenceProvider().getSequence(proteinAccession);
                 int unmodifiedCounter = 0;
@@ -4629,8 +4628,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 Identification identification = peptideShakerGUI.getIdentification();
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                PSModificationScores psPtmScores = new PSModificationScores();
-                psPtmScores = (PSModificationScores) proteinMatch.getUrParam(psPtmScores);
+                PSModificationScores psPtmScores = (PSModificationScores) proteinMatch.getUrParam(PSModificationScores.dummy);
 
                 String sequence = peptideShakerGUI.getSequenceProvider().getSequence(proteinAccession);
                 int unmodifiedCounter = 0;
