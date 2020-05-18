@@ -1740,10 +1740,6 @@ public class ModificationLocalizationScorer extends DbObject {
             IdentificationParameters identificationParameters
     ) {
 
-        if (spectrumMatch.getKey() == 6271599892319511900l) {
-            int debug = 1;
-        }
-
         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
         int nVariableModifications = peptide.getNVariableModifications();
@@ -2210,7 +2206,7 @@ public class ModificationLocalizationScorer extends DbObject {
             }
 
             // See whether there are sites that are not confidently assigned.
-            for (Double modMass : confidentSites.keySet()) {
+            for (double modMass : confidentSites.keySet()) {
 
                 HashMap<Integer, ArrayList<String>> modConfidentSitesMap = confidentSites.get(modMass);
                 ArrayList<Integer> modConfidentSites = new ArrayList<>(modConfidentSitesMap.keySet());
@@ -2250,9 +2246,7 @@ public class ModificationLocalizationScorer extends DbObject {
             // Create ambiguous site groups and assign the remaining modifications to the best scoring sites.
             if (!nRepresentativesMap.isEmpty()) {
 
-                HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap;
-
-                representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousScoreToSiteMap, nRepresentativesMap);
+                HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousScoreToSiteMap, nRepresentativesMap);
 
                 for (Entry<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> entry1 : representativeToSecondaryMap.entrySet()) {
 

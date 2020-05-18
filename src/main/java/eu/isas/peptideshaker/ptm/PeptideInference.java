@@ -539,10 +539,6 @@ public class PeptideInference {
             ModificationProvider modificationProvider
     ) {
 
-                        if (spectrumKey == 6271599892319511900l) {
-                            int debug = 1;
-                        }
-
         HashMap<Integer, ModificationMatch> nonConfidentMatches = new HashMap<>();
 
         for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
@@ -610,13 +606,7 @@ public class PeptideInference {
                     modificationMatch.setSite(newLocalization);
                     modificationMatch.setModification(candidateName);
                     PSModificationScores psmScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
-                    
-                    try {
 
-                        if (spectrumKey == 6271599892319511900l) {
-                            int debug = 1;
-                        }
-                        
                     psmScores.changeRepresentativeSite(
                             candidateName,
                             previousName,
@@ -625,18 +615,6 @@ public class PeptideInference {
                             nMod,
                             modificationProvider
                     );
-
-                    } catch (Exception e) {
-                        
-                    psmScores.changeRepresentativeSite(
-                            candidateName,
-                            previousName,
-                            oldLocalization,
-                            newLocalization,
-                            nMod,
-                            modificationProvider
-                    );
-                    }
                 }
 
                 modificationMatch.setInferred(true);
