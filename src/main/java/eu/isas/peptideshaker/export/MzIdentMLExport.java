@@ -146,10 +146,6 @@ public class MzIdentMLExport {
      */
     private final HashMap<Long, String> spectrumIds = new HashMap<>();
     /**
-     * The spectrum key to parent peptide key map.
-     */
-    private final HashMap<Long, Long> spectrumKeyToPeptideKeyMap;
-    /**
      * The identification parameters.
      */
     private final IdentificationParameters identificationParameters;
@@ -223,12 +219,10 @@ public class MzIdentMLExport {
         this.waitingHandler = waitingHandler;
         this.peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
-        this.spectrumKeyToPeptideKeyMap = new HashMap<>(identification.getSpectrumIdentificationSize());
-
         setSpectrumTitlesMap();
-        
+
         writer = new SimpleFileWriter(outputFile, gzip);
-        
+
     }
 
     /**
@@ -388,9 +382,9 @@ public class MzIdentMLExport {
 
         writeCvTerm(
                 new CvTerm(
-                        "PSI-MS", 
-                        "MS:1001267", 
-                        "software vendor", 
+                        "PSI-MS",
+                        "MS:1001267",
+                        "software vendor",
                         null
                 )
         );
@@ -412,9 +406,9 @@ public class MzIdentMLExport {
 
         writeCvTerm(
                 new CvTerm(
-                        "PSI-MS", 
-                        "MS:1002458", 
-                        "PeptideShaker", 
+                        "PSI-MS",
+                        "MS:1002458",
+                        "PeptideShaker",
                         null
                 )
         );
@@ -460,12 +454,12 @@ public class MzIdentMLExport {
         writer.newLine();
         tabCounter++;
 
-         // @TODO: add user defined provider role?
+        // @TODO: add user defined provider role?
         writeCvTerm(
                 new CvTerm(
-                        "PSI-MS", 
-                        "MS:1001271", 
-                        "researcher", 
+                        "PSI-MS",
+                        "MS:1001271",
+                        "researcher",
                         null
                 )
         );
@@ -508,9 +502,9 @@ public class MzIdentMLExport {
 
         writeCvTerm(
                 new CvTerm(
-                        "PSI-MS", 
-                        "MS:1000587", 
-                        "contact address", 
+                        "PSI-MS",
+                        "MS:1000587",
+                        "contact address",
                         StringEscapeUtils.escapeHtml4(
                                 projectDetails.getContactAddress()
                         )
@@ -521,9 +515,9 @@ public class MzIdentMLExport {
 
             writeCvTerm(
                     new CvTerm(
-                            "PSI-MS", 
-                            "MS:1000588", 
-                            "contact URL", 
+                            "PSI-MS",
+                            "MS:1000588",
+                            "contact URL",
                             projectDetails.getContactUrl()
                     )
             );
@@ -532,9 +526,9 @@ public class MzIdentMLExport {
 
         writeCvTerm(
                 new CvTerm(
-                        "PSI-MS", 
-                        "MS:1000589", 
-                        "contact email", 
+                        "PSI-MS",
+                        "MS:1000589",
+                        "contact email",
                         projectDetails.getContactEmail()
                 )
         );
@@ -557,17 +551,17 @@ public class MzIdentMLExport {
 
         writeCvTerm(
                 new CvTerm(
-                        "PSI-MS", 
-                        "MS:1000586", 
-                        "contact name", 
+                        "PSI-MS",
+                        "MS:1000586",
+                        "contact name",
                         StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationName())
                 )
         );
         writeCvTerm(
                 new CvTerm(
-                        "PSI-MS", 
-                        "MS:1000587", 
-                        "contact address", 
+                        "PSI-MS",
+                        "MS:1000587",
+                        "contact address",
                         StringEscapeUtils.escapeHtml4(projectDetails.getOrganizationAddress())
                 )
         );
@@ -576,9 +570,9 @@ public class MzIdentMLExport {
 
             writeCvTerm(
                     new CvTerm(
-                            "PSI-MS", 
-                            "MS:1000588", 
-                            "contact URL", 
+                            "PSI-MS",
+                            "MS:1000588",
+                            "contact URL",
                             projectDetails.getOrganizationUrl()
                     )
             );
@@ -587,9 +581,9 @@ public class MzIdentMLExport {
 
         writeCvTerm(
                 new CvTerm(
-                        "PSI-MS", 
-                        "MS:1000589", 
-                        "contact email", 
+                        "PSI-MS",
+                        "MS:1000589",
+                        "contact email",
                         projectDetails.getOrganizationEmail()
                 )
         );
@@ -714,7 +708,7 @@ public class MzIdentMLExport {
             }
         }
 
-        // set up the spectrum key to peptide key map
+        // Write the peptides, store the spectrum key to peptide key mapping.
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(waitingHandler);
         PeptideMatch peptideMatch;
 
@@ -723,13 +717,6 @@ public class MzIdentMLExport {
             long peptideKey = peptideMatch.getKey();
             Peptide peptide = peptideMatch.getPeptide();
             String peptideSequence = peptide.getSequence();
-
-            // store the spectrum to peptide mapping for later
-            for (long spectrumMatchKey : peptideMatch.getSpectrumMatchesKeys()) {
-
-                spectrumKeyToPeptideKeyMap.put(spectrumMatchKey, peptideKey);
-
-            }
 
             writer.write(getCurrentTabSpace());
             writer.write("<Peptide id=\"");
@@ -2243,8 +2230,7 @@ public class MzIdentMLExport {
             String spectrumIdentificationItemKey = "SII_" + spectrumMatchIndex + "_" + rank;
             spectrumIds.put(spectrumKey, spectrumIdentificationItemKey);
 
-            //String bestPeptideKey = bestPeptideAssumption.getPeptide().getMatchingKey(identificationParameters.getSequenceMatchingPreferences());
-            long peptideMatchKey = spectrumKeyToPeptideKeyMap.get(spectrumKey);
+            long peptideMatchKey = bestPeptideAssumption.getPeptide().getMatchingKey(identificationParameters.getSequenceMatchingParameters());
 
             writer.write(getCurrentTabSpace());
             writer.write("<SpectrumIdentificationItem passThreshold=\"");
@@ -3447,7 +3433,7 @@ public class MzIdentMLExport {
      * or not
      */
     private void writeCvTerm(
-            CvTerm cvTerm, 
+            CvTerm cvTerm,
             boolean showValue
     ) {
 
@@ -3472,7 +3458,7 @@ public class MzIdentMLExport {
      * or not
      */
     private void writeCvTermValue(
-            CvTerm cvTerm, 
+            CvTerm cvTerm,
             boolean showValue
     ) {
 
@@ -3519,7 +3505,7 @@ public class MzIdentMLExport {
      * @param value the value of the user parameter
      */
     private void writeUserParam(
-            String name, 
+            String name,
             String value
     ) {
 

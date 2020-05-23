@@ -40,7 +40,7 @@ import java.util.stream.IntStream;
  * @author Marc Vaudel
  */
 public class PsmImportRunnable implements Runnable {
-    
+
     /**
      * Size of the batches to use when adding objects to the database.
      */
@@ -180,6 +180,7 @@ public class PsmImportRunnable implements Runnable {
                         waitingHandler,
                         false
                 );
+
             }
 
         } catch (Exception e) {
@@ -231,6 +232,7 @@ public class PsmImportRunnable implements Runnable {
                             waitingHandler,
                             false
                     );
+
                     matchesToAdd.clear();
 
                 }
@@ -394,12 +396,12 @@ public class PsmImportRunnable implements Runnable {
 
                         for (ModificationMatch modMatch : modificationMatches) {
 
-                            HashMap<Integer, HashSet<String>> tempNames = ModificationNameMapper.getPossibleModificationNames(peptide, 
-                                    modMatch, 
-                                    fileReader, 
-                                    searchParameters, 
-                                    modificationSequenceMatchingParameters, 
-                                    sequenceProvider, 
+                            HashMap<Integer, HashSet<String>> tempNames = ModificationNameMapper.getPossibleModificationNames(peptide,
+                                    modMatch,
+                                    fileReader,
+                                    searchParameters,
+                                    modificationSequenceMatchingParameters,
+                                    sequenceProvider,
                                     modificationFactory
                             );
 
@@ -439,11 +441,11 @@ public class PsmImportRunnable implements Runnable {
                         if (peptide.getVariableModifications().length > 0) {
 
                             ModificationLocalizationMapper.modificationLocalization(
-                                    peptide, 
-                                    expectedNames, 
-                                    modNames, 
-                                    identificationParameters, 
-                                    fileReader, 
+                                    peptide,
+                                    expectedNames,
+                                    modNames,
+                                    identificationParameters,
+                                    fileReader,
                                     modificationFactory
                             );
 
@@ -457,14 +459,14 @@ public class PsmImportRunnable implements Runnable {
 
                             // Set peptide key
                             peptide.setKey(
-                                    Peptide.getKey(peptide.getSequence(), 
+                                    Peptide.getKey(peptide.getSequence(),
                                             peptide.getVariableModifications()
                                     )
                             );
 
                             // Estimate mass
-                            peptide.getMass(modificationParameters, 
-                                    sequenceProvider, 
+                            peptide.getMass(modificationParameters,
+                                    sequenceProvider,
                                     modificationSequenceMatchingParameters
                             );
 
