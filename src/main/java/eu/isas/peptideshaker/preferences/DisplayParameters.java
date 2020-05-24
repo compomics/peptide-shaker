@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.preferences;
 
 import com.compomics.util.db.object.DbObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -63,7 +64,6 @@ public class DisplayParameters extends DbObject {
     public void showHiddenProteins(boolean showHiddenProteins) {
         writeDBMode();
         this.showHiddenProteins = showHiddenProteins;
-        
     }
 
     /**
@@ -73,9 +73,7 @@ public class DisplayParameters extends DbObject {
      */
     public boolean showHiddenProteins() {
         readDBMode();
-        
         return showHiddenProteins;
-        
     }
 
     /**
@@ -85,9 +83,7 @@ public class DisplayParameters extends DbObject {
      */
     public void showScores(boolean showScores) {
         writeDBMode();
-        
         this.showScores = showScores;
-        
     }
 
     /**
@@ -97,9 +93,7 @@ public class DisplayParameters extends DbObject {
      */
     public boolean showScores() {
         readDBMode();
-        
         return showScores;
-        
     }
 
     /**
@@ -110,9 +104,7 @@ public class DisplayParameters extends DbObject {
      */
     public void showValidatedProteinsOnly(boolean showValidatedProteinsOnly) {
         writeDBMode();
-        
         this.showValidatedProteinsOnly = showValidatedProteinsOnly;
-        
     }
 
     /**
@@ -122,9 +114,7 @@ public class DisplayParameters extends DbObject {
      */
     public boolean showValidatedProteinsOnly() {
         readDBMode();
-        
         return showValidatedProteinsOnly;
-        
     }
 
     /**
@@ -135,9 +125,7 @@ public class DisplayParameters extends DbObject {
      */
     public int getnAASurroundingPeptides() {
         readDBMode();
-        
         return nAASurroundingPeptides;
-        
     }
 
     /**
@@ -148,9 +136,7 @@ public class DisplayParameters extends DbObject {
      */
     public void setnAASurroundingPeptides(int nAASurroundingPeptides) {
         writeDBMode();
-        
         this.nAASurroundingPeptides = nAASurroundingPeptides;
-        
     }
 
     /**
@@ -162,7 +148,6 @@ public class DisplayParameters extends DbObject {
     public void setDisplayedModification(String ptmName, boolean displayed) {
         writeDBMode();
         displayedPTMs.put(ptmName, displayed);
-        
     }
 
     /**
@@ -172,48 +157,45 @@ public class DisplayParameters extends DbObject {
      * @return a boolean indicating whether the PTM shall be displayed
      */
     public boolean isDisplayedPTM(String ptmName) {
-        
+
         readDBMode();
         Boolean result = displayedPTMs.get(ptmName);
-        
+
         if (result == null) {
-            
             result = false;
             setDisplayedModification(ptmName, result);
-            
         }
-        
+
         return result;
-        
     }
 
     /**
-     * Sets the variable modifications visible.
+     * Set the list of visible modifications.
      *
-     * @param modificationProfile the modification profile
+     * @param modifications the modifications to display
      */
-    public void setDefaultSelection(com.compomics.util.parameters.identification.search.ModificationParameters modificationProfile) {
+    public void setDefaultSelection(ArrayList<String> modifications) {
+
         writeDBMode();
-        for (String ptm : modificationProfile.getAllNotFixedModifications()) {
-            
+
+        for (String ptm : modifications) {
             setDisplayedModification(ptm, true);
-            
         }
     }
-    
+
     /**
      * Returns a list containing the names of the PTMs to display.
-     * 
+     *
      * @return a list containing the names of the PTMs to display
      */
     public HashSet<String> getDisplayedModifications() {
+
         readDBMode();
-        
+
         return displayedPTMs.entrySet().stream()
                 .filter(entry -> entry.getValue())
                 .map(Entry::getKey)
                 .collect(Collectors.toCollection(HashSet::new));
-        
     }
 
     /**
@@ -223,9 +205,7 @@ public class DisplayParameters extends DbObject {
      */
     public boolean showBars() {
         readDBMode();
-        
         return showBars;
-        
     }
 
     /**
@@ -235,9 +215,7 @@ public class DisplayParameters extends DbObject {
      */
     public void setShowBars(boolean showBars) {
         writeDBMode();
-        
         this.showBars = showBars;
-        
     }
 
     /**
@@ -249,9 +227,7 @@ public class DisplayParameters extends DbObject {
      */
     public boolean useIntensityIonTable() {
         readDBMode();
-        
         return intensityIonTable;
-        
     }
 
     /**
@@ -262,8 +238,6 @@ public class DisplayParameters extends DbObject {
      */
     public void setIntensityIonTable(boolean intensityIonTable) {
         writeDBMode();
-        
         this.intensityIonTable = intensityIonTable;
-        
     }
 }

@@ -356,13 +356,10 @@ public class PsmImportRunnable implements Runnable {
             int advocateId = entry.getKey();
 
             if (advocateId == Advocate.xtandem.getIndex()) {
-
                 PsmImporter.verifyXTandemModifications(identificationParameters);
-
             }
 
             TreeMap<Double, ArrayList<PeptideAssumption>> assumptionsForAdvocate = entry.getValue();
-
             TreeSet<Double> scores = new TreeSet<>(assumptionsForAdvocate.keySet());
 
             for (double score : scores) {
@@ -375,18 +372,19 @@ public class PsmImportRunnable implements Runnable {
                 for (PeptideAssumption peptideAssumption : oldAssumptions) {
 
                     Peptide peptide = peptideAssumption.getPeptide();
-
                     String peptideSequence = peptide.getSequence();
 
                     // Ignore peptides that are too long or too short
-                    if (peptideSequence.length() >= peptideAssumptionFilter.getMinPepLength() && peptideSequence.length() <= peptideAssumptionFilter.getMaxPepLength()) {
+                    if (peptideSequence.length() >= peptideAssumptionFilter.getMinPepLength()
+                            && peptideSequence.length() <= peptideAssumptionFilter.getMaxPepLength()) {
 
                         // Map peptide to protein
                         proteinMapping(peptide);
 
-                        // map the algorithm specific modifications on utilities modifications
+                        // map the algorithm-specific modifications to utilities modifications
                         // If there are not enough sites to put them all on the sequence, add an unknown modification
-                        // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based modifications
+                        // Note: this needs to be done for tag based assumptions as well since the protein mapping can 
+                        // return erroneous modifications for some pattern based modifications
                         ModificationParameters modificationParameters = searchParameters.getModificationParameters();
 
                         ModificationMatch[] modificationMatches = peptide.getVariableModifications();
@@ -421,18 +419,13 @@ public class PsmImportRunnable implements Runnable {
                                 ArrayList<String> namesAtPosition = expectedNames.get(pos);
 
                                 if (namesAtPosition == null) {
-
                                     namesAtPosition = new ArrayList<>(2);
                                     expectedNames.put(pos, namesAtPosition);
-
                                 }
 
                                 for (String modName : tempNames.get(pos)) {
-
                                     if (!namesAtPosition.contains(modName)) {
-
                                         namesAtPosition.add(modName);
-
                                     }
                                 }
                             }
@@ -479,34 +472,23 @@ public class PsmImportRunnable implements Runnable {
                                 Integer count = proteinCount.get(protein);
 
                                 if (count != null) {
-
                                     proteinCount.put(protein, count + 1);
-
                                 } else {
-
                                     proteinCount.put(protein, 1);
-
                                 }
                             }
 
                         } else {
-
                             modificationIssue++;
-
                         }
                     } else {
-
                         peptideIssue++;
-
                     }
                 }
 
                 if (!newAssumptions.isEmpty()) {
-
                     assumptionsForAdvocate.put(score, newAssumptions);
-
                 } else {
-
                     assumptionsForAdvocate.remove(score);
 
                 }

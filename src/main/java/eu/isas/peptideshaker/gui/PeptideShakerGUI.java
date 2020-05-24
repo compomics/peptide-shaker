@@ -3991,7 +3991,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             sequenceCoverageJCheckBoxMenuItem.setSelected(true);
 
             // display the variable modifications
-            getDisplayParameters().setDefaultSelection(getIdentificationParameters().getSearchParameters().getModificationParameters());
+            ArrayList<String> allVariableMods = modificationFactory.getModifications();
+            for (String tempFixed : getIdentificationParameters().getSearchParameters().getModificationParameters().getFixedModifications()) {
+                allVariableMods.remove(tempFixed);
+            }
+
+            getDisplayParameters().setDefaultSelection(allVariableMods);
 
             overviewPanel.setDisplayOptions(true, true, true, true);
             overviewPanel.updateSeparators();
@@ -7035,7 +7040,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (selectedFile != null) {
 
-                try ( SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
+                try (SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
 
                     for (Entry<String, TreeSet<String>> entry : selectedSpectra.entrySet()) {
 
@@ -7108,7 +7113,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                 TagSpectrumAnnotator tagSpectrumAnnotator = new TagSpectrumAnnotator();
 
-                try ( SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
+                try (SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
 
                     for (long spectrumMatchKey : selectedAssumptions.keySet()) {
 

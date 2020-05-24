@@ -28,7 +28,7 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="psmSpectraSplitPane" alignment="0" max="32767" attributes="0"/>
-                  <Component id="ptmAndPeptideSelectionPanel" alignment="0" max="32767" attributes="0"/>
+                  <Component id="modificationAndPeptideSelectionPanel" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -38,16 +38,16 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="ptmAndPeptideSelectionPanel" min="-2" max="-2" attributes="0"/>
+              <Component id="modificationAndPeptideSelectionPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="psmSpectraSplitPane" max="32767" attributes="0"/>
+              <Component id="psmSpectraSplitPane" pref="442" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="ptmAndPeptideSelectionPanel">
+    <Container class="javax.swing.JPanel" name="modificationAndPeptideSelectionPanel">
       <Properties>
         <Property name="opaque" type="boolean" value="false"/>
       </Properties>
@@ -56,21 +56,21 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <Component id="ptmPanel" min="-2" max="-2" attributes="0"/>
+                  <Component id="modificationPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="peptideTablesJSplitPane" max="32767" attributes="0"/>
+                  <Component id="peptideTablesJSplitPane" pref="742" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="ptmPanel" alignment="0" max="32767" attributes="3"/>
+              <Component id="modificationPanel" alignment="0" max="32767" attributes="3"/>
               <Component id="peptideTablesJSplitPane" alignment="0" max="32767" attributes="1"/>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Container class="javax.swing.JPanel" name="ptmPanel">
+        <Container class="javax.swing.JPanel" name="modificationPanel">
           <Properties>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
@@ -78,23 +78,23 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="ptmLayeredLayeredPane" alignment="0" pref="260" max="32767" attributes="0"/>
+                  <Component id="modificationLayeredLayeredPane" alignment="0" pref="331" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="ptmLayeredLayeredPane" alignment="0" max="32767" attributes="0"/>
+                  <Component id="modificationLayeredLayeredPane" alignment="0" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Container class="javax.swing.JLayeredPane" name="ptmLayeredLayeredPane">
+            <Container class="javax.swing.JLayeredPane" name="modificationLayeredLayeredPane">
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
                 <Property name="useNullLayout" type="boolean" value="true"/>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JPanel" name="ptmLayeredPanel">
+                <Container class="javax.swing.JPanel" name="modificationLayeredPanel">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -105,18 +105,18 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="0" y="0" width="260" height="400"/>
+                      <AbsoluteConstraints x="0" y="0" width="290" height="400"/>
                     </Constraint>
                   </Constraints>
 
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="248" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="262" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="ptmJScrollPane" pref="224" max="32767" attributes="0"/>
+                                  <Component id="modificationJScrollPane" pref="250" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -128,7 +128,7 @@
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="ptmJScrollPane" pref="349" max="32767" attributes="0"/>
+                                  <Component id="modificationJScrollPane" pref="349" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -136,19 +136,20 @@
                     </DimensionLayout>
                   </Layout>
                   <SubComponents>
-                    <Container class="javax.swing.JScrollPane" name="ptmJScrollPane">
+                    <Container class="javax.swing.JScrollPane" name="modificationJScrollPane">
                       <AuxValues>
                         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
                       </AuxValues>
 
                       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                       <SubComponents>
-                        <Component class="javax.swing.JTable" name="ptmJTable">
+                        <Component class="javax.swing.JTable" name="modificationJTable">
                           <Properties>
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="2" rowCount="0">
+                              <Table columnCount="3" rowCount="0">
                                 <Column editable="false" title="  " type="java.lang.Object"/>
-                                <Column editable="false" title="PTM" type="java.lang.String"/>
+                                <Column editable="false" title="Modification" type="java.lang.String"/>
+                                <Column editable="false" title="#" type="java.lang.Integer"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -174,20 +175,20 @@
                             </Property>
                           </Properties>
                           <Events>
-                            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ptmJTableMouseExited"/>
-                            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ptmJTableMouseReleased"/>
-                            <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="ptmJTableMouseMoved"/>
-                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="ptmJTableKeyReleased"/>
+                            <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="modificationJTableMouseMoved"/>
+                            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="modificationJTableMouseExited"/>
+                            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="modificationJTableMouseReleased"/>
+                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="modificationJTableKeyReleased"/>
                           </Events>
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) {                &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                String tip = (String) ptmTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) {                &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                String tip = (String) modificationTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
                           </AuxValues>
                         </Component>
                       </SubComponents>
                     </Container>
                   </SubComponents>
                 </Container>
-                <Component class="javax.swing.JButton" name="ptmSelectionHelpJButton">
+                <Component class="javax.swing.JButton" name="modificationSelectionHelpJButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
@@ -203,9 +204,9 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ptmSelectionHelpJButtonMouseEntered"/>
-                    <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ptmSelectionHelpJButtonMouseExited"/>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ptmSelectionHelpJButtonActionPerformed"/>
+                    <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="modificationSelectionHelpJButtonMouseEntered"/>
+                    <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="modificationSelectionHelpJButtonMouseExited"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="modificationSelectionHelpJButtonActionPerformed"/>
                   </Events>
                   <AuxValues>
                     <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
@@ -216,7 +217,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Container class="javax.swing.JPanel" name="contextMenuPtmBackgroundPanel">
+                <Container class="javax.swing.JPanel" name="contextMenuModificationBackgroundPanel">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -274,9 +275,9 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="813" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="740" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                          <Component id="modifiedPeptidesLayeredPane" alignment="0" pref="813" max="32767" attributes="0"/>
+                          <Component id="modifiedPeptidesLayeredPane" alignment="0" pref="740" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -513,7 +514,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="relatedPeptiesLayeredPane" alignment="1" pref="813" max="32767" attributes="0"/>
+                      <Component id="relatedPeptiesLayeredPane" alignment="1" pref="740" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -772,13 +773,13 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="spectrumLayeredPane" pref="568" max="32767" attributes="0"/>
+                      <Component id="spectrumLayeredPane" pref="569" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="spectrumLayeredPane" alignment="0" pref="444" max="32767" attributes="0"/>
+                  <Component id="spectrumLayeredPane" alignment="0" pref="440" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -881,7 +882,7 @@
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="psmAScoresScrollPane" pref="471" max="32767" attributes="0"/>
+                                          <Component id="psmAScoresScrollPane" pref="0" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -890,7 +891,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="psmAScoresScrollPane" pref="309" max="32767" attributes="0"/>
+                                          <Component id="psmAScoresScrollPane" pref="277" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="2" attributes="0">
                                               <Component id="aScoreMinValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -973,7 +974,7 @@
                                       </Group>
                                       <Group type="102" alignment="1" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="psmDeltaScrollPane" pref="471" max="32767" attributes="0"/>
+                                          <Component id="psmDeltaScrollPane" pref="0" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -982,7 +983,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="psmDeltaScrollPane" pref="309" max="32767" attributes="0"/>
+                                          <Component id="psmDeltaScrollPane" pref="277" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="2" attributes="0">
                                               <Component id="deltaScoreMinValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -1064,16 +1065,16 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="spectrumJToolBar" pref="475" max="32767" attributes="0"/>
+                                          <Component id="spectrumJToolBar" pref="116" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="spectrumChartJPanel" alignment="0" pref="495" max="32767" attributes="0"/>
+                                      <Component id="spectrumChartJPanel" alignment="0" pref="128" max="32767" attributes="0"/>
                                   </Group>
                                 </DimensionLayout>
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="spectrumChartJPanel" pref="359" max="32767" attributes="0"/>
+                                          <Component id="spectrumChartJPanel" pref="312" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                                           <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -1148,9 +1149,9 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                                      <Component id="accuracySlider" pref="145" max="32767" attributes="0"/>
+                                      <Component id="accuracySlider" pref="143" max="32767" attributes="0"/>
                                       <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                                      <Component id="intensitySlider" pref="145" max="32767" attributes="0"/>
+                                      <Component id="intensitySlider" pref="142" max="32767" attributes="0"/>
                                       <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -1315,7 +1316,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="psmsModPeptidesLayeredPane" alignment="0" pref="197" max="32767" attributes="0"/>
+                      <Component id="psmsModPeptidesLayeredPane" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -1516,7 +1517,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="psmsRelatedPeptidesJLayeredPane" alignment="0" pref="247" max="32767" attributes="0"/>
+                      <Component id="psmsRelatedPeptidesJLayeredPane" alignment="0" pref="437" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>

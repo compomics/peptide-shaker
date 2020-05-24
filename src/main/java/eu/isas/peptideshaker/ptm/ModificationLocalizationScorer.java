@@ -52,6 +52,11 @@ import java.util.stream.Stream;
 public class ModificationLocalizationScorer extends DbObject {
 
     /**
+     * The compomics modification factory.
+     */
+    private ModificationFactory modificationFactory = ModificationFactory.getInstance();
+    
+    /**
      * Constructor.
      */
     public ModificationLocalizationScorer() {
@@ -231,7 +236,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
             if (!modificationsMap.containsKey(modMass)) {
 
-                ArrayList<Modification> modifications = modificationParameters.getSameMassNotFixedModifications(modMass).stream()
+                ArrayList<Modification> modifications = modificationFactory.getSameMassNotFixedModifications(modMass, searchParameters).stream()
                         .map(
                                 modification -> modificationProvider.getModification(modification)
                         )
@@ -1780,7 +1785,10 @@ public class ModificationLocalizationScorer extends DbObject {
 
                 if (!maybeNotTerminal) {
 
-                    for (String otherModName : modificationParameters.getAllNotFixedModifications()) {
+                    ArrayList<String> expectedModifications = 
+                            modificationFactory.getExpectedVariableModifications(searchParameters);
+
+                    for (String otherModName : expectedModifications) {
 
                         if (!otherModName.equals(modName)) {
 
@@ -1800,7 +1808,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                     modOccurence.add(modificationMatch);
 
-                    for (String similarModName : modificationParameters.getSameMassNotFixedModifications(modMass)) {
+                    for (String similarModName : modificationFactory.getSameMassNotFixedModifications(modMass, searchParameters)) {
 
                         Modification similarModification = modificationProvider.getModification(similarModName);
 

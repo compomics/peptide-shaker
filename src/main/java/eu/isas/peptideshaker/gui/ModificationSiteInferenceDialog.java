@@ -37,7 +37,7 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class PtmSiteInferenceDialog extends javax.swing.JDialog {
+public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
 
     /**
      * The main GUI.
@@ -84,7 +84,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      * @param peptideKey the peptide key of the investigated peptide
      * @param ptm the PTM investigated
      */
-    public PtmSiteInferenceDialog(PeptideShakerGUI peptideShakerGUI, long peptideKey, Modification ptm) {
+    public ModificationSiteInferenceDialog(PeptideShakerGUI peptideShakerGUI, long peptideKey, Modification ptm) {
         super(peptideShakerGUI, true);
 
         this.peptideShakerGUI = peptideShakerGUI;
@@ -94,22 +94,15 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         Identification identification = peptideShakerGUI.getIdentification();
         peptideMatch = identification.getPeptideMatch(peptideKey);
         Peptide peptide = peptideMatch.getPeptide();
-        peptidePtmScore = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
-        
+        peptidePtmScore = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
         if (peptidePtmScore != null) {
 
             mainSelection = new boolean[peptide.getSequence().length()];
-
             for (String ptmName : peptidePtmScore.getConfidentlyLocalizedModifications()) {
-
                 Modification tempPTM = modificationFactory.getModification(ptmName);
-
                 if (tempPTM.getMass() == ptmMass) { // @TODO: compare against the accuracy
-
                     for (int site : peptidePtmScore.getConfidentSitesForModification(ptmName)) {
-
                         mainSelection[site - 1] = true;
-
                     }
                 }
             }
@@ -205,47 +198,47 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         DisplayParameters displayParameters = peptideShakerGUI.getDisplayParameters();
         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
-                SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
-                SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                
+        ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+        SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
+        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+
         Peptide peptide = peptideMatch.getPeptide();
-        
+
         String[] fixedModifications = DisplayFeaturesGenerator.getDisplayedModifications(
                 peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayParameters.getDisplayedModifications());
-                
-        PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
+
+        PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
         String[] confidentLocations = DisplayFeaturesGenerator.getFilteredConfidentModificationsSites(ptmScores, displayParameters.getDisplayedModifications(), peptide.getSequence().length());
         String[] representativeAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayParameters.getDisplayedModifications(), peptide.getSequence().length());
-       
+
         String modName = ptm.getName();
 
         for (int i = 0; i < mainSelection.length; i++) {
-            
+
             int aa = i + 1;
-            
+
             if (mainSelection[i]) {
-                
+
                 confidentLocations[aa] = modName;
-                
+
             } else if (confidentLocations[aa].equals(modName)) {
-                
+
                 confidentLocations[aa] = null;
-                
+
             }
 
             if (secondarySelection[i]) {
-                
+
                 representativeAmbiguousLocations[aa] = modName;
-                
+
             } else if (representativeAmbiguousLocations[aa].equals(modName)) {
-                
+
                 representativeAmbiguousLocations[aa] = null;
-            
+
             }
         }
 
-        String taggedModifiedSequence = PeptideUtils.getTaggedModifiedSequence(peptide, modificationParameters, 
+        String taggedModifiedSequence = PeptideUtils.getTaggedModifiedSequence(peptide, modificationParameters,
                 peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters),
                 peptide.getIndexedVariableModifications(), confidentLocations, representativeAmbiguousLocations, null, fixedModifications, true, true, true);
         sequenceLabel.setText(taggedModifiedSequence);
@@ -365,7 +358,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     return row + 1;
                 } else {
                     int psmNumber = row;
-                    PSModificationScores psmScores = (PSModificationScores) psms.get(psmNumber).getUrParam(PSModificationScores.dummy);
+                    PSModificationScores psmScores = (PSModificationScores) psms.get(psmNumber).getUrParam(new PSModificationScores());
                     if (psmScores != null) {
                         ModificationScoring psmScoring = psmScores.getModificationScoring(ptm.getName());
                         if (psmScoring != null) {
@@ -449,7 +442,6 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         ptmSitePanel.setOpaque(false);
 
         ptmSiteTableScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        ptmSiteTableScrollPane.setOpaque(false);
 
         ptmSiteTable.setModel(new SiteSelectionTable());
         ptmSiteTable.setFillsViewportHeight(true);
@@ -457,7 +449,6 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         ptmSiteTableScrollPane.setViewportView(ptmSiteTable);
 
         ptmsTableScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        ptmsTableScrollPane.setOpaque(false);
 
         ptmsTable.setModel(new PtmTable());
         ptmsTable.setOpaque(false);
