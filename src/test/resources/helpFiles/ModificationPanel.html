@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+    <HEAD>
+        <TITLE></TITLE>
+    </HEAD>
+    <BODY>
+        <a name="#top"/>
+        <H2>Modification Analysis</H2>
+
+        <ul>
+            <li><a href='#Introduction'>Introduction</a></li>
+            <li><a href='#Selection'>Modification Selection</a></li>
+            <li><a href='#Peptides'>Peptides</a></li>
+            <li><a href='#RelatedPeptides'>Related Peptides</a></li>
+            <li><a href='#PSMs'>PSMs</a></li>
+            <li><a href='#RelatedPSMs'>Related PSMs</a></li>
+            <li><a href='#Spectrum'>Spectrum and Fragment Ions</a></li>
+            <li><a href='#Modification_Table'>Modification Table</a></li>
+        </ul>
+
+        <a name="#Introduction"></a>
+        <h3>Introduction</h3>
+        <p align="justify">
+            The <i>Modifications tab</i> is dedicated to peptide-level post-translational modifications (PTM) analysis. 
+            The modification of interest is selected in the top left corner and the modified peptides present in the dataset will be displayed.
+            <br>
+            The modification location displayed here is also displayed in the <i>Overview</i> tab and the <i>3D Structure</i> tab. For example, 
+            it is possible to verify here the correctness of the phosphorylation status of a peptide and to visualize it 
+            on the sequence in the tables in the <i>Overview</i> tab or on the 3D structure in the <i>3D Structure</i> tab. Finally, you can confront 
+            your results with data in <a href="http://www.uniprot.org">UniProt</a> using the <i>Annotation</i> tab.
+        </p>
+        <br>
+        <a href="#top">More on Modifications</a>
+        <br><br><br>
+        
+        <a name="#Selection"></a>
+        <h3>Modification Selection</h3>
+        <p align="justify">
+            The modification of choice can be selected. Note that for the sake of simplicity only variable modifications are 
+            displayed in <b>PeptideShaker</b>. Modifications are color coded and the colors can be edited in this table or in 
+            the <i>Search Parameters</i> accessible from the <i>Edit</i> menu.
+        </p>
+        <br>
+        <a href="#top">More on Modifications</a>
+        <br><br><br>
+
+        <a name="#Peptides"></a>
+        <h3>Modified Peptides</h3>
+        <p align="justify">
+            All peptides found in the dataset with the selected variable modification are listed in the <i>Modified Peptides</i> table. 
+            The peptide inference status is displayed like in the <i>Overview</i> tab. Then, the sequence is displayed with the 
+            selected modification location confidence color coded. Note that the peptide modification status is deduced from the PSMs' modification status.
+            <br>
+            The confidence in the modification site assignment is color coded based on the modification location scores:
+        </p>
+
+        <ul>
+            <li> 
+                <b>delta score:</b> the delta score indicates the confidence in the site assignment by the search engine.
+            </li>
+            <li> 
+                <b>A-score:</b> the A-score tries to find the most likely modification site and then estimates a score relative to the 
+                second likely modification site. The A-score is computed only for singly modified peptides and strongly relies on 
+                the annotation settings used for spectrum annotation. The spectrum annotation settings can be accessed from the 
+                <i>Edit</i> menu. For more information about the A-score see <a href="http://www.ncbi.nlm.nih.gov/pubmed/16964243">Beausoleil et al</a>.
+            </li> 
+        </ul>
+
+        <p align="justify">
+            When both scores confidently agree on the modification site, the modification is labeled as "Very Confident"; if the A-score is confident 
+            but disagrees with the search engine's best assumption, the modification is labeled as "Confident"; if the A-score is not confident 
+            and the delta score is, the location is labeled as "Doubtful"; finally if no score is confident, the modification is labeled 
+            as "Random".
+            <br><br>
+            The scores are annotated on the sequence on the right of the table, the delta score on the top of the selected amino acid 
+            and the A-score below.
+            <br><br>
+            The confidence and validation status of the selected peptide is diplayed as in the <i>Overview</i> tab.
+        </p>
+        <br>
+        <a href="#top">More on Modifications</a>
+        <br><br><br>
+
+        <a name="#RelatedPeptides"></a>
+        <h3>Related Peptides</h3>
+        <p align="justify">
+            Whenever a peptide sequence contains or is contained by the selected peptide sequence, this peptide is displayed in the 
+            <i>Related Peptides</i> table. For instance, non-modified peptides or miscleaved peptides will be displayed and may help to 
+            validate the identification and modification status of the selected peptide.
+            <br><br>
+            The structure of the <i>Related Peptides</i> table is similar to the <i>Modified Peptides</i> table.
+        </p>
+        <br>
+        <a href="#top">More on Modifications</a>
+        <br><br><br>
+
+        <a name="#PSMs"></a>
+        <h3>Peptide to Spectrum Matches (PSMs)</h3>
+        <p align="justify">
+            The Peptide to Spectrum Matches (PSMs) linking to the selected peptide are displayed in the PSM table. The modification location 
+            score of these PSMs will make the peptide score. If you select a row in the PSM table, the corresponding spectrum will 
+            be displayed.
+        </p>
+        <br>
+        <a href="#top">More on Modifications</a>
+        <br><br><br>
+
+        <a name="#RelatedPSMs"></a>
+        <h3>Related Peptide to Spectrum Matches</h3>
+        <p align="justify">
+            The Peptide to Spectrum Matches (PSMs) linking to the selected related peptide are displayed in the related PSM table. 
+            The spectrum of the PSM is displayed when clicking on the row of interest.
+        </p>
+        <br>
+        <a href="#top">More on Modifications</a>
+        <br><br><br>
+
+        <a name="#Spectrum"></a>
+        <h3>Spectrum and Fragment Ions</h3>
+        <p align="justify">
+            The spectrum of the selected PSM will be displayed with the peaks annotated according to the ion annotation settings. 
+            Note that the peak annotation has a dramatic effect on the A-score. It is important to carefully tune the annotation 
+            settings when inspecting a doubtful peptide.
+            <br><br>
+            For more information on how to interact with the spectrum see the help option in the menu below the spectrum.
+        </p>
+        <br>
+        <a href="#top">More on Modifications</a>
+        <br><br><br>
+        
+        <a name="#Modification_Table"></a>
+        <h3>Modification Table</h3>
+        <p align="justify">
+            (to be added...)
+        </p>
+        <br>
+        <a href="#top">More on Modifications</a>
+        <br><br>
+    </BODY>
+</HTML>

@@ -378,16 +378,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param args the arguments
      */
     public static void main(String[] args) {
-        
+
         // turn off the zoodb logging
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
         ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.zoodb");
         logger.setLevel(Level.toLevel("ERROR"));
-        
+
         logger = loggerContext.getLogger("org.springframework");
         logger.setLevel(Level.toLevel("ERROR"));
-        
+
         // set the look and feel
         boolean numbusLookAndFeelSet = false;
 
@@ -3984,7 +3984,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             sequenceCoverageJCheckBoxMenuItem.setSelected(true);
 
             // display the variable modifications
-            getDisplayParameters().setDefaultSelection(getIdentificationParameters().getSearchParameters().getModificationParameters());
+            ArrayList<String> allVariableMods = modificationFactory.getModifications();
+            for (String tempFixed : getIdentificationParameters().getSearchParameters().getModificationParameters().getFixedModifications()) {
+                allVariableMods.remove(tempFixed);
+            }
+
+            getDisplayParameters().setDefaultSelection(allVariableMods);
 
             overviewPanel.setDisplayOptions(true, true, true, true);
             overviewPanel.updateSeparators();
@@ -4555,15 +4560,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     /**
      * Sets the mass spectrometry file handler.
-     * 
+     *
      * @param msFileHandler The mass spectrometry file handler.
      */
     public void setMsFileHandler(
             MsFileHandler msFileHandler
     ) {
-   
+
         psdbParent.setMsFileHandler(msFileHandler);
-    
+
     }
 
     /**
@@ -5319,8 +5324,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * Set whether the current data has been saved to a psdb file or not.
      *
-     * @param dataSaved whether the current data has been saved to a psdb file or
-     * not
+     * @param dataSaved whether the current data has been saved to a psdb file
+     * or not
      */
     public void setDataSaved(boolean dataSaved) {
 
@@ -7000,7 +7005,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (selectedFile != null) {
 
-                try ( SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
+                try (SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
 
                     for (long spectrumMatchKey : selectedSpectra) {
 
@@ -7071,7 +7076,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                 TagSpectrumAnnotator tagSpectrumAnnotator = new TagSpectrumAnnotator();
 
-                try ( SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
+                try (SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
 
                     for (long spectrumMatchKey : selectedAssumptions.keySet()) {
 

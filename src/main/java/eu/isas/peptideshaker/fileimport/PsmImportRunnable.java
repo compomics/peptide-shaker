@@ -29,7 +29,6 @@ import com.compomics.util.experiment.io.identification.idfilereaders.OnyaseIdfil
 import com.compomics.util.experiment.io.identification.idfilereaders.PepxmlIdfileReader;
 import com.compomics.util.experiment.io.identification.idfilereaders.TideIdfileReader;
 import com.compomics.util.experiment.io.identification.idfilereaders.XTandemIdfileReader;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
@@ -379,13 +378,10 @@ public class PsmImportRunnable implements Runnable {
             int advocateId = entry.getKey();
 
             if (advocateId == Advocate.xtandem.getIndex()) {
-
                 PsmImporter.verifyXTandemModifications(identificationParameters);
-
             }
 
             TreeMap<Double, ArrayList<PeptideAssumption>> assumptionsForAdvocate = entry.getValue();
-
             TreeSet<Double> scores = new TreeSet<>(assumptionsForAdvocate.keySet());
 
             for (double score : scores) {
@@ -398,18 +394,19 @@ public class PsmImportRunnable implements Runnable {
                 for (PeptideAssumption peptideAssumption : oldAssumptions) {
 
                     Peptide peptide = peptideAssumption.getPeptide();
-
                     String peptideSequence = peptide.getSequence();
 
                     // Ignore peptides that are too long or too short
-                    if (peptideSequence.length() >= peptideAssumptionFilter.getMinPepLength() && peptideSequence.length() <= peptideAssumptionFilter.getMaxPepLength()) {
+                    if (peptideSequence.length() >= peptideAssumptionFilter.getMinPepLength()
+                            && peptideSequence.length() <= peptideAssumptionFilter.getMaxPepLength()) {
 
                         // Map peptide to protein
                         proteinMapping(peptide);
 
-                        // map the algorithm specific modifications on utilities modifications
+                        // map the algorithm-specific modifications to utilities modifications
                         // If there are not enough sites to put them all on the sequence, add an unknown modification
-                        // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based modifications
+                        // Note: this needs to be done for tag based assumptions as well since the protein mapping can 
+                        // return erroneous modifications for some pattern based modifications
                         ModificationParameters modificationParameters = searchParameters.getModificationParameters();
 
                         ModificationMatch[] modificationMatches = peptide.getVariableModifications();
@@ -420,7 +417,6 @@ public class PsmImportRunnable implements Runnable {
                         for (ModificationMatch modMatch : modificationMatches) {
 
                             HashMap<Integer, HashSet<String>> tempNames = new HashMap<>(modificationMatches.length);
-
                             String seMod = modMatch.getModification();
 
                             if (fileReader instanceof OMSSAIdfileReader) {
@@ -428,36 +424,26 @@ public class PsmImportRunnable implements Runnable {
                                 OmssaParameters omssaParameters = (OmssaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.omssa.getIndex());
 
                                 if (!omssaParameters.hasModificationIndexes()) {
-
                                     throw new IllegalArgumentException("OMSSA modification indexes not set in the search parameters.");
-
                                 }
 
                                 int omssaIndex;
 
                                 try {
-
                                     omssaIndex = Integer.parseInt(seMod);
-
                                 } catch (Exception e) {
-
-                                    throw new IllegalArgumentException("Impossible to parse OMSSA modification index " + seMod + ".");
-
+                                    throw new IllegalArgumentException(
+                                            "Impossible to parse OMSSA modification index " + seMod + ".");
                                 }
 
                                 String omssaName = omssaParameters.getModificationName(omssaIndex);
 
                                 if (omssaName == null) {
-
                                     if (!ignoredModifications.contains(omssaIndex)) {
-
                                         waitingHandler.appendReport("Impossible to find OMSSA modification of index "
                                                 + omssaIndex + ". The corresponding peptides will be ignored.", true, true);
-
                                         ignoredModifications.add(omssaIndex);
-
                                     }
-
                                 }
 
                                 Modification modification = modificationFactory.getModification(omssaName);
@@ -468,7 +454,8 @@ public class PsmImportRunnable implements Runnable {
                                         peptide,
                                         MOD_MASS_TOLERANCE,
                                         sequenceProvider,
-                                        modificationSequenceMatchingPreferences
+                                        modificationSequenceMatchingPreferences,
+                                        searchParameters
                                 );
 
                             } else if (fileReader instanceof AndromedaIdfileReader) {
@@ -476,34 +463,26 @@ public class PsmImportRunnable implements Runnable {
                                 AndromedaParameters andromedaParameters = (AndromedaParameters) searchParameters.getIdentificationAlgorithmParameter(Advocate.andromeda.getIndex());
 
                                 if (!andromedaParameters.hasModificationIndexes()) {
-
-                                    throw new IllegalArgumentException("Andromeda modification indexes not set in the search parameters.");
-
+                                    throw new IllegalArgumentException(
+                                            "Andromeda modification indexes not set in the search parameters.");
                                 }
 
                                 int andromedaIndex;
 
                                 try {
-
                                     andromedaIndex = Integer.parseInt(seMod);
-
                                 } catch (Exception e) {
-
-                                    throw new IllegalArgumentException("Impossible to parse Andromeda modification index " + seMod + ".");
-
+                                    throw new IllegalArgumentException(
+                                            "Impossible to parse Andromeda modification index " + seMod + ".");
                                 }
 
                                 String andromedaName = andromedaParameters.getModificationName(andromedaIndex);
 
                                 if (andromedaName == null) {
-
                                     if (!ignoredModifications.contains(andromedaIndex)) {
-
                                         waitingHandler.appendReport("Impossible to find Andromeda modification of index "
                                                 + andromedaIndex + ". The corresponding peptides will be ignored.", true, true);
-
                                         ignoredModifications.add(andromedaIndex);
-
                                     }
                                 }
 
@@ -514,7 +493,8 @@ public class PsmImportRunnable implements Runnable {
                                         peptide,
                                         MOD_MASS_TOLERANCE,
                                         sequenceProvider,
-                                        modificationSequenceMatchingPreferences
+                                        modificationSequenceMatchingPreferences,
+                                        searchParameters
                                 );
 
                             } else if (fileReader instanceof MascotIdfileReader
@@ -523,7 +503,7 @@ public class PsmImportRunnable implements Runnable {
                                     || fileReader instanceof MzIdentMLIdfileReader
                                     || fileReader instanceof PepxmlIdfileReader
                                     || fileReader instanceof TideIdfileReader) {
-
+                                
                                 try {
 
                                     double modMass = Double.parseDouble(seMod.substring(0, seMod.indexOf('@')));
@@ -533,14 +513,17 @@ public class PsmImportRunnable implements Runnable {
                                             peptide,
                                             MOD_MASS_TOLERANCE,
                                             sequenceProvider,
-                                            modificationSequenceMatchingPreferences
+                                            modificationSequenceMatchingPreferences,
+                                            searchParameters
                                     );
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    throw new IllegalArgumentException("Impossible to parse \'" + seMod + "\' as a modification.\n"
-                                            + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in spectrum file "
-                                            + spectrumFile + ".\n" + "Identification file: " + idFile.getName());
+                                    throw new IllegalArgumentException(
+                                            "Impossible to parse \'" + seMod + "\' as a modification.\n"
+                                            + "Error encountered in peptide " + peptideSequence + " spectrum "
+                                            + spectrumTitle + " in spectrum file " + spectrumFile + ".\n"
+                                            + "Identification file: " + idFile.getName());
                                 }
 
                             } else if (fileReader instanceof DirecTagIdfileReader
@@ -550,9 +533,9 @@ public class PsmImportRunnable implements Runnable {
                                 Modification modification = modificationFactory.getModification(seMod);
 
                                 if (modification == null) {
-
-                                    throw new IllegalArgumentException("Modification not recognized spectrum " + spectrumTitle + " of file " + spectrumFile + ".");
-
+                                    throw new IllegalArgumentException(
+                                            "Modification not recognized spectrum "
+                                            + spectrumTitle + " of file " + spectrumFile + ".");
                                 }
 
                                 tempNames = ModificationUtils.getExpectedModifications(
@@ -561,13 +544,14 @@ public class PsmImportRunnable implements Runnable {
                                         peptide,
                                         MOD_MASS_TOLERANCE,
                                         sequenceProvider,
-                                        modificationSequenceMatchingPreferences
+                                        modificationSequenceMatchingPreferences,
+                                        searchParameters
                                 );
 
                             } else {
-
-                                throw new IllegalArgumentException("Modification mapping not implemented for the parsing of " + idFile.getName() + ".");
-
+                                throw new IllegalArgumentException(
+                                        "Modification mapping not implemented for the parsing of "
+                                        + idFile.getName() + ".");
                             }
 
                             HashSet<String> allNames = tempNames.values().stream()
@@ -581,27 +565,20 @@ public class PsmImportRunnable implements Runnable {
                                 ArrayList<String> namesAtPosition = expectedNames.get(pos);
 
                                 if (namesAtPosition == null) {
-
                                     namesAtPosition = new ArrayList<>(2);
                                     expectedNames.put(pos, namesAtPosition);
-
                                 }
 
                                 for (String modName : tempNames.get(pos)) {
-
                                     if (!namesAtPosition.contains(modName)) {
-
                                         namesAtPosition.add(modName);
-
                                     }
                                 }
                             }
                         }
 
                         if (peptide.getVariableModifications().length > 0) {
-
                             modificationLocalization(peptide, expectedNames, modNames);
-
                         }
 
                         if (peptideAssumptionFilter.validateModifications(
@@ -626,36 +603,24 @@ public class PsmImportRunnable implements Runnable {
                                 Integer count = proteinCount.get(protein);
 
                                 if (count != null) {
-
                                     proteinCount.put(protein, count + 1);
-
                                 } else {
-
                                     proteinCount.put(protein, 1);
-
                                 }
                             }
 
                         } else {
-
                             modificationIssue++;
-
                         }
                     } else {
-
                         peptideIssue++;
-
                     }
                 }
 
                 if (!newAssumptions.isEmpty()) {
-
                     assumptionsForAdvocate.put(score, newAssumptions);
-
                 } else {
-
                     assumptionsForAdvocate.remove(score);
-
                 }
             }
         }
@@ -702,10 +667,9 @@ public class PsmImportRunnable implements Runnable {
 
                         Modification modification = modificationFactory.getModification(modName);
 
-                        if (Math.abs(modification.getMass() - refMass) < searchParameters.getFragmentIonAccuracyInDaltons(MASS_PER_AA * peptideLength)) {
-
+                        if (Math.abs(modification.getMass() - refMass)
+                                < searchParameters.getFragmentIonAccuracyInDaltons(MASS_PER_AA * peptideLength)) {
                             filteredNamesAtSite.add(modName);
-
                         }
                     }
 
@@ -723,7 +687,8 @@ public class PsmImportRunnable implements Runnable {
 
                                     Modification tempModification = modificationFactory.getModification(tempName);
 
-                                    if (tempModification.getMass() == modification.getMass() && !tempModification.getModificationType().isNTerm()) {
+                                    if (tempModification.getMass() == modification.getMass()
+                                            && !tempModification.getModificationType().isNTerm()) {
 
                                         otherPossibleMod = true;
                                         break;

@@ -199,8 +199,8 @@ public class ModificationLocalizationScorer extends DbObject {
      * @param identification the identification object
      */
     private void attachProbabilisticScore(
-            SpectrumMatch spectrumMatch, 
-            SequenceProvider sequenceProvider, 
+            SpectrumMatch spectrumMatch,
+            SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
             IdentificationParameters identificationParameters,
             PeptideSpectrumAnnotator peptideSpectrumAnnotator,
@@ -235,7 +235,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
             if (!modificationsMap.containsKey(modMass)) {
 
-                ArrayList<Modification> modifications = modificationParameters.getSameMassNotFixedModifications(modMass).stream()
+                ArrayList<Modification> modifications = modificationFactory.getSameMassNotFixedModifications(modMass, searchParameters).stream()
                         .map(
                                 modification -> modificationFactory.getModification(modification)
                         )
@@ -258,16 +258,16 @@ public class ModificationLocalizationScorer extends DbObject {
             String spectrumFile = spectrumMatch.getSpectrumFile();
             String spectrumTitle = spectrumMatch.getSpectrumTitle();
             Spectrum spectrum = spectrumProvider.getSpectrum(
-                    spectrumFile, 
+                    spectrumFile,
                     spectrumTitle
             );
             SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
                     spectrumFile,
-                    spectrumTitle, 
+                    spectrumTitle,
                     bestPeptideAssumption,
-                    modificationParameters, 
-                    sequenceProvider, 
-                    modificationSequenceMatchingParameters, 
+                    modificationParameters,
+                    sequenceProvider,
+                    modificationSequenceMatchingParameters,
                     peptideSpectrumAnnotator
             );
 
@@ -278,16 +278,16 @@ public class ModificationLocalizationScorer extends DbObject {
                 if (scoringParameters.getSelectedProbabilisticScore() == ModificationLocalizationScore.PhosphoRS) {
 
                     scores = PhosphoRS.getSequenceProbabilities(
-                            peptide, 
-                            modificationsMap.get(modMass), 
-                            modificationParameters, 
-                            spectrum, 
-                            sequenceProvider, 
-                            annotationParameters, 
+                            peptide,
+                            modificationsMap.get(modMass),
+                            modificationParameters,
+                            spectrum,
+                            sequenceProvider,
+                            annotationParameters,
                             specificAnnotationParameters,
-                            scoringParameters.isProbabilisticScoreNeutralLosses(), 
+                            scoringParameters.isProbabilisticScoreNeutralLosses(),
                             sequenceMatchingParameters,
-                            modificationSequenceMatchingParameters, 
+                            modificationSequenceMatchingParameters,
                             peptideSpectrumAnnotator
                     );
 
@@ -396,12 +396,12 @@ public class ModificationLocalizationScorer extends DbObject {
      * @param peptideSpectrumAnnotator the spectrum annotator
      */
     public void scorePTMs(
-            Identification identification, 
-            SpectrumMatch spectrumMatch, 
-            SequenceProvider sequenceProvider, 
+            Identification identification,
+            SpectrumMatch spectrumMatch,
+            SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
             IdentificationParameters identificationParameters,
-            WaitingHandler waitingHandler, 
+            WaitingHandler waitingHandler,
             PeptideSpectrumAnnotator peptideSpectrumAnnotator
     ) {
 
@@ -413,10 +413,10 @@ public class ModificationLocalizationScorer extends DbObject {
         if (scoringParameters.isProbabilisticScoreCalculation()) {
 
             attachProbabilisticScore(
-                    spectrumMatch, 
-                    sequenceProvider, 
-                    spectrumProvider, 
-                    identificationParameters, 
+                    spectrumMatch,
+                    sequenceProvider,
+                    spectrumProvider,
+                    identificationParameters,
                     peptideSpectrumAnnotator,
                     identification
             );
@@ -433,9 +433,9 @@ public class ModificationLocalizationScorer extends DbObject {
      * @param waitingHandler the waiting handler, can be null
      */
     public void scorePTMs(
-            Identification identification, 
-            PeptideMatch peptideMatch, 
-            IdentificationParameters identificationParameters, 
+            Identification identification,
+            PeptideMatch peptideMatch,
+            IdentificationParameters identificationParameters,
             WaitingHandler waitingHandler
     ) {
 
@@ -930,8 +930,8 @@ public class ModificationLocalizationScorer extends DbObject {
             }
 
             HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(
-                    ambiguousSites, 
-                    nRepresentativesMap, 
+                    ambiguousSites,
+                    nRepresentativesMap,
                     inferredSites
             );
 
@@ -1027,8 +1027,7 @@ public class ModificationLocalizationScorer extends DbObject {
             }
             identification.removeObject(originalKey);
             identification.addObject(newKey, peptideMatch);
-        }
-        else {
+        } else {
             identification.updateObject(originalKey, peptideMatch);
         }
     }
@@ -1045,13 +1044,13 @@ public class ModificationLocalizationScorer extends DbObject {
      * @return a representative to secondary sites map
      */
     private HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> getRepresentativeToSecondaryMap(
-            TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousScoreToSiteMap, 
+            TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousScoreToSiteMap,
             HashMap<Double, Integer> nRepresentatives
     ) {
 
         return getRepresentativeToSecondaryMap(
-                ambiguousScoreToSiteMap, 
-                nRepresentatives, 
+                ambiguousScoreToSiteMap,
+                nRepresentatives,
                 null
         );
 
@@ -1071,8 +1070,8 @@ public class ModificationLocalizationScorer extends DbObject {
      * @return a representative to secondary sites map
      */
     private HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> getRepresentativeToSecondaryMap(
-            TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousScoreToSiteMap, 
-            HashMap<Double, Integer> nRepresentativesMap, 
+            TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousScoreToSiteMap,
+            HashMap<Double, Integer> nRepresentativesMap,
             HashMap<Double, HashMap<Integer, HashSet<String>>> preferentialSites
     ) {
 
@@ -1481,10 +1480,10 @@ public class ModificationLocalizationScorer extends DbObject {
      * @param waitingHandler the waiting handler, can be null
      */
     public void scorePTMs(
-            Identification identification, 
-            ProteinMatch proteinMatch, 
-            IdentificationParameters identificationParameters, 
-            boolean scorePeptides, 
+            Identification identification,
+            ProteinMatch proteinMatch,
+            IdentificationParameters identificationParameters,
+            boolean scorePeptides,
             WaitingHandler waitingHandler
     ) {
 
@@ -1671,13 +1670,13 @@ public class ModificationLocalizationScorer extends DbObject {
      * @param exceptionHandler handler for exceptions
      */
     public void scorePsmPtms(
-            Identification identification, 
-            SequenceProvider sequenceProvider, 
+            Identification identification,
+            SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
             IdentificationParameters identificationParameters,
-            Metrics metrics, 
-            ProcessingParameters processingParameters, 
-            WaitingHandler waitingHandler, 
+            Metrics metrics,
+            ProcessingParameters processingParameters,
+            WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
     ) {
 
@@ -1691,17 +1690,17 @@ public class ModificationLocalizationScorer extends DbObject {
 
                     PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                     scorePTMs(
-                            identification, 
-                            spectrumMatch, 
-                            sequenceProvider, 
+                            identification,
+                            spectrumMatch,
+                            sequenceProvider,
                             spectrumProvider,
-                            identificationParameters, 
-                            waitingHandler, 
+                            identificationParameters,
+                            waitingHandler,
                             peptideSpectrumAnnotator
                     );
                     modificationSiteInference(
-                            spectrumMatch, 
-                            sequenceProvider, 
+                            spectrumMatch,
+                            sequenceProvider,
                             identificationParameters
                     );
 
@@ -1725,8 +1724,8 @@ public class ModificationLocalizationScorer extends DbObject {
      * @param identificationParameters the identification parameters
      */
     public void scorePeptidePtms(
-            Identification identification, 
-            WaitingHandler waitingHandler, 
+            Identification identification,
+            WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters
     ) {
 
@@ -1741,9 +1740,9 @@ public class ModificationLocalizationScorer extends DbObject {
                 .forEach(peptideMatch -> {
 
                     scorePTMs(
-                            identification, 
-                            peptideMatch, 
-                            identificationParameters, 
+                            identification,
+                            peptideMatch,
+                            identificationParameters,
                             waitingHandler
                     );
 
@@ -1769,9 +1768,9 @@ public class ModificationLocalizationScorer extends DbObject {
      * @param waitingHandler waiting handler displaying progress to the user
      */
     public void peptideInference(
-            Identification identification, 
-            SequenceProvider sequenceProvider, 
-            IdentificationParameters identificationParameters, 
+            Identification identification,
+            SequenceProvider sequenceProvider,
+            IdentificationParameters identificationParameters,
             WaitingHandler waitingHandler
     ) {
 
@@ -2201,9 +2200,9 @@ public class ModificationLocalizationScorer extends DbObject {
                                                         if (modification.getMass() == modMass) {
 
                                                             int[] possibleSites = ModificationUtils.getPossibleModificationSites(
-                                                                    peptide, 
-                                                                    modification, 
-                                                                    sequenceProvider, 
+                                                                    peptide,
+                                                                    modification,
+                                                                    sequenceProvider,
                                                                     modificationSequenceMatchingParameters
                                                             );
 
@@ -2252,7 +2251,7 @@ public class ModificationLocalizationScorer extends DbObject {
                         }
 
                         HashMap<Integer, Integer> mapping = ModificationSiteMapping.align(
-                                nonConfidentMatches.keySet(), 
+                                nonConfidentMatches.keySet(),
                                 newLocalizationCandidates
                         );
 
@@ -2280,9 +2279,9 @@ public class ModificationLocalizationScorer extends DbObject {
                                         if (modification.getMass() == modMass) {
 
                                             int[] possibleSites = ModificationUtils.getPossibleModificationSites(
-                                                    peptide, 
-                                                    modification, 
-                                                    sequenceProvider, 
+                                                    peptide,
+                                                    modification,
+                                                    sequenceProvider,
                                                     modificationSequenceMatchingParameters
                                             );
 
@@ -2339,8 +2338,8 @@ public class ModificationLocalizationScorer extends DbObject {
      * @param identificationParameters the identification parameters
      */
     public void modificationSiteInference(
-            SpectrumMatch spectrumMatch, 
-            SequenceProvider sequenceProvider, 
+            SpectrumMatch spectrumMatch,
+            SequenceProvider sequenceProvider,
             IdentificationParameters identificationParameters
     ) {
 
@@ -2384,7 +2383,10 @@ public class ModificationLocalizationScorer extends DbObject {
 
                 if (!maybeNotTerminal) {
 
-                    for (String otherModName : modificationParameters.getAllNotFixedModifications()) {
+                    ArrayList<String> expectedModifications = 
+                            modificationFactory.getExpectedVariableModifications(searchParameters);
+
+                    for (String otherModName : expectedModifications) {
 
                         if (!otherModName.equals(modName)) {
 
@@ -2404,16 +2406,16 @@ public class ModificationLocalizationScorer extends DbObject {
 
                     modOccurence.add(modificationMatch);
 
-                    for (String similarModName : modificationParameters.getSameMassNotFixedModifications(modMass)) {
+                    for (String similarModName : modificationFactory.getSameMassNotFixedModifications(modMass, searchParameters)) {
 
                         Modification similarModification = modificationFactory.getModification(similarModName);
 
                         if (modification.getMass() == modMass) {
 
                             int[] possibleSites = ModificationUtils.getPossibleModificationSites(
-                                    psPeptide, 
-                                    similarModification, 
-                                    sequenceProvider, 
+                                    psPeptide,
+                                    similarModification,
+                                    sequenceProvider,
                                     identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters()
                             );
 

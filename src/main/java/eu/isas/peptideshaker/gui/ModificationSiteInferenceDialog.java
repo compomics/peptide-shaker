@@ -37,7 +37,7 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class PtmSiteInferenceDialog extends javax.swing.JDialog {
+public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
 
     /**
      * The main GUI.
@@ -84,7 +84,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      * @param peptideKey the peptide key of the investigated peptide
      * @param ptm the PTM investigated
      */
-    public PtmSiteInferenceDialog(PeptideShakerGUI peptideShakerGUI, long peptideKey, Modification ptm) {
+    public ModificationSiteInferenceDialog(PeptideShakerGUI peptideShakerGUI, long peptideKey, Modification ptm) {
         super(peptideShakerGUI, true);
 
         this.peptideShakerGUI = peptideShakerGUI;
@@ -442,7 +442,6 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         ptmSitePanel.setOpaque(false);
 
         ptmSiteTableScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        ptmSiteTableScrollPane.setOpaque(false);
 
         ptmSiteTable.setModel(new SiteSelectionTable());
         ptmSiteTable.setFillsViewportHeight(true);
@@ -450,7 +449,6 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         ptmSiteTableScrollPane.setViewportView(ptmSiteTable);
 
         ptmsTableScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        ptmsTableScrollPane.setOpaque(false);
 
         ptmsTable.setModel(new PtmTable());
         ptmsTable.setOpaque(false);
