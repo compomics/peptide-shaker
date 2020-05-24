@@ -2820,6 +2820,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         if (spectrumMatch != null) {
 
+            // @TODO: should be sorted on confidence not score!
             // sort peptides by score, tool, and sequence
             HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptions = spectrumMatch.getPeptideAssumptionsMap();
             TreeMap<Double, TreeMap<Integer, TreeMap<String, ArrayList<PeptideAssumption>>>> peptideAssumptionsByScore = new TreeMap<>();
@@ -2863,6 +2864,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             }
 
+            // @TODO: should be sorted on confidence not score!
             // sort tags by score, tool, and sequence
             HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> tagAssumptions = spectrumMatch.getTagAssumptionsMap();
             TreeMap<Double, TreeMap<Integer, TreeMap<String, ArrayList<TagAssumption>>>> tagAssumptionsByScore = new TreeMap<>();
