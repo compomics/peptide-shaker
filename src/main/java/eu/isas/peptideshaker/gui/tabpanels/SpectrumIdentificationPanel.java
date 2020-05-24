@@ -2643,7 +2643,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         TreeMap<String, TreeSet<String>> result = new TreeMap<>();
         TreeSet<String> spectrumTitles = new TreeSet<>();
-        
+
         spectrumTitles.add(getSelectedSpectrumTitle());
         result.put(fileSelected, spectrumTitles);
 
@@ -2690,7 +2690,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         } else {
 
             selectSpectrum(
-                    spectrumFile, 
+                    spectrumFile,
                     spectrumTitle
             );
 
@@ -2705,7 +2705,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerGUI.setSelectedItems(
                 NO_KEY,
                 NO_KEY,
-                fileSelected, 
+                fileSelected,
                 getSelectedSpectrumTitle()
         );
     }
@@ -2832,9 +2832,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         if (spectrumMatch != null) {
 
-            // sort peptides by score, tool, and sequence
+            // sort peptides by pep, tool, and sequence
             HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptions = spectrumMatch.getPeptideAssumptionsMap();
-            TreeMap<Double, TreeMap<Integer, TreeMap<String, ArrayList<PeptideAssumption>>>> peptideAssumptionsByScore = new TreeMap<>();
+            TreeMap<Double, TreeMap<Integer, TreeMap<String, ArrayList<PeptideAssumption>>>> peptideAssumptionsByPep = new TreeMap<>();
 
             for (Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry1 : peptideAssumptions.entrySet()) {
 
@@ -2842,22 +2842,31 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 for (Entry<Double, ArrayList<PeptideAssumption>> entry2 : entry1.getValue().entrySet()) {
 
-                    double score = entry2.getKey();
                     ArrayList<PeptideAssumption> assumptions = entry2.getValue();
 
-                    TreeMap<Integer, TreeMap<String, ArrayList<PeptideAssumption>>> mapAtScore = peptideAssumptionsByScore.get(score);
-
-                    if (mapAtScore == null) {
-
-                        mapAtScore = new TreeMap<>();
-                        peptideAssumptionsByScore.put(score, mapAtScore);
-
-                    }
-
-                    TreeMap<String, ArrayList<PeptideAssumption>> toolMap = new TreeMap<>();
-                    mapAtScore.put(tool, toolMap);
-
                     for (PeptideAssumption peptideAssumption : assumptions) {
+
+                        PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
+
+                        double pep = psParameter.getProbability();
+
+                        TreeMap<Integer, TreeMap<String, ArrayList<PeptideAssumption>>> mapAtPep = peptideAssumptionsByPep.get(pep);
+
+                        if (mapAtPep == null) {
+
+                            mapAtPep = new TreeMap<>();
+                            peptideAssumptionsByPep.put(pep, mapAtPep);
+
+                        }
+
+                        TreeMap<String, ArrayList<PeptideAssumption>> toolMap = mapAtPep.get(tool);
+
+                        if (toolMap == null) {
+
+                            toolMap = new TreeMap<>();
+                            mapAtPep.put(tool, toolMap);
+
+                        }
 
                         String sequence = peptideAssumption.getPeptide().getSequence();
                         ArrayList<PeptideAssumption> sequenceAssumptions = toolMap.get(sequence);
@@ -2875,51 +2884,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             }
 
-            // sort tags by score, tool, and sequence
-            HashMap<Integer, TreeMap<Double, ArrayList<TagAssumption>>> tagAssumptions = spectrumMatch.getTagAssumptionsMap();
-            TreeMap<Double, TreeMap<Integer, TreeMap<String, ArrayList<TagAssumption>>>> tagAssumptionsByScore = new TreeMap<>();
-
-            for (Entry<Integer, TreeMap<Double, ArrayList<TagAssumption>>> entry1 : tagAssumptions.entrySet()) {
-
-                int tool = entry1.getKey();
-
-                for (Entry<Double, ArrayList<TagAssumption>> entry2 : entry1.getValue().entrySet()) {
-
-                    double score = entry2.getKey();
-                    ArrayList<TagAssumption> assumptions = entry2.getValue();
-
-                    TreeMap<Integer, TreeMap<String, ArrayList<TagAssumption>>> mapAtScore = tagAssumptionsByScore.get(score);
-
-                    if (mapAtScore == null) {
-
-                        mapAtScore = new TreeMap<>();
-                        tagAssumptionsByScore.put(score, mapAtScore);
-
-                    }
-
-                    TreeMap<String, ArrayList<TagAssumption>> toolMap = new TreeMap<>();
-                    mapAtScore.put(tool, toolMap);
-
-                    for (TagAssumption tagAssumption : assumptions) {
-
-                        String sequence = tagAssumption.getTag().asSequence();
-                        ArrayList<TagAssumption> sequenceAssumptions = toolMap.get(sequence);
-
-                        if (sequenceAssumptions == null) {
-
-                            sequenceAssumptions = new ArrayList<>(1);
-                            toolMap.put(sequence, sequenceAssumptions);
-
-                        }
-
-                        sequenceAssumptions.add(tagAssumption);
-
-                    }
-                }
-            }
-
             // Add peptides to the list to display
-            peptideAssumptionsByScore.values().stream()
+            peptideAssumptionsByPep.values().stream()
                     .flatMap(
                             subMap -> subMap.values().stream()
                     )
@@ -2937,7 +2903,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 if (peptideShakerGUI.getIdentificationParameters().getPeptideAssumptionFilter().validatePeptide(
                                         peptide,
                                         peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters(),
-                                        peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters())) {
+                                        peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters()
+                                )) {
 
                                     if (vallidatedPsmsCheckBox.isSelected()) {
 
@@ -2961,16 +2928,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             }
                     );
 
-            // Add tags to the list to display
-            tagAssumptionsByScore.values().stream()
+            // Add tags to the list to display. Scores cannot be compared between algorithms so keep sorting by tool.
+            spectrumMatch.getTagAssumptionsMap().values().stream()
                     .flatMap(
                             subMap -> subMap.values().stream()
                     )
                     .flatMap(
-                            subMap -> subMap.values().stream()
-                    )
-                    .flatMap(
-                            assumptionList -> assumptionList.stream()
+                            array -> array.stream()
                     )
                     .forEach(
                             tagAssumption -> {
