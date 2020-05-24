@@ -52,6 +52,11 @@ import java.util.stream.Stream;
 public class ModificationLocalizationScorer extends DbObject {
 
     /**
+     * The compomics modification factory.
+     */
+    private ModificationFactory modificationFactory = ModificationFactory.getInstance();
+    
+    /**
      * Constructor.
      */
     public ModificationLocalizationScorer() {

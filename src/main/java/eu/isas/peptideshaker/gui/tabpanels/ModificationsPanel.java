@@ -89,7 +89,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
      */
     private enum TableIndex {
 
-        MODIFIED_PEPTIDES_TABLE, RELATED_PEPTIDES_TABLE, MODIFIED_PSMS_TABLE, 
+        MODIFIED_PEPTIDES_TABLE, RELATED_PEPTIDES_TABLE, MODIFIED_PSMS_TABLE,
         RELATED_PSMS_TABLE, MODIFICATION__TABLE, A_SCORES_TABLE, DELTA_SCORES_TABLE
     };
     /**
@@ -3425,11 +3425,11 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
                     ((DefaultTableModel) modificationJTable.getModel()).addRow(
                             new Object[]{
-                                Color.lightGray, 
+                                Color.lightGray,
                                 NO_MODIFICATION,
                                 peptideMap.get(NO_MODIFICATION).size()
                             });
-                    
+
                     ((TitledBorder) modificationLayeredPanel.getBorder()).setTitle(
                             PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                             + "Variable Modifications (" + modificationJTable.getRowCount() + ")");
@@ -4542,7 +4542,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
 
                 case 4:
-                    
+
                     PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
                     if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
                         ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
@@ -4648,7 +4648,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                             );
 
                 case 4:
-                    
+
                     PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
                     if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
                         ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
@@ -4776,7 +4776,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                                     true
                             );
                 case 3:
-                   PSModificationScores ptmScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
+                    PSModificationScores ptmScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
                     if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
                         ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
                         return ptmScoring.getMinimalLocalizationConfidence();
@@ -5359,7 +5359,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
                         long spectrumMatchKey = peptideMatch.getSpectrumMatchesKeys()[i];
                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
-                       PSModificationScores ptmScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
+                        PSModificationScores modificationScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
                         ((DefaultTableModel) psmAScoresTable.getModel()).addRow(new Object[]{(i + 1)});
                         ((DefaultTableModel) psmDeltaScoresTable.getModel()).addRow(new Object[]{(i + 1)});
 

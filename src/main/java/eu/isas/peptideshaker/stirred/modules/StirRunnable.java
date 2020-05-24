@@ -391,6 +391,7 @@ public class StirRunnable implements Runnable {
             PeptideAssumption peptideAssumption
     ) {
 
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
         AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
         SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
@@ -412,7 +413,7 @@ public class StirRunnable implements Runnable {
 
             if (!modificationsMap.containsKey(modMass)) {
 
-                ArrayList<Modification> modifications = modificationParameters.getSameMassNotFixedModifications(modMass)
+                ArrayList<Modification> modifications = modificationFactory.getSameMassNotFixedModifications(modMass, searchParameters)
                         .stream()
                         .map(
                                 modification -> modificationFactory.getModification(modification)
