@@ -717,20 +717,30 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         int proteinRow = 0;
         long proteinKey = peptideShakerGUI.getSelectedProteinKey();
         long peptideKey = peptideShakerGUI.getSelectedPeptideKey();
-        long psmKey = peptideShakerGUI.getSelectedPsmKey();
+        String spectrumFile = peptideShakerGUI.getSelectedSpectrumFile();
+        String spectrumTitle = peptideShakerGUI.getSelectedSpectrumTitle();
+        
         Identification identification = peptideShakerGUI.getIdentification();
 
         if (proteinKey == NO_KEY
                 && peptideKey == NO_KEY
-                && psmKey != NO_KEY) {
+                && spectrumFile != null
+                && spectrumTitle != null
+                ) {
+            
+            long psmKey = SpectrumMatch.getKey(spectrumFile, spectrumTitle);
             SpectrumMatch spectrumMatch = (SpectrumMatch) peptideShakerGUI.getIdentification().retrieveObject(psmKey);
+            
             if (spectrumMatch.getBestPeptideAssumption() != null) {
+
                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                 peptideKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
+
             }
         }
 
-        if (proteinKey == NO_KEY && peptideKey != NO_KEY) {
+        if (proteinKey == NO_KEY 
+                && peptideKey != NO_KEY) {
 
             final long peptideKeyFinal = peptideKey;
             ProteinMatch tempProteinMatch = identification.getProteinIdentification().parallelStream()
@@ -742,7 +752,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
             if (tempProteinMatch != null) {
 
-                peptideShakerGUI.setSelectedItems(tempProteinMatch.getKey(), peptideKey, psmKey);
+                peptideShakerGUI.setSelectedItems(tempProteinMatch.getKey(), peptideKey, spectrumFile, spectrumTitle);
 
             }
         }
@@ -754,16 +764,22 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         }
 
         if (proteinKeys.length == 0) {
+            
             clearData();
             return;
+        
         }
 
         if (proteinRow == -1) {
+            
             peptideShakerGUI.resetSelectedItems();
+        
         } else if (proteinTable.getSelectedRow() != proteinRow) {
+        
             proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
             proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
             proteinTableKeyReleased(null);
+        
         }
     }
 
@@ -1764,7 +1780,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         long proteinKey = NO_KEY;
         long peptideKey = NO_KEY;
-        long psmKey = NO_KEY;
+        String spectrumFile = null;
+        String spectrumTitle = null;
 
         if (proteinTable.getSelectedRow() != -1) {
 
@@ -1778,12 +1795,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             // try to select the "best" psm for the selected peptide
             if (peptideKey != NO_KEY) {
 
-                psmKey = peptideShakerGUI.getDefaultPsmSelection(peptideKey);
+                long psmKey = peptideShakerGUI.getDefaultPsmSelection(peptideKey);
+                
+                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
+                spectrumFile = spectrumMatch.getSpectrumFile();
+                spectrumTitle = spectrumMatch.getSpectrumTitle();
 
             }
         }
 
-        peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
+        peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, spectrumFile, spectrumTitle);
     }
 
     /**

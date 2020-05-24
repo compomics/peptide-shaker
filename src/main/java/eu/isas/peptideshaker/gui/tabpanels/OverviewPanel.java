@@ -292,18 +292,31 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         fragmentIonsJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, ionTableCorner);
 
         // add table sorting listeners
-        SelfUpdatingTableModel.addSortListener(proteinTable, new ProgressDialogX(peptideShakerGUI, // @TODO: rightclicking the header should open the stats dialog
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true));
-        SelfUpdatingTableModel.addSortListener(peptideTable, new ProgressDialogX(peptideShakerGUI,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true));
-        SelfUpdatingTableModel.addSortListener(psmTable, new ProgressDialogX(peptideShakerGUI,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true));
+        SelfUpdatingTableModel.addSortListener(
+                proteinTable,
+                new ProgressDialogX(peptideShakerGUI, // @TODO: rightclicking the header should open the stats dialog
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true
+                )
+        );
+        SelfUpdatingTableModel.addSortListener(
+                peptideTable,
+                new ProgressDialogX(
+                        peptideShakerGUI,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true
+                )
+        );
+        SelfUpdatingTableModel.addSortListener(
+                psmTable,
+                new ProgressDialogX(
+                        peptideShakerGUI,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true
+                ));
 
         // add table scrolling listeners
         SelfUpdatingTableModel.addScrollListeners(proteinTable, proteinScrollPane, proteinScrollPane.getVerticalScrollBar());
@@ -2122,7 +2135,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
                 long proteinKey = proteinKeys[proteinIndex];
-                peptideShakerGUI.setSelectedItems(proteinKey, NO_KEY, NO_KEY);
+                peptideShakerGUI.setSelectedItems(proteinKey, NO_KEY, null, null);
 
                 // update the peptide selection
                 updatePeptideSelection(proteinIndex);
@@ -2211,7 +2224,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             int peptideIndex = tableModel.getViewIndex(row);
             long peptideKey = peptideKeys[peptideIndex];
 
-            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, NO_KEY);
+            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, null, null);
 
             // update the psm selection
             SwingUtilities.invokeLater(new Runnable() {
@@ -4916,7 +4929,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         );
                     } else {
 
-                        ArrayList<Spectrum> spectra = Arrays.stream(getSelectedSpectrumKeys())
+                        ArrayList<Spectrum> spectra = Arrays.stream(getSelectedPsmKeys())
                                 .mapToObj(
                                         key -> peptideShakerGUI.getIdentification().getSpectrumMatch(key)
                                 )
@@ -5445,7 +5458,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      *
      * @return the keys of the selected spectra in the PSM table
      */
-    public long[] getSelectedSpectrumKeys() {
+    public long[] getSelectedPsmKeys() {
 
         SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
 
@@ -5457,6 +5470,45 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         psmIndex -> psmKeys[psmIndex]
                 )
                 .toArray();
+
+            }
+
+    /**
+     * Returns the titles of the selected spectra in the PSM table in a map by
+     * file name.
+     *
+     * @return The titles of the selected spectra in the PSM table in a map by
+     * file name.
+     */
+    public TreeMap<String, TreeSet<String>> getSelectedSpectrumTitles() {
+
+        SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
+
+        TreeMap<String, TreeSet<String>> result = new TreeMap<>();
+
+        for (int row : psmTable.getSelectedRows()) {
+
+            long psmKey = psmKeys[tableModel.getViewIndex(row)];
+
+            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
+
+            String spectrumFile = spectrumMatch.getSpectrumFile();
+            String spectrumTitle = spectrumMatch.getSpectrumTitle();
+
+            TreeSet<String> spectrumTitles = result.get(spectrumFile);
+
+            if (spectrumTitles == null) {
+
+                spectrumTitles = new TreeSet<>();
+                result.put(spectrumFile, spectrumTitles);
+
+            }
+
+            spectrumTitles.add(spectrumTitle);
+
+        }
+
+        return result;
 
     }
 
@@ -6480,22 +6532,32 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         long proteinKey = peptideShakerGUI.getSelectedProteinKey();
         long peptideKey = peptideShakerGUI.getSelectedPeptideKey();
-        long psmKey = peptideShakerGUI.getSelectedPsmKey();
+        String spectrumFile = peptideShakerGUI.getSelectedSpectrumFile();
+        String spectrumTitle = peptideShakerGUI.getSelectedSpectrumTitle();
 
         if (proteinKey != NO_KEY) {
+
             int proteinRow = getProteinRow(proteinKey);
             proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
+
         }
 
         if (peptideKey != NO_KEY) {
+
             int peptideRow = getPeptideRow(peptideKey);
             peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
+
         }
 
-        if (psmKey != NO_KEY) {
+        if (spectrumFile != null && spectrumTitle != null) {
+
+            long psmKey = SpectrumMatch.getKey(spectrumFile, spectrumTitle);
             int psmRow = getPsmRow(psmKey);
+
             if (psmRow < psmTable.getRowCount()) {
+
                 psmTable.setRowSelectionInterval(psmRow, psmRow);
+
             }
         }
     }
@@ -6512,12 +6574,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         Identification identification = peptideShakerGUI.getIdentification();
         long proteinKey = peptideShakerGUI.getSelectedProteinKey();
         long peptideKey = peptideShakerGUI.getSelectedPeptideKey();
-        long psmKey = peptideShakerGUI.getSelectedPsmKey();
+        String spectrumFile = peptideShakerGUI.getSelectedSpectrumFile();
+        String spectrumTitle = peptideShakerGUI.getSelectedSpectrumTitle();
 
         if (proteinKey == NO_KEY
                 && peptideKey == NO_KEY
-                && psmKey != NO_KEY) {
+                && spectrumFile != null
+                && spectrumTitle != null) {
 
+            long psmKey = SpectrumMatch.getKey(spectrumFile, spectrumTitle);
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
 
             if (spectrumMatch.getBestPeptideAssumption() != null) {
@@ -6541,7 +6606,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             if (tempProteinMatch != null) {
 
                 proteinKey = tempProteinMatch.getKey();
-                peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
+                peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, spectrumFile, spectrumTitle);
 
             }
         }
@@ -6592,8 +6657,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         }
 
         int psmRow = 0;
-        if (psmKey != NO_KEY) {
+
+        if (spectrumFile != null && spectrumTitle != null) {
+
+            long psmKey = SpectrumMatch.getKey(spectrumFile, spectrumTitle);
             psmRow = getPsmRow(psmKey);
+
         }
 
         if (psmTable.getSelectedRow() != psmRow && psmRow != -1 && psmRow < psmTable.getRowCount()) {
@@ -6630,25 +6699,35 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         long proteinKey = NO_KEY;
         long peptideKey = NO_KEY;
-        long psmKey = NO_KEY;
+        String spectrumFile = null;
+        String spectrumTitle = null;
 
         if (proteinTable.getSelectedRow() != -1) {
+
             SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
             int index = tableModel.getViewIndex(proteinTable.getSelectedRow());
             proteinKey = proteinKeys[index];
+
         }
+
         if (peptideTable.getSelectedRow() != -1) {
+
             SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
             int index = tableModel.getViewIndex(peptideTable.getSelectedRow());
             peptideKey = peptideKeys[index];
-        }
-        if (psmTable.getSelectedRow() != -1) {
-            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
-            int index = tableModel.getViewIndex(psmTable.getSelectedRow());
-            psmKey = psmKeys[index];
+
         }
 
-        peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
+        if (psmTable.getSelectedRow() != -1) {
+
+            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
+            int index = tableModel.getViewIndex(psmTable.getSelectedRow());
+            long psmKey = psmKeys[index];
+
+        }
+
+        peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, spectrumFile, spectrumTitle);
+
     }
 
     /**
@@ -6788,15 +6867,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             peptideShakerGUI.setSelectedItems(
                     peptideShakerGUI.getSelectedProteinKey(),
                     allAnnotation.get(0).identifier,
-                    NO_KEY
+                    null,
+                    null
             );
             updateSelection(true);
 
-            // update the psms
+            // update the protein
             peptideShakerGUI.setSelectedItems(
                     peptideShakerGUI.getSelectedProteinKey(),
                     allAnnotation.get(0).identifier,
-                    NO_KEY
+                    null,
+                    null
             );
 
             // update the psm selection
@@ -6853,15 +6934,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                 peptideShakerGUI.setSelectedItems(
                                         peptideShakerGUI.getSelectedProteinKey(),
                                         peptideKey,
-                                        NO_KEY
+                                        null,
+                                        null
                                 );
                                 updateSelection(true);
 
-                                // update the psms
+                                // update the protein
                                 peptideShakerGUI.setSelectedItems(
                                         peptideShakerGUI.getSelectedProteinKey(),
                                         peptideKey,
-                                        NO_KEY
+                                        null,
+                                        null
                                 );
 
                                 // update the psm selection
@@ -6923,17 +7006,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     public void updateSurroundingAminoAcids() {
 
-        if (peptideShakerGUI.getSelectedPsmKey() != NO_KEY) {
+        String spectrumFile = peptideShakerGUI.getSelectedSpectrumFile();
+        String spectrumTitle = peptideShakerGUI.getSelectedSpectrumTitle();
 
-            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification()
-                    .getSpectrumMatch(
-                            peptideShakerGUI.getSelectedPsmKey()
-                    );
+        if (spectrumFile != null && spectrumTitle != null) {
+
             Spectrum currentSpectrum = peptideShakerGUI.getSpectrumProvider()
                     .getSpectrum(
-                            spectrumMatch.getSpectrumFile(),
-                            spectrumMatch.getSpectrumTitle()
+                            spectrumFile,
+                            spectrumTitle
                     );
+
             updateSpectrumPanelBorderTitle(currentSpectrum);
 
         }
@@ -6950,17 +7033,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     .setMaxValue(
                             peptideShakerGUI.getMetrics().getMaxNPeptides()
                     );
-            
+
             ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer())
                     .setMaxValue(
                             peptideShakerGUI.getMetrics().getMaxNPsms()
                     );
-            
+
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer())
                     .setMaxValue(
                             peptideShakerGUI.getMetrics().getMaxSpectrumCounting()
                     );
-            
+
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer())
                     .setMaxValue(
                             peptideShakerGUI.getMetrics().getMaxMW()

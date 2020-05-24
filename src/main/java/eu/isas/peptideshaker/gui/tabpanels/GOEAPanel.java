@@ -9,6 +9,7 @@ import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
@@ -356,9 +357,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 taxon = genePreferences.getBackgroundSpecies();
                             }
                             if (taxon == null) {
-                                
+
                                 FastaSummary fastaSummary = FastaSummary.getSummary(peptideShakerGUI.getProjectDetails().getFastaFile(), identificationParameters.getFastaParameters(), progressDialog);
-                                
+
                                 BackgroundSpeciesDialog backgroundSpeciesDialog = new BackgroundSpeciesDialog(peptideShakerGUI, genePreferences, fastaSummary);
                                 if (!backgroundSpeciesDialog.isCanceled()) {
                                     genePreferences = backgroundSpeciesDialog.getGeneParameters();
@@ -1769,7 +1770,8 @@ public class GOEAPanel extends javax.swing.JPanel {
             int selectedGroupIndex = proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow());
             long proteinGroupKey = proteinGoTableModel.getProteins().get(selectedGroupIndex);
 
-            long psmKey = NO_KEY;
+            String spectrumFile = null;
+            String spectrumTitle = null;
 
             // try to select the "best" peptide for the selected peptide
             long peptideKey = peptideShakerGUI.getDefaultPeptideSelection(proteinGroupKey);
@@ -1777,11 +1779,16 @@ public class GOEAPanel extends javax.swing.JPanel {
             // try to select the "best" psm for the selected peptide
             if (peptideKey != NO_KEY) {
 
-                psmKey = peptideShakerGUI.getDefaultPsmSelection(peptideKey);
+                long psmKey = peptideShakerGUI.getDefaultPsmSelection(peptideKey);
+                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
+
+                spectrumFile = spectrumMatch.getSpectrumFile();
+                spectrumTitle = spectrumMatch.getSpectrumTitle();
 
             }
 
-            peptideShakerGUI.setSelectedItems(proteinGroupKey, peptideKey, psmKey);
+            peptideShakerGUI.setSelectedItems(proteinGroupKey, peptideKey, spectrumFile, spectrumTitle);
+
         }
     }//GEN-LAST:event_proteinTableKeyReleased
 
@@ -2133,7 +2140,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                         GeneMaps geneMaps = peptideShakerGUI.getGeneMaps();
                         HashSet<String> goProteins = geneMaps.getProteinsForGoTerm(selectedGoAccession);
                         Identification identification = peptideShakerGUI.getIdentification();
-                        
+
                         ArrayList<Long> proteinKeys = new ArrayList<>(goProteins.size());
                         HashMap<String, HashSet<Long>> proteinMap = identification.getProteinMap();
 
@@ -2142,14 +2149,14 @@ public class GOEAPanel extends javax.swing.JPanel {
                             if (tempKeys != null) {
                                 proteinKeys.addAll(tempKeys);
                             }
-                        }                       
+                        }
 
                         // update the table
                         if (proteinTable.getModel() instanceof ProteinGoTableModel) {
                             ((ProteinGoTableModel) proteinTable.getModel()).updateDataModel(proteinKeys);
                         } else {
-                            ProteinGoTableModel proteinTableModel = new ProteinGoTableModel(peptideShakerGUI.getIdentification(), 
-                                    peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                            ProteinGoTableModel proteinTableModel = new ProteinGoTableModel(peptideShakerGUI.getIdentification(),
+                                    peptideShakerGUI.getProteinDetailsProvider(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                                     peptideShakerGUI.getDisplayFeaturesGenerator(), proteinKeys, peptideShakerGUI.getDisplayParameters().showScores());
                             proteinTable.setModel(proteinTableModel);
                         }
@@ -2198,7 +2205,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             ProteinGoTableModel proteinGoTableModel = (ProteinGoTableModel) proteinTable.getModel();
                             int selectedGroupIndex = proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow());
                             long proteinGroupKey = proteinGoTableModel.getProteins().get(selectedGroupIndex);
-                            peptideShakerGUI.setSelectedItems(proteinGroupKey, NO_KEY, NO_KEY);
+                            peptideShakerGUI.setSelectedItems(proteinGroupKey, NO_KEY, null, null);
                             proteinTableKeyReleased(null);
 
                         }

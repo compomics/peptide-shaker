@@ -66,6 +66,7 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.IntStream;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JMenuItem;
@@ -2632,17 +2633,22 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Returns the key of the currently selected spectrum match.
+     * Returns the titles of the selected spectra in the PSM table in a map by
+     * file name.
      *
-     * @return the key of the currently selected spectrum match
+     * @return The titles of the selected spectra in the PSM table in a map by
+     * file name.
      */
-    public long getSelectedSpectrumMatchKey() {
+    public TreeMap<String, TreeSet<String>> getSelectedSpectrumTitles() {
 
-        String spectrumTitle = getSelectedSpectrumTitle();
+        TreeMap<String, TreeSet<String>> result = new TreeMap<>();
+        TreeSet<String> spectrumTitles = new TreeSet<>();
+        
+        spectrumTitles.add(getSelectedSpectrumTitle());
+        result.put(fileSelected, spectrumTitles);
 
-        return fileSelected == null || spectrumTitle == null
-                ? NO_KEY
-                : SpectrumMatch.getKey(fileSelected, spectrumTitle);
+        return result;
+
     }
 
     /**
@@ -2661,7 +2667,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         }
 
         HashMap<Long, ArrayList<SpectrumIdentificationAssumption>> result = new HashMap<>(selectedRows.length);
-        long spectrumMatchKey = getSelectedSpectrumMatchKey();
+        long spectrumMatchKey = SpectrumMatch.getKey(fileSelected, getSelectedSpectrumTitle());
         result.put(spectrumMatchKey, assumptions);
 
         return result;
@@ -2672,9 +2678,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     public void updateSelection() {
 
-        long spectrumMatchKey = peptideShakerGUI.getSelectedPsmKey();
+        String spectrumFile = peptideShakerGUI.getSelectedSpectrumFile();
+        String spectrumTitle = peptideShakerGUI.getSelectedSpectrumTitle();
 
-        if (spectrumMatchKey == NO_KEY) {
+        if (spectrumFile == null) {
 
             spectrumTable.setRowSelectionInterval(0, 0);
             spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(0, 0, false));
@@ -2682,7 +2689,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         } else {
 
-            selectSpectrum(spectrumMatchKey);
+            selectSpectrum(
+                    spectrumFile, 
+                    spectrumTitle
+            );
 
         }
     }
@@ -2695,7 +2705,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerGUI.setSelectedItems(
                 NO_KEY,
                 NO_KEY,
-                getSelectedSpectrumMatchKey()
+                fileSelected, 
+                getSelectedSpectrumTitle()
         );
     }
 
@@ -2707,35 +2718,35 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerGUI.setSelectedItems(
                 NO_KEY,
                 NO_KEY,
-                NO_KEY
+                null,
+                null
         );
     }
 
     /**
      * Select the given spectrum.
      *
-     * @param spectrumMatchKey the key of the spectrum match
+     * @param spectrumFile The file of the spectrum.
+     * @param spectrumTitle The title of the spectrum.
      */
-    private void selectSpectrum(long spectrumMatchKey) {
+    private void selectSpectrum(
+            String spectrumFile,
+            String spectrumTitle
+    ) {
 
         if (fileNamesCmb.getSelectedItem() != null) {
 
             // change the peptide shaker icon to a "waiting version"
             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumMatchKey);
-
-            String fileName = spectrumMatch.getSpectrumFile();
-            String spectrumTitle = spectrumMatch.getSpectrumTitle();
-
-            if (!((String) fileNamesCmb.getSelectedItem()).equalsIgnoreCase(fileName)) {
+            if (!((String) fileNamesCmb.getSelectedItem()).equalsIgnoreCase(spectrumFile)) {
                 updateSelection = false;
-                fileNamesCmb.setSelectedItem(fileName);
+                fileNamesCmb.setSelectedItem(spectrumFile);
                 updateSelection = true;
                 fileSelected = (String) fileNamesCmb.getSelectedItem();
             }
 
-            String[] spectrumTitles = peptideShakerGUI.getSpectrumProvider().getSpectrumTitles(fileName);
+            String[] spectrumTitles = peptideShakerGUI.getSpectrumProvider().getSpectrumTitles(spectrumFile);
 
             int spectrumIndex = IntStream.range(0, spectrumTitles.length)
                     .filter(
@@ -2753,7 +2764,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             }
 
-            // change the peptide shaker icon to a "waiting version"
+            // change the peptide shaker icon to a "normal version"
             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         }
     }
@@ -2769,7 +2780,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             try {
                 // add assumptions to the table
-                populateIdResultsTable(getSelectedSpectrumMatchKey());
+                long spectrumMatchKey = SpectrumMatch.getKey(fileSelected, getSelectedSpectrumTitle());
+                populateIdResultsTable(spectrumMatchKey);
 
                 ((DefaultTableModel) peptideShakerJTable.getModel()).fireTableDataChanged();
                 ((DefaultTableModel) searchResultsTable.getModel()).fireTableDataChanged();
@@ -3846,8 +3858,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             try {
 
-                long spectrumKey = getSelectedSpectrumMatchKey();
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                long spectrumMatchKey = SpectrumMatch.getKey(fileSelected, getSelectedSpectrumTitle());
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
 
                 if (spectrumMatch != null) {
 
@@ -4381,13 +4393,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     .setLogScale(true);
             ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT (min)").getCellRenderer())
                     .showNumberAndChart(
-                            true, 
+                            true,
                             TableProperties.getLabelWidth()
                     );
             ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT (min)").getCellRenderer())
                     .showReferenceLine(
-                            true, 
-                            0.02, 
+                            true,
+                            0.02,
                             java.awt.Color.BLACK
                     );
         }

@@ -153,7 +153,9 @@ import eu.isas.peptideshaker.processing.ProteinProcessor;
 import java.awt.image.BufferedImage;
 import java.net.ConnectException;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import org.slf4j.LoggerFactory;
@@ -179,9 +181,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private long selectedPeptideKey = NO_KEY;
     /**
-     * The currently selected spectrum key.
+     * The currently selected spectrum file, null if none.
      */
-    private long selectedPsmKey = NO_KEY;
+    private String selectedSpectrumFile = null;
+    /**
+     * The currently selected spectrum title, null if none.
+     */
+    private String selectedSpectrumTitle = null;
     /**
      * The Overview tab index.
      */
@@ -378,16 +384,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param args the arguments
      */
     public static void main(String[] args) {
-        
+
         // turn off the zoodb logging
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
         ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.zoodb");
         logger.setLevel(Level.toLevel("ERROR"));
-        
+
         logger = loggerContext.getLogger("org.springframework");
         logger.setLevel(Level.toLevel("ERROR"));
-        
+
         // set the look and feel
         boolean numbusLookAndFeelSet = false;
 
@@ -4556,15 +4562,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     /**
      * Sets the mass spectrometry file handler.
-     * 
+     *
      * @param msFileHandler The mass spectrometry file handler.
      */
     public void setMsFileHandler(
             MsFileHandler msFileHandler
     ) {
-   
+
         psdbParent.setMsFileHandler(msFileHandler);
-    
+
     }
 
     /**
@@ -4795,13 +4801,20 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param proteinKey the key of the selected protein
      * @param peptideKey the key of the selected peptide
-     * @param psmKey the key of the selected PSM
+     * @param spectrumFile the file of the selected spectrum
+     * @param spectrumTitle the title of the selected spectrum
      */
-    public void setSelectedItems(long proteinKey, long peptideKey, long psmKey) {
+    public void setSelectedItems(
+            long proteinKey,
+            long peptideKey,
+            String spectrumFile,
+            String spectrumTitle
+    ) {
 
         this.selectedProteinKey = proteinKey;
         this.selectedPeptideKey = peptideKey;
-        this.selectedPsmKey = psmKey;
+        this.selectedSpectrumFile = spectrumFile;
+        this.selectedSpectrumTitle = spectrumTitle;
 
     }
 
@@ -4843,7 +4856,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void resetSelectedItems() {
 
-        setSelectedItems(NO_KEY, NO_KEY, NO_KEY);
+        setSelectedItems(NO_KEY, NO_KEY, null, null);
 
     }
 
@@ -4896,13 +4909,24 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Returns the currently selected spectrum key.
+     * Returns the currently selected spectrum file.
      *
-     * @return the key for the selected spectrum
+     * @return the file of the selected spectrum
      */
-    public long getSelectedPsmKey() {
+    public String getSelectedSpectrumFile() {
 
-        return selectedPsmKey;
+        return selectedSpectrumFile;
+
+    }
+
+    /**
+     * Returns the currently selected spectrum title.
+     *
+     * @return the title of the selected spectrum
+     */
+    public String getSelectedSpectrumTitle() {
+
+        return selectedSpectrumTitle;
 
     }
 
@@ -4921,7 +4945,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         // reset the preferences
         selectedProteinKey = NO_KEY;
         selectedPeptideKey = NO_KEY;
-        selectedPsmKey = NO_KEY;
+        selectedSpectrumFile = null;
+        selectedSpectrumTitle = null;
 
         psdbParent.setProjectDetails(null);
 
@@ -5298,7 +5323,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param proteinInferenceType the protein inference group type
      */
     public void updateMainMatch(
-            String mainMatch, 
+            String mainMatch,
             int proteinInferenceType
     ) {
 
@@ -5308,10 +5333,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             Identification identification = getIdentification();
             ProteinMatch proteinMatch = identification.getProteinMatch(selectedProteinKey);
             ptmScorer.scorePTMs(
-                    identification, 
-                    proteinMatch, 
-                    getIdentificationParameters(), 
-                    false, 
+                    identification,
+                    proteinMatch,
+                    getIdentificationParameters(),
+                    false,
                     modificationFactory,
                     null
             );
@@ -5330,8 +5355,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     /**
      * Set whether the current data has been saved to a psdb file or not.
      *
-     * @param dataSaved whether the current data has been saved to a psdb file or
-     * not
+     * @param dataSaved whether the current data has been saved to a psdb file
+     * or not
      */
     public void setDataSaved(boolean dataSaved) {
 
@@ -6982,24 +7007,23 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
-        long[] selectedSpectra = null;
+        TreeMap<String, TreeSet<String>> selectedSpectra = null;
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
 
-            selectedSpectra = overviewPanel.getSelectedSpectrumKeys();
+            selectedSpectra = overviewPanel.getSelectedSpectrumTitles();
 
         } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
 
-            selectedSpectra = new long[1];
-            selectedSpectra[0] = spectrumIdentificationPanel.getSelectedSpectrumMatchKey();
+            selectedSpectra = spectrumIdentificationPanel.getSelectedSpectrumTitles();
 
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
 
-            selectedSpectra = modificationsPanel.getSelectedPsmsKeys();
+            selectedSpectra = modificationsPanel.getSelectedSpectrumTitles();
 
         }
 
-        if (selectedSpectra != null && selectedSpectra.length > 0) {
+        if (selectedSpectra != null && !selectedSpectra.isEmpty()) {
 
             File selectedFile = getUserSelectedFile(
                     "selected_spectra.mgf",
@@ -7013,27 +7037,29 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                 try ( SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
 
-                    for (long spectrumMatchKey : selectedSpectra) {
+                    for (Entry<String, TreeSet<String>> entry : selectedSpectra.entrySet()) {
 
-                        SpectrumMatch spectrumMatch = getIdentification().getSpectrumMatch(spectrumMatchKey);
-                        String spectrumFile = spectrumMatch.getSpectrumFile();
-                        String spectrumTitle = spectrumMatch.getSpectrumTitle();
-                        Spectrum spectrum = getSpectrumProvider().getSpectrum(
-                                spectrumFile,
-                                spectrumTitle
-                        );
+                        String spectrumFile = entry.getKey();
 
-                        if (spectrum == null) {
-                            throw new IllegalArgumentException("Spectrum " + spectrumTitle + " in " + spectrumFile + " not found.");
+                        for (String spectrumTitle : entry.getValue()) {
+
+                            Spectrum spectrum = getSpectrumProvider().getSpectrum(
+                                    spectrumFile,
+                                    spectrumTitle
+                            );
+
+                            if (spectrum == null) {
+                                throw new IllegalArgumentException("Spectrum " + spectrumTitle + " in " + spectrumFile + " not found.");
+                            }
+
+                            writer.write(
+                                    MgfFileWriter.asMgf(
+                                            spectrumTitle,
+                                            spectrum
+                                    ),
+                                    true
+                            );
                         }
-
-                        writer.write(
-                                MgfFileWriter.asMgf(
-                                        spectrumTitle,
-                                        spectrum
-                                ),
-                                true
-                        );
                     }
 
                     JOptionPane.showMessageDialog(
