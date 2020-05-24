@@ -3690,6 +3690,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             proteinProcessor.processProteins(
                                     new ModificationLocalizationScorer(),
                                     peptideShakerGUI.getMetrics(),
+                                    modificationFactory,
                                     progressDialog,
                                     peptideShakerGUI.getExceptionHandler(),
                                     peptideShakerGUI.getProcessingParameters()
@@ -5301,14 +5302,24 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param mainMatch the protein match to use
      * @param proteinInferenceType the protein inference group type
      */
-    public void updateMainMatch(String mainMatch, int proteinInferenceType) {
+    public void updateMainMatch(
+            String mainMatch, 
+            int proteinInferenceType
+    ) {
 
         try {
 
             ModificationLocalizationScorer ptmScorer = new ModificationLocalizationScorer();
             Identification identification = getIdentification();
             ProteinMatch proteinMatch = identification.getProteinMatch(selectedProteinKey);
-            ptmScorer.scorePTMs(identification, proteinMatch, getIdentificationParameters(), false, null);
+            ptmScorer.scorePTMs(
+                    identification, 
+                    proteinMatch, 
+                    getIdentificationParameters(), 
+                    false, 
+                    modificationFactory,
+                    null
+            );
 
         } catch (Exception e) {
 

@@ -514,8 +514,8 @@ public class PsPeptideSection {
                 return Integer.toString(identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideMatch.getKey()));
 
             case probabilistic_score:
-                PSModificationScores ptmScores = new PSModificationScores();
-                ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
+
+                PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
 
                 if (ptmScores != null) {
 
@@ -564,16 +564,15 @@ public class PsPeptideSection {
                 }
 
                 return "";
-                
+
             case d_score:
                 StringBuilder result = new StringBuilder();
-                ptmScores = new PSModificationScores();
-                ptmScores = (PSModificationScores) peptideMatch.getUrParam(ptmScores);
+                ptmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
 
                 if (ptmScores != null) {
 
                     TreeSet<String> modList = new TreeSet<>(ptmScores.getScoredModifications());
-                    
+
                     for (String mod : modList) {
 
                         ModificationScoring ptmScoring = ptmScores.getModificationScoring(mod);
@@ -616,7 +615,7 @@ public class PsPeptideSection {
                 }
 
                 return "";
-                
+
             case confident_modification_sites:
 
                 String sequence = peptideMatch.getPeptide().getSequence();
@@ -711,7 +710,7 @@ public class PsPeptideSection {
      * @return a description of the given protein group
      */
     public static String getProteinGroupText(
-            long proteinGroupKey, 
+            long proteinGroupKey,
             Identification identification
     ) {
 
@@ -740,7 +739,7 @@ public class PsPeptideSection {
      * @return the peptide localization on the given protein as text
      */
     public static String getPeptideLocalizationText(
-            String proteinAccession, 
+            String proteinAccession,
             int[] sites
     ) {
 
@@ -763,11 +762,11 @@ public class PsPeptideSection {
      * @return the peptide modification location confidence as a string
      */
     public static String getPeptideModificationLocationConfidence(
-            PeptideMatch peptideMatch, 
+            PeptideMatch peptideMatch,
             ModificationParameters modificationParameters
     ) {
 
-        PSModificationScores psPtmScores = (PSModificationScores) peptideMatch.getUrParam(new PSModificationScores());
+        PSModificationScores psPtmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
 
         if (psPtmScores != null) {
 

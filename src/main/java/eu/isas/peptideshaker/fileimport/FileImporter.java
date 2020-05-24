@@ -81,12 +81,6 @@ public class FileImporter {
      */
     private final Metrics metrics;
     /**
-     * The mass tolerance to be used to match modifications from search engines
-     * and expected modifications. 0.01 by default, the mass resolution in
-     * X!Tandem result files.
-     */
-    public static final double MOD_MASS_TOLERANCE = 0.01;
-    /**
      * The identification parameters.
      */
     private final IdentificationParameters identificationParameters;
@@ -95,7 +89,7 @@ public class FileImporter {
      */
     private final IdfileReaderFactory readerFactory = IdfileReaderFactory.getInstance();
     /**
-     * The processing preferences.
+     * The processing parameters.
      */
     private final ProcessingParameters processingParameters;
     /**
@@ -237,9 +231,9 @@ public class FileImporter {
 
             }
 
-            GeneParameters genePreferences = identificationParameters.getGeneParameters();
+            GeneParameters geneParameters = identificationParameters.getGeneParameters();
 
-            if (genePreferences.getUseGeneMapping()) {
+            if (geneParameters.getUseGeneMapping()) {
 
                 waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                 waitingHandler.appendReport(
@@ -917,10 +911,10 @@ public class FileImporter {
      * Imports sequences from a FASTA file and sets the sequence provider and
      * protein details provider fields.
      *
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param sequenceMatchingParameters the sequence matching parameters
      * @param searchParameters the search parameters
      * @param fastaParameters the FASTA parameters
-     * @param peptideVariantsPreferences the peptide variants preferences set by
+     * @param peptideVariantsParameters the peptide variants parameters set by
      * the user
      * @param waitingHandler the handler displaying feedback to the user and
      * allowing canceling the import
@@ -930,10 +924,10 @@ public class FileImporter {
      * reading the FASTA file
      */
     public void importSequences(
-            SequenceMatchingParameters sequenceMatchingPreferences,
+            SequenceMatchingParameters sequenceMatchingParameters,
             SearchParameters searchParameters,
             FastaParameters fastaParameters,
-            PeptideVariantsParameters peptideVariantsPreferences,
+            PeptideVariantsParameters peptideVariantsParameters,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
     ) throws IOException {
@@ -960,7 +954,7 @@ public class FileImporter {
                 waitingHandler,
                 true,
                 searchParameters.getModificationParameters(),
-                peptideVariantsPreferences
+                peptideVariantsParameters
         );
 
         sequenceProvider = fmIndex;
@@ -983,13 +977,17 @@ public class FileImporter {
         } catch (Exception e) {
 
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "An error occurred while loading the gene mappings.", "Gene Mapping File Error", JOptionPane.ERROR_MESSAGE);
-
+            JOptionPane.showMessageDialog(
+                    null, 
+                    "An error occurred while loading the gene mappings.", 
+                    "Gene Mapping File Error", 
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
 
-        GeneParameters genePreferences = identificationParameters.getGeneParameters();
+        GeneParameters geneParameters = identificationParameters.getGeneParameters();
         geneMaps = geneFactory.getGeneMaps(
-                genePreferences,
+                geneParameters,
                 fastaSummary,
                 sequenceProvider,
                 proteinDetailsProvider,

@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.processing;
 
 import com.compomics.util.exceptions.ExceptionHandler;
+import com.compomics.util.experiment.biology.modifications.ModificationProvider;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -78,12 +79,14 @@ public class ProteinProcessor {
      * Scores the PTMs of all protein matches contained in an identification
      * object, estimates spectrum counting and summary statistics.
      *
-     * @param modificationLocalizationScorer modification localization scorer
-     * @param metrics if provided, metrics on proteins will be saved while
-     * iterating the matches
-     * @param waitingHandler the handler displaying feedback to the user
-     * @param exceptionHandler an exception handler
-     * @param processingParameters the processing parameters
+     * @param modificationLocalizationScorer The modification localization
+     * scorer to use.
+     * @param metrics If provided, metrics on proteins will be saved while
+     * iterating the matches.
+     * @param modificationProvider The modification provider to use.
+     * @param waitingHandler The handler displaying feedback to the user.
+     * @param exceptionHandler The exception handler to use.
+     * @param processingParameters The processing parameters.
      *
      * @throws java.lang.InterruptedException exception thrown if a thread gets
      * interrupted
@@ -93,6 +96,7 @@ public class ProteinProcessor {
     public void processProteins(
             ModificationLocalizationScorer modificationLocalizationScorer,
             Metrics metrics,
+            ModificationProvider modificationProvider,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler,
             ProcessingParameters processingParameters
@@ -115,6 +119,7 @@ public class ProteinProcessor {
             ProteinRunnable runnable = new ProteinRunnable(
                     proteinMatchesIterator,
                     modificationLocalizationScorer,
+                    modificationProvider,
                     waitingHandler,
                     exceptionHandler
             );
@@ -258,6 +263,10 @@ public class ProteinProcessor {
          */
         private final ModificationLocalizationScorer modificationLocalizationScorer;
         /**
+         * The modification provider to use.
+         */
+        private final ModificationProvider modificationProvider;
+        /**
          * The waiting handler.
          */
         private final WaitingHandler waitingHandler;
@@ -301,15 +310,17 @@ public class ProteinProcessor {
         /**
          * Constructor.
          *
-         * @param proteinMatchesIterator the protein matches iterator
-         * @param modificationLocalizationScorer the modification localization
-         * scorer
-         * @param waitingHandler a waiting handler
-         * @param exceptionHandler an exception handler
+         * @param proteinMatchesIterator The protein matches iterator to use.
+         * @param modificationLocalizationScorer The modification localization
+         * scorer to use.
+         * @param modificationProvider The modification provider to use.
+         * @param waitingHandler The waiting handler to use.
+         * @param exceptionHandler The exception handler to use.
          */
         public ProteinRunnable(
                 ProteinMatchesIterator proteinMatchesIterator,
                 ModificationLocalizationScorer modificationLocalizationScorer,
+                ModificationProvider modificationProvider,
                 WaitingHandler waitingHandler,
                 ExceptionHandler exceptionHandler
         ) {
@@ -318,6 +329,7 @@ public class ProteinProcessor {
             this.modificationLocalizationScorer = modificationLocalizationScorer;
             this.waitingHandler = waitingHandler;
             this.exceptionHandler = exceptionHandler;
+            this.modificationProvider = modificationProvider;
 
         }
 
@@ -329,7 +341,14 @@ public class ProteinProcessor {
                 while ((proteinMatch = proteinMatchesIterator.next()) != null && !waitingHandler.isRunCanceled()) {
 
                     long proteinKey = proteinMatch.getKey();
-                    modificationLocalizationScorer.scorePTMs(identification, proteinMatch, identificationParameters, false, waitingHandler);
+                    modificationLocalizationScorer.scorePTMs(
+                            identification,
+                            proteinMatch,
+                            identificationParameters,
+                            false,
+                            modificationProvider, 
+                            waitingHandler
+                    );
 
                     PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 

@@ -13,7 +13,6 @@ import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.threading.ConcurrentIterator;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
@@ -22,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This class tries to find a best hit per search engine for each spectrum
@@ -58,7 +58,7 @@ public class PsmFirstHitRunnable implements Runnable {
     /**
      * Iterator for the spectrum matches to import.
      */
-    private final ConcurrentIterator<SpectrumMatch> spectrumMatchIterator;
+    private final ConcurrentLinkedQueue<SpectrumMatch> spectrumMatchQueue;
     /**
      * The number of PSMs which did not pass the import filters.
      */
@@ -115,7 +115,7 @@ public class PsmFirstHitRunnable implements Runnable {
     /**
      * Constructor.
      *
-     * @param spectrumMatchIterator The spectrum matches iterator to use.
+     * @param spectrumMatchQueue The spectrum matches iterator to use.
      * @param identificationParameters The identification parameters.
      * @param sequenceProvider The protein sequence provider.
      * @param spectrumProvider The spectrum provider.
@@ -126,7 +126,7 @@ public class PsmFirstHitRunnable implements Runnable {
      * @param exceptionHandler The handler of exceptions.
      */
     public PsmFirstHitRunnable(
-            ConcurrentIterator<SpectrumMatch> spectrumMatchIterator,
+            ConcurrentLinkedQueue<SpectrumMatch> spectrumMatchQueue,
             IdentificationParameters identificationParameters,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
@@ -136,7 +136,7 @@ public class PsmFirstHitRunnable implements Runnable {
             ExceptionHandler exceptionHandler
     ) {
 
-        this.spectrumMatchIterator = spectrumMatchIterator;
+        this.spectrumMatchQueue = spectrumMatchQueue;
         this.identificationParameters = identificationParameters;
         this.sequenceProvider = sequenceProvider;
         this.spectrumProvider = spectrumProvider;
@@ -160,7 +160,7 @@ public class PsmFirstHitRunnable implements Runnable {
         try {
 
             SpectrumMatch spectrumMatch;
-            while ((spectrumMatch = spectrumMatchIterator.next()) != null) {
+            while ((spectrumMatch = spectrumMatchQueue.poll()) != null) {
 
                 processPsm(spectrumMatch);
 

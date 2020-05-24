@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.processing;
 
 import com.compomics.util.exceptions.ExceptionHandler;
+import com.compomics.util.experiment.biology.modifications.ModificationProvider;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.amino_acid_tags.Tag;
@@ -14,7 +15,6 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
-import com.compomics.util.threading.ConcurrentIterator;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.protein_inference.PeptideChecker;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This class processes PSMs.
@@ -36,7 +37,7 @@ public class PsmProcessorRunnable implements Runnable {
     /**
      * Iterator for the spectrum matches to import.
      */
-    private final ConcurrentIterator<Long> spectrumMatchKeysIterator;
+    private final ConcurrentLinkedQueue<Long> spectrumMatchKeysQueue;
     /**
      * The identification object.
      */
@@ -70,6 +71,10 @@ public class PsmProcessorRunnable implements Runnable {
      */
     private final SpectrumProvider spectrumProvider;
     /**
+     * The modification provider to use.
+     */
+    private final ModificationProvider modificationProvider;
+    /**
      * The spectrum annotator.
      */
     private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
@@ -84,21 +89,23 @@ public class PsmProcessorRunnable implements Runnable {
 
     /**
      * Constructor.
-     * 
+     *
      * @param spectrumMatchKeysIterator Iterator for the spectrum match keys.
      * @param identification The identification object.
      * @param identificationParameters The identification parameters.
      * @param inputMap The input map.
      * @param matchesValidator The matches validator.
-     * @param modificationLocalizationScorer The post-translational modification localization scorer.
+     * @param modificationLocalizationScorer The post-translational modification
+     * localization scorer.
      * @param sequenceProvider The protein sequences provider.
      * @param spectrumProvider The spectrum provider.
+         * @param modificationProvider The modification provider to use.
      * @param proteinCount The protein count.
      * @param waitingHandler The waiting handler.
      * @param exceptionHandler The exception handler.
      */
     public PsmProcessorRunnable(
-            ConcurrentIterator<Long> spectrumMatchKeysIterator,
+            ConcurrentLinkedQueue<Long> spectrumMatchKeysIterator,
             Identification identification,
             IdentificationParameters identificationParameters,
             InputMap inputMap,
@@ -106,12 +113,13 @@ public class PsmProcessorRunnable implements Runnable {
             ModificationLocalizationScorer modificationLocalizationScorer,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
+            ModificationProvider modificationProvider,
             HashMap<String, Integer> proteinCount,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
     ) {
 
-        this.spectrumMatchKeysIterator = spectrumMatchKeysIterator;
+        this.spectrumMatchKeysQueue = spectrumMatchKeysIterator;
         this.identification = identification;
         this.identificationParameters = identificationParameters;
         this.inputMap = inputMap;
@@ -119,6 +127,7 @@ public class PsmProcessorRunnable implements Runnable {
         this.modificationLocalizationScorer = modificationLocalizationScorer;
         this.sequenceProvider = sequenceProvider;
         this.spectrumProvider = spectrumProvider;
+        this.modificationProvider = modificationProvider;
         this.waitingHandler = waitingHandler;
         this.exceptionHandler = exceptionHandler;
 
@@ -137,7 +146,7 @@ public class PsmProcessorRunnable implements Runnable {
         try {
 
             Long spectrumMatchKey;
-            while ((spectrumMatchKey = spectrumMatchKeysIterator.next()) != null) {
+            while ((spectrumMatchKey = spectrumMatchKeysQueue.poll()) != null) {
 
                 processPsm(spectrumMatchKey);
 
@@ -177,14 +186,14 @@ public class PsmProcessorRunnable implements Runnable {
         }
 
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-        
+
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
 
         attachAssumptionsProbabilities(spectrumMatch);
 
         bestMatchSelection.selectBestHit(
-                spectrumMatch, 
-                inputMap, 
+                spectrumMatch,
+                inputMap,
                 matchesValidator.getPsmMap(),
                 identification
         );
@@ -193,19 +202,21 @@ public class PsmProcessorRunnable implements Runnable {
 
             // Score modification localization
             modificationLocalizationScorer.scorePTMs(
-                    identification, 
-                    spectrumMatch, 
-                    sequenceProvider, 
+                    identification,
+                    spectrumMatch,
+                    sequenceProvider,
                     spectrumProvider,
-                    identificationParameters, 
-                    waitingHandler, 
+                    modificationProvider,
+                    identificationParameters,
+                    waitingHandler,
                     peptideSpectrumAnnotator
             );
 
             // Set modification sites
             modificationLocalizationScorer.modificationSiteInference(
-                    spectrumMatch, 
-                    sequenceProvider, 
+                    spectrumMatch,
+                    sequenceProvider,
+                    modificationProvider,
                     identificationParameters
             );
 

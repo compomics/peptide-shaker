@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
@@ -510,6 +511,7 @@ public class CLIExportMethods {
                 psbdParent.getSequenceProvider(),
                 psbdParent.getProteinDetailsProvider(),
                 psbdParent.getSpectrumProvider(),
+                ModificationFactory.getInstance(),
                 fastaSummary,
                 psbdParent.getIdentificationFeaturesGenerator(),
                 mzidCLIInputBean.getOutputFile(),

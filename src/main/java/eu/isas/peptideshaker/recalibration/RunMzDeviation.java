@@ -413,8 +413,7 @@ public class RunMzDeviation {
 
                         fragmentRawMap.get(precursorRT)
                                 .get(key)
-                                .add(
-                                        BasicMathFunctions.median(spectrumFragmentMap.get(key))
+                                .add(BasicMathFunctions.median(spectrumFragmentMap.get(key))
                                 );
                     }
                 }

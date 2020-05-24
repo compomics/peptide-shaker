@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -138,6 +139,10 @@ public class ValidationPanel extends javax.swing.JPanel {
      * The highlighting to use for FDR.
      */
     private final Color fdrHighlightColor = new Color(255, 0, 0, 15);
+    /**
+     * The compomics PTM factory.
+     */
+    private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
 
     /**
      * Create a new StatsPanel.
@@ -1512,6 +1517,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                             proteinProcessor.processProteins(
                                     new ModificationLocalizationScorer(),
                                     peptideShakerGUI.getMetrics(),
+                                    modificationFactory,
                                     progressDialog,
                                     peptideShakerGUI.getExceptionHandler(),
                                     peptideShakerGUI.getProcessingParameters()

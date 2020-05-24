@@ -335,8 +335,7 @@ public class DisplayFeaturesGenerator {
     public String getPeptideModificationTooltipAsHtml(SpectrumMatch spectrumMatch) {
 
         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-        PSModificationScores modificationScores = new PSModificationScores();
-        modificationScores = (PSModificationScores) spectrumMatch.getUrParam(modificationScores);
+        PSModificationScores modificationScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
         return getPeptideModificationTooltipAsHtml(peptide, modificationScores);
 
     }
@@ -351,8 +350,7 @@ public class DisplayFeaturesGenerator {
     public String getPeptideModificationTooltipAsHtml(PeptideMatch peptideMatch) {
 
         Peptide peptide = peptideMatch.getPeptide();
-        PSModificationScores modificationScores = new PSModificationScores();
-        modificationScores = (PSModificationScores) peptideMatch.getUrParam(modificationScores);
+        PSModificationScores modificationScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
         return getPeptideModificationTooltipAsHtml(peptide, modificationScores);
 
     }
@@ -610,8 +608,7 @@ public class DisplayFeaturesGenerator {
     public String getTaggedPeptideSequence(PeptideMatch peptideMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
 
         Peptide peptide = peptideMatch.getPeptide();
-        PSModificationScores modificationScores = new PSModificationScores();
-        modificationScores = (PSModificationScores) peptideMatch.getUrParam(modificationScores);
+        PSModificationScores modificationScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
         return getTaggedPeptideSequence(peptide, modificationScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
 
     }
@@ -633,8 +630,7 @@ public class DisplayFeaturesGenerator {
     public String getTaggedPeptideSequence(SpectrumMatch spectrumMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
 
         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-        PSModificationScores modificationScores = new PSModificationScores();
-        modificationScores = (PSModificationScores) spectrumMatch.getUrParam(modificationScores);
+        PSModificationScores modificationScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
         return getTaggedPeptideSequence(peptide, modificationScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
 
     }

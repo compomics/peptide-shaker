@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.export;
 
+import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
@@ -722,6 +723,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                             peptideShakerGUI.getSequenceProvider(),
                             peptideShakerGUI.getProteinDetailsProvider(),
                             peptideShakerGUI.getSpectrumProvider(),
+                            ModificationFactory.getInstance(),
                             fastaSummary,
                             peptideShakerGUI.getIdentificationFeaturesGenerator(),
                             finalOutputFile,

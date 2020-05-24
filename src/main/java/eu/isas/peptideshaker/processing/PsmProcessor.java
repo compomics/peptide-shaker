@@ -1,11 +1,11 @@
 package eu.isas.peptideshaker.processing;
 
 import com.compomics.util.exceptions.ExceptionHandler;
+import com.compomics.util.experiment.biology.modifications.ModificationProvider;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import com.compomics.util.threading.ConcurrentIterator;
 import com.compomics.util.waiting.WaitingHandler;
 import static eu.isas.peptideshaker.PeptideShaker.TIMEOUT_DAYS;
 import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
@@ -13,6 +13,7 @@ import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -57,6 +58,7 @@ public class PsmProcessor {
      * scorer.
      * @param sequenceProvider Protein sequence provider.
      * @param spectrumProvider The spectrum provider.
+         * @param modificationProvider The modification provider to use.
      * @param proteinCount Map of the protein occurrence.
      * @param nThreads The number of threads to use.
      * @param waitingHandler Waiting handler to display progress and allow
@@ -75,18 +77,17 @@ public class PsmProcessor {
             ModificationLocalizationScorer modificationLocalizationScorer,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
+            ModificationProvider modificationProvider,
             HashMap<String, Integer> proteinCount,
             int nThreads,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
     ) throws InterruptedException, TimeoutException {
 
-        ArrayList<Long> spectrumKeys = new ArrayList<>(identification.getSpectrumIdentificationKeys());
+        ConcurrentLinkedQueue<Long> spectrumMatchKeysIterator = new ConcurrentLinkedQueue<>(identification.getSpectrumIdentificationKeys());
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressCounter(spectrumKeys.size());
-
-        ConcurrentIterator<Long> spectrumMatchKeysIterator = new ConcurrentIterator<>(spectrumKeys);
+        waitingHandler.setMaxSecondaryProgressCounter(spectrumMatchKeysIterator.size());
 
         ExecutorService importPool = Executors.newFixedThreadPool(nThreads);
 
@@ -104,6 +105,7 @@ public class PsmProcessor {
                             modificationLocalizationScorer,
                             sequenceProvider,
                             spectrumProvider,
+                            modificationProvider,
                             proteinCount,
                             waitingHandler,
                             exceptionHandler

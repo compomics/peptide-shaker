@@ -8,6 +8,7 @@ import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
@@ -34,8 +35,10 @@ import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.psm_scoring.PsmScorer;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
 import com.compomics.util.experiment.identification.protein_inference.PeptideAndProteinBuilder;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.experiment.quantification.spectrumcounting.ScalingFactorsEstimators;
@@ -43,6 +46,7 @@ import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.processing.ProteinProcessor;
 import eu.isas.peptideshaker.processing.PsmProcessor;
 import eu.isas.peptideshaker.protein_inference.GroupSimplification;
+import eu.isas.peptideshaker.ptm.PeptideInference;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 
 import java.io.File;
@@ -51,7 +55,9 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 /**
  * This class will be responsible for the identification import and the
@@ -107,7 +113,7 @@ public class PeptideShaker {
     /**
      * The compomics PTM factory.
      */
-    private ModificationFactory modificationFactory = ModificationFactory.getInstance();
+    private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
     /**
      * Metrics to be picked when loading the identification.
      */
@@ -393,6 +399,7 @@ public class PeptideShaker {
                 modificationLocalizationScorer,
                 sequenceProvider,
                 spectrumProvider,
+                modificationFactory,
                 proteinCount,
                 processingParameters.getnThreads(),
                 waitingHandler,
@@ -424,15 +431,19 @@ public class PeptideShaker {
 
         if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
 
+            PeptideInference peptideInference = new PeptideInference();
+
             ModificationLocalizationParameters modificationScoringPreferences = identificationParameters.getModificationLocalizationParameters();
 
             if (modificationScoringPreferences.getAlignNonConfidentModifications()) {
 
                 waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
-                modificationLocalizationScorer.peptideInference(
+
+                peptideInference.peptideInference(
                         identification,
-                        sequenceProvider,
                         identificationParameters,
+                        sequenceProvider,
+                        modificationFactory,
                         waitingHandler
                 );
 
@@ -736,6 +747,7 @@ public class PeptideShaker {
             );
             modificationLocalizationScorer.scorePeptidePtms(
                     identification,
+                    modificationFactory,
                     waitingHandler,
                     identificationParameters
             );
@@ -790,6 +802,7 @@ public class PeptideShaker {
                 proteinProcessor.processProteins(
                         modificationLocalizationScorer,
                         metrics,
+                        modificationFactory,
                         waitingHandler,
                         exceptionHandler,
                         processingParameters
@@ -824,7 +837,7 @@ public class PeptideShaker {
                         matchesValidator.getProteinMap()
                 )
         );
-        
+
         if (setWaitingHandlerFinshedWhenDone) {
             waitingHandler.setRunFinished();
         }
@@ -992,10 +1005,11 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-        try (PeptideAndProteinBuilder peptideAndProteinBuilder = new PeptideAndProteinBuilder(identification)) {
+        try ( PeptideAndProteinBuilder peptideAndProteinBuilder = new PeptideAndProteinBuilder(identification)) {
 
             identification.getSpectrumIdentification().values().stream()
                     .flatMap(keys -> keys.stream())
+                    .parallel()
                     .map(
                             key -> identification.getSpectrumMatch(key)
                     )
@@ -1013,6 +1027,7 @@ public class PeptideShaker {
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+        
     }
 
     /**

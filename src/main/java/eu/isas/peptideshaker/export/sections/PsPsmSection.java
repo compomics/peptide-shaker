@@ -425,8 +425,7 @@ public class PsPsmSection {
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                    PSModificationScores ptmScores = new PSModificationScores();
-                    ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
+                    PSModificationScores ptmScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
 
                     if (ptmScores != null) {
 
@@ -483,8 +482,7 @@ public class PsPsmSection {
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
 
                     StringBuilder result = new StringBuilder();
-                    PSModificationScores ptmScores = new PSModificationScores();
-                    ptmScores = (PSModificationScores) spectrumMatch.getUrParam(ptmScores);
+                    PSModificationScores ptmScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
 
                     if (ptmScores != null) {
 
@@ -784,7 +782,7 @@ public class PsPsmSection {
             ModificationParameters modificationParameters
     ) {
 
-        PSModificationScores psPtmScores = (PSModificationScores) spectrumMatch.getUrParam(new PSModificationScores());
+        PSModificationScores psPtmScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
 
         if (psPtmScores != null) {
 
