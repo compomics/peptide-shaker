@@ -3701,7 +3701,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             long psmKey = SpectrumMatch.getKey(spectrumFile, spectrumTitle);
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
 
-            if (spectrumMatch.getBestPeptideAssumption() != null) {
+            if (spectrumMatch != null && spectrumMatch.getBestPeptideAssumption() != null) {
 
                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                 peptideKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
@@ -3783,7 +3783,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             if (spectrumFile != null
                     && spectrumTitle != null) {
 
-                peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideShakerGUI.getSelectedPeptideKey(), spectrumFile, spectrumTitle);
+                peptideShakerGUI.setSelectedItems(
+                        peptideShakerGUI.getSelectedProteinKey(), 
+                        peptideShakerGUI.getSelectedPeptideKey(), 
+                        spectrumFile, 
+                        spectrumTitle
+                );
 
             }
         }

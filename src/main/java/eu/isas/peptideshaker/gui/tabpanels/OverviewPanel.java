@@ -6585,7 +6585,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             long psmKey = SpectrumMatch.getKey(spectrumFile, spectrumTitle);
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
 
-            if (spectrumMatch.getBestPeptideAssumption() != null) {
+            if (spectrumMatch != null && spectrumMatch.getBestPeptideAssumption() != null) {
 
                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                 peptideKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters());
@@ -6723,6 +6723,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
             int index = tableModel.getViewIndex(psmTable.getSelectedRow());
             long psmKey = psmKeys[index];
+            
+            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
+            spectrumFile = spectrumMatch.getSpectrumFile();
+            spectrumTitle = spectrumMatch.getSpectrumTitle();
 
         }
 
