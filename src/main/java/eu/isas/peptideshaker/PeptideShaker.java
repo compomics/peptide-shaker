@@ -46,7 +46,7 @@ import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.processing.ProteinProcessor;
 import eu.isas.peptideshaker.processing.PsmProcessor;
 import eu.isas.peptideshaker.protein_inference.GroupSimplification;
-import eu.isas.peptideshaker.ptm.PeptideInference;
+import com.compomics.util.experiment.identification.peptide_inference.PeptideInference;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 
 import java.io.File;
