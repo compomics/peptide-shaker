@@ -19,15 +19,15 @@ public class StirredOptionsBean {
     /**
      * The spectrum file.
      */
-    public final File spectrumFile;
+    public File spectrumFile = null;
     /**
      * The fasta file.
      */
-    public final File fastaFile;
+    public File fastaFile = null;
     /**
      * The identification parameters file.
      */
-    public final File identificationParametersFile;
+    public File identificationParametersFile = null;
     /**
      * The temp folder to use for temp files.
      */
@@ -45,9 +45,9 @@ public class StirredOptionsBean {
      */
     public int timeOutDays = 365;
     /**
-     * The output file.
+     * The output folder.
      */
-    public final File outputFile;
+    public final File outputFolder;
     /**
      * The first name of the contact to annotate in the mzIdentML file.
      */
@@ -104,40 +104,43 @@ public class StirredOptionsBean {
         inputFile = new File(arg);
 
         // Spectrum file
-        arg = aLine.getOptionValue(StirredOptions.spectrum.opt);
-        spectrumFile = new File(arg);
+        if (aLine.hasOption(StirredOptions.spectrum.opt)) {
 
-        // Spectrum file
-        arg = aLine.getOptionValue(StirredOptions.fasta.opt);
-        fastaFile = new File(arg);
+            arg = aLine.getOptionValue(StirredOptions.spectrum.opt);
+            spectrumFile = new File(arg);
 
-        // Spectrum file
-        arg = aLine.getOptionValue(StirredOptions.identificationParametersFile.opt);
-        identificationParametersFile = new File(arg);
-
-        // Output file
-        arg = aLine.getOptionValue(StirredOptions.output.opt);
-
-        if (!arg.endsWith(".mzid.gz")) {
-            
-            if (arg.endsWith(".gz")) {
-                
-                arg = arg.substring(0, arg.length() - 3);
-                
-            }
-
-            if (!arg.endsWith(".mzid")) {
-
-                arg = arg + ".mzid.gz";
-
-            } else {
-
-                arg = arg + ".gz";
-
-            }
         }
 
-        outputFile = new File(arg);
+        // Fasta file
+        if (aLine.hasOption(StirredOptions.fasta.opt)) {
+
+            arg = aLine.getOptionValue(StirredOptions.fasta.opt);
+            fastaFile = new File(arg);
+
+        }
+
+        // Spectrum file
+        if (aLine.hasOption(StirredOptions.identificationParametersFile.opt)) {
+
+            arg = aLine.getOptionValue(StirredOptions.identificationParametersFile.opt);
+            identificationParametersFile = new File(arg);
+
+        }
+
+        // Output folder
+        arg = aLine.getOptionValue(StirredOptions.output.opt);
+        outputFolder = new File(arg);
+
+        if (!outputFolder.exists()) {
+
+            throw new IllegalArgumentException("Output folder '" + outputFolder + "' not found.");
+
+        }
+        if (!outputFolder.isDirectory()) {
+
+            throw new IllegalArgumentException("Output folder '" + outputFolder + "' must be a directory.");
+
+        }
 
         // Log file
         if (aLine.hasOption(StirredOptions.log.opt)) {
@@ -147,7 +150,7 @@ public class StirredOptionsBean {
 
         } else {
 
-            logFile = new File(outputFile.getAbsolutePath() + ".log");
+            logFile = new File(outputFolder, inputFile.getName() + ".stirred.log");
 
         }
 
@@ -156,10 +159,16 @@ public class StirredOptionsBean {
 
             arg = aLine.getOptionValue(StirredOptions.tempFolder.opt);
             tempFolder = new File(arg);
+            
+            if (!tempFolder.exists()) {
+                
+                tempFolder.mkdir();
+                
+            }
 
         } else {
 
-            tempFolder = outputFile.getParentFile();
+            tempFolder = outputFolder;
 
         }
 

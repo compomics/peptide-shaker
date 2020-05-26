@@ -773,7 +773,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
      */
     public void createProject() throws IOException, InterruptedException, TimeoutException {
 
-        // define new project references
+        // define new project reference
         projectParameters = new ProjectParameters(cliInputBean.getExperimentID());
 
         // set the project details
@@ -790,7 +790,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
         File fastaFile = null;
 
-        // export data from zip files, try to find the search parameter and spectrum files
+        // Extract data from zip files, try to find the search parameter and spectrum files
         ArrayList<File> identificationFiles = new ArrayList<>();
         IdentificationParameters tempIdentificationParameters = null;
 
@@ -822,7 +822,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             }
 
             String fileName = inputFile.getName();
+            
             if (fileName.toLowerCase().endsWith(".zip")) {
+            
                 waitingHandler.appendReport("Unzipping " + fileName + ".", true, true);
                 String newName = PsZipUtils.getTempFolderName(fileName);
                 String parentFolder = PsZipUtils.getUnzipParentFolder();
@@ -834,6 +836,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 destinationFolder.mkdir();
                 TempFilesManager.registerTempFolder(parentFolderFile);
                 ZipUtils.unzip(inputFile, destinationFolder, waitingHandler);
+                
                 if (waitingHandler instanceof WaitingHandlerCLIImpl) {
                     waitingHandler.appendReportEndLine();
                 }

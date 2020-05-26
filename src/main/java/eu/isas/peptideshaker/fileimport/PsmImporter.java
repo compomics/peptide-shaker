@@ -165,7 +165,8 @@ public class PsmImporter {
 
         for (int i = 0; i < nThreads; i++) {
 
-            importRunnables.add(new PsmImportRunnable(
+            importRunnables.add(
+                    new PsmImportRunnable(
                             spectrumMatchQueue,
                             identificationParameters,
                             fileReader,

@@ -67,7 +67,7 @@ public class StirredCLI {
                         optionBean.inputFile,
                         optionBean.spectrumFile,
                         optionBean.fastaFile,
-                        optionBean.outputFile,
+                        optionBean.outputFolder,
                         optionBean.identificationParametersFile,
                         optionBean.tempFolder,
                         cliLogger,

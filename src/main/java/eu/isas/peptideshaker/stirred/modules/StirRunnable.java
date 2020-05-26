@@ -5,7 +5,6 @@ import com.compomics.util.experiment.io.identification.writers.SimpleMzIdentMLEx
 import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.proteins.Peptide;
-import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideVariantMatches;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -27,7 +26,7 @@ import com.compomics.util.parameters.identification.advanced.ModificationLocaliz
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import eu.isas.peptideshaker.fileimport.PsmImporter;
+import com.compomics.util.waiting.WaitingHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,10 +57,6 @@ public class StirRunnable implements Runnable {
      */
     private final ConcurrentLinkedQueue<SpectrumMatch> spectrumMatches;
     /**
-     * The name of the spectrum file.
-     */
-    private final String spectrumFileName;
-    /**
      * The mzIdentML writer.
      */
     private final SimpleMzIdentMLExporter writer;
@@ -89,41 +84,53 @@ public class StirRunnable implements Runnable {
      * The logger for CLI feedback.
      */
     private final CliLogger cliLogger;
+    /**
+     * The waiting handler to use to display progress.
+     */
+    private final WaitingHandler waitingHandler;
+    /**
+     * The number of peptides where the modification could not be parsed.
+     */
+    private int nModificationIssues = 0;
+    /**
+     * The total number of peptides processed.
+     */
+    private int nPeptides = 0;
 
     /**
      * Constructor.
      *
      * @param spectrumMatches The spectrum matches to process.
      * @param idfileReader The id file reader.
-     * @param spectrumFileName The name of the spectrum file.
      * @param writer The mzIdentML writer.
      * @param identificationParameters The identification parameters.
      * @param fastaMapper The sequence mapper.
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param cliLogger The logger for CLI feedback.
+     * @param waitingHandler The waiting handler to use to display progress.
      */
     public StirRunnable(
             ConcurrentLinkedQueue<SpectrumMatch> spectrumMatches,
             IdfileReader idfileReader,
-            String spectrumFileName,
             SimpleMzIdentMLExporter writer,
             IdentificationParameters identificationParameters,
             FastaMapper fastaMapper,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
-            CliLogger cliLogger
+            CliLogger cliLogger,
+            WaitingHandler waitingHandler
     ) {
 
         this.spectrumMatches = spectrumMatches;
         this.idfileReader = idfileReader;
-        this.spectrumFileName = spectrumFileName;
         this.writer = writer;
         this.identificationParameters = identificationParameters;
         this.fastaMapper = fastaMapper;
         this.sequenceProvider = sequenceProvider;
         this.spectrumProvider = spectrumProvider;
         this.cliLogger = cliLogger;
+        this.waitingHandler = waitingHandler;
 
     }
 
@@ -137,6 +144,8 @@ public class StirRunnable implements Runnable {
             while ((spectrumMatch = spectrumMatches.poll()) != null) {
 
                 processSpectrumMatch(spectrumMatch);
+
+                waitingHandler.increaseSecondaryProgressCounter();
 
             }
         } catch (Throwable t) {
@@ -161,37 +170,35 @@ public class StirRunnable implements Runnable {
         ArrayList<PeptideAssumption> peptideAssumptions = new ArrayList<>();
         ArrayList<TreeMap<Double, HashMap<Integer, Double>>> modificationScores = new ArrayList<>();
 
-        for (Map.Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry : spectrumMatch.getPeptideAssumptionsMap().entrySet()) {
+        for (TreeMap<Double, ArrayList<PeptideAssumption>> advocateMap : spectrumMatch.getPeptideAssumptionsMap().values()) {
 
-            // Check that X!Tandem refinement modifications are set in the parameters, add them otherwise.
-            int advocateId = entry.getKey();
+            for (ArrayList<PeptideAssumption> assumptionsAtScore : advocateMap.values()) {
 
-            if (advocateId == Advocate.xtandem.getIndex()) {
+                for (PeptideAssumption peptideAssumption : assumptionsAtScore) {
 
-                PsmImporter.verifyXTandemModifications(identificationParameters);
-
-            }
-
-            // Iterate all peptides and process them
-            entry.getValue()
-                    .values()
-                    .stream()
-                    .flatMap(
-                            assumptionsAtScore -> assumptionsAtScore.stream()
-                    )
-                    .forEach(
+                    TreeMap<Double, HashMap<Integer, Double>> peptideModificationScores = processPeptideAssumption(
+                            spectrumMatch,
                             peptideAssumption
-                            -> {
-                        peptideAssumptions.add(peptideAssumption);
-                        TreeMap<Double, HashMap<Integer, Double>> peptideModificationScores = processPeptideAssumption(
-                                spectrumMatch,
-                                peptideAssumption
-                        );
-                        modificationScores.add(peptideModificationScores);
-                    }
                     );
+
+                    if (peptideModificationScores != null) {
+
+                        peptideAssumptions.add(peptideAssumption);
+                        modificationScores.add(peptideModificationScores);
+
+                    } else {
+
+                        nModificationIssues++;
+
+                    }
+
+                    nPeptides++;
+
+                }
+            }
         }
 
+        // Write the spectrum match to the mzIdentML file.
         writer.addSpectrum(
                 spectrumMatch.getSpectrumFile(),
                 spectrumMatch.getSpectrumTitle(),
@@ -277,9 +284,9 @@ public class StirRunnable implements Runnable {
                     }
                 }
             }
-            
+
             modMatch.setConfident(true);
-            
+
         }
 
         if (peptide.getVariableModifications().length > 0) {
@@ -292,6 +299,32 @@ public class StirRunnable implements Runnable {
                     idfileReader,
                     modificationFactory
             );
+
+        }
+
+        // Sanity check - are all modifications recognized?
+        boolean modsOK = true;
+
+        for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
+
+            String modName = modificationMatch.getModification();
+
+            if (modName == null) {
+
+                modsOK = false;
+
+            }
+
+            if (modificationFactory.getModification(modName) == null) {
+
+                modsOK = false;
+
+            }
+        }
+
+        if (!modsOK) {
+
+            return null;
 
         }
 
@@ -427,7 +460,7 @@ public class StirRunnable implements Runnable {
             }
         }
         SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
-                spectrumFileName,
+                spectrumFile,
                 spectrumTitle,
                 peptideAssumption,
                 modificationParameters,
@@ -459,4 +492,25 @@ public class StirRunnable implements Runnable {
                         )
                 );
     }
+
+    /**
+     * Returns the number of peptides where the modification could not be
+     * parsed.
+     *
+     * @return The number of peptides where the modification could not be
+     * parsed.
+     */
+    public int getnModificationIssues() {
+        return nModificationIssues;
+    }
+
+    /**
+     * Returns the total number of peptides processed.
+     *
+     * @return The total number of peptides processed.
+     */
+    public int getnPeptides() {
+        return nPeptides;
+    }
+
 }
