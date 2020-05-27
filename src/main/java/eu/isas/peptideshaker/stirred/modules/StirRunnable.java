@@ -85,10 +85,6 @@ public class StirRunnable implements Runnable {
      */
     private final CliLogger cliLogger;
     /**
-     * The waiting handler to use to display progress.
-     */
-    private final WaitingHandler waitingHandler;
-    /**
      * The number of peptides where the modification could not be parsed.
      */
     private int nModificationIssues = 0;
@@ -108,7 +104,6 @@ public class StirRunnable implements Runnable {
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param cliLogger The logger for CLI feedback.
-     * @param waitingHandler The waiting handler to use to display progress.
      */
     public StirRunnable(
             ConcurrentLinkedQueue<SpectrumMatch> spectrumMatches,
@@ -118,8 +113,7 @@ public class StirRunnable implements Runnable {
             FastaMapper fastaMapper,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
-            CliLogger cliLogger,
-            WaitingHandler waitingHandler
+            CliLogger cliLogger
     ) {
 
         this.spectrumMatches = spectrumMatches;
@@ -130,7 +124,6 @@ public class StirRunnable implements Runnable {
         this.sequenceProvider = sequenceProvider;
         this.spectrumProvider = spectrumProvider;
         this.cliLogger = cliLogger;
-        this.waitingHandler = waitingHandler;
 
     }
 
@@ -144,8 +137,6 @@ public class StirRunnable implements Runnable {
             while ((spectrumMatch = spectrumMatches.poll()) != null) {
 
                 processSpectrumMatch(spectrumMatch);
-
-                waitingHandler.increaseSecondaryProgressCounter();
 
             }
         } catch (Throwable t) {

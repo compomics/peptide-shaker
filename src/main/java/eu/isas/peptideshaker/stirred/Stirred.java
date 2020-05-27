@@ -17,6 +17,7 @@ import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.io.flat.SimpleFileReader;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.tool_specific.XtandemParameters;
+import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.Duration;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -92,10 +93,6 @@ public class Stirred {
      * The logger for CLI feedback.
      */
     private final CliLogger cliLogger;
-    /**
-     * The waiting handler to use.
-     */
-    private final WaitingHandler waitingHandler = new WaitingHandlerCLIImpl();
     /**
      * The number of threads to use.
      */
@@ -227,7 +224,7 @@ public class Stirred {
             File unzipFolder = new File(tempFolder, PsZipUtils.getUnzipSubFolder());
             unzipFolder.mkdir();
             TempFilesManager.registerTempFolder(unzipFolder);
-            ZipUtils.unzip(inputFile, unzipFolder, waitingHandler);
+            ZipUtils.unzip(inputFile, unzipFolder, null);
 
             // Get the files
             File dataFasta = fastaFile;
@@ -381,7 +378,7 @@ public class Stirred {
             FMIndex fmIndex = new FMIndex(
                     dataFasta,
                     identificationParameters.getFastaParameters(),
-                    waitingHandler,
+                    null,
                     true,
                     identificationParameters.getSearchParameters().getModificationParameters(),
                     identificationParameters.getPeptideVariantsParameters()
@@ -401,29 +398,38 @@ public class Stirred {
                 msFileHandler.register(
                         spectrumFile,
                         tempFolder,
-                        waitingHandler
+                        null
                 );
 
             }
 
-            // Process search engine results
-            for (File searchEngineResultsFile : searchEngineResultsFiles) {
+            File finalFasta = dataFasta;
 
-                // Create output file
-                File outputFile = new File(ouputFolder, IoUtil.removeExtension(searchEngineResultsFile.getName()) + ".stirred.mzid.gz");
+            // Process search engine results in parallel
+            searchEngineResultsFiles.stream()
+                    .parallel()
+                    .forEach(
+                            searchEngineResultsFile -> {
+                                try {
 
-                // Run on the provided files
-                process(
-                        searchEngineResultsFile,
-                        dataFasta,
-                        outputFile,
-                        fmIndex,
-                        fastaSummary,
-                        msFileHandler,
-                        identificationParameters
-                );
+                                    // Create output file
+                                    File outputFile = new File(ouputFolder, IoUtil.removeExtension(searchEngineResultsFile.getName()) + ".stirred.mzid.gz");
 
-            }
+                                    // Run on the provided files
+                                    process(
+                                            searchEngineResultsFile,
+                                            finalFasta,
+                                            outputFile,
+                                            fmIndex,
+                                            fastaSummary,
+                                            msFileHandler,
+                                            identificationParameters
+                                    );
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                    );
 
         } else {
 
@@ -453,7 +459,7 @@ public class Stirred {
             FMIndex fmIndex = new FMIndex(
                     fastaFile,
                     identificationParameters.getFastaParameters(),
-                    waitingHandler,
+                    null,
                     true,
                     identificationParameters.getSearchParameters().getModificationParameters(),
                     identificationParameters.getPeptideVariantsParameters()
@@ -470,9 +476,8 @@ public class Stirred {
             msFileHandler.register(
                     spectrumFile,
                     tempFolder,
-                    waitingHandler
+                    null
             );
-            waitingHandler.appendReportEndLine();
 
             // Create output file
             File outputFile = new File(ouputFolder, IoUtil.removeExtension(inputFileName) + ".stirred.mzid.gz");
@@ -523,12 +528,11 @@ public class Stirred {
     ) throws InterruptedException, TimeoutException, IOException {
 
         // Start
-        cliLogger.logMessage("    Stirred process of " + searchEngineResultsFile.getName());
-        Duration duration = new Duration();
-        duration.start();
+        String idFileName = searchEngineResultsFile.getName();
+        cliLogger.logMessage("Starting stirred process of " + idFileName);
 
         // Import identification results
-        cliLogger.logMessage("        Parsing identification results");
+        cliLogger.logMessage(idFileName + ": Parsing identification results");
         IdImporter idImporter = new IdImporter(
                 searchEngineResultsFile,
                 cliLogger
@@ -536,7 +540,7 @@ public class Stirred {
         ArrayList<SpectrumMatch> spectrumMatches = idImporter.loadSpectrumMatches(
                 identificationParameters,
                 msFileHandler,
-                waitingHandler
+                null
         );
         HashMap<String, ArrayList<String>> softwareVersions = idImporter.getIdFileReader().getSoftwareVersions();
 
@@ -576,7 +580,9 @@ public class Stirred {
         }
 
         // Stir peptides and export
-        cliLogger.logMessage("        Processing peptides from " + spectrumMatches.size() + " spectra");
+        cliLogger.logMessage(idFileName + ": Processing peptides from " + spectrumMatches.size() + " spectra");
+        
+        
         try ( SimpleMzIdentMLExporter simpleMzIdentMLExporter = new SimpleMzIdentMLExporter(
                 SOFTWARE_NAME,
                 SOFTWARE_VERSION,
@@ -605,9 +611,6 @@ public class Stirred {
 
             ConcurrentLinkedQueue<SpectrumMatch> spectrumMatchesQueue = new ConcurrentLinkedQueue<>(spectrumMatches);
 
-            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-            waitingHandler.setMaxSecondaryProgressCounter(spectrumMatchesQueue.size());
-
             ExecutorService pool = Executors.newFixedThreadPool(nThreads);
 
             ArrayList<StirRunnable> runnables = new ArrayList<>(nThreads);
@@ -622,8 +625,7 @@ public class Stirred {
                         fmIndex,
                         fmIndex,
                         msFileHandler,
-                        cliLogger,
-                        waitingHandler
+                        cliLogger
                 );
                 runnables.add(runnable);
                 pool.submit(runnable);
@@ -650,21 +652,17 @@ public class Stirred {
                     .sum();
             double percentModificationIssues = Util.roundDouble(100.0 * nModificationIssues / nPeptides, 1);
 
-            waitingHandler.appendReportEndLine();
-
-            cliLogger.logMessage("    " + nPeptides + " peptides processed.");
+            cliLogger.logMessage(idFileName + ": " + nPeptides + " peptides processed.");
 
             if (nModificationIssues > 0) {
 
-                cliLogger.logMessage("    Warning: " + nModificationIssues + " (" + percentModificationIssues + "%) excluded due to unrecognized modification.");
+                cliLogger.logMessage(idFileName + ": " + nModificationIssues + " peptides (" + percentModificationIssues + "%) excluded due to unrecognized modification.");
 
             }
         }
 
         // Done
-        duration.end();
-        cliLogger.logMessage("    Stirred process of " + searchEngineResultsFile.getName() + " completed (" + duration.toString() + ")");
-        waitingHandler.appendReportEndLine();
+        cliLogger.logMessage(idFileName + ": completed.");
 
     }
 }
