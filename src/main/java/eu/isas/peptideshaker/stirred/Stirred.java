@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.stirred;
 
 import com.compomics.software.log.CliLogger;
-import com.compomics.util.ArrayUtil;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.identification.Advocate;
@@ -11,15 +10,11 @@ import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.identification.writers.SimpleMzIdentMLExporter;
 import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.experiment.io.temp.TempFilesManager;
-import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.io.IoUtil;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.io.flat.SimpleFileReader;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import com.compomics.util.parameters.identification.tool_specific.XtandemParameters;
-import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.Duration;
-import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.PsmImporter;
 import eu.isas.peptideshaker.stirred.modules.IdImporter;
@@ -39,7 +34,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * This class imports the results of a search engine from SearchGUI in the
@@ -74,7 +68,7 @@ public class Stirred {
      */
     private final File spectrumFile;
     /**
-     * The fasta file.
+     * The FASTA file.
      */
     private final File fastaFile;
     /**
