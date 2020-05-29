@@ -65,7 +65,7 @@ public class GroupSimplification {
         HashMap<Long, long[]> processedKeys = new HashMap<>();
         SimpleSemaphore mutex = new SimpleSemaphore(1);
 
-        proteinGroupKeys.parallelStream()
+        proteinGroupKeys.stream()
                 .filter(
                         key -> !processedKeys.containsKey(key)
                 )
