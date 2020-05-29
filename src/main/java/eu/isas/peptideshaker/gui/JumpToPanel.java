@@ -139,14 +139,20 @@ public class JumpToPanel extends javax.swing.JPanel {
         long psmKey = selection[2];
 
         SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
-        String spectrumFile = spectrumMatch.getSpectrumFile();
-        String spectrumTitle = spectrumMatch.getSpectrumTitle();
+        String spectrumFile = null;
+        String spectrumTitle = null;
+
+        if (spectrumMatch != null) {
+            spectrumFile = spectrumMatch.getSpectrumFile();
+            spectrumTitle = spectrumMatch.getSpectrumTitle();
+        }
 
         peptideShakerGUI.setSelectedItems(selection[0], selection[1], spectrumFile, spectrumTitle);
 
         peptideShakerGUI.updateSelectionInCurrentTab();
 
-        String label = String.join("",
+        String label = String.join(
+                "",
                 "(",
                 Integer.toString(selectedIndex + 1),
                 " of ",
