@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
  * This class groups the methods for protein inference.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ProteinInference {
 
@@ -259,7 +260,7 @@ public class ProteinInference {
 
                     for (String proteinAccession : peptideMatch.getPeptide().getProteinMapping().navigableKeySet()) {
 
-                        if (!proteinGroupAccessions.contains(proteinAccession) 
+                        if (!proteinGroupAccessions.contains(proteinAccession)
                                 && !getSimilarity(mainAccession, proteinAccession, proteinDetailsProvider)) {
 
                             unrelated = true;
@@ -533,7 +534,8 @@ public class ProteinInference {
             if (geneNamePrimaryProtein != null && geneNameSecondaryProtein != null) {
 
                 // one gene name is a substring of the other, for example: EEF1A1 and EEF1A1P5
-                if (geneNamePrimaryProtein.contains(geneNameSecondaryProtein) || geneNameSecondaryProtein.contains(geneNamePrimaryProtein)) {
+                if (geneNamePrimaryProtein.contains(geneNameSecondaryProtein)
+                        || geneNameSecondaryProtein.contains(geneNamePrimaryProtein)) {
                     return true;
                 }
 
@@ -553,8 +555,10 @@ public class ProteinInference {
             }
 
             // compare the protein descriptions, less secure than gene names
-            HashSet<String> primaryDescription = parseDescription(proteinDetailsProvider.getSimpleDescription(primaryProteinAccession));
-            HashSet<String> secondaryDescription = parseDescription(proteinDetailsProvider.getSimpleDescription(secondaryProteinAccession));
+            HashSet<String> primaryDescription = parseDescription(
+                    proteinDetailsProvider.getSimpleDescription(primaryProteinAccession));
+            HashSet<String> secondaryDescription = parseDescription(
+                    proteinDetailsProvider.getSimpleDescription(secondaryProteinAccession));
 
             if (primaryDescription.size() > secondaryDescription.size()) {
 
