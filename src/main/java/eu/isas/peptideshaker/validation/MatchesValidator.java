@@ -254,7 +254,7 @@ public class MatchesValidator {
 
                 if (filePrecursorMzDeviations != null) {
 
-                    precursorMzDeviations.get(spectrumFileName).addAll(threadPrecursorMzDeviations);
+                    filePrecursorMzDeviations.addAll(threadPrecursorMzDeviations);
 
                 } else {
 
