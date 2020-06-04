@@ -394,7 +394,8 @@ public class PsmImportRunnable implements Runnable {
 
                         for (ModificationMatch modMatch : modificationMatches) {
 
-                            HashMap<Integer, HashSet<String>> tempNames = ModificationNameMapper.getPossibleModificationNames(peptide,
+                            HashMap<Integer, HashSet<String>> tempNames = ModificationNameMapper.getPossibleModificationNames(
+                                    peptide,
                                     modMatch,
                                     fileReader,
                                     searchParameters,

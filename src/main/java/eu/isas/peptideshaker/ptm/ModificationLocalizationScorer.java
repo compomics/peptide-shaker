@@ -48,6 +48,7 @@ import java.util.stream.Stream;
  * utilities.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ModificationLocalizationScorer extends DbObject {
 
@@ -55,7 +56,7 @@ public class ModificationLocalizationScorer extends DbObject {
      * The compomics modification factory.
      */
     private ModificationFactory modificationFactory = ModificationFactory.getInstance();
-    
+
     /**
      * Constructor.
      */
@@ -294,7 +295,13 @@ public class ModificationLocalizationScorer extends DbObject {
 
                     if (scores == null) {
 
-                        throw new IllegalArgumentException("An error occurred while scoring spectrum " + spectrumTitle + " of file " + spectrumFile + " with PhosphoRS."); // Most likely a compatibility issue with utilities
+                        throw new IllegalArgumentException(
+                                "An error occurred while scoring spectrum "
+                                + spectrumTitle
+                                + " of file "
+                                + spectrumFile
+                                + " with PhosphoRS."
+                        ); // Most likely a compatibility issue with utilities
 
                     }
                 }
@@ -322,7 +329,12 @@ public class ModificationLocalizationScorer extends DbObject {
 
                             if (mappedModification == null) {
 
-                                throw new IllegalArgumentException("Could not map the PTM of mass " + modMass + " on the N-terminus of the peptide " + peptideSequence + ".");
+                                throw new IllegalArgumentException(
+                                        "Could not map the PTM of mass "
+                                        + modMass
+                                        + " on the N-terminus of the peptide "
+                                        + peptideSequence + "."
+                                );
 
                             }
 
@@ -341,7 +353,12 @@ public class ModificationLocalizationScorer extends DbObject {
 
                             if (mappedModification == null) {
 
-                                throw new IllegalArgumentException("Could not map the PTM of mass " + modMass + " on the C-terminus of the peptide " + peptideSequence + ".");
+                                throw new IllegalArgumentException(
+                                        "Could not map the PTM of mass "
+                                        + modMass
+                                        + " on the C-terminus of the peptide "
+                                        + peptideSequence + "."
+                                );
 
                             }
 
@@ -356,7 +373,15 @@ public class ModificationLocalizationScorer extends DbObject {
 
                             if (mappedModification == null) {
 
-                                throw new IllegalArgumentException("Could not map the PTM of mass " + modMass + " at site " + site + " in peptide " + peptide.getSequence() + ".");
+                                throw new IllegalArgumentException(
+                                        "Could not map the PTM of mass "
+                                        + modMass
+                                        + " at site "
+                                        + site
+                                        + " in peptide "
+                                        + peptide.getSequence()
+                                        + "."
+                                );
 
                             }
                         }
@@ -966,19 +991,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
                     for (String modName : siteToModMap.get(representativeSite)) {
 
-                        int site = representativeSite;
-
-                        if (site == 0) {
-
-                            site = 1;
-
-                        } else if (site == peptideSequence.length() + 1) {
-
-                            site = peptideSequence.length();
-
-                        }
-
-                        ModificationMatch newMatch = new ModificationMatch(modName, site);
+                        ModificationMatch newMatch = new ModificationMatch(modName, representativeSite);
                         newMatch.setConfident(false);
 
                         if (modificationInferredSites != null && modificationInferredSites.containsKey(representativeSite)) {
@@ -1000,7 +1013,12 @@ public class ModificationLocalizationScorer extends DbObject {
 
                         if (modificatoinMatchesTemp.size() > variableModifications.get(modMass)) {
 
-                            throw new IllegalArgumentException("More sites than modifications on peptide " + peptideMatch.getKey() + " for modification of mass " + modMass + ".");
+                            throw new IllegalArgumentException(
+                                    "More sites than modifications on peptide "
+                                    + peptideMatch.getKey()
+                                    + " for modification of mass "
+                                    + modMass + "."
+                            );
                         }
                     }
 
@@ -1042,7 +1060,13 @@ public class ModificationLocalizationScorer extends DbObject {
 
             if (identification.getPeptideIdentification().contains(newKey)) {
 
-                throw new IllegalArgumentException("Attempting to create duplicate peptide key: " + newKey + " from peptide " + originalKey + ".");
+                throw new IllegalArgumentException(
+                        "Attempting to create duplicate peptide key: "
+                        + newKey
+                        + " from peptide "
+                        + originalKey
+                        + "."
+                );
 
             }
             identification.removeObject(originalKey);
@@ -1785,8 +1809,8 @@ public class ModificationLocalizationScorer extends DbObject {
 
                 if (!maybeNotTerminal) {
 
-                    ArrayList<String> expectedModifications = 
-                            modificationFactory.getExpectedVariableModifications(searchParameters);
+                    ArrayList<String> expectedModifications
+                            = modificationFactory.getExpectedVariableModifications(searchParameters);
 
                     for (String otherModName : expectedModifications) {
 
