@@ -1076,6 +1076,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || fileName.endsWith(".tags")
                         || fileName.endsWith(".pnovo.txt")
                         || fileName.endsWith(".novor.csv")
+                        || fileName.endsWith(".coss.tsv")
                         || fileName.endsWith(".psm")
                         || fileName.endsWith(".omx.gz")
                         || fileName.endsWith(".t.xml.gz")
@@ -1087,6 +1088,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || fileName.endsWith(".tags.gz")
                         || fileName.endsWith(".pnovo.txt.gz")
                         || fileName.endsWith(".novor.csv.gz")
+                        || fileName.endsWith(".coss.tsv.gz")
                         || fileName.endsWith(".psm.gz")
                         || fileName.endsWith(".zip")
                         || myFile.isDirectory();
@@ -1294,6 +1296,24 @@ public class NewDialog extends javax.swing.JDialog {
                 return "Novor (.novor.csv, .novor.csv.gz)";
             }
         };
+        
+        // filter for coss only
+        FileFilter cossFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                String fileName = myFile.getName().toLowerCase();
+
+                return fileName.endsWith(".coss.tsv")
+                        || fileName.endsWith(".coss.tsv.gz")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "COSS (.coss.tsv, .coss.tsv.gz)";
+            }
+        };
 
         // filter for Onyase only
         FileFilter onyaseFilter = new FileFilter() {
@@ -1343,6 +1363,7 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.addChoosableFileFilter(direcTagFilter);
         fileChooser.addChoosableFileFilter(novorFilter);
         fileChooser.addChoosableFileFilter(pNovoFilter);
+        fileChooser.addChoosableFileFilter(cossFilter);
 
         int returnVal = fileChooser.showDialog(this, "Add");
 
@@ -2716,6 +2737,7 @@ public class NewDialog extends javax.swing.JDialog {
                 || lowerCaseName.endsWith(".xml")
                 || lowerCaseName.endsWith(".mzid")
                 || lowerCaseName.endsWith(".csv")
+                || lowerCaseName.endsWith(".tsv")
                 || lowerCaseName.endsWith(".tags")
                 || lowerCaseName.endsWith(".pnovo.txt")
                 || lowerCaseName.endsWith(".tide-search.target.txt")
@@ -2725,6 +2747,7 @@ public class NewDialog extends javax.swing.JDialog {
                 || lowerCaseName.endsWith(".xml.gz")
                 || lowerCaseName.endsWith(".mzid.gz")
                 || lowerCaseName.endsWith(".csv.gz")
+                || lowerCaseName.endsWith(".tsv.gz")
                 || lowerCaseName.endsWith(".tags.gz")
                 || lowerCaseName.endsWith(".pnovo.txt.gz")
                 || lowerCaseName.endsWith(".tide-search.target.txt.gz")

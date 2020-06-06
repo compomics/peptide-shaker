@@ -6,7 +6,6 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
@@ -48,7 +47,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      * Items matching the criterion for each type. Keys are in an array:
      * protein, peptide, PSM.
      */
-    private final EnumMap<JumpType, ArrayList<long[]>> possibilities;
+    private final EnumMap<JumpType, ArrayList<Object[]>> possibilities;
     /**
      * Currently selected item.
      */
@@ -78,6 +77,10 @@ public class JumpToPanel extends javax.swing.JPanel {
      * Semaphore for the synchronization of threads.
      */
     private final SimpleSemaphore searchMutex = new SimpleSemaphore(1, true);
+    /**
+     * Splitter between spectrum file and spectrum title.
+     */
+    private final String SPECTRUM_FILENAME_SPLITTER = "_spectrum_file_name_splitter_";
 
     /**
      * Creates a new JumpToPanel.
@@ -134,20 +137,28 @@ public class JumpToPanel extends javax.swing.JPanel {
 
         indexLabel.setForeground(Color.BLACK);
         int selectedIndex = currentSelection.get(selectedJumpType);
-        ArrayList<long[]> keys = possibilities.get(selectedJumpType);
-        long[] selection = keys.get(selectedIndex);
-        long psmKey = selection[2];
+        ArrayList<Object[]> keys = possibilities.get(selectedJumpType);
+        Object[] selection = keys.get(selectedIndex);
 
-        SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
         String spectrumFile = null;
         String spectrumTitle = null;
 
-        if (spectrumMatch != null) {
-            spectrumFile = spectrumMatch.getSpectrumFile();
-            spectrumTitle = spectrumMatch.getSpectrumTitle();
+        if (selection[2] instanceof String) {
+
+            String psmKey = (String) selection[2];
+
+            // parse file and title
+            String[] elements = psmKey.split(SPECTRUM_FILENAME_SPLITTER);
+            spectrumFile = elements[0];
+            spectrumTitle = elements[1];
         }
 
-        peptideShakerGUI.setSelectedItems(selection[0], selection[1], spectrumFile, spectrumTitle);
+        peptideShakerGUI.setSelectedItems(
+                (Long) selection[0],
+                (Long) selection[1],
+                spectrumFile,
+                spectrumTitle
+        );
 
         peptideShakerGUI.updateSelectionInCurrentTab();
 
@@ -187,18 +198,18 @@ public class JumpToPanel extends javax.swing.JPanel {
      *
      * @return the description of an item
      */
-    private String getItemsDescription(
-            long[] keys
+    private Object getItemsDescription(
+            Object[] keys
     ) {
 
         StringBuilder sb = new StringBuilder();
 
-        if (keys[0] != NO_KEY) {
+        if ((Long) keys[0] != NO_KEY) {
 
-            sb.append(getProteinDescription(keys[0]));
+            sb.append(getProteinDescription((Long) keys[0]));
 
         }
-        if (keys[1] != NO_KEY) {
+        if ((Long) keys[1] != NO_KEY) {
 
             if (sb.length() > 0) {
 
@@ -206,10 +217,10 @@ public class JumpToPanel extends javax.swing.JPanel {
 
             }
 
-            sb.append(getPeptideDescription(keys[1]));
+            sb.append(getPeptideDescription((Long) keys[1]));
 
         }
-        if (keys[2] != NO_KEY) {
+        if (keys[2] instanceof String) {
 
             if (sb.length() > 0) {
 
@@ -217,7 +228,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
             }
 
-            sb.append(getSpectrumDescription(keys[2]));
+            sb.append(getSpectrumDescription((String) keys[2]));
 
         }
 
@@ -281,18 +292,16 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @return the description of a spectrum
      */
     private String getSpectrumDescription(
-            long key
+            String key
     ) {
 
-        Identification identification = peptideShakerGUI.getIdentification();
-
-        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
+        String[] elements = key.split(SPECTRUM_FILENAME_SPLITTER);
 
         return String.join(
                 "",
-                spectrumMatch.getSpectrumTitle(),
+                elements[1],
                 " (",
-                spectrumMatch.getSpectrumFile(),
+                elements[0],
                 ")"
         );
     }
@@ -566,7 +575,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                         for (long proteinKey : proteinKeysFound) {
 
-                                            long[] keys = new long[3];
+                                            Object[] keys = new Object[3];
                                             Arrays.fill(keys, NO_KEY);
                                             keys[0] = proteinKey;
 
@@ -585,7 +594,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                         for (long peptideKey : peptideKeysFound) {
 
-                                            long[] keys = new long[3];
+                                            Object[] keys = new Object[3];
                                             Arrays.fill(keys, NO_KEY);
                                             keys[1] = peptideKey;
 
@@ -696,7 +705,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                                 for (long peptideKey : entry.getValue()) {
 
-                                                    long[] keys = new long[3];
+                                                    Object[] keys = new Object[3];
                                                     Arrays.fill(keys, NO_KEY);
                                                     keys[0] = proteinKey;
                                                     keys[1] = peptideKey;
@@ -724,7 +733,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                     .forEach(
                                                             peptideKey -> {
 
-                                                                long[] keys = new long[3];
+                                                                Object[] keys = new Object[3];
                                                                 Arrays.fill(keys, NO_KEY);
                                                                 keys[1] = peptideKey;
 
@@ -739,7 +748,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 if (selectedJumpType == JumpType.psm || !proteinFound && !peptidefound) {
 
                                     // See if the input is contained by a spectrum title or corresponds to a precursor mass or RT
-                                    TreeSet<Long> spectrumKeysFound = new TreeSet<>();
+                                    TreeSet<String> spectrumTitles = new TreeSet<>();
 
                                     SpectrumProvider spectrumProvider = peptideShakerGUI.getSpectrumProvider();
 
@@ -757,11 +766,10 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                 return;
                                             }
 
-                                            long psmKey = SpectrumMatch.getKey(fileName, spectrumTitle);
+                                            if (spectrumTitle.toLowerCase().contains(inputLowerCase)
+                                                    || fileName.toLowerCase().contains(inputLowerCase)) {
 
-                                            if (spectrumTitle.toLowerCase().contains(inputLowerCase) || fileName.toLowerCase().contains(inputLowerCase)) {
-
-                                                spectrumKeysFound.add(psmKey);
+                                                spectrumTitles.add(fileName + SPECTRUM_FILENAME_SPLITTER + spectrumTitle);
 
                                             } else {
 
@@ -773,7 +781,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                                 if (doubleString.startsWith(inputLowerCase)) {
 
-                                                    spectrumKeysFound.add(psmKey);
+                                                    spectrumTitles.add(fileName + SPECTRUM_FILENAME_SPLITTER + spectrumTitle);
 
                                                 } else {
 
@@ -784,23 +792,23 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                     doubleString = Double.toString(precusorRt);
                                                     if (doubleString.startsWith(inputLowerCase)) {
 
-                                                        spectrumKeysFound.add(psmKey);
+                                                        spectrumTitles.add(fileName + SPECTRUM_FILENAME_SPLITTER + spectrumTitle);
 
                                                     }
                                                 }
                                             }
                                         }
 
-                                        if (!spectrumKeysFound.isEmpty()) {
+                                        if (!spectrumTitles.isEmpty()) {
 
                                             for (JumpType jumpType : JumpType.values()) {
 
-                                                ArrayList<long[]> currentPossibilities = possibilities.get(jumpType);
-                                                long[] sample = currentPossibilities.isEmpty()
-                                                        ? new long[]{NO_KEY, NO_KEY, NO_KEY}
+                                                ArrayList<Object[]> currentPossibilities = possibilities.get(jumpType);
+                                                Object[] sample = currentPossibilities.isEmpty()
+                                                        ? new Object[]{NO_KEY, NO_KEY, NO_KEY}
                                                         : currentPossibilities.get(0);
 
-                                                if (jumpType == JumpType.psm || sample[0] == NO_KEY && sample[1] == NO_KEY) {
+                                                if (jumpType == JumpType.psm || ((Long) sample[0] == NO_KEY && (Long) sample[1] == NO_KEY)) {
 
                                                     if (!reinitializedMap.get(jumpType)) {
 
@@ -809,11 +817,11 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                                     }
 
-                                                    for (long psmKey : spectrumKeysFound) {
+                                                    for (String spectrumTitle : spectrumTitles) {
 
-                                                        long[] keys = new long[3];
+                                                        Object[] keys = new Object[3];
                                                         Arrays.fill(keys, NO_KEY);
-                                                        keys[2] = psmKey;
+                                                        keys[2] = spectrumTitle;
 
                                                         possibilities.get(jumpType).add(keys);
 
