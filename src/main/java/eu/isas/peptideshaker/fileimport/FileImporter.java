@@ -113,7 +113,7 @@ public class FileImporter {
      */
     private final Identification identification;
     /**
-     * A fasta file mapper.
+     * A FASTA file mapper.
      */
     private FastaMapper fastaMapper;
     /**
@@ -562,7 +562,13 @@ public class FileImporter {
                     if (!titles.contains(spectrumTitle)) {
 
                         waitingHandler.appendReport(
-                                "Spectrum with title \'" + spectrumTitle + "\' in file named \'" + spectrumFile + "\' required to parse \'" + IoUtil.getFileName(idFile) + "\' not found.",
+                                "Spectrum with title \'"
+                                + spectrumTitle
+                                + "\' in file named \'"
+                                + spectrumFile
+                                + "\' required to parse \'"
+                                + IoUtil.getFileName(idFile)
+                                + "\' not found.",
                                 true,
                                 true
                         );
@@ -978,9 +984,9 @@ public class FileImporter {
 
             e.printStackTrace();
             JOptionPane.showMessageDialog(
-                    null, 
-                    "An error occurred while loading the gene mappings.", 
-                    "Gene Mapping File Error", 
+                    null,
+                    "An error occurred while loading the gene mappings.",
+                    "Gene Mapping File Error",
                     JOptionPane.ERROR_MESSAGE
             );
         }
