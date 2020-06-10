@@ -61,8 +61,8 @@ public class TagMapper {
      * @param waitingHandler a waiting handler
      */
     public void mapTags(
-            ArrayList<SpectrumMatch> spectrumMatches, 
-            FastaMapper fastaMapper, 
+            ArrayList<SpectrumMatch> spectrumMatches,
+            FastaMapper fastaMapper,
             WaitingHandler waitingHandler
     ) {
 
@@ -80,11 +80,11 @@ public class TagMapper {
     /**
      * Maps tags to the protein database.
      *
-     * @param fastaMapper the fasta mapper to use
+     * @param fastaMapper the FASTA mapper to use
      * @param spectrumMatch the spectrum match containing the tags to map
      */
     private void mapTagsForSpectrumMatch(
-            SpectrumMatch spectrumMatch, 
+            SpectrumMatch spectrumMatch,
             FastaMapper fastaMapper
     ) {
 
@@ -173,7 +173,11 @@ public class TagMapper {
 
                         if (utilitiesPtmName == null) {
 
-                            throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
+                            throw new IllegalArgumentException(
+                                    "PepNovo+ PTM "
+                                    + pepnovoPtmName
+                                    + " not recognized."
+                            );
 
                         }
 
@@ -185,11 +189,19 @@ public class TagMapper {
 
                         if (notImplemented == null) {
 
-                            throw new IllegalArgumentException("Advocate of id " + advocateId + " not recognized.");
+                            throw new IllegalArgumentException(
+                                    "Advocate of id "
+                                    + advocateId
+                                    + " not recognized."
+                            );
 
                         }
 
-                        throw new IllegalArgumentException("PTM mapping not implemented for " + Advocate.getAdvocate(advocateId).getName() + ".");
+                        throw new IllegalArgumentException(
+                                "PTM mapping not implemented for "
+                                + Advocate.getAdvocate(advocateId).getName()
+                                + "."
+                        );
 
                     }
                 }
@@ -199,7 +211,11 @@ public class TagMapper {
 
             } else {
 
-                throw new UnsupportedOperationException("PTM mapping not implemeted for tag component " + tagComponent.getClass() + ".");
+                throw new UnsupportedOperationException(
+                        "PTM mapping not implemeted for tag component "
+                        + tagComponent.getClass()
+                        + "."
+                );
 
             }
         }

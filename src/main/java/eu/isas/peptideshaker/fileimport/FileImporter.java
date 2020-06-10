@@ -73,11 +73,11 @@ public class FileImporter {
      */
     private final HashMap<String, HashSet<String>> loadedSpectraMap;
     /**
-     * Summary information on the fasta file.
+     * Summary information on the FASTA file.
      */
     private FastaSummary fastaSummary;
     /**
-     * Metrics of the dataset picked-up while loading the data.
+     * Metrics of the data set extracted while loading the data.
      */
     private final Metrics metrics;
     /**
@@ -145,7 +145,7 @@ public class FileImporter {
      * @param processingParameters The processing parameters.
      * @param identificationParameters The identification parameters.
      * @param projectDetails The project details.
-     * @param metrics The metrics of the dataset to be saved.
+     * @param metrics The metrics of the data set to be saved.
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The handler displaying feedback to the user.
      * @param exceptionHandler The exception handler.
@@ -598,6 +598,7 @@ public class FileImporter {
                             true,
                             true
                     );
+
                     tagMapper.mapTags(
                             idFileSpectrumMatches,
                             fastaMapper,
