@@ -334,7 +334,12 @@ public class PeptideShaker {
 
                 } else {
 
-                    waitingHandler.appendReport("No decoy sequences found. Impossible to estimate intermediate scores probabilities.", true, true);
+                    waitingHandler.appendReport(
+                            "No decoy sequences found. Impossible to "
+                            + "estimate intermediate scores probabilities.",
+                            true,
+                            true
+                    );
 
                 }
             }
@@ -1000,7 +1005,7 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-        try ( PeptideAndProteinBuilder peptideAndProteinBuilder = new PeptideAndProteinBuilder(identification)) {
+        try (PeptideAndProteinBuilder peptideAndProteinBuilder = new PeptideAndProteinBuilder(identification)) {
 
             identification.getSpectrumIdentification().values().stream()
                     .flatMap(keys -> keys.stream())
@@ -1022,7 +1027,7 @@ public class PeptideShaker {
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-        
+
     }
 
     /**

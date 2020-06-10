@@ -21,18 +21,23 @@ import java.util.TreeMap;
 public class PeptideChecker {
 
     /**
-     * Corrects the protein mapping based on the confident or inferred variable modifications when located at the protein termini or targetting amino acid patterns.
-     * 
+     * Corrects the protein mapping based on the confident or inferred variable
+     * modifications when located at the protein termini or targeting amino acid
+     * patterns.
+     *
      * @param peptide the peptide to check
-     * @param sequenceProvider a protein sequence provider 
-     * @param modificationMatchingParameters the modification sequence matching parameters
+     * @param sequenceProvider a protein sequence provider
+     * @param modificationMatchingParameters the modification sequence matching
+     * parameters
      */
-    public static void checkPeptide(Peptide peptide, SequenceProvider sequenceProvider, SequenceMatchingParameters modificationMatchingParameters) {
+    public static void checkPeptide(
+            Peptide peptide,
+            SequenceProvider sequenceProvider,
+            SequenceMatchingParameters modificationMatchingParameters
+    ) {
 
         ModificationFactory modificationFactory = ModificationFactory.getInstance();
-
         ModificationMatch[] variableModifications = peptide.getVariableModifications();
-
         TreeMap<String, int[]> proteinMapping = peptide.getProteinMapping();
 
         for (ModificationMatch modificationMatch : variableModifications) {
@@ -42,11 +47,13 @@ public class PeptideChecker {
                 Modification modification = modificationFactory.getModification(modificationMatch.getModification());
                 ModificationType modificationType = modification.getModificationType();
 
-                if (modificationType == ModificationType.modn_protein || modificationType == ModificationType.modnaa_protein) {
+                if (modificationType == ModificationType.modn_protein
+                        || modificationType == ModificationType.modnaa_protein) {
 
                     proteinMapping = getNTermMapping(proteinMapping);
 
-                } else if (modificationType == ModificationType.modc_protein || modificationType == ModificationType.modcaa_protein) {
+                } else if (modificationType == ModificationType.modc_protein
+                        || modificationType == ModificationType.modcaa_protein) {
 
                     proteinMapping = getCTermMapping(proteinMapping, peptide.getSequence().length(), sequenceProvider);
 
@@ -54,7 +61,14 @@ public class PeptideChecker {
 
                 if (modification.getPattern().length() > 0) {
 
-                    proteinMapping = getPatternMapping(proteinMapping, modificationMatch, modification, peptide.getSequence().length(), sequenceProvider, modificationMatchingParameters);
+                    proteinMapping = getPatternMapping(
+                            proteinMapping,
+                            modificationMatch,
+                            modification,
+                            peptide.getSequence().length(),
+                            sequenceProvider,
+                            modificationMatchingParameters
+                    );
 
                 }
             }
@@ -65,11 +79,13 @@ public class PeptideChecker {
     }
 
     /**
-     * Returns the modification mapping for a peptide carrying a protein n-term modification.
-     * 
+     * Returns the modification mapping for a peptide carrying a protein n-term
+     * modification.
+     *
      * @param proteinMapping the protein mapping to check
-     * 
-     * @return the modification mapping for a peptide carrying a protein c-term modification
+     *
+     * @return the modification mapping for a peptide carrying a protein c-term
+     * modification
      */
     private static TreeMap<String, int[]> getNTermMapping(TreeMap<String, int[]> proteinMapping) {
 
@@ -89,15 +105,21 @@ public class PeptideChecker {
     }
 
     /**
-     * Returns the modification mapping for a peptide carrying a protein c-term modification.
-     * 
+     * Returns the modification mapping for a peptide carrying a protein c-term
+     * modification.
+     *
      * @param proteinMapping the protein mapping to check
      * @param peptideLength the peptide length
-     * @param sequenceProvider a protein sequence provider 
-     * 
-     * @return the modification mapping for a peptide carrying a protein c-term modification
+     * @param sequenceProvider a protein sequence provider
+     *
+     * @return the modification mapping for a peptide carrying a protein c-term
+     * modification
      */
-    private static TreeMap<String, int[]> getCTermMapping(TreeMap<String, int[]> proteinMapping, int peptideLength, SequenceProvider sequenceProvider) {
+    private static TreeMap<String, int[]> getCTermMapping(
+            TreeMap<String, int[]> proteinMapping,
+            int peptideLength,
+            SequenceProvider sequenceProvider
+    ) {
 
         TreeMap<String, int[]> cleanedProteinMapping = new TreeMap<>();
 
@@ -119,18 +141,28 @@ public class PeptideChecker {
     }
 
     /**
-     * Returns the modification mapping corrected for modification amino acid pattern.
-     * 
+     * Returns the modification mapping corrected for modification amino acid
+     * pattern.
+     *
      * @param proteinMapping the protein mapping to check
      * @param modificationMatch the modification match
      * @param modification the modification
      * @param peptideLength the peptide length
-     * @param sequenceProvider a protein sequence provider 
-     * @param modificationMatchingParameters the modification sequence matching parameters
-     * 
-     * @return the modification mapping corrected for modification amino acid pattern
+     * @param sequenceProvider a protein sequence provider
+     * @param modificationMatchingParameters the modification sequence matching
+     * parameters
+     *
+     * @return the modification mapping corrected for modification amino acid
+     * pattern
      */
-    private static TreeMap<String, int[]> getPatternMapping(TreeMap<String, int[]> proteinMapping, ModificationMatch modificationMatch, Modification modification, int peptideLength, SequenceProvider sequenceProvider, SequenceMatchingParameters modificationMatchingParameters) {
+    private static TreeMap<String, int[]> getPatternMapping(
+            TreeMap<String, int[]> proteinMapping,
+            ModificationMatch modificationMatch,
+            Modification modification,
+            int peptideLength,
+            SequenceProvider sequenceProvider,
+            SequenceMatchingParameters modificationMatchingParameters
+    ) {
 
         TreeMap<String, int[]> cleanedProteinMapping = new TreeMap<>();
 
@@ -142,7 +174,14 @@ public class PeptideChecker {
             int[] sequenceStart = entry.getValue();
 
             int[] peptideStart = Arrays.stream(sequenceStart)
-                    .filter(aa -> validSite(proteinSequence, aa, modificationMatch.getSite(), peptideLength, modification.getPattern(), modificationMatchingParameters))
+                    .filter(aa -> validSite(
+                    proteinSequence,
+                    aa,
+                    modificationMatch.getSite(),
+                    peptideLength,
+                    modification.getPattern(),
+                    modificationMatchingParameters)
+                    )
                     .toArray();
 
             if (peptideStart.length > 0) {
@@ -158,18 +197,30 @@ public class PeptideChecker {
     }
 
     /**
-     * Indicates whether the peptide start allows the modification of given pattern to be on the given site of the given protein.
-     * 
+     * Indicates whether the peptide start allows the modification of given
+     * pattern to be on the given site of the given protein.
+     *
      * @param proteinSequence the protein sequence
      * @param peptideStart the peptide start
-     * @param modificationSite the modification site as stated in the modification match
+     * @param modificationSite the modification site as stated in the
+     * modification match
      * @param peptideLength the peptide length
      * @param aminoAcidPattern the amino acid pattern of the modification
-     * @param modificationMatchingParameters the modification sequence matching parameters
-     * 
-     * @return a boolean indicating whether the peptide start allows the modification of given pattern to be on the given site of the given protein
+     * @param modificationMatchingParameters the modification sequence matching
+     * parameters
+     *
+     * @return a boolean indicating whether the peptide start allows the
+     * modification of given pattern to be on the given site of the given
+     * protein
      */
-    private static boolean validSite(String proteinSequence, int peptideStart, int modificationSite, int peptideLength, AminoAcidPattern aminoAcidPattern, SequenceMatchingParameters modificationMatchingParameters) {
+    private static boolean validSite(
+            String proteinSequence,
+            int peptideStart,
+            int modificationSite,
+            int peptideLength,
+            AminoAcidPattern aminoAcidPattern,
+            SequenceMatchingParameters modificationMatchingParameters
+    ) {
 
         if (modificationSite == 0) {
 

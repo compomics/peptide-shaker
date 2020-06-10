@@ -93,7 +93,7 @@ public class ModificationLocalizationScorer extends DbObject {
 
         String mainSequence = psPeptide.getSequence();
 
-        HashMap<String, List<Integer>> modificationParameterss = Arrays.stream(psPeptide.getVariableModifications())
+        HashMap<String, List<Integer>> modificationParameters = Arrays.stream(psPeptide.getVariableModifications())
                 .collect(
                         Collectors.groupingBy(
                                 ModificationMatch::getModification,
@@ -102,7 +102,7 @@ public class ModificationLocalizationScorer extends DbObject {
                         )
                 );
 
-        for (Entry<String, List<Integer>> entry : modificationParameterss.entrySet()) {
+        for (Entry<String, List<Integer>> entry : modificationParameters.entrySet()) {
 
             String modName = entry.getKey();
             List<Integer> sites = entry.getValue();
@@ -229,7 +229,7 @@ public class ModificationLocalizationScorer extends DbObject {
         HashMap<Double, Integer> nMod = new HashMap<>(1);
         PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
         Peptide peptide = bestPeptideAssumption.getPeptide();
-
+        
         for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
 
             Modification refMod = modificationProvider.getModification(modificationMatch.getModification());
@@ -1776,7 +1776,6 @@ public class ModificationLocalizationScorer extends DbObject {
         if (nVariableModifications > 0) {
 
             SearchParameters searchParameters = identificationParameters.getSearchParameters();
-            ModificationParameters modificationParameters = searchParameters.getModificationParameters();
             PSModificationScores modificationScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
             HashMap<Double, ArrayList<ModificationMatch>> modMatchesMap = new HashMap<>(nVariableModifications);
             HashMap<Double, HashMap<Integer, String>> possiblePositions = new HashMap<>(nVariableModifications);
