@@ -960,7 +960,7 @@ public class FileImporter {
                 fastaParameters,
                 waitingHandler,
                 true,
-                searchParameters.getModificationParameters(),
+                searchParameters,
                 peptideVariantsParameters
         );
 

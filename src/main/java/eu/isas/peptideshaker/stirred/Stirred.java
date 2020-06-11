@@ -374,7 +374,7 @@ public class Stirred {
                     identificationParameters.getFastaParameters(),
                     null,
                     true,
-                    identificationParameters.getSearchParameters().getModificationParameters(),
+                    identificationParameters.getSearchParameters(),
                     identificationParameters.getPeptideVariantsParameters()
             );
             FastaSummary fastaSummary = FastaSummary.getSummary(
@@ -455,7 +455,7 @@ public class Stirred {
                     identificationParameters.getFastaParameters(),
                     null,
                     true,
-                    identificationParameters.getSearchParameters().getModificationParameters(),
+                    identificationParameters.getSearchParameters(),
                     identificationParameters.getPeptideVariantsParameters()
             );
             FastaSummary fastaSummary = FastaSummary.getSummary(
