@@ -3510,26 +3510,28 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         for (Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry1 : peptideAssumptions.entrySet()) {
 
-            int tool = entry1.getKey();
-
             Entry<Double, ArrayList<PeptideAssumption>> entry2 = entry1.getValue().firstEntry();
 
             boolean advocateSameSequence = false, advocateSameModifications = false;
 
-            for (PeptideAssumption peptideAssumption : entry2.getValue()) {
+            if (entry2 != null) {
 
-                if (bestPeptideAssumption.getPeptide().isSameSequenceAndModificationStatus(peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
+                for (PeptideAssumption peptideAssumption : entry2.getValue()) {
 
-                    advocateSameSequence = true;
+                    if (bestPeptideAssumption.getPeptide().isSameSequenceAndModificationStatus(
+                            peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
 
-                    if (bestPeptideAssumption.getPeptide().sameModificationsAs(peptideAssumption.getPeptide())) {
+                        advocateSameSequence = true;
 
-                        advocateSameModifications = true;
+                        if (bestPeptideAssumption.getPeptide().sameModificationsAs(peptideAssumption.getPeptide())) {
 
+                            advocateSameModifications = true;
+
+                        }
                     }
-                }
-                if (advocateSameSequence && advocateSameModifications) {
-                    break;
+                    if (advocateSameSequence && advocateSameModifications) {
+                        break;
+                    }
                 }
             }
             if (!advocateSameSequence) {
