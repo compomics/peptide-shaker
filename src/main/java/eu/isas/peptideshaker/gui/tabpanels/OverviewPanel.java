@@ -7,6 +7,7 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.ions.Charge;
 import com.compomics.util.experiment.biology.proteins.Peptide;
+import com.compomics.util.experiment.biology.variants.Variant;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.parameters.identification.search.SearchParameters;
@@ -4267,7 +4268,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             if (updateProtein || !proteinAccession.equalsIgnoreCase(currentProteinAccession) || coverage == null) {
                 updateProteinSequenceCoveragePanelTitle(proteinAccession);
                 updatePtmCoveragePlot(proteinAccession);
-                //updatePeptideVariationsCoveragePlot(proteinAccession); // @TODO: re-add when adding the peptide variations!
+                updatePeptideVariationsCoveragePlot(proteinAccession);
             }
 
             currentProteinAccession = proteinAccession;
@@ -4621,15 +4622,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private void updatePeptideVariationsCoveragePlot(
             String proteinAccession
-    ) { // @TODO: replace with the actual peptide variation data!
+    ) {
 
         if (proteinTable.getSelectedRow() != -1) {
 
             try {
-                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
-                long proteinKey = proteinKeys[tableModel.getViewIndex(proteinTable.getSelectedRow())];
-
-                // get the ptms
                 ArrayList<JSparklinesDataSeries> sparkLineDataSeriesPtm = new ArrayList<>();
                 HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<>();
 
@@ -4640,14 +4637,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
 
                 Identification identification = peptideShakerGUI.getIdentification();
-                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                PSModificationScores psPtmScores = (PSModificationScores) proteinMatch.getUrParam(PSModificationScores.dummy);
 
                 String sequence = peptideShakerGUI.getSequenceProvider().getSequence(proteinAccession);
                 int unmodifiedCounter = 0;
 
-                // get the fixed ptms
-                HashMap<Integer, String> fixedPtms = new HashMap<>(); // @TODO: note that this only supports one fixed ptm per residue
+                // get the variants
+                HashMap<Integer, String> variantMapping = new HashMap<>();
                 DisplayParameters displayParameters = peptideShakerGUI.getDisplayParameters();
 
                 // see if fixed ptms are displayed
@@ -4657,18 +4652,23 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                         Peptide peptide = peptideMatch.getPeptide();
-                        int[] indexes = peptide.getProteinMapping().get(proteinAccession);
 
-                        for (ModificationMatch modMatch : peptide.getVariableModifications()) {
+                        HashMap<String, HashMap<Integer, PeptideVariantMatches>> allVariants = peptide.getVariantMatches();
 
-                            String modName = modMatch.getModification();
+                        if (allVariants != null && allVariants.containsKey(proteinAccession)) {
 
-                            if (displayParameters.isDisplayedPTM(modName)) {
+                            HashMap<Integer, PeptideVariantMatches> peptideVariants = allVariants.get(proteinAccession);
 
-                                for (Integer index : indexes) {
+                            for (Integer peptideStart : peptideVariants.keySet()) {
 
-                                    fixedPtms.put(modMatch.getSite() + index - 1, modName);
+                                PeptideVariantMatches peptideVariantMatches = peptideVariants.get(peptideStart);
 
+                                HashMap<Integer, Variant> variants = peptideVariantMatches.getVariantMatches();
+
+                                for (Integer site : variants.keySet()) {
+                                    Variant variant = variants.get(site);
+
+                                    variantMapping.put(site + peptideStart - 1, variant.getDescription());
                                 }
                             }
                         }
@@ -4677,23 +4677,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 for (int aa = 1; aa < sequence.length(); aa++) {
 
-                    String modName = fixedPtms.get(aa + 1);
-                    for (String variablePTM : psPtmScores.getModificationsAtRepresentativeSite(aa + 1)) {
-                        if (displayParameters.isDisplayedPTM(variablePTM)) {
-                            modName = variablePTM;
-                            break;
-                        }
-                    }
-                    for (String variablePTM : psPtmScores.getConfidentModificationsAt(aa + 1)) {
-                        if (displayParameters.isDisplayedPTM(variablePTM)) {
-                            modName = variablePTM;
-                            break;
-                        }
-                    }
+                    String variantName = variantMapping.get(aa + 1);
 
-                    if (modName != null) {
+                    if (variantName != null) {
 
-                        // add the non-modified area
+                        // add the unmodified area
                         if (unmodifiedCounter > 0) {
                             data = new ArrayList<>(1);
                             data.add(new Double(unmodifiedCounter));
@@ -4701,21 +4689,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
                         }
 
-                        // @TODO: what about multiple ptms on the same residue..?
-//                        if (psPtmScores.getMainModificationsAt(aa).size() > 1) {
-//                            for (int i=0; i<psPtmScores.getMainModificationsAt(aa).size(); i++) {
-//                                psPtmScores.getMainModificationsAt(aa).get(i);
-//                            }
-//                        }
-                        // @TODO: are peptide terminal mods excluded??  
-                        Color ptmColor = new Color(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationParameters().getColor(modName));
-                        if (ptmColor == null) {
-                            ptmColor = Color.lightGray;
-                        }
-                        ptmColor = Color.ORANGE; // @TODO: remove when adding the actual peptide variations!
+                        // @TODO: get different colors for the different variant types?
+                        // @TODO: what about multiple variants on the same residue..?
+                        Color ptmColor = Color.ORANGE;
 
                         ArrayList<ResidueAnnotation> annotations = new ArrayList<>(1);
-                        annotations.add(new ResidueAnnotation(modName + " (" + aa + ")", 0l, false));
+                        annotations.add(new ResidueAnnotation(variantName + " (" + aa + ")", 0l, false));
                         proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
 
                         data = new ArrayList<>(1);
@@ -4723,7 +4702,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         sparklineDataseriesPtm = new JSparklinesDataSeries(data, ptmColor, null);
                         sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
 
-                        // reset the non-modified area counter
+                        // reset the unmodified area counter
                         unmodifiedCounter = 0;
 
                     } else {
@@ -4732,7 +4711,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 }
 
                 if (unmodifiedCounter > 0) {
-                    // add the remaining non-modified area
+                    // add the remaining unmodified area
                     data = new ArrayList<>();
                     data.add(new Double(unmodifiedCounter));
                     sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
@@ -4747,12 +4726,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         false,
                         false
                 );
+
                 sequenceVariationsPanel.removeAll();
                 sequenceVariationsPanel.add(peptideVariationsChart);
                 sequenceVariationsPanel.revalidate();
                 sequenceVariationsPanel.repaint();
+
             } catch (ClassCastException e) {
-                // ignore   @TODO: this should not happen, but can happen if the table does not update fast enough for the filtering
+                // ignore   @TODO: this should not happen, but can happen if the 
+                //                 table does not update fast enough for the filtering
             }
         }
     }
@@ -5471,7 +5453,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 )
                 .toArray();
 
-            }
+    }
 
     /**
      * Returns the titles of the selected spectra in the PSM table in a map by
@@ -6723,7 +6705,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
             int index = tableModel.getViewIndex(psmTable.getSelectedRow());
             long psmKey = psmKeys[index];
-            
+
             SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
             spectrumFile = spectrumMatch.getSpectrumFile();
             spectrumTitle = spectrumMatch.getSpectrumTitle();
