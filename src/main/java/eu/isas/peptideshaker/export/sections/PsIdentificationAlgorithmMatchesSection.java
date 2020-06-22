@@ -675,7 +675,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case rt:
 
-                double precursorRt = spectrumProvider.getPrecursorMz(spectrumFile, spectrumTitle);
+                double precursorRt = spectrumProvider.getPrecursorRt(spectrumFile, spectrumTitle);
                 return Double.toString(precursorRt);
 
             case algorithm_score:
