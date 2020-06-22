@@ -355,6 +355,8 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "\n\nSequence Matching:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SEQUENCE_MATCHING_TYPE.id) + " " + IdentificationParametersCLIParams.SEQUENCE_MATCHING_TYPE.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SEQUENCE_MATCHING_X.id) + " " + IdentificationParametersCLIParams.SEQUENCE_MATCHING_X.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SEQUENCE_MATCHING_ENZYMATIC_TAGS.id) + " " + IdentificationParametersCLIParams.SEQUENCE_MATCHING_ENZYMATIC_TAGS.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SEQUENCE_MATCHING_MAX_PTMS_PER_TAG.id) + " " + IdentificationParametersCLIParams.SEQUENCE_MATCHING_MAX_PTMS_PER_TAG.description + "\n";
 
         output += "\n\nImport Filters:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.IMPORT_PEPTIDE_LENGTH_MIN.id) + " " + IdentificationParametersCLIParams.IMPORT_PEPTIDE_LENGTH_MIN.description + "\n";

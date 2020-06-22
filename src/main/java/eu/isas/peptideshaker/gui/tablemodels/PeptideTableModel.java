@@ -51,7 +51,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     private String proteinAccession;
     /**
      * Indicates whether the scores should be displayed instead of the
-     * confidence
+     * confidence.
      */
     private boolean showScores = false;
 
