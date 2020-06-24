@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.pride;
 
 import com.compomics.software.dialogs.ProteoWizardSetupDialog;
-import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.mass_spectrometry.proteowizard.ProteoWizardMsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
@@ -1052,13 +1051,14 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             if (file.getName().contains(" ")) {
 
                 JOptionPane.showMessageDialog(
-                        this, 
-                        "Your FASTA file name contains white space and ougth to be renamed.", 
-                        "File Name Warning", 
+                        this,
+                        "Your FASTA file name contains white space and ougth to be renamed.",
+                        "File Name Warning",
                         JOptionPane.WARNING_MESSAGE
                 );
             }
 
+            databaseSettingsTxt.setText(file.getAbsolutePath());
         }
 
         validateInput(false);
@@ -1293,11 +1293,11 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                 final String fileName = (String) spectrumTable.getValueAt(row, spectrumTable.getColumn("File").getModelIndex());
                 final File downloadFolder = FileChooserUtil.getUserSelectedFolder(
-                        this, 
-                        "Select Download Folder", 
-                        lastSelectedFolder.getLastSelectedFolder(), 
-                        "Download Folder", 
-                        "Select", 
+                        this,
+                        "Select Download Folder",
+                        lastSelectedFolder.getLastSelectedFolder(),
+                        "Download Folder",
+                        "Select",
                         false
                 );
 
@@ -1331,11 +1331,11 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                             try {
                                 File downLoadLocation = new File(downloadFolder, fileName);
                                 File savedFile = IoUtil.saveUrl(
-                                        downLoadLocation, 
-                                        link, 
-                                        fileSizeInBytes, 
-                                        prideReShakeGUI.getUserName(), 
-                                        prideReShakeGUI.getPassword(), 
+                                        downLoadLocation,
+                                        link,
+                                        fileSizeInBytes,
+                                        prideReShakeGUI.getUserName(),
+                                        prideReShakeGUI.getPassword(),
                                         progressDialog
                                 );
 
@@ -1344,8 +1344,8 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                                 if (!canceled) {
                                     JOptionPane.showMessageDialog(
-                                            PrideReshakeSetupDialog.this, 
-                                            savedFile.getName() + " downloaded to\n" + savedFile + ".", "Download Complete", 
+                                            PrideReshakeSetupDialog.this,
+                                            savedFile.getName() + " downloaded to\n" + savedFile + ".", "Download Complete",
                                             JOptionPane.INFORMATION_MESSAGE
                                     );
                                 } else {
@@ -1532,6 +1532,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void downloadUniProtJLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadUniProtJLabelMouseClicked
+
         if (downloadUniProtJLabel.isEnabled()) {
 
             String tempSpecies = speciesJTextField.getText().trim();
@@ -1637,14 +1638,24 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         // check the database
         if (databaseSettingsTxt.getText() == null || databaseSettingsTxt.getText().trim().isEmpty()) {
             if (showMessage && valid) {
-                JOptionPane.showMessageDialog(this, "You need to specify a search database.", "Search Database Not Found", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "You need to specify a search database.",
+                        "Search Database Not Found",
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
             valid = false;
         } else {
             File test = new File(databaseSettingsTxt.getText().trim());
             if (!test.exists()) {
                 if (showMessage && valid) {
-                    JOptionPane.showMessageDialog(this, "The database file could not be found.", "Search Database Not Found", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "The database file could not be found.",
+                            "Search Database Not Found",
+                            JOptionPane.WARNING_MESSAGE
+                    );
                 }
                 valid = false;
             }
@@ -1653,7 +1664,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         // check the working folder
         if (workingFolderTxt.getText().trim().isEmpty()) {
             if (showMessage && valid) {
-                JOptionPane.showMessageDialog(this, "You need to specify a working folder.", "Working Folder", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "You need to specify a working folder.",
+                        "Working Folder",
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
             valid = false;
         }
@@ -1668,7 +1684,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
         if (spectrumCounter == 0) {
             if (showMessage && valid) {
-                JOptionPane.showMessageDialog(this, "You need to select at least one specturm file.", "Spectrum Files", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "You need to select at least one specturm file.",
+                        "Spectrum Files",
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
             valid = false;
         }
@@ -1684,7 +1705,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
         if (searchSettingsCount > 1) {
             if (showMessage && valid) {
-                JOptionPane.showMessageDialog(this, "You can only select one file to extract seach settings from.", "Search Settings Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "You can only select one file to extract seach settings from.",
+                        "Search Settings Error",
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
             valid = false;
         }
@@ -1692,53 +1718,6 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         reshakeButton.setEnabled(valid);
 
         return valid;
-    }
-
-//    /**
-//     * Checks whether the FASTA file loaded contains mainly UniProt concatenated
-//     * target decoy.
-//     */
-//    public void checkFastaFile() {
-//
-//        try {
-//
-//            SearchParameters searchParameters = prideReShakeGUI.getPeptideShakerGUI().getIdentificationParameters().getSearchParameters();
-//            FastaSummary fastaSummary = FastaSummary.getSummary(searchParameters.getFastaFile(), searchParameters.getFastaParameters(), progressDialog);
-//
-//            if (!fastaSummary.databaseType.containsKey(ProteinDatabase.UniProt)) {
-//
-//                showDataBaseHelpDialog();
-//
-//            }
-//            if (!searchParameters.getFastaParameters().isTargetDecoy()) {
-//
-//                JOptionPane.showMessageDialog(this, "PeptideShaker validation requires the use of a taget-decoy database.\n"
-//                        + "Some features will be limited if using other types of databases.\n\n"
-//                        + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
-//                        + "See the PeptideShaker home page for details.",
-//                        "No Decoys Found",
-//                        JOptionPane.INFORMATION_MESSAGE);
-//
-//            }
-//
-//        } catch (IOException exception) {
-//
-//            JOptionPane.showMessageDialog(this, "An error occurred while parsing the fasta file.",
-//                    "Fasta File Error",
-//                    JOptionPane.INFORMATION_MESSAGE);
-//
-//        }
-//    }
-    /**
-     * Show a simple dialog saying that UniProt databases is recommended and
-     * display a link to the Database Help web page.
-     */
-    private void showDataBaseHelpDialog() {
-        JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
-                "We strongly recommend the use of UniProt databases. Some<br>"
-                + "features will be limited if using other databases.<br><br>"
-                + "See <a href=\"https://compomics.github.io/projects/searchgui/wiki/databasehelp.html\">Database Help</a> for details."),
-                "Database Information", JOptionPane.WARNING_MESSAGE);
     }
 
     /**
@@ -1761,7 +1740,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 try {
                     prideReShakeGUI.getPeptideShakerGUI().setUtilitiesUserParameters(UtilitiesUserParameters.loadUserParameters());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "An error occurred when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "An error occurred when reading the user preferences.",
+                            "File Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                     e.printStackTrace();
                 }
             }
