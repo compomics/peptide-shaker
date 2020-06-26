@@ -23,6 +23,7 @@ public enum PeptideShakerCLIParams {
     PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", false),
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is '0').", false),
     ZIP("zip", "Exports the entire project as a zip file in the file specified.", false),
+    OUTPUT_MGF("output_mgf", "When using zipped output, exports mgf file/s out of it into its same folder (0: no, 1: yes, default is '0').", false),
     THREADS("threads", "The number of threads to use. Defaults to the number of available CPUs.", false);
 
     /**
@@ -108,7 +109,8 @@ public enum PeptideShakerCLIParams {
 
         output += "\n\nOptional Export Parameters:\n\n";
         output += "-" + String.format(formatter, ZIP.id) + " " + ZIP.description + "\n";
-
+        output += "-" + String.format(formatter, OUTPUT_MGF.id) + " " + OUTPUT_MGF.description + "\n";
+        
         output += "\n\nOptional Log Folder:\n\n";
         output += "-" + String.format(formatter, LOG.id) + " " + LOG.description + "\n";
 

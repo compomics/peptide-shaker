@@ -15,6 +15,7 @@ import com.compomics.cli.identification_parameters.IdentificationParametersInput
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
+import com.compomics.util.experiment.io.mass_spectrometry.MsFileExporter;
 import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
@@ -620,6 +621,49 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                             true,
                             true
                     );
+                    
+                    // export mgf file/s out of the zip file
+                    boolean mgfExport = cliInputBean.getMgfExport();
+                    if (mgfExport) {
+                        
+                        waitingHandler.appendReportEndLine();
+                        waitingHandler.appendReport(
+                                "Writing mgf file/s to output folder.",
+                                true,
+                                true
+                        );
+                        
+                        
+                        for (int i = 0; i < spectrumFiles.size() && !waitingHandler.isRunCanceled(); i++) {
+
+                            File spectrumFile = spectrumFiles.get(i);
+                            String spectrumFileName = spectrumFile.getName();
+                            waitingHandler.appendReport(
+                                    "Writing: " + IoUtil.removeExtension(spectrumFileName) + ".mgf" + 
+                                            " (" + (i + 1) + "/" + spectrumFiles.size() + ")",
+                                    true,
+                                    true
+                            );
+                            
+                            File mgfFile = new File(parent,
+                                    IoUtil.removeExtension(spectrumFileName) + ".mgf");
+
+                            MsFileExporter.writeMgfFile(
+                                    msFileHandler,
+                                    spectrumFileName,
+                                    mgfFile,
+                                    waitingHandler);
+                        }
+                        
+                        
+                        
+                        waitingHandler.appendReport(
+                                "Written mgf file/s to output folder.",
+                                true,
+                                true
+                        );
+
+                    }
 
                     waitingHandler.increasePrimaryProgressCounter();
 
