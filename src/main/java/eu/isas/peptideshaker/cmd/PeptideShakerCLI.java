@@ -34,6 +34,9 @@ import eu.isas.peptideshaker.utils.PsdbParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFolder;
+import com.compomics.util.experiment.io.mass_spectrometry.mgf.IndexedMgfReader;
+import com.compomics.util.experiment.io.mass_spectrometry.mgf.MgfIndex;
+import com.compomics.util.io.file.SerializationUtils;
 import eu.isas.peptideshaker.utils.Properties;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
@@ -653,6 +656,11 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                     spectrumFileName,
                                     mgfFile,
                                     waitingHandler);
+                            
+                            // writing the index too
+                            MgfIndex mgfIndex = IndexedMgfReader.getMgfIndex(spectrumFile, waitingHandler);
+                            File indexFile = new File(parent, IoUtil.removeExtension(mgfIndex.getFileName())+ ".cui");
+                            SerializationUtils.writeObject(mgfIndex, indexFile);
                         }
                         
                         
