@@ -50,6 +50,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
@@ -638,7 +639,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                         
                         
                         for (int i = 0; i < spectrumFiles.size() && !waitingHandler.isRunCanceled(); i++) {
-
+                            
                             File spectrumFile = spectrumFiles.get(i);
                             String spectrumFileName = spectrumFile.getName();
                             waitingHandler.appendReport(
@@ -648,17 +649,28 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                     true
                             );
                             
-                            File mgfFile = new File(parent,
-                                    IoUtil.removeExtension(spectrumFileName) + ".mgf");
+                            // When having a source mgf file, we must not recreate it, but
+                            // just copying it to the output
+                            File mgfFile = null;
+                            if(spectrumFileName.endsWith(".mgf")){
+                                mgfFile = new File(parent,spectrumFileName);
 
-                            MsFileExporter.writeMgfFile(
-                                    msFileHandler,
-                                    spectrumFileName,
-                                    mgfFile,
-                                    waitingHandler);
+                                IoUtil.copyFile(spectrumFile, mgfFile);
+                            }else{
+                                
+                                mgfFile = new File(parent,
+                                        IoUtil.removeExtension(spectrumFileName) + ".mgf");
+
+                                MsFileExporter.writeMgfFile(
+                                        msFileHandler,
+                                        spectrumFileName,
+                                        mgfFile,
+                                        waitingHandler);
+
+                            }
                             
                             // writing the index too
-                            MgfIndex mgfIndex = IndexedMgfReader.getMgfIndex(spectrumFile, waitingHandler);
+                            MgfIndex mgfIndex = IndexedMgfReader.getMgfIndex(mgfFile, waitingHandler);
                             File indexFile = new File(parent, IoUtil.removeExtension(mgfIndex.getFileName())+ ".cui");
                             SerializationUtils.writeObject(mgfIndex, indexFile);
                         }
@@ -1004,7 +1016,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         for (File spectrumFile : spectrumFiles) {
 
             File folder = CmsFolder.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
-
+            System.out.println(">SpectrumFile: "+spectrumFile.getAbsolutePath());
             msFileHandler.register(spectrumFile, folder, waitingHandler);
 
         }
