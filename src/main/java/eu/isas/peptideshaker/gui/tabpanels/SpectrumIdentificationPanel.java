@@ -2602,7 +2602,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
 
                     updateSelection();
-                    peptideShakerGUI.mgfFileSelectionChanged(fileSelected);
+                    peptideShakerGUI.spectrumFileSelectionChanged(fileSelected);
                     //repaint();
                     spectrumTable.requestFocus();
                 }

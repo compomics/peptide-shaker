@@ -7787,12 +7787,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Sets the new mgf file selected.
+     * Sets the new spectrum file selected.
      *
-     * @param mgfFile the name of the new mgf file
+     * @param spectrumFile the name of the new spectrum file
      */
-    public void mgfFileSelectionChanged(String mgfFile) {
-        jumpToPanel.setSpectrumFile(mgfFile);
+    public void spectrumFileSelectionChanged(String spectrumFile) {
+        jumpToPanel.setSpectrumFile(spectrumFile);
         //@TODO: in the future we need to store this information like the selected protein/peptide/psm for selection in new tabs
     }
 
