@@ -83,6 +83,10 @@ public class PeptideShakerCLIInputBean {
      */
     private File zipExport = null;
     /**
+     * Boolean that indicates whether mgf file/s should be written apart from the zip file
+     */
+    private boolean mgfExternalExportWhenZip = false;
+    /**
      * The number of threads to use.
      */
     private Integer nThreads = null;
@@ -126,6 +130,14 @@ public class PeptideShakerCLIInputBean {
         if (aLine.hasOption(PeptideShakerCLIParams.ZIP.id)) {
             zipExport = new File(aLine.getOptionValue(PeptideShakerCLIParams.ZIP.id));
         }
+        
+        // mgf exported out of the zip file
+        if (aLine.hasOption(PeptideShakerCLIParams.OUTPUT_MGF.id)) {
+            String mgfOption = aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT_MGF.id);
+            if (mgfOption.trim().equals("1")) {
+                mgfExternalExportWhenZip = true;
+            }
+        }
 
         // n threads
         if (aLine.hasOption(PeptideShakerCLIParams.THREADS.id)) {
@@ -153,6 +165,16 @@ public class PeptideShakerCLIInputBean {
      */
     public File getZipExport() {
         return zipExport;
+    }
+    
+    /**
+     * When exporting the project to a zip file, returns whether mgf file/s should 
+     * be written apart from it, into the same folder.
+     *
+     * @return whether mgf file/s should be written apart from the zip file
+     */
+    public boolean getMgfExport() {
+        return mgfExternalExportWhenZip;
     }
 
     /**

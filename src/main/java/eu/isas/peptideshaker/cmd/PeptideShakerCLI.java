@@ -15,6 +15,7 @@ import com.compomics.cli.identification_parameters.IdentificationParametersInput
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
+import com.compomics.util.experiment.io.mass_spectrometry.MsFileExporter;
 import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
@@ -33,6 +34,9 @@ import eu.isas.peptideshaker.utils.PsdbParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFolder;
+import com.compomics.util.experiment.io.mass_spectrometry.mgf.IndexedMgfReader;
+import com.compomics.util.experiment.io.mass_spectrometry.mgf.MgfIndex;
+import com.compomics.util.io.file.SerializationUtils;
 import eu.isas.peptideshaker.utils.Properties;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
@@ -46,6 +50,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
@@ -620,6 +625,65 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                             true,
                             true
                     );
+                    
+                    // export mgf file/s out of the zip file
+                    boolean mgfExport = cliInputBean.getMgfExport();
+                    if (mgfExport) {
+                        
+                        waitingHandler.appendReportEndLine();
+                        waitingHandler.appendReport(
+                                "Writing mgf file/s to output folder.",
+                                true,
+                                true
+                        );
+                        
+                        
+                        for (int i = 0; i < spectrumFiles.size() && !waitingHandler.isRunCanceled(); i++) {
+                            
+                            File spectrumFile = spectrumFiles.get(i);
+                            String spectrumFileName = spectrumFile.getName();
+                            waitingHandler.appendReport(
+                                    "Writing: " + IoUtil.removeExtension(spectrumFileName) + ".mgf" + 
+                                            " (" + (i + 1) + "/" + spectrumFiles.size() + ")",
+                                    true,
+                                    true
+                            );
+                            
+                            // When having a source mgf file, we must not recreate it, but
+                            // just copying it to the output
+                            File mgfFile = null;
+                            if(spectrumFileName.endsWith(".mgf")){
+                                mgfFile = new File(parent,spectrumFileName);
+
+                                IoUtil.copyFile(spectrumFile, mgfFile);
+                            }else{
+                                
+                                mgfFile = new File(parent,
+                                        IoUtil.removeExtension(spectrumFileName) + ".mgf");
+
+                                MsFileExporter.writeMgfFile(
+                                        msFileHandler,
+                                        spectrumFileName,
+                                        mgfFile,
+                                        waitingHandler);
+
+                            }
+                            
+                            // writing the index too
+                            MgfIndex mgfIndex = IndexedMgfReader.getMgfIndex(mgfFile, waitingHandler);
+                            File indexFile = new File(parent, IoUtil.removeExtension(mgfIndex.getFileName())+ ".cui");
+                            SerializationUtils.writeObject(mgfIndex, indexFile);
+                        }
+                        
+                        
+                        
+                        waitingHandler.appendReport(
+                                "Written mgf file/s to output folder.",
+                                true,
+                                true
+                        );
+
+                    }
 
                     waitingHandler.increasePrimaryProgressCounter();
 
@@ -952,7 +1016,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         for (File spectrumFile : spectrumFiles) {
 
             File folder = CmsFolder.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
-
+            System.out.println(">SpectrumFile: "+spectrumFile.getAbsolutePath());
             msFileHandler.register(spectrumFile, folder, waitingHandler);
 
         }
