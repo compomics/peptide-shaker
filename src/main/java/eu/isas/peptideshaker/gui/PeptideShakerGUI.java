@@ -5023,6 +5023,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     }
                 }
+                
+                // @TODO: is this warning still required..?
 
                 if (matchFolder.listFiles() != null && matchFolder.listFiles().length > 0) {
 
@@ -6738,19 +6740,17 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                             FileFilter filter = new FileFilter() {
                                 @Override
-
                                 public boolean accept(File myFile) {
-
-                                    return myFile.getName().toLowerCase().endsWith("mgf")
+                                    return myFile.getName().toLowerCase().endsWith(".mgf")
+                                            || myFile.getName().toLowerCase().endsWith(".mgf.gz")
+                                            || myFile.getName().toLowerCase().endsWith(".mzml")
+                                            || myFile.getName().toLowerCase().endsWith(".mzml.gz")
                                             || myFile.isDirectory();
-
                                 }
 
                                 @Override
                                 public String getDescription() {
-
-                                    return "Supported formats: Mascot Generic Format (.mgf)";
-
+                                    return "Supported formats: mgf or mzML (.mgf, .mg.gz, .mzml, .mzml.gz)";
                                 }
                             };
 
@@ -6759,24 +6759,24 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                             if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-                                File mgfFolder = fileChooser.getSelectedFile();
+                                File spectrumFolder = fileChooser.getSelectedFile();
 
-                                if (!mgfFolder.isDirectory()) {
+                                if (!spectrumFolder.isDirectory()) {
 
-                                    mgfFolder = mgfFolder.getParentFile();
+                                    spectrumFolder = spectrumFolder.getParentFile();
 
                                 }
 
-                                lastSelectedFolder.setLastSelectedFolder(mgfFolder.getAbsolutePath());
+                                lastSelectedFolder.setLastSelectedFolder(spectrumFolder.getAbsolutePath());
                                 found = false;
 
-                                for (File file : mgfFolder.listFiles()) {
+                                for (File file : spectrumFolder.listFiles()) {
 
                                     for (String spectrumFileName2 : getIdentification().getFractions()) {
 
                                         try {
 
-                                            String fileName = file.getName();
+                                            String fileName = IoUtil.removeExtension(file.getName());
 
                                             if (spectrumFileName2.equals(fileName)) {
 

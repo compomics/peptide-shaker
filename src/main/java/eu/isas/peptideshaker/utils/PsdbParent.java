@@ -429,29 +429,32 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
         File projectFolder = psdbFile.getParentFile();
         File dataFolder = new File(projectFolder, "data");
 
+        boolean fileFound = providedSpectrumLocation.exists();
+
         // try to locate the spectrum file
-        if (providedSpectrumLocation == null || !providedSpectrumLocation.exists()) {
+        if (!fileFound) {
 
-            File fileInProjectFolder = new File(projectFolder, spectrumFileName);
-            File fileInDataFolder = new File(dataFolder, spectrumFileName);
-
-            if (fileInProjectFolder.exists()) {
-
-                projectDetails.addSpectrumFilePath(
-                        fileInProjectFolder.getAbsolutePath()
-                );
-
-            } else if (fileInDataFolder.exists()) {
-
-                projectDetails.addSpectrumFilePath(
-                        fileInDataFolder.getAbsolutePath()
-                );
-
-            } else {
-
-                return false;
-
+            // check the data folder
+            for (File tempFile : dataFolder.listFiles()) {
+                if (!fileFound && IoUtil.removeExtension(tempFile.getName()).equalsIgnoreCase(spectrumFileName)) { // @TODO: perhaps prefer the cms file if available?
+                    projectDetails.addSpectrumFilePath(tempFile.getAbsolutePath());
+                    fileFound = true;
+                }
             }
+
+            // check the project folder
+            if (!fileFound) {
+                for (File tempFile : projectFolder.listFiles()) {
+                    if (!fileFound && IoUtil.removeExtension(tempFile.getName()).equalsIgnoreCase(spectrumFileName)) { // @TODO: perhaps prefer the cms file if available?
+                        projectDetails.addSpectrumFilePath(tempFile.getAbsolutePath());
+                        fileFound = true;
+                    }
+                }
+            }
+        }
+
+        if (!fileFound) {
+            return false;
         }
 
         File spectrumFile = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
@@ -535,8 +538,8 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
         }
 
         return FastaSummary.getSummary(
-                projectDetails.getFastaFile(), 
-                identificationParameters.getFastaParameters(), 
+                projectDetails.getFastaFile(),
+                identificationParameters.getFastaParameters(),
                 waitingHandler
         );
 
