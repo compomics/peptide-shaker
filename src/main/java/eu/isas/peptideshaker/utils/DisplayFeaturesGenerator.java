@@ -671,6 +671,9 @@ public class DisplayFeaturesGenerator {
         String[] ambiguousVariableModificationsRepresentative = modificationScores == null ? new String[peptideSequence.length() + 2]
                 : getFilteredAmbiguousModificationsRepresentativeSites(modificationScores, displayParameters.getDisplayedModifications(), peptideSequence.length());
 
+        // @TODO: also add the variants
+        //peptide.getVariantMatches();
+
         return PeptideUtils.getTaggedModifiedSequence(peptide, modificationParameters,
                 allFixedModifications, allVariableModifications,
                 confidentVariableModifications, ambiguousVariableModificationsRepresentative, null,

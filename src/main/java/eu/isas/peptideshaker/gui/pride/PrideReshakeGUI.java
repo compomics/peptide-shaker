@@ -205,7 +205,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     /**
      * The web service URL.
      */
-    private static final String PROJECT_SERVICE_URL = "https://www.ebi.ac.uk/pride/ws/archive/";
+    private static final String PROJECT_SERVICE_URL = "https://www.ebi.ac.uk/pride/ws/archive/"; // https://www.ebi.ac.uk/pride/ws/archive/v2/
     /**
      * The data format.
      */
@@ -2974,12 +2974,12 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                     if (currentFileName.toLowerCase().endsWith(".xml")
                                             || currentFileName.toLowerCase().endsWith(".xml.gz")
                                             || currentFileName.toLowerCase().endsWith(".xml.zip")) {
-                                        prideSearchParametersReport = getSearchParams(prideSearchParameters);
+                                        prideSearchParametersReport = getSearchParams(prideSearchParameters); // @TODO: implement our own parsing...
                                     } else { // mzid
 
                                         progressDialog.setPrimaryProgressCounterIndeterminate(true); // @TODO: better display of progress
 
-                                        // convert the parameters from the assay
+                                        // convert the parameters from the assay  // @TODO: implement our own parsing...
                                         prideSearchParametersReport = MzIdentMLIdfileSearchParametersConverter.getSearchParameters(currentPrideDataFile, prideSearchParameters, currentSpecies, progressDialog);
 
                                         // add the ptms from the project/assay
