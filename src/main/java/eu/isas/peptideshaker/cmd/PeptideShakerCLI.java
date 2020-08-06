@@ -637,44 +637,37 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                 true
                         );
                         
+                        int i = 0;               
                         
-                        for (int i = 0; i < spectrumFiles.size() && !waitingHandler.isRunCanceled(); i++) {
+                        for (String spectrumFileName : msFileHandler.getCmsFilePaths().keySet() ) {
                             
-                            File spectrumFile = spectrumFiles.get(i);
-                            String spectrumFileName = spectrumFile.getName();
+                            if (waitingHandler.isRunCanceled())
+                                break;
+                            
                             waitingHandler.appendReport(
                                     "Writing: " + IoUtil.removeExtension(spectrumFileName) + ".mgf" + 
-                                            " (" + (i + 1) + "/" + spectrumFiles.size() + ")",
+                                            " (" + (i + 1) + "/" + getIdentification().getFractions().size() + ")",
                                     true,
                                     true
                             );
                             
-                            // When having a source mgf file, we must not recreate it, but
-                            // just copying it to the output
-                            File mgfFile = null;
-                            if(spectrumFileName.endsWith(".mgf")){
-                                mgfFile = new File(parent,spectrumFileName);
-
-                                IoUtil.copyFile(spectrumFile, mgfFile);
-                            }else{
-                                
-                                mgfFile = new File(parent,
+                            File mgfFile = new File(parent,
                                         IoUtil.removeExtension(spectrumFileName) + ".mgf");
 
-                                MsFileExporter.writeMgfFile(
-                                        msFileHandler,
-                                        spectrumFileName,
-                                        mgfFile,
-                                        waitingHandler);
+                            MsFileExporter.writeMgfFile(
+                                    msFileHandler,
+                                    spectrumFileName,
+                                    mgfFile,
+                                    waitingHandler);
 
-                            }
                             
                             // writing the index too
                             MgfIndex mgfIndex = IndexedMgfReader.getMgfIndex(mgfFile, waitingHandler);
                             File indexFile = new File(parent, IoUtil.removeExtension(mgfIndex.getFileName())+ ".cui");
                             SerializationUtils.writeObject(mgfIndex, indexFile);
+                            
+                            i++;
                         }
-                        
                         
                         
                         waitingHandler.appendReport(
@@ -1016,7 +1009,6 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         for (File spectrumFile : spectrumFiles) {
 
             File folder = CmsFolder.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
-            System.out.println(">SpectrumFile: "+spectrumFile.getAbsolutePath());
             msFileHandler.register(spectrumFile, folder, waitingHandler);
 
         }
