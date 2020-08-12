@@ -1059,6 +1059,9 @@ public class PSExportFactory implements ExportFactory {
             sectionContentAllPSM.add(section);
         }
         
+        // spectrum file (not included in the extended PSM report)
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_scan_number);
+        
         // psm scores
         sectionContent.add(PsPsmFeature.confidence);
         sectionContent.add(PsPsmFeature.validated);
@@ -1077,7 +1080,7 @@ public class PSExportFactory implements ExportFactory {
                 true, 
                 false
         );
-
+           
         ///////////////////////////
         // PSM report (including non-validated matches)
         ///////////////////////////
@@ -1093,7 +1096,7 @@ public class PSExportFactory implements ExportFactory {
                 false, 
                 false
         );
-        
+          
         ///////////////////////////
         // All PSM report
         ///////////////////////////
@@ -1115,7 +1118,7 @@ public class PSExportFactory implements ExportFactory {
                 false, 
                 true
         );
-
+                
         ///////////////////////////
         // Default protein phospho report
         ///////////////////////////

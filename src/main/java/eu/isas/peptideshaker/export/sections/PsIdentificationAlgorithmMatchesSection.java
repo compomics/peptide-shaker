@@ -771,7 +771,11 @@ public class PsIdentificationAlgorithmMatchesSection {
             case spectrum_title:
 
                 return spectrumTitle;
-
+                
+            case spectrum_scan_number:
+                // TODO: To get scan numbers from cms when source mgf files have that info
+                return "";
+                    
             case starred:
 
                 return psParameter.getStarred() ? "1" : "0";
@@ -1326,6 +1330,10 @@ public class PsIdentificationAlgorithmMatchesSection {
             case spectrum_title:
 
                 return spectrumTitle;
+                
+            case spectrum_scan_number:
+                // TODO: To get scan numbers from cms when source mgf files have that info
+                return "";
 
             case starred:
 
