@@ -8,7 +8,7 @@
             </goals>
             <properties>
                 <exec.classpathScope>runtime</exec.classpathScope>
-                <exec.args>-Xmx4g -splash:resources/conf/peptide-shaker-splash.png -classpath %classpath eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.args>
+                <exec.args>--illegal-access=debug -Xmx4g -splash:resources/conf/peptide-shaker-splash.png -classpath %classpath eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -20,7 +20,7 @@
             </goals>
             <properties>
                 <exec.classpathScope>runtime</exec.classpathScope>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Xmx4g -splash:resources/conf/peptide-shaker-splash.png -classpath %classpath eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.args>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} --illegal-access=debug -Xmx4g -splash:resources/conf/peptide-shaker-splash.png -classpath %classpath eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.args>
                 <jpda.listen>true</jpda.listen>
                 <exec.executable>java</exec.executable>
             </properties>
@@ -32,7 +32,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.6.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xmx4g -splash:resources/conf/peptide-shaker-splash.png -classpath %classpath eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.args>
+                <exec.args>--illegal-access=debug -Xmx4g -splash:resources/conf/peptide-shaker-splash.png -classpath %classpath eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.args>
                 <profiler.action>profile</profiler.action>
                 <exec.executable>${profiler.java}</exec.executable>
             </properties>
