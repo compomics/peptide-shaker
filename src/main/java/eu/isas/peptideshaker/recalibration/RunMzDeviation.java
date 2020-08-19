@@ -273,7 +273,7 @@ public class RunMzDeviation {
     /**
      * Creates a map of m/z deviations for a given run.
      *
-     * @param spectrumFileName the name of the file of the run
+     * @param spectrumFileNameWithoutExtension the name of the file of the run
      * @param identification the corresponding identification
      * @param sequenceProvider the protein sequence provider
      * @param spectrumProvider the spectrum provider
@@ -282,7 +282,7 @@ public class RunMzDeviation {
      * allowing the user to cancel the process. Can be null
      */
     public RunMzDeviation(
-            String spectrumFileName,
+            String spectrumFileNameWithoutExtension,
             Identification identification,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
@@ -301,10 +301,10 @@ public class RunMzDeviation {
 
         if (waitingHandler != null) {
             waitingHandler.resetSecondaryProgressCounter();
-            waitingHandler.setMaxSecondaryProgressCounter(spectrumProvider.getSpectrumTitles(spectrumFileName).length);
+            waitingHandler.setMaxSecondaryProgressCounter(spectrumProvider.getSpectrumTitles(spectrumFileNameWithoutExtension).length);
         }
 
-        for (long spectrumKey : identification.getSpectrumIdentification().get(spectrumFileName)) {
+        for (long spectrumKey : identification.getSpectrumIdentification().get(spectrumFileNameWithoutExtension)) {
 
             if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 break;
@@ -319,11 +319,11 @@ public class RunMzDeviation {
             if (psParameter.getMatchValidationLevel().isValidated()) {
 
                 double precursorMz = spectrumProvider.getPrecursorMz(
-                        spectrumFileName,
+                        spectrumFileNameWithoutExtension,
                         spectrumTitle
                 );
                 double precursorRT = spectrumProvider.getPrecursorRt(
-                        spectrumFileName,
+                        spectrumFileNameWithoutExtension,
                         spectrumTitle
                 );
 
@@ -352,13 +352,13 @@ public class RunMzDeviation {
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
                     Spectrum spectrum = spectrumProvider.getSpectrum(
-                            spectrumFileName,
+                            spectrumFileNameWithoutExtension,
                             spectrumTitle
                     );
                     ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                     SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
                     SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(
-                            spectrumFileName,
+                            spectrumFileNameWithoutExtension,
                             spectrumTitle,
                             bestPeptideAssumption,
                             modificationParameters,
@@ -369,7 +369,7 @@ public class RunMzDeviation {
                     IonMatch[] ionMatches = spectrumAnnotator.getSpectrumAnnotation(
                             annotationPreferences,
                             specificAnnotationPreferences,
-                            spectrumFileName,
+                            spectrumFileNameWithoutExtension,
                             spectrumTitle,
                             spectrum,
                             bestPeptideAssumption.getPeptide(),
@@ -433,7 +433,7 @@ public class RunMzDeviation {
 
         ArrayList<Double> keys = new ArrayList<>(precursorRawMap.keySet());
         if (keys.isEmpty()) {
-            throw new IllegalArgumentException("No validated PSM found for file " + spectrumFileName + ".");
+            throw new IllegalArgumentException("No validated PSM found for file " + spectrumFileNameWithoutExtension + ".");
         }
         Collections.sort(keys);
         int cpt1 = 0;

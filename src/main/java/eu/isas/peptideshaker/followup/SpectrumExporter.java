@@ -69,33 +69,39 @@ public class SpectrumExporter {
     )
             throws IOException {
 
-        String[] fileNames = spectrumProvider.getFileNames();
-        ArrayList<File> destinationFiles = new ArrayList<>(spectrumProvider.getFileNames().length);
+        String[] spectrumFileNamesWithoutExtensions = spectrumProvider.getOrderedFileNamesWithoutExtensions();
+        ArrayList<File> destinationFiles = new ArrayList<>(spectrumFileNamesWithoutExtensions.length);
 
-        for (int i = 0; i < fileNames.length; i++) {
+        for (int i = 0; i < spectrumFileNamesWithoutExtensions.length; i++) {
 
-            String fileName = fileNames[i];
-            String[] spectrumTitles = spectrumProvider.getSpectrumTitles(fileName);
+            String fileNameWithoutExtension = spectrumFileNamesWithoutExtensions[i];
+            String[] spectrumTitles = spectrumProvider.getSpectrumTitles(fileNameWithoutExtension);
 
             if (waitingHandler != null) {
 
-                waitingHandler.setWaitingText("Exporting Spectra. Please Wait... (" + (i + 1) + "/" + fileNames.length + ")");
+                waitingHandler.setWaitingText(
+                        "Exporting Spectra. Please Wait... ("
+                        + (i + 1)
+                        + "/"
+                        + spectrumFileNamesWithoutExtensions.length
+                        + ")"
+                );
 
                 // reset the progress bar
                 waitingHandler.resetSecondaryProgressCounter();
                 waitingHandler.setMaxSecondaryProgressCounter(spectrumTitles.length);
             }
 
-            File destinationFile = getDestinationFile(destinationFolder, fileName, exportType);
+            File destinationFile = getDestinationFile(destinationFolder, fileNameWithoutExtension, exportType);
 
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(destinationFile))) {
 
                 for (String spectrumTitle : spectrumTitles) {
 
-                    Spectrum spectrum = spectrumProvider.getSpectrum(fileName, spectrumTitle);
+                    Spectrum spectrum = spectrumProvider.getSpectrum(fileNameWithoutExtension, spectrumTitle);
 
                     boolean include = include(
-                            fileName,
+                            fileNameWithoutExtension,
                             spectrumTitle,
                             identification,
                             sequenceMatchingPreferences,

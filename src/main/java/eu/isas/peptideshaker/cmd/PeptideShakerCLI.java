@@ -625,60 +625,47 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                             true,
                             true
                     );
-                    
+
                     // export mgf file/s out of the zip file
                     boolean mgfExport = cliInputBean.getMgfExport();
+
                     if (mgfExport) {
-                        
+
                         waitingHandler.appendReportEndLine();
                         waitingHandler.appendReport(
-                                "Writing mgf file/s to output folder.",
+                                "Writing mgf file(s) to output folder.",
                                 true,
                                 true
                         );
-                        
-                        
+
                         for (int i = 0; i < spectrumFiles.size() && !waitingHandler.isRunCanceled(); i++) {
-                            
+
                             File spectrumFile = spectrumFiles.get(i);
                             String spectrumFileName = spectrumFile.getName();
                             waitingHandler.appendReport(
-                                    "Writing: " + IoUtil.removeExtension(spectrumFileName) + ".mgf" + 
-                                            " (" + (i + 1) + "/" + spectrumFiles.size() + ")",
+                                    "Writing: " + IoUtil.removeExtension(spectrumFileName) + ".mgf"
+                                    + " (" + (i + 1) + "/" + spectrumFiles.size() + ")",
                                     true,
                                     true
                             );
-                            
-                            // When having a source mgf file, we must not recreate it, but
-                            // just copying it to the output
-                            File mgfFile = null;
-                            if(spectrumFileName.endsWith(".mgf")){
-                                mgfFile = new File(parent,spectrumFileName);
 
-                                IoUtil.copyFile(spectrumFile, mgfFile);
-                            }else{
-                                
-                                mgfFile = new File(parent,
-                                        IoUtil.removeExtension(spectrumFileName) + ".mgf");
+                            File mgfFile = new File(parent,
+                                    IoUtil.removeExtension(spectrumFileName) + ".mgf");
 
-                                MsFileExporter.writeMgfFile(
-                                        msFileHandler,
-                                        spectrumFileName,
-                                        mgfFile,
-                                        waitingHandler);
+                            MsFileExporter.writeMgfFile(
+                                    msFileHandler,
+                                    IoUtil.removeExtension(spectrumFileName),
+                                    mgfFile,
+                                    waitingHandler);
 
-                            }
-                            
-                            // writing the index too
+                            // write the index too
                             MgfIndex mgfIndex = IndexedMgfReader.getMgfIndex(mgfFile, waitingHandler);
-                            File indexFile = new File(parent, IoUtil.removeExtension(mgfIndex.getFileName())+ ".cui");
+                            File indexFile = new File(parent, IoUtil.removeExtension(mgfIndex.getFileName()) + ".cui");
                             SerializationUtils.writeObject(mgfIndex, indexFile);
                         }
-                        
-                        
-                        
+
                         waitingHandler.appendReport(
-                                "Written mgf file/s to output folder.",
+                                "Written mgf file(s) to output folder.",
                                 true,
                                 true
                         );
@@ -886,9 +873,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             }
 
             String fileName = inputFile.getName();
-            
+
             if (fileName.toLowerCase().endsWith(".zip")) {
-            
+
                 waitingHandler.appendReport("Unzipping " + fileName + ".", true, true);
                 String newName = PsZipUtils.getTempFolderName(fileName);
                 String parentFolder = PsZipUtils.getUnzipParentFolder();
@@ -900,7 +887,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 destinationFolder.mkdir();
                 TempFilesManager.registerTempFolder(parentFolderFile);
                 ZipUtils.unzip(inputFile, destinationFolder, waitingHandler);
-                
+
                 if (waitingHandler instanceof WaitingHandlerCLIImpl) {
                     waitingHandler.appendReportEndLine();
                 }
@@ -1016,7 +1003,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         for (File spectrumFile : spectrumFiles) {
 
             File folder = CmsFolder.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
-            System.out.println(">SpectrumFile: "+spectrumFile.getAbsolutePath());
+            System.out.println(">SpectrumFile: " + spectrumFile.getAbsolutePath());
             msFileHandler.register(spectrumFile, folder, waitingHandler);
 
         }

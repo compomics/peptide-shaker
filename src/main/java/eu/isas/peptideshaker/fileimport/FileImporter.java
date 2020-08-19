@@ -172,13 +172,13 @@ public class FileImporter {
 
         tagMapper = new TagMapper(identificationParameters, exceptionHandler);
 
-        loadedSpectraMap = new HashMap<>(spectrumProvider.getFileNames().length);
+        loadedSpectraMap = new HashMap<>(spectrumProvider.getOrderedFileNamesWithoutExtensions().length);
 
-        for (String fileName : spectrumProvider.getFileNames()) {
+        for (String fileNameWithoutExtension : spectrumProvider.getOrderedFileNamesWithoutExtensions()) {
 
             loadedSpectraMap.put(
-                    fileName,
-                    Arrays.stream(spectrumProvider.getSpectrumTitles(fileName))
+                    fileNameWithoutExtension,
+                    Arrays.stream(spectrumProvider.getSpectrumTitles(fileNameWithoutExtension))
                             .collect(
                                     Collectors.toCollection(HashSet::new)
                             )
@@ -540,8 +540,7 @@ public class FileImporter {
 
                 for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
 
-                    String spectrumFile = IoUtil.removeExtension(spectrumMatch.getSpectrumFile());
-                    HashSet<String> titles = loadedSpectraMap.get(spectrumFile);
+                    HashSet<String> titles = loadedSpectraMap.get(spectrumMatch.getSpectrumFile());
 
                     if (titles == null) {
 
@@ -556,7 +555,7 @@ public class FileImporter {
 
                     }
 
-                    importedFileNames.add(spectrumFile);
+                    importedFileNames.add(spectrumMatch.getSpectrumFile());
 
                     String spectrumTitle = spectrumMatch.getSpectrumTitle();
                     if (!titles.contains(spectrumTitle)) {
@@ -565,7 +564,7 @@ public class FileImporter {
                                 "Spectrum with title \'"
                                 + spectrumTitle
                                 + "\' in file named \'"
-                                + spectrumFile
+                                + spectrumMatch.getSpectrumFile()
                                 + "\' required to parse \'"
                                 + IoUtil.getFileName(idFile)
                                 + "\' not found.",
@@ -581,10 +580,10 @@ public class FileImporter {
 
                 }
 
-                for (String spectrumFile : importedFileNames) {
+                for (String tempSpectrumFileName : importedFileNames) {
 
-                    projectDetails.addSpectrumFilePath(spectrumProvider.getFilePaths().get(spectrumFile));
-                    identification.addFraction(spectrumFile);
+                    projectDetails.addSpectrumFilePath(spectrumProvider.getFilePaths().get(tempSpectrumFileName));
+                    identification.addFraction(tempSpectrumFileName);
 
                 }
 

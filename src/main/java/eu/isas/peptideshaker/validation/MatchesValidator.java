@@ -1117,7 +1117,7 @@ public class MatchesValidator {
 
             if (nFractions == 1) {
 
-                String fraction = spectrumProvider.getFileNames()[0];
+                String fraction = spectrumProvider.getOrderedFileNamesWithoutExtensions()[0];
                 fractionScores.put(fraction, probaScore);
 
                 String peptideKeyString = Long.toString(peptideKey);
@@ -1343,7 +1343,7 @@ public class MatchesValidator {
 
             if (nFractions == 1) {
 
-                String spectrumFile = spectrumProvider.getFileNames()[0];
+                String spectrumFile = spectrumProvider.getOrderedFileNamesWithoutExtensions()[0];
                 fractionScores.put(spectrumFile, proteinGroupScore);
 
             }

@@ -99,17 +99,17 @@ public class ProjectExport {
             waitingHandler.setWaitingText("Getting FASTA File. Please Wait...");
         }
 
-        ArrayList<String> dataFiles = new ArrayList<>(2 * spectrumProvider.getFileNames().length + 1);
+        ArrayList<String> dataFiles = new ArrayList<>(2 * spectrumProvider.getOrderedFileNamesWithoutExtensions().length + 1);
         dataFiles.add(fastaFile.getAbsolutePath());
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting Spectrum Files. Please Wait...");
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             waitingHandler.setSecondaryProgressCounter(0);
-            waitingHandler.setMaxSecondaryProgressCounter(spectrumProvider.getFileNames().length);
+            waitingHandler.setMaxSecondaryProgressCounter(spectrumProvider.getOrderedFileNamesWithoutExtensions().length);
         }
 
-        for (String fileName : spectrumProvider.getFileNames()) {
+        for (String fileName : spectrumProvider.getOrderedFileNamesWithoutExtensions()) {
 
             String cmsFilePath = spectrumProvider.getCmsFilePaths().get(fileName);
             File cmsFile = new File(cmsFilePath);
@@ -121,7 +121,7 @@ public class ProjectExport {
             }
         }
 
-        for (String fileName : spectrumProvider.getFileNames()) {
+        for (String fileName : spectrumProvider.getOrderedFileNamesWithoutExtensions()) {
 
             String msFilePath = spectrumProvider.getFilePaths().get(fileName);
             File msFile = new File(msFilePath);

@@ -2579,7 +2579,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 dm.getDataVector().removeAllElements();
                 dm.fireTableDataChanged();
 
-                fileSelected = IoUtil.removeExtension((String) fileNamesCmb.getSelectedItem());
+                fileSelected = (String) fileNamesCmb.getSelectedItem();
                 SpectrumProvider spectrumProvider = peptideShakerGUI.getSpectrumProvider();
                 double maxMz = spectrumProvider.getMaxPrecMz(fileSelected);
                 int nSpectra = spectrumProvider.getSpectrumTitles(fileSelected).length;

@@ -752,10 +752,10 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                     SpectrumProvider spectrumProvider = peptideShakerGUI.getSpectrumProvider();
 
-                                    String[] spectrumFiles = spectrumfile == null ? spectrumProvider.getFileNames() : new String[]{spectrumfile};
+                                    String[] spectrumFiles = spectrumfile == null ? spectrumProvider.getOrderedFileNamesWithoutExtensions() : new String[]{spectrumfile};
 
-                                    for (String fileName : spectrumFiles) {
-                                        for (String spectrumTitle : spectrumProvider.getSpectrumTitles(fileName)) {
+                                    for (String fileNameWithoutExtension : spectrumFiles) {
+                                        for (String spectrumTitle : spectrumProvider.getSpectrumTitles(fileNameWithoutExtension)) {
 
                                             if (newInput) {
 
@@ -767,32 +767,32 @@ public class JumpToPanel extends javax.swing.JPanel {
                                             }
 
                                             if (spectrumTitle.toLowerCase().contains(inputLowerCase)
-                                                    || fileName.toLowerCase().contains(inputLowerCase)) {
+                                                    || fileNameWithoutExtension.toLowerCase().contains(inputLowerCase)) {
 
-                                                spectrumTitles.add(fileName + SPECTRUM_FILENAME_SPLITTER + spectrumTitle);
+                                                spectrumTitles.add(fileNameWithoutExtension + SPECTRUM_FILENAME_SPLITTER + spectrumTitle);
 
                                             } else {
 
                                                 double precusorMz = spectrumProvider.getPrecursorMz(
-                                                        fileName,
+                                                        fileNameWithoutExtension,
                                                         spectrumTitle
                                                 );
                                                 doubleString = Double.toString(precusorMz);
 
                                                 if (doubleString.startsWith(inputLowerCase)) {
 
-                                                    spectrumTitles.add(fileName + SPECTRUM_FILENAME_SPLITTER + spectrumTitle);
+                                                    spectrumTitles.add(fileNameWithoutExtension + SPECTRUM_FILENAME_SPLITTER + spectrumTitle);
 
                                                 } else {
 
                                                     double precusorRt = spectrumProvider.getPrecursorRt(
-                                                            fileName,
+                                                            fileNameWithoutExtension,
                                                             spectrumTitle
                                                     );
                                                     doubleString = Double.toString(precusorRt);
                                                     if (doubleString.startsWith(inputLowerCase)) {
 
-                                                        spectrumTitles.add(fileName + SPECTRUM_FILENAME_SPLITTER + spectrumTitle);
+                                                        spectrumTitles.add(fileNameWithoutExtension + SPECTRUM_FILENAME_SPLITTER + spectrumTitle);
 
                                                     }
                                                 }

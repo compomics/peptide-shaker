@@ -332,13 +332,13 @@ public class PeptideShakerCLIInputBean {
      */
     public static ArrayList<File> getSpectrumFiles(String optionInput) throws FileNotFoundException {
 
-        ArrayList<String> extentions = new ArrayList<>();
+        ArrayList<String> extensions = new ArrayList<>();
 
-        extentions.add(".mgf");
-        extentions.add(".mzML");
-        extentions.add(".cms");
+        extensions.add(".mgf");
+        extensions.add(".mzML");
+        extensions.add(".cms");
 
-        return CommandLineUtils.getFiles(optionInput, extentions);
+        return CommandLineUtils.getFiles(optionInput, extensions);
     }
 
     /**
@@ -352,22 +352,22 @@ public class PeptideShakerCLIInputBean {
      */
     public static ArrayList<File> getIdentificationFiles(String optionInput) throws FileNotFoundException {
 
-        ArrayList<String> extentions = new ArrayList<>();
+        ArrayList<String> extensions = new ArrayList<>();
 
-        extentions.add(".dat");
-        extentions.add(".omx");
-        extentions.add(".t.xml");
-        extentions.add(".pep.xml");
-        extentions.add(".mzid");
-        extentions.add(".csv");
-        extentions.add(".res");
-        extentions.add(".txt");
-        extentions.add(".tags");
-        extentions.add(".psm");
-        extentions.add(".gz");
-        extentions.add(".zip");
+        extensions.add(".dat");
+        extensions.add(".omx");
+        extensions.add(".t.xml");
+        extensions.add(".pep.xml");
+        extensions.add(".mzid");
+        extensions.add(".csv");
+        extensions.add(".res");
+        extensions.add(".txt");
+        extensions.add(".tags");
+        extensions.add(".psm");
+        extensions.add(".gz");
+        extensions.add(".zip");
 
-        return CommandLineUtils.getFiles(optionInput, extentions);
+        return CommandLineUtils.getFiles(optionInput, extensions);
     }
 
     /**

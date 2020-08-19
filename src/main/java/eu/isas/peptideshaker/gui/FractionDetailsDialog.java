@@ -511,7 +511,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         for (int i = 0; i < fractionTable.getRowCount(); i++) {
 
             String fileName = (String) fractionTable.getValueAt(i, fractionTable.getColumn("Fraction").getModelIndex());
-            spectrumFiles.add(fileName);
+            spectrumFiles.add(IoUtil.removeExtension(fileName));
 
             Double lower = (Double) fractionTable.getValueAt(i, fractionTable.getColumn("Lower Range (kDa)").getModelIndex());
             Double upper = (Double) fractionTable.getValueAt(i, fractionTable.getColumn("Upper Range (kDa)").getModelIndex());

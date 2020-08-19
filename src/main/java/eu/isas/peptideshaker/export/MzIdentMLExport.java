@@ -230,9 +230,9 @@ public class MzIdentMLExport {
      */
     private void setSpectrumTitlesMap() {
 
-        for (String fileName : spectrumProvider.getFileNames()) {
+        for (String fileNameWithoutExtension : spectrumProvider.getOrderedFileNamesWithoutExtensions()) {
 
-            String[] spectrumTitles = spectrumProvider.getSpectrumTitles(fileName);
+            String[] spectrumTitles = spectrumProvider.getSpectrumTitles(fileNameWithoutExtension);
             HashMap<String, Integer> tempMap = new HashMap<>(spectrumTitles.length);
 
             for (int i = 0; i < spectrumTitles.length; i++) {
@@ -241,7 +241,7 @@ public class MzIdentMLExport {
 
             }
 
-            spectrumTitleToIndexMap.put(fileName, tempMap);
+            spectrumTitleToIndexMap.put(fileNameWithoutExtension, tempMap);
 
         }
     }
@@ -266,6 +266,8 @@ public class MzIdentMLExport {
             default:
                 throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
         }
+
+        waitingHandler.setPrimaryProgressCounterIndeterminate(true);
 
         // @TODO: use the waiting handler more (especially for command line mode)
         // the mzIdentML start tag
@@ -1004,11 +1006,11 @@ public class MzIdentMLExport {
         tabCounter++;
 
         // iterate the spectrum files and add the file name refs
-        for (String mgfFileName : spectrumProvider.getFileNames()) {
+        for (String spectrumFileNameWithoutExtension : spectrumProvider.getOrderedFileNamesWithoutExtensions()) {
 
             writer.write(getCurrentTabSpace());
             writer.write("<InputSpectra spectraData_ref=\"");
-            writer.write(mgfFileName);
+            writer.write(spectrumFileNameWithoutExtension);
             writer.write("\"/>");
             writer.newLine();
 
@@ -3249,16 +3251,16 @@ public class MzIdentMLExport {
         writer.newLine();
 
         // add the spectra location
-        for (String spectrumFileName : spectrumProvider.getFileNames()) {
+        for (String spectrumFileNameWithoutExtension : spectrumProvider.getOrderedFileNamesWithoutExtensions()) {
 
-            String spectrumFilePath = projectDetails.getSpectrumFilePath(spectrumFileName);
+            String spectrumFilePath = projectDetails.getSpectrumFilePath(spectrumFileNameWithoutExtension);
             File spectrumFile = new File(spectrumFilePath);
 
             writer.write(getCurrentTabSpace());
             writer.write("<SpectraData location=\"");
             writer.write(spectrumFile.toURI().toString());
             writer.write("\" id=\"");
-            writer.write(spectrumFileName);
+            writer.write(spectrumFileNameWithoutExtension);
             writer.write("\" name=\"");
             writer.write(spectrumFile.getName());
             writer.write("\">");

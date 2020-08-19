@@ -70,7 +70,7 @@ public class RecalibrationExporter {
         ArrayList<File> recalibratedSpectrums = new ArrayList<>();
         int progress = 1;
 
-        for (String fileName : spectrumProvider.getFileNames()) {
+        for (String fileNameWithoutExtension : spectrumProvider.getOrderedFileNamesWithoutExtensions()) {
 
             if (waitingHandler != null) {
 
@@ -80,15 +80,21 @@ public class RecalibrationExporter {
 
                 }
 
-                waitingHandler.setWaitingText("Recalibrating Spectra. Inspecting Mass Deviations. Please Wait... (" + progress + "/" + spectrumProvider.getFileNames().length + ")");
+                waitingHandler.setWaitingText(
+                        "Recalibrating Spectra. Inspecting Mass Deviations. Please Wait... ("
+                        + progress
+                        + "/"
+                        + spectrumProvider.getOrderedFileNamesWithoutExtensions().length
+                        + ")"
+                );
                 waitingHandler.resetSecondaryProgressCounter();
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-                waitingHandler.setMaxSecondaryProgressCounter(2 * spectrumProvider.getSpectrumTitles(fileName).length);
+                waitingHandler.setMaxSecondaryProgressCounter(2 * spectrumProvider.getSpectrumTitles(fileNameWithoutExtension).length);
 
             }
 
             spectrumRecalibrator.estimateErrors(
-                    fileName,
+                    fileNameWithoutExtension,
                     identification,
                     sequenceProvider,
                     spectrumProvider,
@@ -99,9 +105,9 @@ public class RecalibrationExporter {
             // Debug part
             if (DEBUG) {
 
-                RunMzDeviation runMzDeviation = spectrumRecalibrator.getRunMzDeviations(fileName);
+                RunMzDeviation runMzDeviation = spectrumRecalibrator.getRunMzDeviations(fileNameWithoutExtension);
 
-                File debugFile = new File(folder, "debug" + getRecalibratedFileName(fileName) + "_precursors.txt");
+                File debugFile = new File(folder, "debug" + getRecalibratedFileName(fileNameWithoutExtension) + "_precursors.txt");
                 BufferedWriter debugWriter = new BufferedWriter(new FileWriter(debugFile));
                 debugWriter.write("rt\tgrade\toffset");
                 debugWriter.newLine();
@@ -124,7 +130,7 @@ public class RecalibrationExporter {
                 debugWriter.flush();
                 debugWriter.close();
 
-                debugFile = new File(folder, getRecalibratedFileName(fileName) + "_fragments.txt");
+                debugFile = new File(folder, getRecalibratedFileName(fileNameWithoutExtension) + "_fragments.txt");
                 debugWriter = new BufferedWriter(new FileWriter(debugFile));
 
                 for (double rtKey : runMzDeviation.getPrecursorRTList()) {
@@ -162,26 +168,32 @@ public class RecalibrationExporter {
 
             }
 
-            File file = new File(folder, getRecalibratedFileName(fileName));
+            File file = new File(folder, getRecalibratedFileName(fileNameWithoutExtension));
 
-            try ( BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 
                 if (waitingHandler != null) {
 
-                    waitingHandler.setWaitingText("Recalibrating Spectra. Writing Spectra. Please Wait... (" + progress + "/" + spectrumProvider.getFileNames().length + ")");
+                    waitingHandler.setWaitingText(
+                            "Recalibrating Spectra. Writing Spectra. Please Wait... ("
+                            + progress
+                            + "/"
+                            + spectrumProvider.getOrderedFileNamesWithoutExtensions().length
+                            + ")"
+                    );
                     waitingHandler.resetSecondaryProgressCounter();
-                    waitingHandler.setMaxSecondaryProgressCounter(spectrumProvider.getSpectrumTitles(fileName).length);
+                    waitingHandler.setMaxSecondaryProgressCounter(spectrumProvider.getSpectrumTitles(fileNameWithoutExtension).length);
 
                 }
 
-                for (String spectrumTitle : spectrumProvider.getSpectrumTitles(fileName)) {
+                for (String spectrumTitle : spectrumProvider.getSpectrumTitles(fileNameWithoutExtension)) {
 
                     if (DEBUG) {
                         //System.out.println(new Date() + " recalibrating " + spectrumTitle + "\n");
                     }
 
                     Spectrum recalibratedSpectrum = spectrumRecalibrator.recalibrateSpectrum(
-                            fileName,
+                            fileNameWithoutExtension,
                             spectrumTitle,
                             spectrumProvider,
                             recalibratePrecursors,
@@ -204,7 +216,7 @@ public class RecalibrationExporter {
                     }
                 }
 
-                spectrumRecalibrator.clearErrors(fileName);
+                spectrumRecalibrator.clearErrors(fileNameWithoutExtension);
 
             }
 

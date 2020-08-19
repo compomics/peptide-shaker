@@ -726,11 +726,11 @@ public class NewDialog extends javax.swing.JDialog {
                 new Thread(new Runnable() {
                     public void run() {
 
-                            ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler(
-                                    (WaitingDialog) waitingDialog,
-                                    "https://github.com/compomics/peptide-shaker/issues"
-                            );
-                            
+                        ExceptionHandler exceptionHandler = new WaitingDialogExceptionHandler(
+                                (WaitingDialog) waitingDialog,
+                                "https://github.com/compomics/peptide-shaker/issues"
+                        );
+
                         try {
 
                             int outcome = peptideShaker.importFiles(
@@ -763,12 +763,12 @@ public class NewDialog extends javax.swing.JDialog {
 
                             }
                         } catch (Exception e) {
-                        
+
                             exceptionHandler.catchException(e);
                             waitingDialog.setRunCanceled();
-                            
+
                             waitingDialog.setWaitingText("Failed to import data or create the project!");
-                        
+
                         }
                     }
                 }, "Import data and create project").start();
@@ -1296,7 +1296,7 @@ public class NewDialog extends javax.swing.JDialog {
                 return "Novor (.novor.csv, .novor.csv.gz)";
             }
         };
-        
+
         // filter for coss only
         FileFilter cossFilter = new FileFilter() {
             @Override
@@ -1562,8 +1562,11 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void spectrumFilesTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumFilesTxtMouseClicked
+
         if (!spectrumFiles.isEmpty()) {
+
             FileDisplayDialog fileDisplayDialog = new FileDisplayDialog(this, spectrumFiles, true);
+
             if (!fileDisplayDialog.canceled()) {
 
                 ArrayList<File> selectedFiles = fileDisplayDialog.getSelectedFiles();
@@ -1576,6 +1579,7 @@ public class NewDialog extends javax.swing.JDialog {
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                         true
                 );
+
                 progressDialog.setPrimaryProgressCounterIndeterminate(true);
                 progressDialog.setTitle("Loading Files. Please Wait...");
 
@@ -1624,7 +1628,6 @@ public class NewDialog extends javax.swing.JDialog {
 
                         if (allLoaded) {
 
-                            spectrumFiles.addAll(selectedFiles);
                             spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
                             validateInput();
 
@@ -2115,7 +2118,7 @@ public class NewDialog extends javax.swing.JDialog {
                     || path.toLowerCase().endsWith(".mzml") || path.toLowerCase().endsWith(".mzml.gz")) {
 
                 progressDialog.setTitle("Loading Spectrum Files (" + ++cpt + " of " + total + "). Please Wait...");
-                
+
                 File tempSpectrumFile = new File(path);
                 String spectrumFileName = tempSpectrumFile.getName();
 

@@ -65,7 +65,7 @@ public class SpectrumRecalibrator {
      *
      * The progress will only be updated, max value is the number of spectra
      *
-     * @param spectrumFileName the name of the file of the run
+     * @param spectrumFileNameWithoutExtension the name of the file of the run
      * @param identification the corresponding identification
      * @param sequenceProvider the sequence provider
      * @param spectrumProvider the spectrum provider
@@ -74,7 +74,7 @@ public class SpectrumRecalibrator {
      * allowing the user to cancel the process. Can be null
      */
     public void estimateErrors(
-            String spectrumFileName,
+            String spectrumFileNameWithoutExtension,
             Identification identification,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
@@ -83,7 +83,7 @@ public class SpectrumRecalibrator {
     ) {
 
         RunMzDeviation fileErrors = new RunMzDeviation(
-                spectrumFileName,
+                spectrumFileNameWithoutExtension,
                 identification,
                 sequenceProvider,
                 spectrumProvider,
@@ -91,7 +91,7 @@ public class SpectrumRecalibrator {
                 waitingHandler
         );
 
-        runMzDeviationMap.put(spectrumFileName, fileErrors);
+        runMzDeviationMap.put(spectrumFileNameWithoutExtension, fileErrors);
 
     }
 

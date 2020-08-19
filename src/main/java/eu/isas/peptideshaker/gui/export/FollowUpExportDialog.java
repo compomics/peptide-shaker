@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.gui.export;
 
-import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -1501,7 +1500,7 @@ public class FollowUpExportDialog extends javax.swing.JDialog {
 
             setLastSelectedFolder(selectedFolder.getAbsolutePath());
 
-            for (String fileName : peptideShakerGUI.getSpectrumProvider().getFileNames()) {
+            for (String fileName : peptideShakerGUI.getSpectrumProvider().getOrderedFileNamesWithoutExtensions()) {
                 
                 String newName = RecalibrationExporter.getRecalibratedFileName(fileName);
                 File testFile = new File(selectedFolder, newName);
