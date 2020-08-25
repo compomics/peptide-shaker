@@ -2605,8 +2605,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                 break;
                             }
 
-                            progressDialog.increasePrimaryProgressCounter();
                         }
+                        
+                        progressDialog.increasePrimaryProgressCounter();
 
                         if (progressDialog.isRunCanceled()) {
                             break;
@@ -2974,13 +2975,16 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                     if (currentFileName.toLowerCase().endsWith(".xml")
                                             || currentFileName.toLowerCase().endsWith(".xml.gz")
                                             || currentFileName.toLowerCase().endsWith(".xml.zip")) {
-                                        prideSearchParametersReport = getSearchParams(prideSearchParameters); // @TODO: implement our own parsing...
-                                    } else { // mzid
+                                        // pride ml
+                                        prideSearchParametersReport = getSearchParams(prideSearchParameters); // @TODO: implement our own parsing?
+                                    } else { 
+                                        // mzid
+                                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
-                                        progressDialog.setPrimaryProgressCounterIndeterminate(true); // @TODO: better display of progress
-
-                                        // convert the parameters from the assay  // @TODO: implement our own parsing...
-                                        prideSearchParametersReport = MzIdentMLIdfileSearchParametersConverter.getSearchParameters(currentPrideDataFile, prideSearchParameters, currentSpecies, progressDialog);
+                                        // convert the parameters from the assay
+                                        MzIdentMLIdfileSearchParametersConverter mzIdentMLIdfileSearchParametersConverter 
+                                                = new MzIdentMLIdfileSearchParametersConverter(currentPrideDataFile, prideSearchParameters, currentSpecies, progressDialog);
+                                        prideSearchParametersReport = mzIdentMLIdfileSearchParametersConverter.getSearchParameters();
 
                                         // add the ptms from the project/assay
                                         String allPtms;
