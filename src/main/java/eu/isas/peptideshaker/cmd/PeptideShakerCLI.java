@@ -1262,7 +1262,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         return System.getProperty("line.separator")
                 + "The PeptideShaker command line takes identification files from search engines and creates a PeptideShaker project saved as psdb file. Various exports can be generated from the project." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "For further help see https://compomics.github.io/projects/peptide-shaker.html and https://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
+                + "For further help see https://compomics.github.io/projects/peptide-shaker.html and https://compomics.github.io/projects/peptide-shaker/wiki/PeptideshakerCLI.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "Or contact the developers at https://groups.google.com/group/peptide-shaker." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")

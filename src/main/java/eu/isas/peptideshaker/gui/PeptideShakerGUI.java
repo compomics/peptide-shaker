@@ -6869,7 +6869,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     String message = "PeptideShaker used up all the available memory and had to be stopped.<br>"
                             + "Memory boundaries are changed in the the Welcome Dialog (Settings<br>"
                             + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit<br>"
-                            + "Java Options). See also <a href=\"https://compomics.github.io/projects/compomics-utilities/wiki/javatroubleshooting.html\">JavaTroubleShooting</a>.";
+                            + "Java Options). See also <a href=\"https://compomics.github.io/projects/compomics-utilities/wiki/JavaTroubleShooting.html\">JavaTroubleShooting</a>.";
                     JOptionPane.showMessageDialog(
                             PeptideShakerGUI.this,
                             JOptionEditorPane.getJOptionEditorPane(message),

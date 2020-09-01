@@ -487,7 +487,7 @@ public class FollowUpCLI extends PsdbParent {
         return System.getProperty("line.separator")
                 + "The PeptideShaker follow-up command line takes a psdb file and generates various types of output files." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "For further help see https://compomics.github.io/projects/peptide-shaker.html and https://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
+                + "For further help see https://compomics.github.io/projects/peptide-shaker.html and https://compomics.github.io/projects/peptide-shaker/wiki/PeptideshakerCLI.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "Or contact the developers at https://groups.google.com/group/peptide-shaker." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")

@@ -153,7 +153,7 @@ public class PathSettingsCLI {
         return System.getProperty("line.separator")
                 + "The PeptideShaker path settings command line allows setting the path of every configuration file created by PeptideShaker or set a temporary folder where all files will be stored." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "For further help see http://compomics.github.io/projects/peptide-shaker.html and http://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html." + System.getProperty("line.separator")
+                + "For further help see http://compomics.github.io/projects/peptide-shaker.html and http://compomics.github.io/projects/peptide-shaker/wiki/PeptideshakerCLI.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "Or contact the developers at https://groups.google.com/group/peptide-shaker." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")

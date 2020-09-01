@@ -2310,7 +2310,7 @@ public class NewDialog extends javax.swing.JDialog {
                 JOptionEditorPane.getJOptionEditorPane(
                         "We strongly recommend the use of UniProt databases. Some<br>"
                         + "features will be limited if using other databases.<br><br>"
-                        + "See <a href=\"https://compomics.github.io/projects/searchgui/wiki/databasehelp.html\">Database Help</a> for details."
+                        + "See <a href=\"https://compomics.github.io/projects/searchgui/wiki/DatabaseHelp.html\">Database Help</a> for details."
                 ),
                 "Database Information",
                 JOptionPane.WARNING_MESSAGE

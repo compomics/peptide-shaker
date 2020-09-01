@@ -14,7 +14,7 @@ public enum PeptideShakerCLIParams {
 
     ///////////////////////////////////////////////////////////////////////////
     // IMPORTANT: Any change here must be reported in the wiki: 
-    // https://compomics.github.io/projects/peptide-shaker/wiki/peptideshakercli.html
+    // https://github.com/compomics/peptide-shaker/wiki/PeptideShakerCLI
     ///////////////////////////////////////////////////////////////////////////
     REFERENCE("reference", "The reference of the project.", true),
     SPECTRUM_FILES("spectrum_files", "Spectrum files, comma separated list or an entire folder.", false),

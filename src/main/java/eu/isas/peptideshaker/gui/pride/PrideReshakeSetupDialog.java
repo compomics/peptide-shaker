@@ -1504,7 +1504,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      */
     private void databaseSettingsLblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_databaseSettingsLblMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("https://compomics.github.io/projects/searchgui/wiki/databasehelp.html");
+        BareBonesBrowserLaunch.openURL("https://compomics.github.io/projects/searchgui/wiki/DatabaseHelp.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_databaseSettingsLblMouseClicked
 
