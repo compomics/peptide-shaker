@@ -436,8 +436,11 @@ public class PeptideShaker {
             ModificationLocalizationParameters modificationScoringPreferences = identificationParameters.getModificationLocalizationParameters();
 
             if (modificationScoringPreferences.getAlignNonConfidentModifications()) {
+                
+                if (false) {
 
                 waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
+                
 
                 peptideInference.peptideInference(
                         identification,
@@ -446,6 +449,12 @@ public class PeptideShaker {
                         modificationFactory,
                         waitingHandler
                 );
+                
+                } else {
+
+                waitingHandler.appendReport("Warning: Ambiguous modification site alignment not available for this version of PeptideShaker.", true, true);
+                    
+                }
 
                 waitingHandler.increasePrimaryProgressCounter();
 
