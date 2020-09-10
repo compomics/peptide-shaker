@@ -1014,7 +1014,7 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-        PeptideAndProteinBuilder peptideAndProteinBuilder = new PeptideAndProteinBuilder(identification);
+        try (PeptideAndProteinBuilder peptideAndProteinBuilder = new PeptideAndProteinBuilder(identification)) {
 
             identification.getSpectrumIdentification().values().stream()
                     .flatMap(keys -> keys.stream())
@@ -1033,7 +1033,7 @@ public class PeptideShaker {
                                     waitingHandler
                             )
                     );
-        
+        }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
