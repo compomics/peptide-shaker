@@ -69,6 +69,7 @@ public class PsdbExporter {
             DisplayParameters displayParameters,
             File dbFolder
     ) throws IOException {
+
         identificationFeaturesCache.setReadOnly(true);
 
         try {
@@ -123,6 +124,7 @@ public class PsdbExporter {
                 identification.getObjectsDB().unlock();
 
             }
+
         } finally {
 
             // restore the project navigability

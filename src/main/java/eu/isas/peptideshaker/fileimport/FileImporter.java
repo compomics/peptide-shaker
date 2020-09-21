@@ -959,8 +959,8 @@ public class FileImporter {
                 fastaParameters,
                 waitingHandler,
                 true,
-                peptideVariantsParameters,
-                searchParameters
+                searchParameters,
+                peptideVariantsParameters
         );
 
         sequenceProvider = fmIndex;
