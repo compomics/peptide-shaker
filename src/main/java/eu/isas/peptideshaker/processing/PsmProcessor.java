@@ -58,7 +58,7 @@ public class PsmProcessor {
      * scorer.
      * @param sequenceProvider Protein sequence provider.
      * @param spectrumProvider The spectrum provider.
-         * @param modificationProvider The modification provider to use.
+     * @param modificationProvider The modification provider to use.
      * @param proteinCount Map of the protein occurrence.
      * @param nThreads The number of threads to use.
      * @param waitingHandler Waiting handler to display progress and allow
@@ -84,7 +84,8 @@ public class PsmProcessor {
             ExceptionHandler exceptionHandler
     ) throws InterruptedException, TimeoutException {
 
-        ConcurrentLinkedQueue<Long> spectrumMatchKeysIterator = new ConcurrentLinkedQueue<>(identification.getSpectrumIdentificationKeys());
+        ConcurrentLinkedQueue<Long> spectrumMatchKeysIterator 
+                = new ConcurrentLinkedQueue<>(identification.getSpectrumIdentificationKeys());
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(spectrumMatchKeysIterator.size());

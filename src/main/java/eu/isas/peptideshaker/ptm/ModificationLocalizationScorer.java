@@ -213,9 +213,7 @@ public class ModificationLocalizationScorer extends DbObject {
         ModificationLocalizationParameters scoringParameters = identificationParameters.getModificationLocalizationParameters();
         SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = scoringParameters.getSequenceMatchingParameters();
-
         ModificationParameters modificationParameters = searchParameters.getModificationParameters();
-
         PSModificationScores modificationScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
 
         if (modificationScores != null) {
@@ -229,7 +227,7 @@ public class ModificationLocalizationScorer extends DbObject {
         HashMap<Double, Integer> nMod = new HashMap<>(1);
         PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
         Peptide peptide = bestPeptideAssumption.getPeptide();
-        
+
         for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
 
             Modification refMod = modificationProvider.getModification(modificationMatch.getModification());
@@ -965,20 +963,12 @@ public class ModificationLocalizationScorer extends DbObject {
             }
 
             HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap;
-            try {
 
-                representativeToSecondaryMap = getRepresentativeToSecondaryMap(
-                        ambiguousSites,
-                        nRepresentativesMap,
-                        inferredSites
-                );
-            } catch (Exception e) {
-                representativeToSecondaryMap = getRepresentativeToSecondaryMap(
-                        ambiguousSites,
-                        nRepresentativesMap,
-                        inferredSites
-                );
-            }
+            representativeToSecondaryMap = getRepresentativeToSecondaryMap(
+                    ambiguousSites,
+                    nRepresentativesMap,
+                    inferredSites
+            );
 
             for (Double modMass : representativeToSecondaryMap.keySet()) {
 

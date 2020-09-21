@@ -205,7 +205,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     /**
      * The web service URL.
      */
-    private static final String PROJECT_SERVICE_URL = "https://www.ebi.ac.uk/pride/ws/archive/"; // https://www.ebi.ac.uk/pride/ws/archive/v2/
+    private static final String PROJECT_SERVICE_URL = "https://www.ebi.ac.uk/pride/ws/archive/"; // @TODO: new version: https://www.ebi.ac.uk/pride/ws/archive/v2
     /**
      * The data format.
      */
