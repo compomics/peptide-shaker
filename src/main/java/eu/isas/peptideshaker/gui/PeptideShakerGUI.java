@@ -2390,7 +2390,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             try {
 
-                bubbleScale = new Double(input);
+                bubbleScale = Double.valueOf(input);
                 overviewPanel.updateBubblePlot();
 
             } catch (NumberFormatException e) {

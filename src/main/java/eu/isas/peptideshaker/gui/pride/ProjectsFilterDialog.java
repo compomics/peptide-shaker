@@ -789,7 +789,7 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
         if (assaysJTextField.getText().length() > 0) {
 
             try {
-                Integer value = new Integer(assaysJTextField.getText());
+                Integer value = Integer.valueOf(assaysJTextField.getText());
 
                 if (assaysComboBox.getSelectedIndex() == 0) {
                     filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, value, projectsTable.getColumn("#Assays").getModelIndex()));

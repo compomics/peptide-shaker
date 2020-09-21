@@ -573,7 +573,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
 
                 while (line != null) {
                     String[] values = line.split("\\t");
-                    lowerAndUpper.add(new XYDataPoint(new Double(values[0]), new Double(values[1])));
+                    lowerAndUpper.add(new XYDataPoint(Double.valueOf(values[0]), Double.valueOf(values[1])));
                     line = br.readLine();
                 }
 

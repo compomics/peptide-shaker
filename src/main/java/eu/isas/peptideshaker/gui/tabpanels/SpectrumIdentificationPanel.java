@@ -3759,7 +3759,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     return getValueAt(i, columnIndex).getClass();
                 }
             }
-            return (new Double(0.0)).getClass();
+            return (Double.valueOf(0.0)).getClass();
         }
 
         @Override

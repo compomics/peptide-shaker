@@ -10,8 +10,8 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -176,7 +176,7 @@ public class PathSettingsCLI {
         try {
             Options lOptions = new Options();
             PathSettingsCLIParams.createOptionsCLI(lOptions);
-            BasicParser parser = new BasicParser();
+            DefaultParser parser = new DefaultParser();
             CommandLine line = parser.parse(lOptions, args);
 
             if (args.length == 0) {
@@ -262,7 +262,7 @@ public class PathSettingsCLI {
         // update the paths if needed
         Options pathOptions = new Options();
         PathSettingsCLIParams.createOptionsCLI(pathOptions);
-        BasicParser parser = new BasicParser();
+        DefaultParser parser = new DefaultParser();
         CommandLine line = parser.parse(pathOptions, pathSettingArgsAsList);
         PathSettingsCLIInputBean pathSettingsCLIInputBean = new PathSettingsCLIInputBean(line);
         PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
