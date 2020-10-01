@@ -240,15 +240,14 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
                 psParameters.getIdentificationParameters().getSearchParameters()
             );
         }
-        else { // TODO: request file
-            File fmPath = new File(Paths.get(psdbFile.getAbsolutePath(), "data").toString());
+        else {
+            File fmPath = new File(Paths.get(psdbFile.getParentFile().getAbsolutePath(), "data").toString());
             
             for (File file : fmPath.listFiles()) {
 
-                if (file.getName().toLowerCase().endsWith(".fmi")) {
-
+                if (file.getName().toLowerCase().endsWith(".fasta")) {
                     fmIndex = new FMIndex(
-                        fastaFile,
+                        file,
                         psParameters.getIdentificationParameters().getFastaParameters(),
                         waitingHandler,
                         true,
