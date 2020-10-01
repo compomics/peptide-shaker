@@ -110,6 +110,7 @@ import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.utils.PsdbParent;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import static com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex.getFileExtension;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.experiment.io.mass_spectrometry.mgf.MgfFileWriter;

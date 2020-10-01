@@ -26,7 +26,7 @@ public class ModificationSpecificMap extends SpecificTargetDecoyMap {
     public void clean(double minimalFDR) {
 
         
-        writeDBMode();
+        
         
 
         for (Map.Entry<Integer, HashMap<String, TargetDecoyMap>> entry1 : fileSpecificMaps.entrySet()) {

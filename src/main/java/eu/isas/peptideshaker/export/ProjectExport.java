@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export;
 
+import static com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex.getFileExtension;
 import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFileUtils;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.io.IoUtil;
@@ -99,8 +100,13 @@ public class ProjectExport {
             waitingHandler.setWaitingText("Getting FASTA File. Please Wait...");
         }
 
-        ArrayList<String> dataFiles = new ArrayList<>(2 * spectrumProvider.getOrderedFileNamesWithoutExtensions().length + 1);
+        ArrayList<String> dataFiles = new ArrayList<>(2 * spectrumProvider.getOrderedFileNamesWithoutExtensions().length + 2);
         dataFiles.add(fastaFile.getAbsolutePath());
+        
+        
+        String fastaExtension = getFileExtension(fastaFile);
+        File FMFile = new File(fastaFile.getAbsolutePath().replace(fastaExtension, ".fmi"));
+        dataFiles.add(FMFile.getAbsolutePath());
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting Spectrum Files. Please Wait...");

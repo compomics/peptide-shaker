@@ -16,6 +16,7 @@ import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCo
 import eu.isas.peptideshaker.scoring.PSMaps;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesCache;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex;
 import com.compomics.util.io.IoUtil;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import java.io.*;
@@ -96,6 +97,8 @@ public class PsdbExporter {
                 identification.addObject(PeptideShakerParameters.KEY, peptideShakerParameters);
 
             }
+            
+            
 
             // add the identification keys
             if (!identification.contains(IdentificationKeys.KEY)) {
@@ -108,9 +111,20 @@ public class PsdbExporter {
             if (!identification.contains(psMapsIdentKey)) {
                 identification.addObject(psMapsIdentKey, identification.getUrParam(psMaps));
             }
+            
+            
+            
 
             // save the cache and the database
             if (waitingHandler == null || !waitingHandler.isRunCanceled()) {
+                
+                // remove the FM index temporaly from the parameters set
+                PeptideShakerParameters peptideShakerParameters = (PeptideShakerParameters)identification.retrieveObject(PeptideShakerParameters.KEY);          
+                SequenceProvider tmpSequenceProvider = peptideShakerParameters.getSequenceProvider();
+                ProteinDetailsProvider tmpProteinDetailsProvider = peptideShakerParameters.getProteinDetailsProvider();
+                peptideShakerParameters.cleanProviders();
+                
+                identification.updateObject(PeptideShakerParameters.KEY, peptideShakerParameters);
 
                 identification.getObjectsDB().lock(waitingHandler);
                 IoUtil.copyFile(identification.getObjectsDB().getDbFile(), destinationFile);
@@ -121,6 +135,11 @@ public class PsdbExporter {
 //                        false
 //                );
                 identification.getObjectsDB().unlock();
+                
+                
+                peptideShakerParameters.setSequenceProvider(tmpSequenceProvider);
+                peptideShakerParameters.setProteinDetailsProvider(tmpProteinDetailsProvider);
+                identification.updateObject(PeptideShakerParameters.KEY, peptideShakerParameters);
 
             }
         } finally {

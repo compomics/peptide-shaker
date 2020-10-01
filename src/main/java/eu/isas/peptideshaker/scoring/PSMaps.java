@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.scoring;
 
 import com.compomics.util.db.object.ObjectsDB;
-import com.compomics.util.db.object.DbObject;
+import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.maps.InputMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -12,7 +12,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
  *
  * @author Marc Vaudel
  */
-public class PSMaps extends DbObject implements UrParameter {
+public class PSMaps extends ExperimentObject implements UrParameter {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -65,7 +65,7 @@ public class PSMaps extends DbObject implements UrParameter {
      */
     public InputMap getInputMap() {
         
-        readDBMode();
+        
         
         return inputMap;
     
@@ -78,7 +78,7 @@ public class PSMaps extends DbObject implements UrParameter {
      */
     public TargetDecoyMap getPsmMap() {
         
-        readDBMode();
+        
         
         return psmMap;
     
@@ -91,7 +91,7 @@ public class PSMaps extends DbObject implements UrParameter {
      */
     public TargetDecoyMap getPeptideMap() {
         
-        readDBMode();
+        
         
         return peptideMap;
     
@@ -104,7 +104,7 @@ public class PSMaps extends DbObject implements UrParameter {
      */
     public TargetDecoyMap getProteinMap() {
         
-        readDBMode();
+        
         
         return proteinMap;
     

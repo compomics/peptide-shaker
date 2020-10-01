@@ -9,6 +9,8 @@ import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationKeys;
+import com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex;
+import static com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex.getFileExtension;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
@@ -34,6 +36,8 @@ import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -221,6 +225,50 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
                 false
         );
         PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.KEY);
+        
+        
+        File fastaFile = new File(psParameters.getProjectDetails().getFastaFile());
+        FMIndex fmIndex = null;
+        
+        if (fastaFile.exists()){
+            fmIndex = new FMIndex(
+                fastaFile,
+                psParameters.getIdentificationParameters().getFastaParameters(),
+                waitingHandler,
+                true,
+                psParameters.getIdentificationParameters().getPeptideVariantsParameters(),
+                psParameters.getIdentificationParameters().getSearchParameters()
+            );
+        }
+        else { // TODO: request file
+            File fmPath = new File(Paths.get(psdbFile.getAbsolutePath(), "data").toString());
+            
+            for (File file : fmPath.listFiles()) {
+
+                if (file.getName().toLowerCase().endsWith(".fmi")) {
+
+                    fmIndex = new FMIndex(
+                        fastaFile,
+                        psParameters.getIdentificationParameters().getFastaParameters(),
+                        waitingHandler,
+                        true,
+                        psParameters.getIdentificationParameters().getPeptideVariantsParameters(),
+                        psParameters.getIdentificationParameters().getSearchParameters()
+                    );
+                    break;
+
+                }
+            }
+            
+        }
+        
+        psParameters.setSequenceProvider(fmIndex);
+        psParameters.setProteinDetailsProvider(fmIndex);
+        sequenceProvider = fmIndex;
+        proteinDetailsProvider = fmIndex;
+        
+        objectsDB.updateObject(PeptideShakerParameters.KEY, psParameters);
+        
 
         projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.key);
         identification = new Identification(objectsDB);

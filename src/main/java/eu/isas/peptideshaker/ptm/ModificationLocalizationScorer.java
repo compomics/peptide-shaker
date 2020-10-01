@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.ptm;
 
-import com.compomics.util.db.object.DbObject;
+import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationProvider;
@@ -50,7 +50,7 @@ import java.util.stream.Stream;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class ModificationLocalizationScorer extends DbObject {
+public class ModificationLocalizationScorer extends ExperimentObject {
 
     /**
      * The compomics modification factory.
@@ -1119,7 +1119,7 @@ public class ModificationLocalizationScorer extends DbObject {
             HashMap<Double, HashMap<Integer, HashSet<String>>> preferentialSites
     ) {
 
-        readDBMode();
+        
 
         int nMasses = nRepresentativesMap.size();
         HashMap<Double, Integer> nToSelectMap = new HashMap<>(nMasses);

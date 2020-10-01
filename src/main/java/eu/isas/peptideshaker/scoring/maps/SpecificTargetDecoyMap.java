@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.scoring.maps;
 
 import com.compomics.util.db.object.ObjectsDB;
-import com.compomics.util.db.object.DbObject;
+import com.compomics.util.experiment.personalization.ExperimentObject;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.Serializable;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  *
  * @author Marc Vaudel
  */
-public abstract class SpecificTargetDecoyMap extends DbObject implements Serializable {
+public abstract class SpecificTargetDecoyMap extends ExperimentObject implements Serializable {
 
     /**
      * Serial version UID for backward compatibility.
@@ -57,7 +57,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public void estimateProbabilities(WaitingHandler waitingHandler) {
 
         
-        writeDBMode();
+        
         
 
         int max = getMapsSize();
@@ -90,7 +90,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public double getProbability(String file, int category, double score) {
 
         
-        readDBMode();
+        
         
 
         HashSet<String> groupedFiles = fileSpecificGrouping.get(category);
@@ -149,7 +149,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public void addPoint(String fileName, int category, double score, boolean decoy) {
 
         
-        writeDBMode();
+        
         
 
         HashMap<String, TargetDecoyMap> fileMapping = fileSpecificMaps.get(category);
@@ -192,7 +192,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public TargetDecoyMap getTargetDecoyMap(int category, String spectrumFile) {
 
         
-        readDBMode();
+        
         
 
         if (spectrumFile != null) {
@@ -227,7 +227,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public boolean isFileGrouped(int category, String fileName) {
 
         
-        readDBMode();
+        
         
 
         HashSet<String> groupedFiles = fileSpecificGrouping.get(category);
@@ -247,7 +247,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public int getCorrectedCharge(int category) {
 
         
-        readDBMode();
+        
         
 
         Integer correctedCharge = grouping.get(category);
@@ -270,7 +270,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public Set<Integer> getPossibleCategories() {
 
         
-        readDBMode();
+        
         
 
         return fileSpecificMaps.keySet();
@@ -285,7 +285,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public Set<Integer> getCategoriesFromGroupedFiles() {
         
         
-        readDBMode();
+        
         
         
         return groupedMaps.keySet();
@@ -300,7 +300,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public int[] getGroupedCategories() {
         
         
-        readDBMode();
+        
         
         
         return groupedMaps.keySet().stream()
@@ -318,7 +318,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public HashMap<Integer, ArrayList<Integer>> getChargeGroupingMap() {
         
         
-        readDBMode();
+        
         
         
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<>(4);
@@ -361,7 +361,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public TreeSet<String> getFilesAtCategory(int category) {
         
         
-        readDBMode();
+        
         
         
         HashMap<String, TargetDecoyMap> categoryMap = fileSpecificMaps.get(category);
@@ -378,7 +378,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public int getMapsSize() {
         
         
-        readDBMode();
+        
         
         
         return groupedMaps.values().stream()
@@ -400,7 +400,7 @@ public abstract class SpecificTargetDecoyMap extends DbObject implements Seriali
     public ArrayList<TargetDecoyMap> getTargetDecoyMaps() {
         
         
-        readDBMode();
+        
         
         
         ArrayList<TargetDecoyMap> result = new ArrayList<>(0);
