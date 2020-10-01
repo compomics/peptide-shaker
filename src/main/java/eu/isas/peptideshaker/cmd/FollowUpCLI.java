@@ -91,7 +91,7 @@ public class FollowUpCLI extends PsdbParent {
 
                 inputFilePath = followUpCLIInputBean.getPsdbFile().getAbsolutePath();
                 psdbFile = followUpCLIInputBean.getPsdbFile();
-                loadPsdbFile(PeptideShaker.getMatchesFolder(), waitingHandler);
+                loadPsdbFile(PeptideShaker.getMatchesFolder(), waitingHandler, false);
 
             } else {
 

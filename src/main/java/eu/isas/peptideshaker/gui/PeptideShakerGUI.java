@@ -719,7 +719,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                 } else {
 
-                    importPeptideShakerFile(psdbFile);
+                    importPeptideShakerFile(psdbFile, false);
 
                 }
 
@@ -2732,7 +2732,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 clearParameters();
                 getUserParameters().addRecentProject(selectedFile);
                 updateRecentProjectsList();
-                importPeptideShakerFile(selectedFile);
+                importPeptideShakerFile(selectedFile, false);
                 lastSelectedFolder.setLastSelectedFolder(selectedFile.getAbsolutePath());
 
             } else {
@@ -6239,7 +6239,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                             clearData(true, true);
                             clearParameters();
-                            importPeptideShakerFile(new File(filePath));
+                            importPeptideShakerFile(new File(filePath), false);
                             psdbParent.getUserParameters().addRecentProject(filePath);
                             lastSelectedFolder.setLastSelectedFolder(new File(filePath).getAbsolutePath());
 
@@ -6312,7 +6312,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         } else {
 
-                            importPeptideShakerFile(new File(filePath));
+                            importPeptideShakerFile(new File(filePath), false);
 
                         }
 
@@ -6520,7 +6520,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                 getUserParameters().addRecentProject(zipFile);
                                 updateRecentProjectsList();
                                 progressDialog.setRunFinished();
-                                importPeptideShakerFile(file);
+                                importPeptideShakerFile(file, true);
                                 lastSelectedFolder.setLastSelectedFolder(file.getAbsolutePath());
                                 return;
 
@@ -6558,12 +6558,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Imports information from a PeptideShaker file.
      *
      * @param psFile The PeptideShaker file to import.
+     * @param importFromZip flag that determines if psdb was imported from a zip file
      */
     public void importPeptideShakerFile(
-            File psFile
+            File psFile,
+            boolean importFromZip
     ) {
 
         psdbParent.setPsdbFile(psFile);
+        psdbParent.setPsdbImportFromZip(importFromZip);
 
         final PeptideShakerGUI peptideShakerGUI = this; // needed due to threading issues
 
@@ -6607,7 +6610,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     updateNotesNotificationCounter();
                     openingExistingProject = true;
 
-                    psdbParent.loadPsdbFile(PeptideShaker.getMatchesFolder(), progressDialog);
+                    psdbParent.loadPsdbFile(PeptideShaker.getMatchesFolder(), progressDialog, psdbParent.getPsdbImportFromZip());
 
                     // load project specific PTMs
                     String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
@@ -8061,7 +8064,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 clearData(true, true);
                 clearParameters();
 
-                importPeptideShakerFile(new File(filePath));
+                importPeptideShakerFile(new File(filePath), false);
                 psdbParent.getUserParameters().addRecentProject(filePath);
             }
 

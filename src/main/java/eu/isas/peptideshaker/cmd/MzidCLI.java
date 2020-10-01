@@ -86,7 +86,7 @@ public class MzidCLI extends PsdbParent {
             } else if (mzidCLIInputBean.getPsdbFile() != null) {
                 inputFilePath = mzidCLIInputBean.getPsdbFile().getAbsolutePath();
                 psdbFile = mzidCLIInputBean.getPsdbFile();
-                loadPsdbFile(PeptideShaker.getMatchesFolder(), waitingHandler);
+                loadPsdbFile(PeptideShaker.getMatchesFolder(), waitingHandler, false);
             } else {
                 waitingHandler.appendReport("PeptideShaker project input missing.", true, true);
                 return 1;
