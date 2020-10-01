@@ -118,7 +118,7 @@ public class DisplayFeaturesGenerator {
         if (!underlineLink) {
             underLineTag = " style=\"text-decoration: none\"";
         }
-        
+
         String result;
 
         switch (proteinDatabase) {
@@ -148,7 +148,8 @@ public class DisplayFeaturesGenerator {
                         proteinAccession,
                         "</font></a>");
                 break;
-            case NCBI:
+            case NCBI_old:
+            case NCBI_new:
                 result = String.join("",
                         "<a href=\"",
                         getNcbiAccessionLink(proteinAccession),
@@ -183,7 +184,7 @@ public class DisplayFeaturesGenerator {
 
         return result;
     }
-    
+
     /**
      * Transforms the protein accession number into an HTML link to the
      * corresponding database. Note that this is a complete HTML with HTML and a
@@ -570,7 +571,7 @@ public class DisplayFeaturesGenerator {
                             }
                             if (confidentMod != null) {
                                 tooltip.append(confidentMod).append(" (confident)<br>");
-                            } 
+                            }
 //                            else if (ambiguousMod != null) {
 //                                tooltip.append(ambiguousMod).append(" (not confident))<br>");
 //                            }
@@ -673,7 +674,6 @@ public class DisplayFeaturesGenerator {
 
         // @TODO: also add the variants
         //peptide.getVariantMatches();
-
         return PeptideUtils.getTaggedModifiedSequence(peptide, modificationParameters,
                 allFixedModifications, allVariableModifications,
                 confidentVariableModifications, ambiguousVariableModificationsRepresentative, null,

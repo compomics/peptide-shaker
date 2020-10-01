@@ -4484,7 +4484,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // we need to add a first empty filler as the coverage table starts at 0
                 ArrayList<Double> data = new ArrayList<>();
-                data.add(new Double(0));
+                data.add(Double.valueOf(0));
                 JSparklinesDataSeries sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                 sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
 
@@ -4555,7 +4555,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         // add the non-modified area
                         if (unmodifiedCounter > 0) {
                             data = new ArrayList<>(1);
-                            data.add(new Double(unmodifiedCounter));
+                            data.add(Double.valueOf(unmodifiedCounter));
                             sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                             sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
                         }
@@ -4576,7 +4576,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
 
                         data = new ArrayList<>(1);
-                        data.add(new Double(1));
+                        data.add(Double.valueOf(1));
                         sparklineDataseriesPtm = new JSparklinesDataSeries(data, ptmColor, null);
                         sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
 
@@ -4591,7 +4591,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 if (unmodifiedCounter > 0) {
                     // add the remaining non-modified area
                     data = new ArrayList<>();
-                    data.add(new Double(unmodifiedCounter));
+                    data.add(Double.valueOf(unmodifiedCounter));
                     sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                     sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
                 }
@@ -4632,7 +4632,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // we need to add a first empty filler as the coverage table starts at 0
                 ArrayList<Double> data = new ArrayList<>();
-                data.add(new Double(1));
+                data.add(Double.valueOf(1));
                 JSparklinesDataSeries sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                 sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
 
@@ -4684,7 +4684,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         // add the unmodified area
                         if (unmodifiedCounter > 0) {
                             data = new ArrayList<>(1);
-                            data.add(new Double(unmodifiedCounter));
+                            data.add(Double.valueOf(unmodifiedCounter));
                             sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                             sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
                         }
@@ -4698,7 +4698,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
 
                         data = new ArrayList<>(1);
-                        data.add(new Double(1));
+                        data.add(Double.valueOf(1));
                         sparklineDataseriesPtm = new JSparklinesDataSeries(data, ptmColor, null);
                         sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
 
@@ -4713,7 +4713,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 if (unmodifiedCounter > 0) {
                     // add the remaining unmodified area
                     data = new ArrayList<>();
-                    data.add(new Double(unmodifiedCounter));
+                    data.add(Double.valueOf(unmodifiedCounter));
                     sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                     sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
                 }

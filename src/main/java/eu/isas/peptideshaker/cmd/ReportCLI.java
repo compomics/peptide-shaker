@@ -13,8 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 
 /**
@@ -346,7 +346,7 @@ public class ReportCLI extends PsdbParent {
             // parse the rest of the cptions   
             Options nonPathOptions = new Options();
             ReportCLIParams.createOptionsCLI(nonPathOptions);
-            BasicParser parser = new BasicParser();
+            DefaultParser parser = new DefaultParser();
             CommandLine line = parser.parse(nonPathOptions, nonPathSettingArgsAsList);
 
             if (!isValidStartup(line)) {

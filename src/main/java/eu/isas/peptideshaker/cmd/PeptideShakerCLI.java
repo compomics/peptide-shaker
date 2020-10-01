@@ -1341,7 +1341,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             // parse the rest of the cptions   
             Options nonPathOptions = new Options();
             PeptideShakerCLIParams.createOptionsCLI(nonPathOptions);
-            BasicParser parser = new BasicParser();
+            DefaultParser parser = new DefaultParser();
             CommandLine line = parser.parse(nonPathOptions, nonPathSettingArgsAsList);
 
             if (!PeptideShakerCLIInputBean.isValidStartup(line)) {

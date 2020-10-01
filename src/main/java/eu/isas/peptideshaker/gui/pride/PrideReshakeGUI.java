@@ -205,7 +205,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     /**
      * The web service URL.
      */
-    private static final String PROJECT_SERVICE_URL = "https://www.ebi.ac.uk/pride/ws/archive/"; // https://www.ebi.ac.uk/pride/ws/archive/v2/
+    private static final String PROJECT_SERVICE_URL = "https://www.ebi.ac.uk/pride/ws/archive/"; // @TODO: new version: https://www.ebi.ac.uk/pride/ws/archive/v2
     /**
      * The data format.
      */
@@ -3151,7 +3151,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         prideSearchParameters.setFragmentAccuracyType(SearchParameters.MassAccuracyType.DA);
                         value = value.substring(0, value.length() - 2);
                     }
-                    fragmentIonMassTolerance = new Double(value);
+                    fragmentIonMassTolerance = Double.valueOf(value);
                 } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000078")) { // peptide mass tolerance
                     String value = cvParam.getValue().trim();
                     if (value.contains(" ")) { // escape Da or ppm
@@ -3170,9 +3170,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         prideSearchParameters.setPrecursorAccuracyType(SearchParameters.MassAccuracyType.DA);
                         value = value.substring(0, value.length() - 2);
                     }
-                    peptideIonMassTolerance = new Double(value);
+                    peptideIonMassTolerance = Double.valueOf(value);
                 } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000162")) { // allowed missed cleavages
-                    maxMissedCleavages = new Integer(cvParam.getValue());
+                    maxMissedCleavages = Integer.valueOf(cvParam.getValue());
                 }
             }
         }
@@ -3616,11 +3616,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                 for (CvParam cvParam : precursorCvParams) {
                     if (cvParam.getAccession().equalsIgnoreCase("MS:1000744") || cvParam.getAccession().equalsIgnoreCase("PSI:1000040")) { // precursor m/z
-                        precursorMz = new Double(cvParam.getValue());
+                        precursorMz = Double.valueOf(cvParam.getValue());
                     } else if (cvParam.getAccession().equalsIgnoreCase("MS:1000042") || cvParam.getAccession().equalsIgnoreCase("PSI:1000042")) { // precursor intensity
-                        precursorIntensity = new Double(cvParam.getValue());
+                        precursorIntensity = Double.valueOf(cvParam.getValue());
                     } else if (cvParam.getAccession().equalsIgnoreCase("MS:1000041") || cvParam.getAccession().equalsIgnoreCase("PSI:1000041")) { // precursor charge
-                        precursorCharge = new Integer(cvParam.getValue());
+                        precursorCharge = Integer.valueOf(cvParam.getValue());
                     } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000203") || cvParam.getAccession().equalsIgnoreCase("MS:1000894")) { // precursor retention time
                         precursorRt = cvParam.getValue();
                     }
@@ -3980,7 +3980,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                             Double fileSizeInMB = (Double) filesTable.getValueAt(rowIndex, filesTable.getColumn("Size (MB)").getModelIndex());
                             final int fileSizeInBytes;
                             if (fileSizeInMB != null) {
-                                fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
+                                fileSizeInBytes = Double.valueOf(fileSizeInMB * 1024 * 1024).intValue();
                             } else {
                                 fileSizeInBytes = -1;
                             }

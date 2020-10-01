@@ -1250,7 +1250,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         try {
             String selectedGroup = (String) groupSelectionTable.getValueAt(groupSelectionTable.getSelectedRow(), 1);
             int thresholdType = thresholdTypeCmb.getSelectedIndex();
-            double lastThreshold = new Double(thresholdInput.getText());
+            double lastThreshold = Double.valueOf(thresholdInput.getText());
             applyThreshold(selectedGroup, lastThreshold, thresholdType);
             updateDisplayedComponents();
         } catch (Exception e) {
@@ -1265,7 +1265,7 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void windowTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_windowTxtActionPerformed
         try {
-            Integer newWindow = new Integer(windowTxt.getText());
+            Integer newWindow = Integer.valueOf(windowTxt.getText());
 
             if (newWindow < 0) {
                 JOptionPane.showMessageDialog(this, "Please verify the given PEP bin size. Has to be a positive value.", "Window Error", JOptionPane.WARNING_MESSAGE);
@@ -1298,7 +1298,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                         if (!progressDialog.isRunCanceled()) {
                             targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
                             int thresholdType = thresholdTypeCmb.getSelectedIndex();
-                            double lastThreshold = new Double(thresholdInput.getText());
+                            double lastThreshold = Double.valueOf(thresholdInput.getText());
                             updateResults(thresholdType, lastThreshold);
                             updateDisplayedComponents();
                             modifiedMaps.put((String) groupSelectionTable.getValueAt(groupSelectionTable.getSelectedRow(), 1), true);
@@ -1324,7 +1324,7 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
 
-        Integer newWindow = new Integer(windowTxt.getText());
+        Integer newWindow = Integer.valueOf(windowTxt.getText());
 
         if (newWindow < 0) {
             JOptionPane.showMessageDialog(this, "Please verify the given window size. Has to be a positive value.", "Window Error", JOptionPane.WARNING_MESSAGE);
@@ -1450,7 +1450,7 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void validateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateButtonActionPerformed
 
-        double lastThreshold = new Double(thresholdInput.getText());
+        double lastThreshold = Double.valueOf(thresholdInput.getText());
 
         thresholdInputActionPerformed(null);
 
@@ -1536,7 +1536,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                             peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, false);
                             dataValidated = true;
                             validateButton.setEnabled(false);
-                            double input = new Double(thresholdInput.getText());
+                            double input = Double.valueOf(thresholdInput.getText());
                             int inputType = thresholdTypeCmb.getSelectedIndex();
                             TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
                             currentResults.setUserInput(input);
@@ -1693,7 +1693,7 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void thresholdInputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_thresholdInputKeyReleased
         try {
-            double lastThreshold = new Double(thresholdInput.getText());
+            double lastThreshold = Double.valueOf(thresholdInput.getText());
 
             if (lastThreshold < 0 || lastThreshold > 100) {
                 JOptionPane.showMessageDialog(this, "Please verify the given threshold. Interval: [0, 100].", "Threshold Error", JOptionPane.WARNING_MESSAGE);
@@ -1713,7 +1713,7 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void windowTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_windowTxtKeyReleased
         try {
-            Integer newWindow = new Integer(windowTxt.getText());
+            Integer newWindow = Integer.valueOf(windowTxt.getText());
 
             if (newWindow < 0) {
                 JOptionPane.showMessageDialog(this, "Please verify the given window size. Has to be a positive value.", "Window Error", JOptionPane.WARNING_MESSAGE);

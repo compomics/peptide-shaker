@@ -168,7 +168,7 @@ public class ProteinSequencePanel {
                 if (cme.getEntity() != null && cme.getTrigger().getButton() == MouseEvent.BUTTON1) {
 
                     ((CategoryItemEntity) cme.getEntity()).getDataset();
-                    Integer blockNumber = new Integer((String) ((CategoryItemEntity) cme.getEntity()).getRowKey());
+                    Integer blockNumber = Integer.valueOf((String) ((CategoryItemEntity) cme.getEntity()).getRowKey());
 
                     ArrayList<ResidueAnnotation> annotation = blockTooltips.get(blockNumber);
                     if (annotation != null) {
@@ -184,7 +184,7 @@ public class ProteinSequencePanel {
 
                 if (cme.getEntity() != null && cme.getEntity() instanceof CategoryItemEntity) {
                     ((CategoryItemEntity) cme.getEntity()).getDataset();
-                    Integer blockNumber = new Integer((String) ((CategoryItemEntity) cme.getEntity()).getRowKey());
+                    Integer blockNumber = Integer.valueOf((String) ((CategoryItemEntity) cme.getEntity()).getRowKey());
 
                     ArrayList<ResidueAnnotation> annotation = blockTooltips.get(blockNumber);
                     if (annotation != null && !annotation.isEmpty()) {

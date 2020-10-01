@@ -1521,7 +1521,7 @@ public class QCPanel extends javax.swing.JPanel {
                             int max = idFilter.getMaxPepLength();
 
                             for (int i = min; i < max; i++) {
-                                bins.add(new Double(i));
+                                bins.add(Double.valueOf(i));
                             }
 
                             getBinData(bins, validatedValues, dataset, "Confident", true);
@@ -1912,7 +1912,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                             int enzymeMissedCelavages = enzyme.getNmissedCleavages(peptideMatch.getPeptide().getSequence());
                             if (value == null || enzymeMissedCelavages < value) {
-                                value = new Double(enzymeMissedCelavages);
+                                value = Double.valueOf(enzymeMissedCelavages);
                             }
                         }
                     }

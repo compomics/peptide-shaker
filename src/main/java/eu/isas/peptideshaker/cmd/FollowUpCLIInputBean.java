@@ -121,31 +121,31 @@ public class FollowUpCLIInputBean {
             recalibrationFolder = new File(aLine.getOptionValue(FollowUpCLIParams.RECALIBRATION_FOLDER.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.RECALIBRATION_MODE.id)) {
-            recalibrationMode = new Integer(aLine.getOptionValue(FollowUpCLIParams.RECALIBRATION_MODE.id));
+            recalibrationMode = Integer.valueOf(aLine.getOptionValue(FollowUpCLIParams.RECALIBRATION_MODE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.SPECTRUM_FOLDER.id)) {
             spectrumExportFolder = new File(aLine.getOptionValue(FollowUpCLIParams.SPECTRUM_FOLDER.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.PSM_TYPE.id)) {
-            spectrumExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.PSM_TYPE.id));
+            spectrumExportTypeIndex = Integer.valueOf(aLine.getOptionValue(FollowUpCLIParams.PSM_TYPE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.ACCESSIONS_FILE.id)) {
             accessionsExportFile = new File(aLine.getOptionValue(FollowUpCLIParams.ACCESSIONS_FILE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.ACCESSIONS_TYPE.id)) {
-            accessionsExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.ACCESSIONS_TYPE.id));
+            accessionsExportTypeIndex = Integer.valueOf(aLine.getOptionValue(FollowUpCLIParams.ACCESSIONS_TYPE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.SEQUENCES_FILE.id)) {
             proteinSequencesExportFile = new File(aLine.getOptionValue(FollowUpCLIParams.SEQUENCES_FILE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.SEQUENCES_TYPE.id)) {
-            proteinSequencesExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.SEQUENCES_TYPE.id));
+            proteinSequencesExportTypeIndex = Integer.valueOf(aLine.getOptionValue(FollowUpCLIParams.SEQUENCES_TYPE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.PROGENESIS_FILE.id)) {
             progenesisExportFile = new File(aLine.getOptionValue(FollowUpCLIParams.PROGENESIS_FILE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.PROGENESIS_TYPE.id)) {
-            progenesisExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.PROGENESIS_TYPE.id));
+            progenesisExportTypeIndex = Integer.valueOf(aLine.getOptionValue(FollowUpCLIParams.PROGENESIS_TYPE.id));
             if (progenesisExportTypeIndex == ProgenesisExport.ExportType.confident_ptms.index) {
                 if (aLine.hasOption(FollowUpCLIParams.PROGENESIS_TARGETED_PTMS.id)) {
                     progenesisTargetedPTMs = getModificationNames(aLine.getOptionValue(FollowUpCLIParams.PROGENESIS_TARGETED_PTMS.id));
@@ -156,7 +156,7 @@ public class FollowUpCLIInputBean {
             inclusionFile = new File(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_FILE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_FORMAT.id)) {
-            inclusionFormat = new Integer(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_FORMAT.id));
+            inclusionFormat = Integer.valueOf(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_FORMAT.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_PROTEIN_FILTERS.id)) {
             inclusionProteinFilter = CommandLineUtils.getIntegerListFromString(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_PROTEIN_FILTERS.id), ",");
@@ -165,7 +165,7 @@ public class FollowUpCLIInputBean {
             inclusionPeptideFilter = CommandLineUtils.getIntegerListFromString(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_PEPTIDE_FILTERS.id), ",");
         }
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id)) {
-            inclusionRtWindow = new Double(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id));
+            inclusionRtWindow = Double.valueOf(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.PROTEOFORMS_FILE.id)) {
             proteoformsFile = new File(aLine.getOptionValue(FollowUpCLIParams.PROTEOFORMS_FILE.id));

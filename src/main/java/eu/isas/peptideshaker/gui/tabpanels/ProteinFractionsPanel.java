@@ -465,7 +465,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         }
 
                         ArrayList<Double> data = new ArrayList<>();
-                        data.add(new Double(sequenceCounter));
+                        data.add(Double.valueOf(sequenceCounter));
 
                         JSparklinesDataSeries sparklineDataseries;
 

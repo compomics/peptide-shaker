@@ -863,7 +863,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                 Double fileSizeInMB = (Double) spectrumTable.getValueAt(i, spectrumTable.getColumn("Size (MB)").getModelIndex());
                                 int fileSizeInBytes;
                                 if (fileSizeInMB != null) {
-                                    fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
+                                    fileSizeInBytes = Double.valueOf(fileSizeInMB * 1024 * 1024).intValue();
                                 } else {
                                     fileSizeInBytes = -1;
                                 }
@@ -922,7 +922,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                     Double fileSizeInMB = (Double) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Size (MB)").getModelIndex());
                                     int fileSizeInBytes;
                                     if (fileSizeInMB != null) {
-                                        fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
+                                        fileSizeInBytes = Double.valueOf(fileSizeInMB * 1024 * 1024).intValue();
                                     } else {
                                         fileSizeInBytes = -1;
                                     }
@@ -1134,7 +1134,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             Double fileSizeInMB = (Double) searchSettingsTable.getValueAt(row, searchSettingsTable.getColumn("Size (MB)").getModelIndex());
             final int fileSizeInBytes;
             if (fileSizeInMB != null) {
-                fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
+                fileSizeInBytes = Double.valueOf(fileSizeInMB * 1024 * 1024).intValue();
             } else {
                 fileSizeInBytes = -1;
             }
@@ -1286,7 +1286,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 final Double fileSizeInMB = (Double) spectrumTable.getValueAt(row, spectrumTable.getColumn("Size (MB)").getModelIndex());
                 final int fileSizeInBytes;
                 if (fileSizeInMB != null) {
-                    fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
+                    fileSizeInBytes = Double.valueOf(fileSizeInMB * 1024 * 1024).intValue();
                 } else {
                     fileSizeInBytes = -1;
                 }

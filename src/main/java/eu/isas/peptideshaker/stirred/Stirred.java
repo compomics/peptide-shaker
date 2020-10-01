@@ -454,7 +454,7 @@ public class Stirred {
                     fastaFile,
                     identificationParameters.getFastaParameters(),
                     null,
-                    true,
+                    true,  
                     identificationParameters.getPeptideVariantsParameters(),
                     identificationParameters.getSearchParameters()
             );

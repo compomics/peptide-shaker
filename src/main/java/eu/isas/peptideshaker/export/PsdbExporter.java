@@ -70,6 +70,7 @@ public class PsdbExporter {
             DisplayParameters displayParameters,
             File dbFolder
     ) throws IOException {
+
         identificationFeaturesCache.setReadOnly(true);
 
         try {
@@ -142,6 +143,7 @@ public class PsdbExporter {
                 identification.updateObject(PeptideShakerParameters.KEY, peptideShakerParameters);
 
             }
+
         } finally {
 
             // restore the project navigability

@@ -185,7 +185,8 @@ public class PsmProcessorRunnable implements Runnable {
             return;
         }
 
-        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+        SequenceMatchingParameters modificationSequenceMatchingParameters 
+                = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
 

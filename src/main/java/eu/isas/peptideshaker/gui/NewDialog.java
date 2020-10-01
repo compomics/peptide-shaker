@@ -2039,12 +2039,12 @@ public class NewDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Loads the path of the FASTA and mgf files listed in the given searchGUI
-     * input files and provides them in a list without duplicates.
+     * Loads the path of the FASTA and spectrum files listed in the given
+     * SearchGUI input files and provides them in a list without duplicates.
      *
      * @param searchguiInputFiles the SearchGUI input files to inspect
      *
-     * @return a list of FASTA and mgf input files
+     * @return a list of FASTA and spectrum input files
      */
     private ArrayList<String> getFastaAndSpectrumFiles(ArrayList<File> searchguiInputFiles) {
 

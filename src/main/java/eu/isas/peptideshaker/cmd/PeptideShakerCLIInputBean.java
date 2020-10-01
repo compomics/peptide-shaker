@@ -141,7 +141,7 @@ public class PeptideShakerCLIInputBean {
 
         // n threads
         if (aLine.hasOption(PeptideShakerCLIParams.THREADS.id)) {
-            nThreads = new Integer(aLine.getOptionValue(PeptideShakerCLIParams.THREADS.id));
+            nThreads = Integer.valueOf(aLine.getOptionValue(PeptideShakerCLIParams.THREADS.id));
         }
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);

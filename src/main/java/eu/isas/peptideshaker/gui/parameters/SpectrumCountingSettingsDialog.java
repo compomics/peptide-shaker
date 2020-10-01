@@ -177,7 +177,7 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
 
         if (normalizationCmb.getSelectedIndex() == 0 && normalizationCmb.getSelectedIndex() == 1) {
             try {
-                new Double(referenceTxt.getText());
+                Double.valueOf(referenceTxt.getText());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for the protein amount.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -205,7 +205,7 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
             spectrumCountingPreferences.setNormalize(true);
             spectrumCountingPreferences.setUnit((UnitOfMeasurement) unitCmb.getSelectedItem());
             if (normalizationCmb.getSelectedIndex() == 1) {
-                Double value = new Double(referenceTxt.getText());
+                Double value = Double.valueOf(referenceTxt.getText());
                 spectrumCountingPreferences.setReferenceMass(value);
             }
         }
