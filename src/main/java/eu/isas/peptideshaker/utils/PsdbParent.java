@@ -853,9 +853,9 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
     }
 
     /**
-     * Sets the psdb file.
+     * Sets that the psdb file is imported from a zip file.
      *
-     * @param psdbFile the psdb file
+     * @param importFromZip  if the psdb was extracted from a zip file
      */
     public void setPsdbImportFromZip(
             boolean importFromZip
