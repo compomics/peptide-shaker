@@ -188,7 +188,7 @@ public class BestMatchSelection {
 
                             double p = multiSE && fastaParameters.isTargetDecoy()
                                     ? psParameter1.getProbability()
-                                    : peptideAssumption1.getScore();
+                                    : peptideAssumption1.getScore(); // @TODO: why use the score?
 
                             searchEngine2loop:
 
@@ -251,19 +251,11 @@ public class BestMatchSelection {
 
             PeptideAssumption bestPeptideAssumption;
 
-            try {
-                bestPeptideAssumption = getBestMatch(
-                        spectrumFile,
-                        spectrumTitle,
-                        assumptions
-                );
-            } catch (Exception e) {
-                bestPeptideAssumption = getBestMatch(
-                        spectrumFile,
-                        spectrumTitle,
-                        assumptions
-                );
-            }
+            bestPeptideAssumption = getBestMatch(
+                    spectrumFile,
+                    spectrumTitle,
+                    assumptions
+            );
 
             psmParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
 
