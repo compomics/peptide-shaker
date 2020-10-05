@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import com.compomics.util.db.object.DbObject;
+import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.waiting.WaitingHandler;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +12,7 @@ import java.util.HashSet;
  *
  * @author Marc Vaudel
  */
-public class TargetDecoyMap extends DbObject {
+public class TargetDecoyMap extends ExperimentObject {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -79,7 +79,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public double getProbability(double score) {
         
-        readDBMode();
+        
         
         TargetDecoyPoint point = hitMap.get(score);
         
@@ -124,7 +124,7 @@ public class TargetDecoyMap extends DbObject {
      * @return the number of target hits found at the given score
      */
     public int getNTarget(double score) {
-        readDBMode();
+        
         return hitMap.get(score).nTarget;
     }
 
@@ -146,7 +146,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public void put(double score, boolean isDecoy) {
         
-        writeDBMode();
+        
         
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         
@@ -177,7 +177,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public synchronized TargetDecoyPoint createTargetDecoyPoint(double score) {
         
-        readDBMode();
+        
         
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         
@@ -201,7 +201,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public void remove(double score, boolean isDecoy) {
 
-        writeDBMode();
+        
 
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
 
@@ -221,7 +221,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public synchronized void cleanUp() {
 
-        writeDBMode();
+        
 
         boolean removed = false;
 
@@ -255,7 +255,7 @@ public class TargetDecoyMap extends DbObject {
      */
     private void estimateNs() {
 
-        readDBMode();
+        
 
         if (scores == null) {
 
@@ -334,7 +334,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
         
-        readDBMode();
+        
 
         if (scores == null) {
 
@@ -444,7 +444,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public int getnMax() {
 
-        readDBMode();
+        
 
         if (nmax == null) {
 
@@ -463,7 +463,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public double getMinFdr() {
 
-        readDBMode();
+        
 
         return minFDR;
 
@@ -496,7 +496,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public Integer getnTargetOnly() {
 
-        readDBMode();
+        
 
         return nTargetOnly;
 
@@ -507,7 +507,7 @@ public class TargetDecoyMap extends DbObject {
      */
     private void estimateScores() {
 
-        readDBMode();
+        
 
         scores = new ArrayList<>(hitMap.keySet());
         Collections.sort(scores);
@@ -521,7 +521,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public ArrayList<Double> getScores() {
 
-        readDBMode();
+        
 
         if (scores == null) {
 
@@ -540,7 +540,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public void addAll(TargetDecoyMap anOtherMap) {
 
-        writeDBMode();
+        
 
         for (double score : anOtherMap.getScores()) {
 
@@ -572,7 +572,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public boolean suspiciousInput(double initialFDR) {
 
-        readDBMode();
+        
 
         if (nmax == null) {
 
@@ -597,7 +597,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public TargetDecoyResults getTargetDecoyResults() {
 
-        readDBMode();
+        
 
         return targetDecoyResults;
 
@@ -610,7 +610,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public TargetDecoySeries getTargetDecoySeries() {
 
-        readDBMode();
+        
 
         return new TargetDecoySeries(hitMap);
 
@@ -623,7 +623,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public int getWindowSize() {
 
-        readDBMode();
+        
 
         if (windowSize == null) {
 
@@ -642,7 +642,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public void setWindowSize(int windowSize) {
 
-        writeDBMode();
+        
 
         this.windowSize = windowSize;
 
@@ -655,7 +655,7 @@ public class TargetDecoyMap extends DbObject {
      */
     public int getMapSize() {
 
-        readDBMode();
+        
 
         return hitMap.size();
 

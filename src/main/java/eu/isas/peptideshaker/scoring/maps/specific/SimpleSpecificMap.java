@@ -18,7 +18,7 @@ public class SimpleSpecificMap extends SpecificTargetDecoyMap {
     public void clean(double minimalFDR) {
 
         
-        writeDBMode();
+        
         
 
         TreeMap<Integer, HashMap<String, TargetDecoyMap>> sortedMap = new TreeMap<>(fileSpecificMaps);

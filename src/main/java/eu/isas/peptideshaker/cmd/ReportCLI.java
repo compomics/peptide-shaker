@@ -92,7 +92,7 @@ public class ReportCLI extends PsdbParent {
 
                 inputFilePath = reportCLIInputBean.getPsdbFile().getAbsolutePath();
                 psdbFile = reportCLIInputBean.getPsdbFile();
-                loadPsdbFile(PeptideShaker.getMatchesFolder(), waitingHandler);
+                loadPsdbFile(PeptideShaker.getMatchesFolder(), waitingHandler, false);
 
             } else {
 

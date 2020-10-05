@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.parameters;
 
-import com.compomics.util.db.object.DbObject;
+import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
@@ -21,7 +21,7 @@ import com.compomics.util.parameters.peptide_shaker.ProjectType;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class PeptideShakerParameters extends DbObject implements UrParameter {
+public class PeptideShakerParameters extends ExperimentObject implements UrParameter {
 
     /**
      * The identification parameters.
@@ -50,11 +50,11 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
     /**
      * The sequence provider.
      */
-    private final SequenceProvider sequenceProvider;
+    private SequenceProvider sequenceProvider;
     /**
      * The protein details provider.
      */
-    private final ProteinDetailsProvider proteinDetailsProvider;
+    private ProteinDetailsProvider proteinDetailsProvider;
     /**
      * The gene maps.
      */
@@ -71,6 +71,12 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      * The key of the object when stored in settings table of a psdb file.
      */
     public static final long KEY = ExperimentObject.asLong("PeptideShaker_parameters");
+    /**
+     * The path for the FM index
+     */
+    private String fmIndexPath;
+    
+    
 
     /**
      * Empty default constructor.
@@ -87,6 +93,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
         geneMaps = null;
         identificationFeaturesCache = null;
         projectType = null;
+        fmIndexPath = "";
     }
 
     /**
@@ -139,7 +146,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     public IdentificationParameters getIdentificationParameters() {
 
-        readDBMode();
+        
 
         return identificationParameters;
 
@@ -152,7 +159,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     public SpectrumCountingParameters getSpectrumCountingPreferences() {
 
-        readDBMode();
+        
 
         return spectrumCountingPreferences;
 
@@ -165,7 +172,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     public ProjectDetails getProjectDetails() {
 
-        readDBMode();
+        
 
         return projectDetails;
 
@@ -178,7 +185,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     public FilterParameters getFilterParameters() {
 
-        readDBMode();
+        
 
         return filterParameters;
 
@@ -191,7 +198,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     public DisplayParameters getDisplayParameters() {
 
-        readDBMode();
+        
 
         return displayParameters;
 
@@ -204,7 +211,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     public Metrics getMetrics() {
 
-        readDBMode();
+        
 
         return metrics;
 
@@ -217,7 +224,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     public SequenceProvider getSequenceProvider() {
 
-        readDBMode();
+        
 
         return sequenceProvider;
 
@@ -230,7 +237,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     public ProteinDetailsProvider getProteinDetailsProvider() {
 
-        readDBMode();
+        
 
         return proteinDetailsProvider;
 
@@ -243,7 +250,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     public GeneMaps getGeneMaps() {
 
-        readDBMode();
+        
 
         return geneMaps;
 
@@ -257,7 +264,7 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     public IdentificationFeaturesCache getIdentificationFeaturesCache() {
 
-        readDBMode();
+        
 
         return identificationFeaturesCache;
 
@@ -275,9 +282,37 @@ public class PeptideShakerParameters extends DbObject implements UrParameter {
      */
     public ProjectType getProjectType() {
 
-        readDBMode();
+        
 
         return projectType;
     }
 
+    
+    /**
+     * Cleans the SequenceProvider and ProteinDetailsProvider, please use only
+     * temporary or if you know what you do
+     */
+    public void cleanProviders(){
+        sequenceProvider = null;
+        proteinDetailsProvider = null;
+    }
+    
+    
+    /**
+     * Setter for the sequence provider
+     * @param sequenceProvider the sequence provider instance
+     */
+    public void setSequenceProvider(SequenceProvider sequenceProvider){
+        this.sequenceProvider = sequenceProvider;
+    }
+    
+    
+    /**
+     * Setter for the protein details provider
+     * @param proteinDetailsProvider the protein details provider instance
+     */
+    public void setProteinDetailsProvider(ProteinDetailsProvider proteinDetailsProvider){
+        this.proteinDetailsProvider = proteinDetailsProvider;
+    }
+    
 }

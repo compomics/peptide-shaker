@@ -9,6 +9,8 @@ import com.compomics.util.experiment.ProjectParameters;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationKeys;
+import com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex;
+import static com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex.getFileExtension;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
@@ -34,6 +36,8 @@ import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -112,6 +116,10 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
      * The project type.
      */
     protected ProjectType projectType;
+    /**
+     * Import from szip
+     */
+    private boolean importFromZip = false;
 
     /**
      * Empty constructor for instantiation purposes.
@@ -170,7 +178,7 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
                 if (file.getName().toLowerCase().endsWith(".psdb")) {
 
                     psdbFile = file;
-                    loadPsdbFile(dbFolder, waitingHandler);
+                    loadPsdbFile(dbFolder, waitingHandler, true);
                     return;
 
                 }
@@ -184,13 +192,15 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
      * @param dbFolder the folder where to untar the project
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
+     * @param openFromZip flag determining if pdsb file was openend from a zip file
      *
      * @throws IOException thrown of IOException occurs exception thrown
      * whenever an error occurred while reading or writing a file
      */
     public void loadPsdbFile(
             File dbFolder,
-            WaitingHandler waitingHandler
+            WaitingHandler waitingHandler,
+            boolean openFromZip
     ) throws IOException { // @TODO: use the waiting handler!
 
         // close any open connection to an identification database
@@ -199,6 +209,8 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
             identification.close();
 
         }
+        
+            
 
         // create the matches folder if it does not exist
         if (!dbFolder.exists()) {
@@ -221,6 +233,57 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
                 false
         );
         PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.KEY);
+        
+        
+        File fastaFile = new File(psParameters.getProjectDetails().getFastaFile());
+        FMIndex fmIndex = null;
+        
+        if (openFromZip){
+            File fmPath = new File(Paths.get(psdbFile.getParentFile().getAbsolutePath(), "data").toString());
+            
+            for (File file : fmPath.listFiles()) {
+
+                if (file.getAbsoluteFile().toString().toLowerCase().endsWith(".fasta")) {
+                    fmIndex = new FMIndex(
+                        file,
+                        psParameters.getIdentificationParameters().getFastaParameters(),
+                        waitingHandler,
+                        true,
+                        psParameters.getIdentificationParameters().getPeptideVariantsParameters(),
+                        psParameters.getIdentificationParameters().getSearchParameters()
+                    );
+                    break;
+
+                }
+            }
+        }
+        else {
+            if (fastaFile.exists()){
+                fmIndex = new FMIndex(
+                    fastaFile,
+                    psParameters.getIdentificationParameters().getFastaParameters(),
+                    waitingHandler,
+                    true,
+                    psParameters.getIdentificationParameters().getPeptideVariantsParameters(),
+                    psParameters.getIdentificationParameters().getSearchParameters()
+                );
+            }
+            else {
+                // TODO: handle it
+            }
+        }
+        
+        
+        
+        
+        
+        psParameters.setSequenceProvider(fmIndex);
+        psParameters.setProteinDetailsProvider(fmIndex);
+        sequenceProvider = fmIndex;
+        proteinDetailsProvider = fmIndex;
+        
+        objectsDB.updateObject(PeptideShakerParameters.KEY, psParameters);
+        
 
         projectParameters = (ProjectParameters) objectsDB.retrieveObject(ProjectParameters.key);
         identification = new Identification(objectsDB);
@@ -645,6 +708,17 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
     }
 
     /**
+     * Returns the psdb import from zip.
+     *
+     * @return the psdb import from zip
+     */
+    public boolean getPsdbImportFromZip() {
+
+        return importFromZip;
+
+    }
+
+    /**
      * Sets the identification feature generator.
      *
      * @param identificationFeaturesGenerator the identification feature
@@ -775,6 +849,19 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
     ) {
 
         this.psdbFile = psdbFile;
+
+    }
+
+    /**
+     * Sets that the psdb file is imported from a zip file.
+     *
+     * @param importFromZip  if the psdb was extracted from a zip file
+     */
+    public void setPsdbImportFromZip(
+            boolean importFromZip
+    ) {
+
+        this.importFromZip = importFromZip;
 
     }
 

@@ -528,7 +528,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
             } else if (selectedFile.getName().toLowerCase().endsWith(".psdb")) {
                 setVisible(false);
                 peptideShakerGUI.setVisible(true);
-                peptideShakerGUI.importPeptideShakerFile(selectedFile);
+                peptideShakerGUI.importPeptideShakerFile(selectedFile, false);
                 peptideShakerGUI.getUserParameters().addRecentProject(selectedFile);
                 peptideShakerGUI.updateRecentProjectsList();
                 LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();

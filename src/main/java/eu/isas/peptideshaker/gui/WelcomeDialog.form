@@ -166,7 +166,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="searchJButton" min="-2" pref="250" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="reshakeJButton" pref="254" max="32767" attributes="0"/>
+                              <Component id="reshakeJButton" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">

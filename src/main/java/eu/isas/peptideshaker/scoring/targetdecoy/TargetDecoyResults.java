@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import com.compomics.util.db.object.DbObject;
+import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
  *
  * @author Marc Vaudel
  */
-public class TargetDecoyResults extends DbObject implements Serializable {
+public class TargetDecoyResults extends ExperimentObject implements Serializable {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -69,7 +69,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return the confidence limit
      */
     public double getConfidenceLimit() {
-        readDBMode();
+        
         return confidenceLimit;
     }
 
@@ -79,7 +79,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @param confidenceLimit the confidence limit
      */
     public void setConfidenceLimit(double confidenceLimit) {
-        writeDBMode();
+        
         this.confidenceLimit = confidenceLimit;
     }
 
@@ -89,7 +89,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return the FDR limit
      */
     public double getFdrLimit() {
-        readDBMode();
+        
         return fdrLimit;
     }
 
@@ -99,7 +99,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @param fdrLimit the FDR limit
      */
     public void setFdrLimit(double fdrLimit) {
-        writeDBMode();
+        
         this.fdrLimit = fdrLimit;
     }
 
@@ -109,7 +109,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return the FNR limit
      */
     public double getFnrLimit() {
-        readDBMode();
+        
         return fnrLimit;
     }
 
@@ -119,7 +119,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @param fnrLimit the FNR limit
      */
     public void setFnrLimit(double fnrLimit) {
-        writeDBMode();
+        
         this.fnrLimit = fnrLimit;
     }
 
@@ -129,7 +129,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return the estimated number of false positives
      */
     public double getnFP() {
-        readDBMode();
+        
         return nFP;
     }
 
@@ -139,7 +139,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @param nFP the estimated number of false positives
      */
     public void setnFP(double nFP) {
-        writeDBMode();
+        
         this.nFP = nFP;
     }
 
@@ -149,7 +149,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return the estimated number of retained True positives
      */
     public double getnTP() {
-        readDBMode();
+        
         return n - nFP;
     }
 
@@ -159,7 +159,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @param n the estimated number of retained True positives
      */
     public void setn(double n) {
-        writeDBMode();
+        
         this.n = n;
     }
 
@@ -169,7 +169,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return the estimated total number of True positives
      */
     public double getnTPTotal() {
-        readDBMode();
+        
         return nTPTotal;
     }
 
@@ -179,7 +179,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @param nTPTotal the estimated total number of True positives
      */
     public void setnTPTotal(double nTPTotal) {
-        writeDBMode();
+        
         this.nTPTotal = nTPTotal;
     }
 
@@ -189,7 +189,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return the number of retained hits
      */
     public double getN() {
-        readDBMode();
+        
         return n;
     }
 
@@ -199,7 +199,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return the score limit obtained with the current validation settings
      */
     public double getScoreLimit() {
-        readDBMode();
+        
         return scoreLimit;
     }
 
@@ -209,7 +209,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return the score limit obtained with the current validation settings
      */
     public double getLogScoreLimit() {
-        readDBMode();
+        
         return PSParameter.transformScore(scoreLimit);
     }
 
@@ -220,7 +220,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * settings
      */
     public void setScoreLimit(double scoreLimit) {
-        writeDBMode();
+        
         this.scoreLimit = scoreLimit;
     }
 
@@ -230,7 +230,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return a boolean indicating that everything was validated
      */
     public boolean noValidated() {
-        readDBMode();
+        
         return (noValidated != null) && noValidated;
     }
 
@@ -241,7 +241,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * validated
      */
     public void setNoValidated(boolean validateAll) {
-        writeDBMode();
+        
         this.noValidated = validateAll;
     }
 
@@ -251,7 +251,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return the type of input
      */
     public int getInputType() {
-        readDBMode();
+        
         return inputType;
     }
 
@@ -261,7 +261,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @param inputType the input type
      */
     public void setInputType(int inputType) {
-        writeDBMode();
+        
         this.inputType = inputType;
     }
 
@@ -271,7 +271,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @return the user input
      */
     public double getUserInput() {
-        readDBMode();
+        
         return userInput;
     }
 
@@ -281,7 +281,7 @@ public class TargetDecoyResults extends DbObject implements Serializable {
      * @param userInput the user input
      */
     public void setUserInput(double userInput) {
-        writeDBMode();
+        
         this.userInput = userInput;
     }
 }
