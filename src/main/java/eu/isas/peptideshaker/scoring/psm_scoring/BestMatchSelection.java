@@ -188,7 +188,7 @@ public class BestMatchSelection {
 
                             double p = multiSE && fastaParameters.isTargetDecoy()
                                     ? psParameter1.getProbability()
-                                    : peptideAssumption1.getScore(); // @TODO: why use the score?
+                                    : peptideAssumption1.getScore();
 
                             searchEngine2loop:
 
@@ -230,7 +230,7 @@ public class BestMatchSelection {
                             );
 
                             if (p <= bestP) {
-
+                                
                                 if (p < bestP) {
 
                                     bestP = p;
