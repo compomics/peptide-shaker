@@ -136,7 +136,7 @@ public class BestMatchSelection {
 
         HashSet<Long> ids = new HashSet<>(2);
         ArrayList<PeptideAssumption> assumptions = new ArrayList<>(4);
-        double bestP = 1.0;
+        Double bestP = null;
 
         HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptionMap = spectrumMatch.getPeptideAssumptionsMap();
 
@@ -229,18 +229,18 @@ public class BestMatchSelection {
                                     )
                             );
 
-                            if (p <= bestP) {
-                                
+                            if (bestP == null) {
+                                bestP = p;
+                                assumptions.add(peptideAssumption1);
+                            }else{
                                 if (p < bestP) {
-
                                     bestP = p;
                                     assumptions.clear();
-
                                 }
-
-                                assumptions.add(peptideAssumption1);
-
+                                if (p <= bestP)
+                                    assumptions.add(peptideAssumption1);
                             }
+                            
                         }
                     }
                 }
