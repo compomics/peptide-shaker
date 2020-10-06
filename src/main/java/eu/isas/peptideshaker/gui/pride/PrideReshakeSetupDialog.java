@@ -1116,7 +1116,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
         // open pride project link in web browser
         if (column == searchSettingsTable.getColumn("Assay").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
-                && ((String) searchSettingsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+                && ((String) searchSettingsTable.getValueAt(row, column)).lastIndexOf("<a href=\"") != -1) {
 
             String link = (String) searchSettingsTable.getValueAt(row, column);
             link = link.substring(link.indexOf("\"") + 1);
@@ -1126,7 +1126,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             BareBonesBrowserLaunch.openURL(link);
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         } else if (column == searchSettingsTable.getColumn("Download").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
-                && ((String) searchSettingsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+                && ((String) searchSettingsTable.getValueAt(row, column)).lastIndexOf("<a href=\"") != -1) {
 
             String tempLink = (String) searchSettingsTable.getValueAt(row, column);
             tempLink = tempLink.substring(tempLink.indexOf("\"") + 1);
@@ -1236,7 +1236,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
             String tempValue = (String) spectrumTable.getValueAt(row, column);
 
-            if (tempValue.lastIndexOf("<html>") != -1) {
+            if (tempValue.lastIndexOf("<a href=\"") != -1) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1268,7 +1268,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
             // open pride project link in web browser
             if (column == spectrumTable.getColumn("Assay").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
-                    && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+                    && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<a href=\"") != -1) {
 
                 String link = (String) spectrumTable.getValueAt(row, column);
                 link = link.substring(link.indexOf("\"") + 1);
@@ -1278,7 +1278,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 BareBonesBrowserLaunch.openURL(link);
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             } else if (column == spectrumTable.getColumn("Download").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
-                    && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+                    && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<a href=\"") != -1) {
 
                 String tempLink = (String) spectrumTable.getValueAt(row, column);
                 tempLink = tempLink.substring(tempLink.indexOf("\"") + 1);
@@ -1398,7 +1398,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
             String tempValue = (String) searchSettingsTable.getValueAt(row, column);
 
-            if (tempValue.lastIndexOf("<html>") != -1) {
+            if (tempValue.lastIndexOf("<a href=\"") != -1) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

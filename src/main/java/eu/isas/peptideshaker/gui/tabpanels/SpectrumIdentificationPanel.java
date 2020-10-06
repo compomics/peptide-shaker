@@ -2282,7 +2282,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             if (column == spectrumTable.getColumn("Protein(s)").getModelIndex()
                     && evt.getButton() == MouseEvent.BUTTON1
                     && spectrumTable.getValueAt(row, column) != null
-                    && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+                    && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<a href=\"") != -1) {
                 peptideShakerGUI.openProteinLinks((String) spectrumTable.getValueAt(row, column));
             }
         }

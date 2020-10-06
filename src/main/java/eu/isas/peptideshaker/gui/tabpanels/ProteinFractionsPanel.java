@@ -1370,7 +1370,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                 // open protein link in web browser
                 if (column == proteinTable.getColumn("Accession").getModelIndex()
-                        && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+                        && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<a href=\"") != -1) {
 
                     String link = (String) proteinTable.getValueAt(row, column);
                     link = link.substring(link.indexOf("\"") + 1);
@@ -1430,7 +1430,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
             String tempValue = (String) proteinTable.getValueAt(row, column);
 
-            if (tempValue.lastIndexOf("<html>") != -1) {
+            if (tempValue.lastIndexOf("<a href=\"") != -1) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

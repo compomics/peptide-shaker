@@ -2021,7 +2021,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             String tempValue = (String) proteinTable.getValueAt(row, column);
 
-            if (tempValue.lastIndexOf("<html>") != -1) {
+            if (tempValue.lastIndexOf("<a href=\"") != -1) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2173,7 +2173,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // open protein link in web browser
                 if (column == proteinTable.getColumn("Accession").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
-                        && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+                        && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<a href=\"") != -1) {
 
                     String link = (String) proteinTable.getValueAt(row, column);
                     link = link.substring(link.indexOf("\"") + 1);

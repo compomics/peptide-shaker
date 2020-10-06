@@ -787,7 +787,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
                 // open protein link in web browser
                 if (evt.getButton() == MouseEvent.BUTTON1
-                        && ((String) otherProteinJTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+                        && ((String) otherProteinJTable.getValueAt(row, column)).lastIndexOf("<a href=\"") != -1) {
 
                     String link = (String) otherProteinJTable.getValueAt(row, column);
                     link = link.substring(link.indexOf("\"") + 1);
@@ -857,7 +857,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
                 // open protein link in web browser
                 if (evt.getButton() == MouseEvent.BUTTON1
-                        && ((String) retainedProteinJTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+                        && ((String) retainedProteinJTable.getValueAt(row, column)).lastIndexOf("<a href=\"") != -1) {
 
                     String link = (String) retainedProteinJTable.getValueAt(row, column);
                     link = link.substring(link.indexOf("\"") + 1);
@@ -948,7 +948,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
             String tempValue = (String) retainedProteinJTable.getValueAt(row, column);
 
-            if (tempValue.lastIndexOf("<html>") != -1) {
+            if (tempValue.lastIndexOf("<a href=\"") != -1) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

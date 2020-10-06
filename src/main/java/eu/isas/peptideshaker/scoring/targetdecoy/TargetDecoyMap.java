@@ -78,42 +78,40 @@ public class TargetDecoyMap extends ExperimentObject {
      * @return the estimated posterior error probability
      */
     public double getProbability(double score) {
-        
-        
-        
+
         TargetDecoyPoint point = hitMap.get(score);
-        
+
         if (point != null) {
-        
+
             return point.p;
-        
+
         } else if (score >= scores.get(scores.size() - 1)) {
-        
+
             return hitMap.get(scores.get(scores.size() - 1)).p;
-        
+
         } else {
-        
+
             int indexDown = 0;
             int indexUp = scores.size() - 1;
             int indexTemp;
-            
+
             while (indexUp - indexDown > 1) {
-            
+
                 indexTemp = (indexUp - indexDown) / 2 + indexDown;
-                
+
                 if (scores.get(indexTemp) > score) {
-                
+
                     indexUp = indexTemp;
-                
+
                 } else {
-                
+
                     indexDown = indexTemp;
-                
+
                 }
             }
-            
+
             return (hitMap.get(scores.get(indexUp)).p + hitMap.get(scores.get(indexDown)).p) / 2;
-        
+
         }
     }
 
@@ -124,7 +122,7 @@ public class TargetDecoyMap extends ExperimentObject {
      * @return the number of target hits found at the given score
      */
     public int getNTarget(double score) {
-        
+
         return hitMap.get(score).nTarget;
     }
 
@@ -145,15 +143,13 @@ public class TargetDecoyMap extends ExperimentObject {
      * @param isDecoy boolean indicating whether the hit is decoy
      */
     public void put(double score, boolean isDecoy) {
-        
-        
-        
+
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
-        
+
         if (targetDecoyPoint == null) {
-        
+
             targetDecoyPoint = createTargetDecoyPoint(score);
-        
+
         }
 
         if (isDecoy) {
@@ -176,13 +172,11 @@ public class TargetDecoyMap extends ExperimentObject {
      * @return the target decoy point of the map at the given score
      */
     public synchronized TargetDecoyPoint createTargetDecoyPoint(double score) {
-        
-        
-        
+
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
-        
+
         if (targetDecoyPoint == null) {
-        
+
             targetDecoyPoint = new TargetDecoyPoint();
             hitMap.put(score, targetDecoyPoint);
 
@@ -201,8 +195,6 @@ public class TargetDecoyMap extends ExperimentObject {
      */
     public void remove(double score, boolean isDecoy) {
 
-        
-
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
 
         if (!isDecoy) {
@@ -220,8 +212,6 @@ public class TargetDecoyMap extends ExperimentObject {
      * Removes empty points and clears dependent metrics if needed.
      */
     public synchronized void cleanUp() {
-
-        
 
         boolean removed = false;
 
@@ -254,8 +244,6 @@ public class TargetDecoyMap extends ExperimentObject {
      * and above will be skipped for Nmax.
      */
     private void estimateNs() {
-
-        
 
         if (scores == null) {
 
@@ -333,8 +321,6 @@ public class TargetDecoyMap extends ExperimentObject {
      * @param waitingHandler the handler displaying feedback to the user
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
-        
-        
 
         if (scores == null) {
 
@@ -444,8 +430,6 @@ public class TargetDecoyMap extends ExperimentObject {
      */
     public int getnMax() {
 
-        
-
         if (nmax == null) {
 
             estimateNs();
@@ -462,8 +446,6 @@ public class TargetDecoyMap extends ExperimentObject {
      * @return the minimal FDR which can be achieved in this dataset
      */
     public double getMinFdr() {
-
-        
 
         return minFDR;
 
@@ -496,8 +478,6 @@ public class TargetDecoyMap extends ExperimentObject {
      */
     public Integer getnTargetOnly() {
 
-        
-
         return nTargetOnly;
 
     }
@@ -506,8 +486,6 @@ public class TargetDecoyMap extends ExperimentObject {
      * Sorts the scores implemented in this map.
      */
     private void estimateScores() {
-
-        
 
         scores = new ArrayList<>(hitMap.keySet());
         Collections.sort(scores);
@@ -520,8 +498,6 @@ public class TargetDecoyMap extends ExperimentObject {
      * @return the sorted scores implemented in this map.
      */
     public ArrayList<Double> getScores() {
-
-        
 
         if (scores == null) {
 
@@ -539,8 +515,6 @@ public class TargetDecoyMap extends ExperimentObject {
      * @param anOtherMap another target/decoy map
      */
     public void addAll(TargetDecoyMap anOtherMap) {
-
-        
 
         for (double score : anOtherMap.getScores()) {
 
@@ -572,8 +546,6 @@ public class TargetDecoyMap extends ExperimentObject {
      */
     public boolean suspiciousInput(double initialFDR) {
 
-        
-
         if (nmax == null) {
 
             estimateNs();
@@ -597,8 +569,6 @@ public class TargetDecoyMap extends ExperimentObject {
      */
     public TargetDecoyResults getTargetDecoyResults() {
 
-        
-
         return targetDecoyResults;
 
     }
@@ -610,8 +580,6 @@ public class TargetDecoyMap extends ExperimentObject {
      */
     public TargetDecoySeries getTargetDecoySeries() {
 
-        
-
         return new TargetDecoySeries(hitMap);
 
     }
@@ -622,8 +590,6 @@ public class TargetDecoyMap extends ExperimentObject {
      * @return the window size used for pep estimation
      */
     public int getWindowSize() {
-
-        
 
         if (windowSize == null) {
 
@@ -642,8 +608,6 @@ public class TargetDecoyMap extends ExperimentObject {
      */
     public void setWindowSize(int windowSize) {
 
-        
-
         this.windowSize = windowSize;
 
     }
@@ -654,8 +618,6 @@ public class TargetDecoyMap extends ExperimentObject {
      * @return the size of the map
      */
     public int getMapSize() {
-
-        
 
         return hitMap.size();
 
