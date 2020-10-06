@@ -230,17 +230,23 @@ public class BestMatchSelection {
                             );
 
                             if (bestP == null) {
+
                                 bestP = p;
                                 assumptions.add(peptideAssumption1);
-                            }else{
+
+                            } else {
+
                                 if (p < bestP) {
                                     bestP = p;
                                     assumptions.clear();
                                 }
-                                if (p <= bestP)
+
+                                if (p <= bestP) {
                                     assumptions.add(peptideAssumption1);
+                                }
+
                             }
-                            
+
                         }
                     }
                 }
