@@ -587,7 +587,7 @@ public class FileImporter {
 
                 }
 
-                // if any map spectrum sequencing matches on protein sequences
+                // if any de novo tag, map spectrum sequence matches to protein sequences
                 if (fileReader.hasDeNovoTags()) {
 
                     waitingHandler.resetSecondaryProgressCounter();

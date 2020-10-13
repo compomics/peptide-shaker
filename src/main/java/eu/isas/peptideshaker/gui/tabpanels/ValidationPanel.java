@@ -2273,7 +2273,7 @@ public class ValidationPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * This method displays results on the panel.
+     * This method displays results in the panel.
      */
     public void displayResults() {
 
@@ -2594,7 +2594,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         double[] confidences = targetDecoySeries.getConfidenceLog();
 
         // test for valid values
-        boolean enoughData = scores.length > 2;
+        boolean enoughData = scores.length > 3;
 
         if (!enoughData) {
             // clear the chart
