@@ -18,7 +18,7 @@ public class PsZipUtils {
     /**
      * The sub folder where the unzipped files should be stored.
      */
-    private static final String UNZIP_SUB_FOLDER = ".PeptideShaker_unzip_temp";
+    public static final String UNZIP_SUB_FOLDER = ".PeptideShaker_unzip_temp";
     /**
      * Suffix for folders where the content of zip files should be extracted.
      */

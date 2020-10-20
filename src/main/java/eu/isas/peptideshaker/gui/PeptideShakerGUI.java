@@ -110,7 +110,6 @@ import eu.isas.peptideshaker.ptm.ModificationLocalizationScorer;
 import eu.isas.peptideshaker.utils.PsdbParent;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
-import static com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex.getFileExtension;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.experiment.io.mass_spectrometry.mgf.MgfFileWriter;
@@ -5024,9 +5023,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     }
                 }
-                
-                // @TODO: is this warning still required..?
 
+                // @TODO: is this warning still required..?
                 if (matchFolder.listFiles() != null && matchFolder.listFiles().length > 0) {
 
                     JOptionPane.showMessageDialog(null, "Failed to empty the database folder:\n" + matchFolder.getPath() + ".",
@@ -6558,7 +6556,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Imports information from a PeptideShaker file.
      *
      * @param psFile The PeptideShaker file to import.
-     * @param importFromZip flag that determines if psdb was imported from a zip file
+     * @param importFromZip flag that determines if psdb was imported from a zip
+     * file
      */
     public void importPeptideShakerFile(
             File psFile,
@@ -7575,6 +7574,57 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         // saving the mod factory
                         modificationFactory.saveFactory();
+
+                        // check if any data files are inside the temp zip folder
+                        ArrayList<String> dataFiles = new ArrayList<>();
+                        File dataFolder = new File(psdbParent.getPsdbFile().getParentFile(), "data");
+
+                        String fastaFile = getProjectDetails().getFastaFile();
+
+                        if (fastaFile.lastIndexOf(PsZipUtils.UNZIP_SUB_FOLDER) != -1) {
+
+                            dataFiles.add(fastaFile);
+
+                            String fastaExtension = IoUtil.getExtension(fastaFile);
+                            File FMFile = new File(new File(fastaFile).getAbsolutePath().replace(fastaExtension, ".fmi"));
+                            dataFiles.add(FMFile.getAbsolutePath());
+
+                            getProjectDetails().setFastaFile(new File(dataFolder, IoUtil.getFileName(fastaFile)));
+                        }
+
+                        for (String fileName : getSpectrumProvider().getOrderedFileNamesWithoutExtensions()) {
+
+                            String cmsFilePath = getSpectrumProvider().getCmsFilePaths().get(fileName);
+                            String msFilePath = getSpectrumProvider().getFilePaths().get(fileName);
+
+                            if (cmsFilePath.lastIndexOf(PsZipUtils.UNZIP_SUB_FOLDER) != -1) {
+                                dataFiles.add(cmsFilePath);
+                                getSpectrumProvider().getCmsFilePaths().put(fileName, new File(dataFolder, IoUtil.getFileName(new File(cmsFilePath))).getAbsolutePath());
+                            }
+
+                            if (msFilePath.lastIndexOf(PsZipUtils.UNZIP_SUB_FOLDER) != -1) {
+                                dataFiles.add(msFilePath);
+                                getSpectrumProvider().getFilePaths().put(fileName, new File(dataFolder, IoUtil.getFileName(new File(msFilePath))).getAbsolutePath());
+                            }
+                        }
+
+                        // save the data files next to the psdb file
+                        if (!dataFiles.isEmpty()) {
+
+                            boolean dataFolderCreated = dataFolder.mkdir();
+
+                            if (dataFolderCreated) {
+
+                                for (String tempFile : dataFiles) {
+                                    File tempDataFile = new File(tempFile);
+                                    IoUtil.copyFile(tempDataFile, new File(dataFolder, IoUtil.getFileName(tempDataFile)));
+                                }
+
+                            } else {
+                                JOptionPane.showMessageDialog(tempRef, "Data folder could not be created.", "Save Error", JOptionPane.ERROR_MESSAGE);
+                            }
+
+                        }
 
                         // saving the project
                         psdbParent.saveProject(progressDialog, closeWhenDone);
