@@ -803,7 +803,7 @@ public class NewDialog extends javax.swing.JDialog {
 
                 // close the database
                 try {
-                    peptideShaker.getIdentification().close();
+                    peptideShaker.getIdentification().close(false);
                 } catch (Exception e) {
                     System.out.println("Failed to close the database!");
                     e.printStackTrace();

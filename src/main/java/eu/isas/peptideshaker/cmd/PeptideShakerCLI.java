@@ -1220,7 +1220,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
         try {
             if (identification != null) {
-                identification.close();
+                identification.close(false);
             }
         } catch (Exception e) {
             e.printStackTrace();

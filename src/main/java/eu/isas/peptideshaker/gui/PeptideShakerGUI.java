@@ -4994,7 +4994,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             try {
 
-                getIdentification().close();
+                getIdentification().close(false);
                 psdbParent.setIdentification(null);
 
             } catch (Exception e) {

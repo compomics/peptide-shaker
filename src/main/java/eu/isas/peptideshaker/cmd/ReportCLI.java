@@ -399,7 +399,7 @@ public class ReportCLI extends PsdbParent {
      */
     public void closePeptideShaker() throws IOException, SQLException, InterruptedException, ClassNotFoundException {
 
-        identification.close();
+        identification.close(false);
 
         File matchFolder = PeptideShaker.getMatchesFolder();
 

@@ -205,7 +205,7 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
         // close any open connection to an identification database
         if (identification != null) {
 
-            identification.close();
+            identification.close(false);
 
         }
 
