@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.gui.file_handling.FileAndFileFilter;
-import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
@@ -33,7 +32,6 @@ import eu.isas.peptideshaker.export.exportfeatures.PsProteinFeature;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1909,6 +1907,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                             sectionContent.add(PsProteinFeature.chromosome);
                             sectionContent.add(PsProteinFeature.coverage);
                             sectionContent.add(PsProteinFeature.confident_coverage);
+                            sectionContent.add(PsProteinFeature.all_coverage);
                             sectionContent.add(PsProteinFeature.possible_coverage);
                             sectionContent.add(PsProteinFeature.validated_peptides);
                             sectionContent.add(PsProteinFeature.peptides);

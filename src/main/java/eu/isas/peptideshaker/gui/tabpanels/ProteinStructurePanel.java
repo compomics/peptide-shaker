@@ -3401,6 +3401,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                                     sectionContent.add(PsProteinFeature.chromosome);
                                     sectionContent.add(PsProteinFeature.coverage);
                                     sectionContent.add(PsProteinFeature.confident_coverage);
+                                    sectionContent.add(PsProteinFeature.all_coverage);
                                     sectionContent.add(PsProteinFeature.possible_coverage);
                                     sectionContent.add(PsProteinFeature.validated_peptides);
                                     sectionContent.add(PsProteinFeature.peptides);

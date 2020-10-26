@@ -901,6 +901,7 @@ public class PSExportFactory implements ExportFactory {
 
         // protein coverage
         sectionContent.add(PsProteinFeature.coverage);
+        sectionContent.add(PsProteinFeature.all_coverage);
         sectionContent.add(PsProteinFeature.possible_coverage);
 
         // molecular weight and spectrum counting
@@ -1146,6 +1147,7 @@ public class PSExportFactory implements ExportFactory {
 
         // protein coverage
         sectionContent.add(PsProteinFeature.coverage);
+        sectionContent.add(PsProteinFeature.all_coverage);
         sectionContent.add(PsProteinFeature.possible_coverage);
 
         // molecular weight and spectrum counting
@@ -1306,6 +1308,7 @@ public class PSExportFactory implements ExportFactory {
         
         // protein coverage
         sectionContent.add(PsProteinFeature.coverage);
+        sectionContent.add(PsProteinFeature.all_coverage);
         sectionContent.add(PsProteinFeature.possible_coverage);
 
         // protein scores

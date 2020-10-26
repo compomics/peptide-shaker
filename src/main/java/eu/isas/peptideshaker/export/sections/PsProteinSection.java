@@ -639,14 +639,9 @@ public class PsProteinSection {
 
                 return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(proteinMatch, modifications);
 
-            case possible_coverage:
-
-                double value = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
-                return Double.toString(Util.roundDouble(value, 2));
-
             case coverage:
 
-                value = 100 * identificationFeaturesGenerator.getValidatedSequenceCoverage(proteinKey);
+                double value = 100 * identificationFeaturesGenerator.getValidatedSequenceCoverage(proteinKey);
                 return Double.toString(Util.roundDouble(value, 2));
 
             case confident_coverage:
@@ -654,7 +649,21 @@ public class PsProteinSection {
                 HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                 value = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                 return Double.toString(Util.roundDouble(value, 2));
+                
+            case all_coverage:
 
+                sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
+                Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex());
+                double totalCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful + sequenceCoverageNotValidated;
+                return Double.toString(Util.roundDouble(totalCoverage, 2));
+
+            case possible_coverage:
+
+                value = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
+                return Double.toString(Util.roundDouble(value, 2));
+                
             case decoy:
 
                 return proteinMatch.isDecoy() ? "1" : "0";
