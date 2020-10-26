@@ -22,6 +22,7 @@ public enum PsProteinFeature implements ExportFeature {
     chromosome("Chromosome", "The chromosome of the Ensembl gene ID associated to the accession of the leading protein of the group.", false),
     ensembl_gene_id("Ensembl Gene ID", "The Ensembl gene ID associated to the accession of the leading protein of the group.", false),
     gene_name("Gene Name", "The gene names of the Ensembl gene ID associated to the accession of the leading protein of the group.", false),
+    taxonomy("Taxonomy", "The protein taxonomy for the leading protein of the group.", false),
     go_accession("GO Accession", "The accessions of the Gene Ontology terms associated to the accessions of the group.", false),
     go_description("GO Description", "The descriptions of the Gene Ontology terms associated to the accessions of the group.", false),
     coverage("Coverage [%]", "Sequence coverage by validated peptides in percent of the protein designed by the main accession.", false),

@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export.sections;
 
-import com.compomics.util.experiment.biology.ions.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.impl.PeptideFragmentIon;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
@@ -9,7 +8,6 @@ import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsAnnotationFeature;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 

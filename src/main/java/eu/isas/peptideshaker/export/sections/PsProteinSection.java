@@ -459,6 +459,21 @@ public class PsProteinSection {
                 }
 
                 return "";
+                
+            case taxonomy:
+
+                if (!proteinMatch.isDecoy()) {
+
+                    String taxonomy = proteinDetailsProvider.getTaxonomy(proteinMatch.getLeadingAccession());
+
+                    if (taxonomy != null) {
+
+                        return taxonomy;
+
+                    }
+                }
+
+                return "";
 
             case go_accession:
 
