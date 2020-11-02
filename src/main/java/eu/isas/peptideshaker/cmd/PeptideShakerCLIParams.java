@@ -16,14 +16,14 @@ public enum PeptideShakerCLIParams {
     // IMPORTANT: Any change here must be reported in the wiki: 
     // https://github.com/compomics/peptide-shaker/wiki/PeptideShakerCLI
     ///////////////////////////////////////////////////////////////////////////
-    REFERENCE("reference", "The reference of the project.", true),
+    REFERENCE("reference", "The reference for the project.", true),
     SPECTRUM_FILES("spectrum_files", "Spectrum files, comma separated list or an entire folder.", false),
     FASTA_FILE("fasta_file", "The complete path to the FASTA file.", false),
     IDENTIFICATION_FILES("identification_files", "Identification files, comma separated list or an entire folder.", true),
     PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", false),
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is '0').", false),
     ZIP("zip", "Exports the entire project as a zip file in the file specified.", false),
-    OUTPUT_MGF("output_mgf", "When using zipped output, exports mgf file/s out of it into its same folder (0: no, 1: yes, default is '0').", false),
+    OUTPUT_MGF("output_mgf", "When using zipped output, exports mgf file(s) out of the zip file into the same folder in addition (0: no, 1: yes, default is '0').", false),
     THREADS("threads", "The number of threads to use. Defaults to the number of available CPUs.", false);
 
     /**
