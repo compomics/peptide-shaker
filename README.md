@@ -31,7 +31,7 @@
 
 ## Introduction ##
 
-PeptideShaker is a search engine independent platform for interpretation of proteomics identification results from multiple search and _de novo_ engines, currently supporting  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](https://github.com/MSGFPlus/msgfplus), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683), [MyriMatch](http://www.ncbi.nlm.nih.gov/pubmed/?term=17269722), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Mascot](http://www.matrixscience.com), [Andromeda](http://www.coxdocs.org/doku.php?id=maxquant:andromeda:start) and [mzIdentML](http://www.psidev.info/mzidentml). PeptideShaker aggregates the results in a single identification set, annotates spectra, computes a consensus score, maps sequences and performs protein inference, scores post-translational modification localization, runs statistical validation, quality control, and annotates the results using multiple sources of information like Gene Ontology, Uniprot and Ensembl annotation, and Protein structures. PeptideShaker can be used in command line and comes with rich visualization capabilities to navigate the results. It can be used on local data as well as on data sets deposited to the ProteomeXchange PRIDE repository.
+PeptideShaker is a search engine independent platform for interpretation of proteomics identification results from multiple search and _de novo_ engines, currently supporting  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](https://github.com/MSGFPlus/msgfplus), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683), [MyriMatch](http://www.ncbi.nlm.nih.gov/pubmed/?term=17269722), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Mascot](http://www.matrixscience.com), [Andromeda](http://www.coxdocs.org/doku.php?id=maxquant:andromeda:start), [MetaMorpheus](https://github.com/smith-chem-wisc/MetaMorpheus), [Novor](http://rapidnovor.com), [DirecTag](http://fenchurch.mc.vanderbilt.edu/bumbershoot/directag/) and [mzIdentML](http://www.psidev.info/mzidentml). PeptideShaker aggregates the results in a single identification set, annotates spectra, computes a consensus score, maps sequences and performs protein inference, scores post-translational modification localization, runs statistical validation, quality control, and annotates the results using multiple sources of information like Gene Ontology, Uniprot and Ensembl annotation, and Protein structures. PeptideShaker can be used in command line and comes with rich visualization capabilities to navigate the results. It can be used on local data as well as on data sets deposited to the ProteomeXchange PRIDE repository.
 
 
 PeptideShaker currently supports nine different analysis tasks:
@@ -146,7 +146,7 @@ peptide-shaker eu.isas.peptideshaker.cmd.PeptideShakerCLI
 
 PeptideShaker has a strong connection to the [SearchGUI](http://compomics.github.io/projects/searchgui.html) project.
 
-**SearchGUI** is a user-friendly, lightweight and open-source graphical user interface for configuring and running proteomics identification search engines, namely  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](http://www.ncbi.nlm.nih.gov/pubmed/?term=25358478), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [MyriMatch](http://www.ncbi.nlm.nih.gov/pubmed/?term=17269722), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Andromeda](http://www.coxdocs.org/doku.php?id=maxquant:andromeda:start) and [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683).
+**SearchGUI** is a user-friendly, lightweight and open-source graphical user interface for configuring and running proteomics identification search engines, namely  [X! Tandem](http://www.thegpm.org/tandem), [MyriMatch](http://forge.fenchurch.mc.vanderbilt.edu/scm/viewvc.php/*checkout*/trunk/doc/index.html?root=myrimatch), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [MS-GF+](https://github.com/MSGFPlus/msgfplus), [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Andromeda](http://www.andromeda-search.org), [MetaMorpheus](https://github.com/smith-chem-wisc/MetaMorpheus), [Novor](http://rapidnovor.com) and [DirecTag](http://fenchurch.mc.vanderbilt.edu/bumbershoot/directag/).
 
 Importing output from **SearchGUI** is especially simple in PeptideShaker as the parameters and files used for the search is easily available.
 
@@ -221,7 +221,7 @@ _Note that PeptideShaker will load search results from searches not using decoy 
 
 ### Converting Spectrum Data ###
 
-PeptideShaker currently only supports mgf files as the input format for the spectra. To convert your raw data to mgf we recommend using [msconvert](http://proteowizard.sourceforge.net) from [ProteoWizard](http://proteowizard.sourceforge.net).
+PeptideShaker supports mgf and mzML files as the input format for the spectra. To convert your raw data we recommend using [ThermoRawFileParser](https://github.com/compomics/ThermoRawFileParser) for Thermo raw files and [msconvert](http://proteowizard.sourceforge.net) from [ProteoWizard](http://proteowizard.sourceforge.net) for other raw file formats.
 
 [Go to top of page](#peptideshaker)
 
