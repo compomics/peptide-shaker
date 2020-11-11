@@ -16,7 +16,7 @@ public enum ReportCLIParams {
     EXPORT_PREFIX("report_prefix", "Prefix added to the report file name.", false, true),
     REPORT_TYPE("reports", "Comma separated list of types of report to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false, true),
     DOCUMENTATION_TYPE("documentation", "Comma separated list of types of report documentation to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false, true),
-    GZIP("gzip", "Indicates whether the report should be compressed (0: no, 1: yes, default is 0).", false, true);
+    GZIP("gzip", "Indicates whether the report should be compressed (0: no, 1: yes, default is 0).", true, false);
 
     /**
      * Short Id for the CLI parameter.
