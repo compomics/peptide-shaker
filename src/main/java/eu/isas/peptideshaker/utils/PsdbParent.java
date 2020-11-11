@@ -190,7 +190,7 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
      * @param dbFolder the folder where to untar the project
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
-     * @param openFromZip flag determining if pdsb file was openend from a zip
+     * @param openFromZip flag determining if pdsb file was opened from a zip
      * file
      *
      * @throws IOException thrown of IOException occurs exception thrown
@@ -200,13 +200,11 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
             File dbFolder,
             WaitingHandler waitingHandler,
             boolean openFromZip
-    ) throws IOException { // @TODO: use the waiting handler!
+    ) throws IOException {
 
         // close any open connection to an identification database
         if (identification != null) {
-
             identification.close(false);
-
         }
 
         // create the matches folder if it does not exist
@@ -229,17 +227,31 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
                 destinationFile.getName(),
                 false
         );
-        PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.KEY);
 
-        File fastaFile = new File(psParameters.getProjectDetails().getFastaFile());
+        // get the PeptideShaker parameters
+        PeptideShakerParameters psParameters = (PeptideShakerParameters) objectsDB.retrieveObject(PeptideShakerParameters.KEY);
+        identificationParameters = psParameters.getIdentificationParameters();
+        spectrumCountingParameters = psParameters.getSpectrumCountingPreferences();
+        projectDetails = psParameters.getProjectDetails();
+        metrics = psParameters.getMetrics();
+        geneMaps = psParameters.getGeneMaps();
+        filterParameters = psParameters.getFilterParameters();
+        displayParameters = psParameters.getDisplayParameters();
+        sequenceProvider = psParameters.getSequenceProvider();
+        proteinDetailsProvider = psParameters.getProteinDetailsProvider();
+        projectType = psParameters.getProjectType();
+
+        // find or create the fm index
         FMIndex fmIndex = null;
 
         if (openFromZip) {
+
             File fmPath = new File(Paths.get(psdbFile.getParentFile().getAbsolutePath(), "data").toString());
 
             for (File file : fmPath.listFiles()) {
 
                 if (file.getAbsoluteFile().toString().toLowerCase().endsWith(".fasta")) {
+
                     fmIndex = new FMIndex(
                             file,
                             psParameters.getIdentificationParameters().getFastaParameters(),
@@ -248,12 +260,32 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
                             psParameters.getIdentificationParameters().getPeptideVariantsParameters(),
                             psParameters.getIdentificationParameters().getSearchParameters()
                     );
-                    break;
 
+                    break;
                 }
+
             }
+
         } else {
-            if (fastaFile.exists()) {
+
+            boolean fastaFileFound = false;
+
+            try {
+
+                FastaSummary fastaSummary = loadFastaFile(waitingHandler);
+
+                if (fastaSummary != null) {
+                    fastaFileFound = true;
+                }
+
+            } catch (IOException e) {
+                fastaFileFound = false;
+            }
+
+            if (fastaFileFound) {
+
+                File fastaFile = new File(psParameters.getProjectDetails().getFastaFile());
+
                 fmIndex = new FMIndex(
                         fastaFile,
                         psParameters.getIdentificationParameters().getFastaParameters(),
@@ -262,8 +294,9 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
                         psParameters.getIdentificationParameters().getPeptideVariantsParameters(),
                         psParameters.getIdentificationParameters().getSearchParameters()
                 );
+
             } else {
-                // TODO: handle it
+                throw new IOException("FASTA file not found " + psParameters.getProjectDetails().getFastaFile() + ".");
             }
         }
 
@@ -285,19 +318,7 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
         psMaps = (PSMaps) objectsDB.retrieveObject(psMaps.getParameterKey());
         identification.addUrParam(psMaps);
 
-        // get PeptideShaker settings
-        identificationParameters = psParameters.getIdentificationParameters();
-        spectrumCountingParameters = psParameters.getSpectrumCountingPreferences();
-        projectDetails = psParameters.getProjectDetails();
-        metrics = psParameters.getMetrics();
-        geneMaps = psParameters.getGeneMaps();
-        filterParameters = psParameters.getFilterParameters();
-        displayParameters = psParameters.getDisplayParameters();
-        sequenceProvider = psParameters.getSequenceProvider();
-        proteinDetailsProvider = psParameters.getProteinDetailsProvider();
-        projectType = psParameters.getProjectType();
-
-        // set up spectrum provider
+        // set up the spectrum provider
         msFileHandler = new MsFileHandler();
 
         // set up caches
