@@ -16,7 +16,7 @@
 
 |   |   |   |
 | :------------------------- | :---------------: | :--: |
-| [![download](https://github.com/compomics/peptide-shaker/wiki/images/download_button.png)](http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/2.0.0/PeptideShaker-2.0.0.zip) | *v2.0.0 - All platforms* | [ReleaseNotes](https://github.com/compomics/peptide-shaker/wiki/ReleaseNotes) |
+| [![download](https://github.com/compomics/peptide-shaker/wiki/images/download_button.png)](http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/2.0.1/PeptideShaker-2.0.1.zip) | *v2.0.1 - All platforms* | [ReleaseNotes](https://github.com/compomics/peptide-shaker/wiki/ReleaseNotes) |
 
 ---
 
@@ -31,7 +31,11 @@
 
 ## Introduction ##
 
-PeptideShaker is a search engine independent platform for interpretation of proteomics identification results from multiple search and _de novo_ engines, currently supporting  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](https://github.com/MSGFPlus/msgfplus), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683), [MyriMatch](http://www.ncbi.nlm.nih.gov/pubmed/?term=17269722), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Mascot](http://www.matrixscience.com), [Andromeda](http://www.coxdocs.org/doku.php?id=maxquant:andromeda:start), [MetaMorpheus](https://github.com/smith-chem-wisc/MetaMorpheus), [Novor](http://rapidnovor.com), [DirecTag](http://fenchurch.mc.vanderbilt.edu/bumbershoot/directag/) and [mzIdentML](http://www.psidev.info/mzidentml). PeptideShaker aggregates the results in a single identification set, annotates spectra, computes a consensus score, maps sequences and performs protein inference, scores post-translational modification localization, runs statistical validation, quality control, and annotates the results using multiple sources of information like Gene Ontology, Uniprot and Ensembl annotation, and Protein structures. PeptideShaker can be used in command line and comes with rich visualization capabilities to navigate the results. It can be used on local data as well as on data sets deposited to the ProteomeXchange PRIDE repository.
+PeptideShaker is a search engine independent platform for interpretation of proteomics identification results from multiple search and _de novo_ engines, currently supporting  [X!Tandem](http://www.thegpm.org/tandem), [MS-GF+](https://github.com/MSGFPlus/msgfplus), [MS Amanda](http://ms.imp.ac.at/?goto=msamanda), [OMSSA](http://www.ncbi.nlm.nih.gov/pubmed/15473683), [MyriMatch](http://www.ncbi.nlm.nih.gov/pubmed/?term=17269722), [Comet](http://comet-ms.sourceforge.net/), [Tide](http://cruxtoolkit.sourceforge.net), [Mascot](http://www.matrixscience.com), [Andromeda](http://www.coxdocs.org/doku.php?id=maxquant:andromeda:start), [MetaMorpheus](https://github.com/smith-chem-wisc/MetaMorpheus), [Novor](http://rapidnovor.com), [DirecTag](http://fenchurch.mc.vanderbilt.edu/bumbershoot/directag/) and [mzIdentML](http://www.psidev.info/mzidentml). 
+
+PeptideShaker aggregates the results in a single identification set, annotates spectra, computes a consensus score, maps sequences and performs protein inference, scores post-translational modification localization, runs statistical validation, quality control, and annotates the results using multiple sources of information like Gene Ontology, UniProt and Ensembl annotation, and protein structures.
+
+PeptideShaker can be used in command line and comes with rich visualization capabilities to navigate the results. It can be used on local data as well as on data sets deposited to the ProteomeXchange PRIDE repository.
 
 
 PeptideShaker currently supports nine different analysis tasks:
