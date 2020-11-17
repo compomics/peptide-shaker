@@ -2525,10 +2525,10 @@ public class ValidationPanel extends javax.swing.JPanel {
      */
     private void updateCharts() {
 
+        setMarkers();
         updateConfidenceChart();
         updateTargteDecoyChart();
         updateCostBenefitChart();
-        setMarkers();
 
         // find the smallest x-axis value used
         double[] scores = targetDecoySeries.getScores();
@@ -2597,10 +2597,12 @@ public class ValidationPanel extends javax.swing.JPanel {
         boolean enoughData = scores.length > 3;
 
         if (!enoughData) {
+
             // clear the chart
             confidenceChartPanel.removeAll();
             confidenceChartPanel.revalidate();
             confidenceChartPanel.repaint();
+
         } else {
 
             // extend the dataset by two elements to be able to make the vertical drop
