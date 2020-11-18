@@ -432,45 +432,59 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
             WaitingHandler waitingHandler
     ) throws IOException {
 
-        for (String spectrumFileName : projectDetails.getSpectrumFileNames()) {
+        for (String spectrumFileNameWithoutExtension : projectDetails.getSpectrumFileNames()) {
 
-            File providedSpectrumLocation = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
+            File providedSpectrumLocation = new File(projectDetails.getSpectrumFilePath(spectrumFileNameWithoutExtension));
             File projectFolder = psdbFile.getParentFile();
-            File dataFolder = new File(projectFolder, "data");
 
-            // try to locate the spectrum file
-            if (providedSpectrumLocation == null || !providedSpectrumLocation.exists()) {
+            boolean spectrumFileFound = providedSpectrumLocation.exists();
 
-                File fileInProjectFolder = new File(projectFolder, spectrumFileName);
-                File fileInDataFolder = new File(dataFolder, spectrumFileName);
-                File fileInGivenFolder = new File(folder, spectrumFileName);
+            // check the project folder
+            if (!spectrumFileFound) {
 
-                if (fileInProjectFolder.exists()) {
-
-                    projectDetails.addSpectrumFilePath(
-                            fileInProjectFolder.getAbsolutePath()
-                    );
-
-                } else if (fileInDataFolder.exists()) {
-
-                    projectDetails.addSpectrumFilePath(
-                            fileInDataFolder.getAbsolutePath()
-                    );
-
-                } else if (fileInGivenFolder.exists()) {
-
-                    projectDetails.addSpectrumFilePath(
-                            fileInDataFolder.getAbsolutePath()
-                    );
-
-                } else {
-
-                    return false;
-
+                for (File tempFile : projectFolder.listFiles()) {
+                    if (IoUtil.removeExtension(tempFile.getName()).equalsIgnoreCase(spectrumFileNameWithoutExtension)) {
+                        projectDetails.addSpectrumFilePath(
+                                tempFile.getAbsolutePath()
+                        );
+                        spectrumFileFound = true;
+                    }
                 }
             }
 
-            File spectrumFile = new File(projectDetails.getSpectrumFilePath(spectrumFileName));
+            // check the data folder
+            if (!spectrumFileFound) {
+
+                File dataFolder = new File(projectFolder, "data");
+
+                for (File tempFile : dataFolder.listFiles()) {
+                    if (IoUtil.removeExtension(tempFile.getName()).equalsIgnoreCase(spectrumFileNameWithoutExtension)) {
+                        projectDetails.addSpectrumFilePath(
+                                tempFile.getAbsolutePath()
+                        );
+                        spectrumFileFound = true;
+                    }
+                }
+
+            }
+
+            // check the folder provided
+            if (!spectrumFileFound) {
+                for (File tempFile : folder.listFiles()) {
+                    if (IoUtil.removeExtension(tempFile.getName()).equalsIgnoreCase(spectrumFileNameWithoutExtension)) {
+                        projectDetails.addSpectrumFilePath(
+                                tempFile.getAbsolutePath()
+                        );
+                        spectrumFileFound = true;
+                    }
+                }
+            }
+
+            if (!spectrumFileFound) {
+                return false;
+            }
+
+            File spectrumFile = new File(projectDetails.getSpectrumFilePath(spectrumFileNameWithoutExtension));
 
             folder = CmsFolder.getParentFolder() == null ? spectrumFile.getParentFile() : new File(CmsFolder.getParentFolder());
             msFileHandler.register(spectrumFile, folder, waitingHandler);

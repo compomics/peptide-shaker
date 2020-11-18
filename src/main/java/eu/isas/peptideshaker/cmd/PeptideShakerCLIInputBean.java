@@ -83,7 +83,8 @@ public class PeptideShakerCLIInputBean {
      */
     private File zipExport = null;
     /**
-     * Boolean that indicates whether mgf file/s should be written apart from the zip file
+     * Boolean that indicates whether mgf file/s should be written apart from
+     * the zip file
      */
     private boolean mgfExternalExportWhenZip = false;
     /**
@@ -130,7 +131,7 @@ public class PeptideShakerCLIInputBean {
         if (aLine.hasOption(PeptideShakerCLIParams.ZIP.id)) {
             zipExport = new File(aLine.getOptionValue(PeptideShakerCLIParams.ZIP.id));
         }
-        
+
         // mgf exported out of the zip file
         if (aLine.hasOption(PeptideShakerCLIParams.OUTPUT_MGF.id)) {
             String mgfOption = aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT_MGF.id);
@@ -166,10 +167,10 @@ public class PeptideShakerCLIInputBean {
     public File getZipExport() {
         return zipExport;
     }
-    
+
     /**
-     * When exporting the project to a zip file, returns whether mgf file/s should 
-     * be written apart from it, into the same folder.
+     * When exporting the project to a zip file, returns whether mgf file/s
+     * should be written apart from it, into the same folder.
      *
      * @return whether mgf file/s should be written apart from the zip file
      */
@@ -501,6 +502,13 @@ public class PeptideShakerCLIInputBean {
                     return false;
                 }
             }
+        }
+
+        // if the zip option is used, the out option is mandatory
+        if (aLine.hasOption(PeptideShakerCLIParams.ZIP.id)
+                && !aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id)) {
+            System.out.println("\nThe out option is mandatory when using the zip option.\n");
+            return false;
         }
 
 //        // Check the identification parameters

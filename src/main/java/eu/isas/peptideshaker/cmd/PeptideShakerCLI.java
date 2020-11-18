@@ -236,7 +236,12 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 try {
                     closePeptideShaker(identification);
                 } catch (Exception e) {
-                    waitingHandler.appendReport("An error occurred while closing PeptideShaker. " + getLogFileMessage(), true, true);
+                    waitingHandler.appendReport(
+                            "An error occurred while closing PeptideShaker. "
+                            + getLogFileMessage(),
+                            true,
+                            true
+                    );
                     e.printStackTrace();
                 }
                 System.exit(1);
@@ -247,7 +252,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             }
 
             // save project
-            if (cliInputBean.getOutput() != null) {
+            if (cliInputBean.getOutput() != null) { 
                 try {
                     psdbFile = cliInputBean.getOutput();
                     waitingHandler.appendReport("Saving results.", true, true);
@@ -255,7 +260,12 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     waitingHandler.appendReport("Results saved to " + psdbFile.getAbsolutePath() + ".", true, true);
                     waitingHandler.appendReportEndLine();
                 } catch (Exception e) {
-                    waitingHandler.appendReport("An exception occurred while saving the project. " + getLogFileMessage(), true, true);
+                    waitingHandler.appendReport(
+                            "An exception occurred while saving the project. "
+                            + getLogFileMessage(),
+                            true,
+                            true
+                    );
                     e.printStackTrace();
                     waitingHandler.setRunCanceled();
                 }
