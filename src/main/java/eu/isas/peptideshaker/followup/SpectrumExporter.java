@@ -92,8 +92,8 @@ public class SpectrumExporter {
                 waitingHandler.setMaxSecondaryProgressCounter(spectrumTitles.length);
             }
 
-            File destinationFile = getDestinationFile(destinationFolder, fileNameWithoutExtension, exportType);
-
+            File destinationFile = getDestinationFile(destinationFolder, fileNameWithoutExtension + ".mgf", exportType);
+            
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(destinationFile))) {
 
                 for (String spectrumTitle : spectrumTitles) {
