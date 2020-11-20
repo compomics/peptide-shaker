@@ -168,7 +168,7 @@ public class RecalibrationExporter {
 
             }
 
-            File file = new File(folder, getRecalibratedFileName(fileNameWithoutExtension));
+            File file = new File(folder, getRecalibratedFileName(fileNameWithoutExtension + ".mgf"));
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 
