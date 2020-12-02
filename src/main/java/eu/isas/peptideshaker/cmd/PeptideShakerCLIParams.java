@@ -16,7 +16,7 @@ public enum PeptideShakerCLIParams {
     // IMPORTANT: Any change here must be reported in the wiki: 
     // https://github.com/compomics/peptide-shaker/wiki/PeptideShakerCLI
     ///////////////////////////////////////////////////////////////////////////
-    REFERENCE("reference", "The reference for the project.", true),
+    REFERENCE("reference", "The reference/name for the project.", true),
     SPECTRUM_FILES("spectrum_files", "Spectrum files, comma separated list or an entire folder.", false),
     FASTA_FILE("fasta_file", "The complete path to the FASTA file.", false),
     IDENTIFICATION_FILES("identification_files", "Identification files, comma separated list or an entire folder.", true),
