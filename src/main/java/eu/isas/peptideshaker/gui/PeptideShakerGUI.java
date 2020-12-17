@@ -242,6 +242,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     static {
         XYBarRenderer.setDefaultBarPainter(new StandardXYBarPainter());
     }
+    
+    /**
+     * Name of PeptideShaker's Conda package
+     */
+    private static final String condaAppName = "peptide-shaker";
+
+    
     /**
      * If true, the latest changes have been saved.
      */
@@ -616,7 +623,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         // check for new version
         boolean newVersion = false;
 
-        if (!PeptideShaker.getJarFilePath().equalsIgnoreCase(".") && utilitiesUserParameters.isAutoUpdate()) {
+        if (!PeptideShaker.getJarFilePath().equalsIgnoreCase(".") && utilitiesUserParameters.isAutoUpdate() && !CompomicsWrapper.appRunningIntoConda(condaAppName)) {
 
             newVersion = checkForNewVersion();
 
