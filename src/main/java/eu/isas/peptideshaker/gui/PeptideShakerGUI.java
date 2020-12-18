@@ -242,13 +242,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     static {
         XYBarRenderer.setDefaultBarPainter(new StandardXYBarPainter());
     }
-    
+
     /**
      * Name of PeptideShaker's Conda package
      */
-    private static final String condaAppName = "peptide-shaker";
-
-    
+    private static final String CONDA_APP_NAME = "peptide-shaker";
     /**
      * If true, the latest changes have been saved.
      */
@@ -394,7 +392,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public static void main(String[] args) {
 
         // turn off illegal access log messages
-        try { 
+        try {
             Class loggerClass = Class.forName("jdk.internal.module.IllegalAccessLogger");
             Field loggerField = loggerClass.getDeclaredField("logger");
             Class unsafeClass = Class.forName("sun.misc.Unsafe");
@@ -408,7 +406,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             // ignore, i.e. simply show the warnings...
             //ex.printStackTrace();
         }
-        
+
         // turn off the zoodb logging
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
@@ -623,10 +621,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         // check for new version
         boolean newVersion = false;
 
-        if (!PeptideShaker.getJarFilePath().equalsIgnoreCase(".") && utilitiesUserParameters.isAutoUpdate() && !CompomicsWrapper.appRunningIntoConda(condaAppName)) {
-
+        if (!PeptideShaker.getJarFilePath().equalsIgnoreCase(".")
+                && !CompomicsWrapper.appRunningIntoConda(CONDA_APP_NAME)
+                && utilitiesUserParameters.isAutoUpdate()) {
             newVersion = checkForNewVersion();
-
         }
 
         if (!newVersion) {
