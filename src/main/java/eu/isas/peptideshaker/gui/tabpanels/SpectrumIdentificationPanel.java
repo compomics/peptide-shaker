@@ -3001,6 +3001,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         2,
                         false
                 );
+
                 spectrumPanel.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                 spectrumPanel.setDeltaMassWindow(annotationParameters.getFragmentIonAccuracy());
                 spectrumPanel.setBorder(null);
@@ -3304,7 +3305,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                 );
 
-                spectrumChartPanel.add(spectrumPanel);
+                if (currentSpectrum.getNPeaks() > 0) {
+                    spectrumChartPanel.add(spectrumPanel);
+                }
+
                 spectrumPanelPanel.repaint();
             }
         }
