@@ -7893,7 +7893,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             selectedFile = getUserSelectedFile(
                     psdbParent.getPsdbFile().getName(),
                     ".psdb",
-                    "Peptide Shaker Database format (*.psdb)",
+                    "PeptideShaker Database format (*.psdb)",
                     "Save As...",
                     false
             );
@@ -7902,7 +7902,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             selectedFile = getUserSelectedFile(
                     psdbParent.getProjectParameters().getProjectUniqueName() + ".psdb",
                     ".psdb",
-                    "Peptide Shaker Database format (*.psdb)",
+                    "PeptideShaker Database format (*.psdb)",
                     "Save As...",
                     false
             );
