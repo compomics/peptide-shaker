@@ -18,6 +18,7 @@ import com.google.common.collect.Sets;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
@@ -213,6 +214,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         if (!nodes.contains(peptideNodeName)) {
 
             ProteinDetailsProvider proteinDetailsProvider = peptideShakerGUI.getProteinDetailsProvider();
+            SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
 
             // add the node
             nodes.add(peptideNodeName);
@@ -310,8 +312,13 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
                     if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
 
-                        enzymatic = PeptideUtils.isEnzymatic(peptideMatch.getPeptide(), peptideShakerGUI.getSequenceProvider(), digestionPreferences.getEnzymes());
-
+                        enzymatic = PeptideUtils.isEnzymatic(
+                                peptideMatch.getPeptide(), 
+                                tempProteinAccession, 
+                                sequenceProvider.getSequence(tempProteinAccession), 
+                                digestionPreferences.getEnzymes()
+                        );
+                        
                     }
 
                     edgeProperties.put(peptideNodeName + "|" + proteinNodeKey, enzymatic.toString());

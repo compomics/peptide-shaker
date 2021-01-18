@@ -19,6 +19,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
+import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
@@ -211,6 +212,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             ArrayList<String> selectedNodes, HashMap<String, ArrayList<String>> edges, HashMap<String, String> edgeProperties) {
 
         ProteinDetailsProvider proteinDetailsProvider = peptideShakerGUI.getProteinDetailsProvider();
+        SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
         String peptideNodeName = "Peptide " + peptideKey;
 
@@ -335,7 +337,12 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
                     if (digestionPreferences.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
 
-                        enzymatic = PeptideUtils.isEnzymatic(peptideMatch.getPeptide(), peptideShakerGUI.getSequenceProvider(), digestionPreferences.getEnzymes());
+                        enzymatic = PeptideUtils.isEnzymatic(
+                                peptideMatch.getPeptide(), 
+                                tempProteinAccession, 
+                                sequenceProvider.getSequence(tempProteinAccession), 
+                                digestionPreferences.getEnzymes()
+                        );
 
                     }
 
