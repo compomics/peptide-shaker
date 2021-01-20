@@ -127,9 +127,7 @@ public class PSExportFactory implements ExportFactory {
      * @throws IOException exception thrown whenever an error occurred while
      * saving the ptmFactory
      */
-    public static void saveFactory(
-            PSExportFactory psExportFactory
-    ) throws IOException {
+    public static void saveFactory(PSExportFactory psExportFactory) throws IOException {
     
         File factoryFile = new File(SERIALIZATION_FILE);
         
@@ -155,9 +153,7 @@ public class PSExportFactory implements ExportFactory {
      * @throws IOException exception thrown whenever an error occurred while
      * loading the file
      */
-    public static PSExportFactory loadFromFile(
-            File file
-    ) throws IOException {
+    public static PSExportFactory loadFromFile(File file) throws IOException {
         
         JsonMarshaller jsonMarshaller = new JsonMarshaller();
         PSExportFactory result = (PSExportFactory) jsonMarshaller.fromJson(PSExportFactory.class, file);
