@@ -643,7 +643,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             boolean java64bit = CompomicsWrapper.is64BitJava();
             boolean memoryOk = (utilitiesUserParameters.getMemoryParameter() >= 4000);
             String javaVersion = System.getProperty("java.version");
-            boolean javaVersionWarning = javaVersion.startsWith("1.5") || javaVersion.startsWith("1.6");
+            boolean javaVersionWarning = javaVersion.startsWith("1.5") 
+                || javaVersion.startsWith("1.6")
+                || javaVersion.startsWith("1.7") 
+                || javaVersion.startsWith("1.8");
 
             // add desktop shortcut?
             if (!PeptideShaker.getJarFilePath().equalsIgnoreCase(".")

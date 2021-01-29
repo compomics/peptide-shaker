@@ -60,7 +60,13 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param showJavaVersionWarning show or hide the java version warning
      * @param modal modal or not modal
      */
-    public WelcomeDialog(PeptideShakerGUI peptideShakerGUI, boolean showLowMemoryWarning, boolean showJavaVersionWarning, boolean modal) {
+    public WelcomeDialog(
+            PeptideShakerGUI peptideShakerGUI, 
+            boolean showLowMemoryWarning, 
+            boolean showJavaVersionWarning, 
+            boolean modal
+    ) {
+        
         super(DUMMY_PARENT_FRAME.setNewTitle(peptideShakerGUI.getTitle()), modal);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
