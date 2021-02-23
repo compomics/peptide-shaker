@@ -30,45 +30,45 @@ public class PeptideShakerPathParameters {
          * reduce the memory footprint.
          */
         matchesDirectory(
-                "peptideshaker_matches_directory", 
-                "Folder where identification matches are temporarily saved to reduce the memory footprint.", 
-                "", 
+                "peptideshaker_matches_directory",
+                "Folder where identification matches are temporarily saved to reduce the memory footprint.",
+                "",
                 true
         ),
         /**
          * Folder containing the PeptideShaker user preferences file.
          */
         peptideShakerPreferences(
-                "peptideshaker_user_preferences", 
-                "Folder containing the PeptideShaker user preferences file.", 
-                "", 
+                "peptideshaker_user_preferences",
+                "Folder containing the PeptideShaker user preferences file.",
+                "",
                 true
         ),
         /**
          * Folder containing the user custom exports file.
          */
         peptideShakerExports(
-                "peptideshaker_exports", 
-                "Folder containing the user custom exports file.", 
-                "", 
+                "peptideshaker_exports",
+                "Folder containing the user custom exports file.",
+                "",
                 true
         ),
         /**
          * The folder to use when unzipping files.
          */
         unzipFolder(
-                "unzip", 
-                "Folder to use when unzipping files", 
-                "", 
+                "unzip",
+                "Folder to use when unzipping files",
+                "",
                 true
         ),
         /**
          * The folder to use for cms files.
          */
         cmsFolder(
-                "cms", 
-                "Folder to use for cms files", 
-                "", 
+                "cms",
+                "Folder to use for cms files",
+                "",
                 true
         );
         /**
@@ -99,9 +99,9 @@ public class PeptideShakerPathParameters {
          * @param isDirectory boolean indicating whether a folder is expected
          */
         private PeptideShakerPathKey(
-                String id, 
-                String description, 
-                String defaultSubDirectory, 
+                String id,
+                String description,
+                String defaultSubDirectory,
                 boolean isDirectory
         ) {
 
@@ -132,7 +132,7 @@ public class PeptideShakerPathParameters {
         public static PeptideShakerPathKey getKeyFromId(
                 String id
         ) {
-        
+
             for (PeptideShakerPathKey pathKey : values()) {
 
                 if (pathKey.id.equals(id)) {
@@ -159,7 +159,7 @@ public class PeptideShakerPathParameters {
             File inputFile
     ) throws FileNotFoundException, IOException {
 
-        try (SimpleFileReader reader = SimpleFileReader.getFileReader(inputFile)) {
+        try ( SimpleFileReader reader = SimpleFileReader.getFileReader(inputFile)) {
 
             String line;
 
@@ -180,7 +180,7 @@ public class PeptideShakerPathParameters {
      * Loads a path to be set from a line.
      *
      * @param line the line where to read the path from
-     * 
+     *
      * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void loadPathParametersFromLine(
@@ -248,14 +248,14 @@ public class PeptideShakerPathParameters {
                 return PeptideShaker.getMatchesDirectoryParent();
 
             case peptideShakerExports:
-                return PSExportFactory.getSerializationFolder();
+                return PSExportFactory.getJsonFolder();
 
             case peptideShakerPreferences:
                 return PeptideShaker.getUserPreferencesFolder();
 
             case unzipFolder:
                 return PsZipUtils.getUnzipParentFolder();
-                
+
             case cmsFolder:
                 return CmsFolder.getParentFolder();
 
@@ -274,7 +274,7 @@ public class PeptideShakerPathParameters {
      * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void setPathPreference(
-            PeptideShakerPathKey peptideShakerPathKey, 
+            PeptideShakerPathKey peptideShakerPathKey,
             String path
     ) throws IOException {
 
@@ -285,7 +285,7 @@ public class PeptideShakerPathParameters {
                 return;
 
             case peptideShakerExports:
-                PSExportFactory.setSerializationFolder(path);
+                PSExportFactory.setJsonFolder(path);
                 return;
 
             case peptideShakerPreferences:
@@ -295,7 +295,7 @@ public class PeptideShakerPathParameters {
             case unzipFolder:
                 PsZipUtils.setUnzipParentFolder(path);
                 return;
-                
+
             case cmsFolder:
                 CmsFolder.setParentFolder(path);
                 return;
@@ -315,7 +315,7 @@ public class PeptideShakerPathParameters {
      * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void setPathParameters(
-            PathKey pathKey, 
+            PathKey pathKey,
             String path
     ) throws IOException {
 
@@ -331,7 +331,11 @@ public class PeptideShakerPathParameters {
 
         } else {
 
-            throw new UnsupportedOperationException("Path " + pathKey.getId() + " not implemented.");
+            throw new UnsupportedOperationException(
+                    "Path "
+                    + pathKey.getId()
+                    + " not implemented."
+            );
 
         }
     }
@@ -383,11 +387,11 @@ public class PeptideShakerPathParameters {
     public static void writeConfigurationToFile(
             File file
     ) throws IOException {
-        
-        try (SimpleFileWriter writer = new SimpleFileWriter(file, false)) {
-            
+
+        try ( SimpleFileWriter writer = new SimpleFileWriter(file, false)) {
+
             writeConfigurationToFile(writer);
-        
+
         }
     }
 
@@ -401,7 +405,7 @@ public class PeptideShakerPathParameters {
     public static void writeConfigurationToFile(
             SimpleFileWriter writer
     ) throws IOException {
-        
+
         for (PeptideShakerPathKey pathKey : PeptideShakerPathKey.values()) {
 
             writePathToFile(writer, pathKey);
@@ -421,7 +425,7 @@ public class PeptideShakerPathParameters {
      * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void writePathToFile(
-            SimpleFileWriter writer, 
+            SimpleFileWriter writer,
             PeptideShakerPathKey pathKey
     ) throws IOException {
 
@@ -444,7 +448,7 @@ public class PeptideShakerPathParameters {
 
             case peptideShakerExports:
 
-                toWrite = PSExportFactory.getSerializationFolder();
+                toWrite = PSExportFactory.getJsonFolder();
 
                 if (toWrite == null) {
 
@@ -480,7 +484,7 @@ public class PeptideShakerPathParameters {
 
                 writer.write(toWrite);
                 break;
-                
+
             case cmsFolder:
 
                 toWrite = CmsFolder.getParentFolder();
@@ -500,7 +504,7 @@ public class PeptideShakerPathParameters {
         }
 
         writer.newLine();
-    
+
     }
 
     /**

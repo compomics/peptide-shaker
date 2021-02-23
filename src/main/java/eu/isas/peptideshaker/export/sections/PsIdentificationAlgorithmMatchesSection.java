@@ -109,7 +109,11 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             } else {
 
-                throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
+                throw new IllegalArgumentException(
+                        "Export feature of type "
+                        + exportFeature.getClass()
+                        + " not recognized."
+                );
 
             }
         }
@@ -678,10 +682,21 @@ public class PsIdentificationAlgorithmMatchesSection {
                 double precursorRt = spectrumProvider.getPrecursorRt(spectrumFile, spectrumTitle);
                 return Double.toString(precursorRt);
 
-            case algorithm_score:
+            case algorithm_raw_score:
 
                 int id = peptideAssumption.getAdvocate();
                 double score = peptideAssumption.getRawScore();
+                return String.join("",
+                        Advocate.getAdvocate(id).getName(),
+                        " (",
+                        Double.toString(score),
+                        ")"
+                );
+
+            case algorithm_score:
+
+                id = peptideAssumption.getAdvocate();
+                score = peptideAssumption.getScore();
                 return String.join("",
                         Advocate.getAdvocate(id).getName(),
                         " (",
@@ -771,11 +786,11 @@ public class PsIdentificationAlgorithmMatchesSection {
             case spectrum_title:
 
                 return spectrumTitle;
-                
+
             case spectrum_scan_number:
                 // TODO: To get scan numbers from cms when source mgf files have that info
                 return "";
-                    
+
             case starred:
 
                 return psParameter.getStarred() ? "1" : "0";
@@ -1274,10 +1289,21 @@ public class PsIdentificationAlgorithmMatchesSection {
                 double precursorRt = spectrumProvider.getPrecursorRt(spectrumFile, spectrumTitle);
                 return Double.toString(precursorRt);
 
-            case algorithm_score:
+            case algorithm_raw_score:
 
                 int id = tagAssumption.getAdvocate();
-                double score = tagAssumption.getScore();
+                double score = tagAssumption.getRawScore();
+                return String.join("",
+                        Advocate.getAdvocate(id).getName(),
+                        " (",
+                        Double.toString(score),
+                        ")"
+                );
+
+            case algorithm_score:
+
+                id = tagAssumption.getAdvocate();
+                score = tagAssumption.getScore();
                 return String.join("",
                         Advocate.getAdvocate(id).getName(),
                         " (",
@@ -1330,7 +1356,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case spectrum_title:
 
                 return spectrumTitle;
-                
+
             case spectrum_scan_number:
                 // TODO: To get scan numbers from cms when source mgf files have that info
                 return "";

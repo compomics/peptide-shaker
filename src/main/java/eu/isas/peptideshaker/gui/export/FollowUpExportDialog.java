@@ -1337,7 +1337,7 @@ public class FollowUpExportDialog extends javax.swing.JDialog {
                                 true, 
                                 true, 
                                 false, // @TODO: allow the user to alter the boolean variables?
-                                new File(PSExportFactory.getSerializationFolder(), "UnipeptExport.html"), 
+                                new File(PSExportFactory.getJsonFolder(), "UnipeptExport.html"), 
                                 progressDialog
                         );
                     }

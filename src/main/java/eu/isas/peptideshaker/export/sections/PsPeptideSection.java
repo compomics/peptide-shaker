@@ -26,7 +26,6 @@ import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -91,7 +90,11 @@ public class PsPeptideSection {
 
             } else {
 
-                throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
+                throw new IllegalArgumentException(
+                        "Export feature of type "
+                        + exportFeature.getClass()
+                        + " not recognized."
+                );
 
             }
         }

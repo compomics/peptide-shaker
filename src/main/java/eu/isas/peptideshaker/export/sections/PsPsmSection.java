@@ -28,7 +28,6 @@ import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -71,8 +70,10 @@ public class PsPsmSection {
      * Constructor.
      *
      * @param exportFeatures The features to export in this section.
-     * @param indexes A boolean indicating whether the line index should be written.
-     * @param header A boolean indicating whether the table header should be written.
+     * @param indexes A boolean indicating whether the line index should be
+     * written.
+     * @param header A boolean indicating whether the table header should be
+     * written.
      * @param writer The writer which will write to the file.
      */
     public PsPsmSection(
@@ -100,7 +101,11 @@ public class PsPsmSection {
 
             } else {
 
-                throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
+                throw new IllegalArgumentException(
+                        "Export feature of type "
+                        + exportFeature.getClass()
+                        + " not recognized."
+                );
 
             }
         }
@@ -750,7 +755,7 @@ public class PsPsmSection {
      * @return a description of the given protein group
      */
     public static String getProteinGroupText(
-            long proteinGroupKey, 
+            long proteinGroupKey,
             Identification identification
     ) {
 
@@ -778,7 +783,7 @@ public class PsPsmSection {
      * @return the peptide modification location confidence as a string
      */
     public static String getPeptideModificationLocationConfidence(
-            SpectrumMatch spectrumMatch, 
+            SpectrumMatch spectrumMatch,
             ModificationParameters modificationParameters
     ) {
 
@@ -816,26 +821,24 @@ public class PsPsmSection {
 
                     int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
 
-                    if (ptmConfidence == ModificationScoring.NOT_FOUND) {
-
-                        result.append(site).append(": Not Scored");
-
-                    } else if (ptmConfidence == ModificationScoring.RANDOM) {
-
-                        result.append(site).append(": Random");
-
-                    } else if (ptmConfidence == ModificationScoring.DOUBTFUL) {
-
-                        result.append(site).append(": Doubtfull");
-
-                    } else if (ptmConfidence == ModificationScoring.CONFIDENT) {
-
-                        result.append(site).append(": Confident");
-
-                    } else if (ptmConfidence == ModificationScoring.VERY_CONFIDENT) {
-
-                        result.append(site).append(": Very Confident");
-
+                    switch (ptmConfidence) {
+                        case ModificationScoring.NOT_FOUND:
+                            result.append(site).append(": Not Scored");
+                            break;
+                        case ModificationScoring.RANDOM:
+                            result.append(site).append(": Random");
+                            break;
+                        case ModificationScoring.DOUBTFUL:
+                            result.append(site).append(": Doubtfull");
+                            break;
+                        case ModificationScoring.CONFIDENT:
+                            result.append(site).append(": Confident");
+                            break;
+                        case ModificationScoring.VERY_CONFIDENT:
+                            result.append(site).append(": Very Confident");
+                            break;
+                        default:
+                            break;
                     }
                 }
 

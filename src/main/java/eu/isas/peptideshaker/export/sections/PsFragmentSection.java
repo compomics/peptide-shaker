@@ -24,12 +24,9 @@ import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.frag
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_type;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * This class outputs the PSM related export features.
@@ -87,7 +84,11 @@ public class PsFragmentSection {
 
             } else {
 
-                throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as fragment feature.");
+                throw new IllegalArgumentException(
+                        "Impossible to export "
+                        + exportFeature.getClass().getName()
+                        + " as fragment feature."
+                );
 
             }
         }
@@ -191,7 +192,11 @@ public class PsFragmentSection {
 
         } else {
 
-            throw new UnsupportedOperationException("Export not implemented for spectrum identification of type " + spectrumIdentificationAssumption.getClass() + ".");
+            throw new UnsupportedOperationException(
+                    "Export not implemented for spectrum identification of type "
+                    + spectrumIdentificationAssumption.getClass()
+                    + "."
+            );
 
         }
 
@@ -222,8 +227,6 @@ public class PsFragmentSection {
         }
 
         for (Entry<Double, ArrayList<IonMatch>> entry : sortedAnnotation.entrySet()) {
-
-            double mz = entry.getKey();
 
             for (IonMatch ionMatch : entry.getValue()) {
 
@@ -301,6 +304,7 @@ public class PsFragmentSection {
                         default:
                             writer.write("Not implemented");
                     }
+
                     writer.addSeparator();
 
                 }

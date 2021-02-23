@@ -124,7 +124,16 @@ public class TagMapper {
 
                             if (!peptidesFound.contains(peptideKey)) {
 
-                                PeptideAssumption peptideAssumption = new PeptideAssumption(peptide, tagAssumption.getRank(), advocateId, tagAssumption.getIdentificationCharge(), tagAssumption.getScore(), tagAssumption.getIdentificationFile());
+                                PeptideAssumption peptideAssumption = new PeptideAssumption(
+                                        peptide, 
+                                        tagAssumption.getRank(), 
+                                        advocateId, 
+                                        tagAssumption.getIdentificationCharge(), 
+                                        tagAssumption.getRawScore(),
+                                        tagAssumption.getScore(),
+                                        tagAssumption.getIdentificationFile()
+                                );
+                                
                                 spectrumMatch.addPeptideAssumption(advocateId, peptideAssumption);
                                 peptidesFound.add(peptideKey);
 

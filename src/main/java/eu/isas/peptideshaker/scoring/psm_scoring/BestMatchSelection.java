@@ -378,6 +378,7 @@ public class BestMatchSelection {
                     1,
                     Advocate.peptideShaker.getIndex(),
                     bestPeptideAssumption.getIdentificationCharge(),
+                    bestP,
                     bestP
             );
 

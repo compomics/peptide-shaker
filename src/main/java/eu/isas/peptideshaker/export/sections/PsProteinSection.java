@@ -95,7 +95,11 @@ public class PsProteinSection {
 
             } else {
 
-                throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
+                throw new IllegalArgumentException(
+                        "Export feature of type "
+                        + exportFeature.getClass()
+                        + " not recognized."
+                );
 
             }
         }
@@ -397,6 +401,7 @@ public class PsProteinSection {
     ) {
 
         switch (tempProteinFeatures) {
+
             case accession:
 
                 return proteinMatch.getLeadingAccession();
@@ -459,7 +464,7 @@ public class PsProteinSection {
                 }
 
                 return "";
-                
+
             case taxonomy:
 
                 if (!proteinMatch.isDecoy()) {
@@ -649,7 +654,7 @@ public class PsProteinSection {
                 HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                 value = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                 return Double.toString(Util.roundDouble(value, 2));
-                
+
             case all_coverage:
 
                 sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
@@ -663,7 +668,7 @@ public class PsProteinSection {
 
                 value = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
                 return Double.toString(Util.roundDouble(value, 2));
-                
+
             case decoy:
 
                 return proteinMatch.isDecoy() ? "1" : "0";
