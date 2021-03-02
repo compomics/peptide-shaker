@@ -5026,7 +5026,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                 databaseClosed = false;
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Failed to close the database.", "Database Error", JOptionPane.WARNING_MESSAGE);
+                
+                JOptionPane.showMessageDialog(
+                        null, 
+                        "Failed to close the database.", 
+                        "Database Error", 
+                        JOptionPane.WARNING_MESSAGE
+                );
 
             }
         }
@@ -5052,8 +5058,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 // @TODO: is this warning still required..?
                 if (matchFolder.listFiles() != null && matchFolder.listFiles().length > 0) {
 
-                    JOptionPane.showMessageDialog(null, "Failed to empty the database folder:\n" + matchFolder.getPath() + ".",
-                            "Database Cleanup Failed", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            null, 
+                            "Failed to empty the database folder:\n" + matchFolder.getPath() + ".",
+                            "Database Cleanup Failed", 
+                            JOptionPane.WARNING_MESSAGE
+                    );
 
                 }
             }
