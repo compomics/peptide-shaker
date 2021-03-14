@@ -12,7 +12,7 @@ import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportScheme;
 import eu.isas.peptideshaker.export.PSExportFactory;
-import eu.isas.peptideshaker.export.exportfeatures.PsProteinFeature;
+import com.compomics.util.io.export.features.peptideshaker.PsProteinFeature;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.io.File;

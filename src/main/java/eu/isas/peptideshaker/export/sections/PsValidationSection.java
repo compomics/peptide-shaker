@@ -5,7 +5,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.parameters.identification.IdentificationParameters;
-import eu.isas.peptideshaker.export.exportfeatures.PsValidationFeature;
+import com.compomics.util.io.export.features.peptideshaker.PsValidationFeature;
 import eu.isas.peptideshaker.scoring.PSMaps;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.io.IOException;

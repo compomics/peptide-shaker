@@ -4,7 +4,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.advanced.ModificationLocalizationParameters;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
-import eu.isas.peptideshaker.export.exportfeatures.PsPtmScoringFeature;
+import com.compomics.util.io.export.features.peptideshaker.PsPtmScoringFeature;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;

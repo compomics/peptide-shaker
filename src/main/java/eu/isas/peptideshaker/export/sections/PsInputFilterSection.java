@@ -4,7 +4,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
-import eu.isas.peptideshaker.export.exportfeatures.PsInputFilterFeature;
+import com.compomics.util.io.export.features.peptideshaker.PsInputFilterFeature;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;

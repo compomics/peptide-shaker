@@ -16,9 +16,9 @@ import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
-import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
+import com.compomics.util.io.export.features.peptideshaker.PsFragmentFeature;
+import com.compomics.util.io.export.features.peptideshaker.PsIdentificationAlgorithmMatchesFeature;
+import com.compomics.util.io.export.features.peptideshaker.PsPsmFeature;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.peptide_shaker.PSModificationScores;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
  * This class outputs the PSM level export features.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PsPsmSection {
 

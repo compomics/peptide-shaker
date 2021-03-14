@@ -4,7 +4,7 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
-import eu.isas.peptideshaker.export.exportfeatures.PsProjectFeature;
+import com.compomics.util.io.export.features.peptideshaker.PsProjectFeature;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import java.io.IOException;
 import java.util.ArrayList;

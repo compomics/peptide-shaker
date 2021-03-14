@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
-import eu.isas.peptideshaker.export.exportfeatures.PsSpectrumCountingFeature;
+import com.compomics.util.io.export.features.peptideshaker.PsSpectrumCountingFeature;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import java.io.IOException;

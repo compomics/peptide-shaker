@@ -6,7 +6,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
-import eu.isas.peptideshaker.export.exportfeatures.PsSearchFeature;
+import com.compomics.util.io.export.features.peptideshaker.PsSearchFeature;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import java.io.IOException;
 import java.util.ArrayList;
