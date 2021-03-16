@@ -887,6 +887,7 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsProteinFeature.protein_description);
         sectionContent.add(PsProteinFeature.gene_name);
         sectionContent.add(PsProteinFeature.taxonomy);
+        sectionContent.add(PsProteinFeature.organism_identifier);
         sectionContent.add(PsProteinFeature.chromosome);
         sectionContent.add(PsProteinFeature.pi);
         sectionContent.add(PsProteinFeature.other_proteins);
@@ -1133,6 +1134,7 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsProteinFeature.protein_description);
         sectionContent.add(PsProteinFeature.gene_name);
         sectionContent.add(PsProteinFeature.taxonomy);
+        sectionContent.add(PsProteinFeature.organism_identifier);
         sectionContent.add(PsProteinFeature.chromosome);
         sectionContent.add(PsProteinFeature.pi);
         sectionContent.add(PsProteinFeature.other_proteins);
@@ -1298,6 +1300,7 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsProteinFeature.protein_description);
         sectionContent.add(PsProteinFeature.gene_name);
         sectionContent.add(PsProteinFeature.taxonomy);
+        sectionContent.add(PsProteinFeature.organism_identifier);
         sectionContent.add(PsProteinFeature.chromosome);
         sectionContent.add(PsProteinFeature.pi);
         sectionContent.add(PsProteinFeature.other_proteins);
