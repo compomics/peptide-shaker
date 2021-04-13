@@ -64,10 +64,12 @@ public class PathSettingsCLI {
         }
 
         // set the PeptideShaker log file
-        if (pathSettingsCLIInputBean.getLogFolder() != null) {
-            PeptideShakerCLI.redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
-        } else {
-            PeptideShakerCLI.redirectErrorStream(new File(PeptideShaker.getJarFilePath() + File.separator + "resources"));
+        if (pathSettingsCLIInputBean.useLogFile()) {
+            if (pathSettingsCLIInputBean.getLogFolder() != null) {
+                PeptideShakerCLI.redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
+            } else {
+                PeptideShakerCLI.redirectErrorStream(new File(PeptideShaker.getJarFilePath() + File.separator + "resources"));
+            }
         }
 
         if (pathSettingsCLIInputBean.hasInput()) {
@@ -228,8 +230,8 @@ public class PathSettingsCLI {
 
         ArrayList<String> allPathOptions = PathSettingsCLIParams.getOptionIDs();
 
-        ArrayList<String> pathSettingArgs = new ArrayList<String>();
-        ArrayList<String> nonPathSettingArgs = new ArrayList<String>();
+        ArrayList<String> pathSettingArgs = new ArrayList<>();
+        ArrayList<String> nonPathSettingArgs = new ArrayList<>();
 
         for (int i = 0; i < args.length; i++) {
 

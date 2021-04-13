@@ -9,11 +9,13 @@ import org.apache.commons.cli.Options;
  * Enum of the command line parameters for path setting.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public enum PathSettingsCLIParams {
 
     ALL("temp_folder", "A folder for temporary file storage. Use only if you encounter problems with the default configuration."),
-    LOG("log", "Folder where to write logs.");
+    LOG_FOLDER("log", "Folder where the log files are written."),
+    USE_LOG_FOLDER("use_log_folder", "Use the log folder. 0: write to standard output, 1: use the log folder. Default: 1.");
 
     /**
      * The id of the command line option.
@@ -31,8 +33,10 @@ public enum PathSettingsCLIParams {
      * @param description the description of the command line option
      */
     private PathSettingsCLIParams(String id, String description) {
+
         this.id = id;
         this.description = description;
+
     }
 
     /**
@@ -42,15 +46,21 @@ public enum PathSettingsCLIParams {
      * @param aOptions the options object where the options will be added
      */
     public static void createOptionsCLI(Options aOptions) {
+
         for (PathSettingsCLIParams pathSettingsCLIParam : values()) {
             aOptions.addOption(pathSettingsCLIParam.id, true, pathSettingsCLIParam.description);
         }
-        for (PeptideShakerPathParameters.PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathParameters.PeptideShakerPathKey.values()) {
+
+        for (PeptideShakerPathParameters.PeptideShakerPathKey peptideShakerPathKey
+                : PeptideShakerPathParameters.PeptideShakerPathKey.values()) {
             aOptions.addOption(peptideShakerPathKey.getId(), true, peptideShakerPathKey.getDescription());
         }
-        for (UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey : UtilitiesPathParameters.UtilitiesPathKey.values()) {
+
+        for (UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey
+                : UtilitiesPathParameters.UtilitiesPathKey.values()) {
             aOptions.addOption(utilitiesPathKey.getId(), true, utilitiesPathKey.getDescription());
         }
+
     }
 
     /**
@@ -60,15 +70,19 @@ public enum PathSettingsCLIParams {
      */
     public static ArrayList<String> getOptionIDs() {
 
-        ArrayList<String> options = new ArrayList<String>();
+        ArrayList<String> options = new ArrayList<>();
 
         for (PathSettingsCLIParams pathSettingsCLIParam : values()) {
             options.add("-" + pathSettingsCLIParam.id);
         }
-        for (PeptideShakerPathParameters.PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathParameters.PeptideShakerPathKey.values()) {
+
+        for (PeptideShakerPathParameters.PeptideShakerPathKey peptideShakerPathKey
+                : PeptideShakerPathParameters.PeptideShakerPathKey.values()) {
             options.add("-" + peptideShakerPathKey.getId());
         }
-        for (UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey : UtilitiesPathParameters.UtilitiesPathKey.values()) {
+
+        for (UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey
+                : UtilitiesPathParameters.UtilitiesPathKey.values()) {
             options.add("-" + utilitiesPathKey.getId());
         }
 
@@ -86,17 +100,24 @@ public enum PathSettingsCLIParams {
         String formatter = "%-35s";
 
         output += "Log Folder:\n\n";
-        output += "-" + String.format(formatter, LOG.id) + " " + LOG.description + "\n";
+        output += "-" + String.format(formatter, LOG_FOLDER.id) + " " + LOG_FOLDER.description + "\n";
+        output += "-" + String.format(formatter, USE_LOG_FOLDER.id) + " " + USE_LOG_FOLDER.description + "\n";
 
         output += "Generic Temporary Folder:\n\n";
         output += "-" + String.format(formatter, ALL.id) + " " + ALL.description + "\n";
 
         output += "\n\nSpecific Path Settings:\n\n";
-        for (PeptideShakerPathParameters.PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathParameters.PeptideShakerPathKey.values()) {
-            output += "-" + String.format(formatter, peptideShakerPathKey.getId()) + " " + peptideShakerPathKey.getDescription() + System.getProperty("line.separator");
+
+        for (PeptideShakerPathParameters.PeptideShakerPathKey peptideShakerPathKey
+                : PeptideShakerPathParameters.PeptideShakerPathKey.values()) {
+            output += "-" + String.format(formatter, peptideShakerPathKey.getId())
+                    + " " + peptideShakerPathKey.getDescription() + System.getProperty("line.separator");
         }
-        for (UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey : UtilitiesPathParameters.UtilitiesPathKey.values()) {
-            output += "-" + String.format(formatter, utilitiesPathKey.getId()) + " " + utilitiesPathKey.getDescription() + System.getProperty("line.separator");
+
+        for (UtilitiesPathParameters.UtilitiesPathKey utilitiesPathKey
+                : UtilitiesPathParameters.UtilitiesPathKey.values()) {
+            output += "-" + String.format(formatter, utilitiesPathKey.getId())
+                    + " " + utilitiesPathKey.getDescription() + System.getProperty("line.separator");
         }
 
         return output;

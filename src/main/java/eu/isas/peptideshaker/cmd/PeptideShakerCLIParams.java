@@ -1,7 +1,8 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.cli.identification_parameters.IdentificationParametersCLIParams;
-import static eu.isas.peptideshaker.cmd.PathSettingsCLIParams.LOG;
+import static eu.isas.peptideshaker.cmd.PathSettingsCLIParams.LOG_FOLDER;
+import static eu.isas.peptideshaker.cmd.PathSettingsCLIParams.USE_LOG_FOLDER;
 import org.apache.commons.cli.Options;
 
 /**
@@ -112,7 +113,8 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, OUTPUT_MGF.id) + " " + OUTPUT_MGF.description + "\n";
         
         output += "\n\nOptional Log Folder:\n\n";
-        output += "-" + String.format(formatter, LOG.id) + " " + LOG.description + "\n";
+        output += "-" + String.format(formatter, LOG_FOLDER.id) + " " + LOG_FOLDER.description + "\n";
+        output += "-" + String.format(formatter, USE_LOG_FOLDER.id) + " " + USE_LOG_FOLDER.description + "\n";
 
         output += "\n\nOptional Temporary Folder:\n\n";
         output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + " " + PathSettingsCLIParams.ALL.description + "\n";

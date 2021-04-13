@@ -56,21 +56,27 @@ public class ReportCLIInputBean {
     public ReportCLIInputBean(CommandLine aLine) {
 
         if (aLine.hasOption(ReportCLIParams.PSDB_FILE.id)) {
+
             String file = aLine.getOptionValue(ReportCLIParams.PSDB_FILE.id);
+
             if (file.toLowerCase().endsWith(".psdb")) {
                 psdbFile = new File(file);
             } else if (file.toLowerCase().endsWith(".zip")) {
                 zipFile = new File(file);
             } else {
-                    throw new IllegalArgumentException("Unknown file format \'" + file + "\' for PeptideShaker project input.");
+                throw new IllegalArgumentException("Unknown file format \'" + file + "\' for PeptideShaker project input.");
             }
+
         }
+
         if (aLine.hasOption(ReportCLIParams.EXPORT_FOLDER.id)) {
             reportOutputFolder = new File(aLine.getOptionValue(ReportCLIParams.EXPORT_FOLDER.id));
         }
+
         if (aLine.hasOption(ReportCLIParams.EXPORT_PREFIX.id)) {
             reportNamePrefix = aLine.getOptionValue(ReportCLIParams.EXPORT_PREFIX.id);
         }
+
         if (aLine.hasOption(ReportCLIParams.REPORT_TYPE.id)) {
             ArrayList<Integer> options = CommandLineUtils.getIntegerListFromString(aLine.getOptionValue(ReportCLIParams.REPORT_TYPE.id), ",");
             PSExportFactory exportFactory = PSExportFactory.getInstance();
@@ -78,6 +84,7 @@ public class ReportCLIInputBean {
                 reportTypes.add(exportFactory.getExportTypeFromCommandLineOption(option));
             }
         }
+
         if (aLine.hasOption(ReportCLIParams.DOCUMENTATION_TYPE.id)) {
             ArrayList<Integer> options = CommandLineUtils.getIntegerListFromString(aLine.getOptionValue(ReportCLIParams.DOCUMENTATION_TYPE.id), ",");
             PSExportFactory exportFactory = PSExportFactory.getInstance();
@@ -85,11 +92,13 @@ public class ReportCLIInputBean {
                 documentationTypes.add(exportFactory.getExportTypeFromCommandLineOption(option));
             }
         }
+
         if (aLine.hasOption(MzidCLIParams.GZIP.id)) {
             String input = aLine.getOptionValue(MzidCLIParams.GZIP.id);
             int index = Integer.parseInt(input.trim());
             gzip = index == 1;
         }
+
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
     }
 
@@ -128,7 +137,7 @@ public class ReportCLIInputBean {
     public void setReportOutputFolder(File outputFolder) {
         this.reportOutputFolder = outputFolder;
     }
-    
+
     /**
      * Returns the report name prefix.
      *
@@ -191,10 +200,10 @@ public class ReportCLIInputBean {
     public boolean documentationExportNeeded() {
         return !documentationTypes.isEmpty();
     }
-    
+
     /**
      * Returns the path settings provided by the user.
-     * 
+     *
      * @return the path settings provided by the user
      */
     public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
@@ -203,7 +212,7 @@ public class ReportCLIInputBean {
 
     /**
      * Returns a boolean indicating whether the export should be gzipped.
-     * 
+     *
      * @return a boolean indicating whether the export should be gzipped
      */
     public boolean isGzip() {
