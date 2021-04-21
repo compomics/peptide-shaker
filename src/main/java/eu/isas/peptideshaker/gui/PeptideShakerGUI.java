@@ -645,8 +645,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             String javaVersion = System.getProperty("java.version");
             boolean javaVersionWarning = javaVersion.startsWith("1.5") 
                 || javaVersion.startsWith("1.6")
-                || javaVersion.startsWith("1.7") 
-                || javaVersion.startsWith("1.8");
+                || javaVersion.startsWith("1.7");
 
             // add desktop shortcut?
             if (!PeptideShaker.getJarFilePath().equalsIgnoreCase(".")

@@ -70,6 +70,8 @@ public class PathSettingsCLI {
             } else {
                 PeptideShakerCLI.redirectErrorStream(new File(PeptideShaker.getJarFilePath() + File.separator + "resources"));
             }
+        } else {
+            System.setErr(new java.io.PrintStream(System.out));
         }
 
         if (pathSettingsCLIInputBean.hasInput()) {
