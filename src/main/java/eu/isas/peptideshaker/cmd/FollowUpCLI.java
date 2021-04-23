@@ -549,7 +549,7 @@ public class FollowUpCLI extends PsdbParent {
             // check if there are updates to the paths
             String[] nonPathSettingArgsAsList = PathSettingsCLI.extractAndUpdatePathOptions(args);
 
-            // parse the rest of the cptions   
+            // parse the rest of the options   
             Options nonPathOptions = new Options();
             FollowUpCLIParams.createOptionsCLI(nonPathOptions);
             DefaultParser parser = new DefaultParser();

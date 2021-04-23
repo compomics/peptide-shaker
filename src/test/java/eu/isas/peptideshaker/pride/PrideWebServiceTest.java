@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.pride;
 
 import java.text.SimpleDateFormat;
 import java.util.Set;
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.TestCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;

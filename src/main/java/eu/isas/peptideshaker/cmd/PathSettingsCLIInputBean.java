@@ -30,7 +30,7 @@ public class PathSettingsCLIInputBean {
      * Whether a log file is to be used. Setting this option to false, sends all
      * of the logs to the standard output instead.
      */
-    private boolean useLogFile = true;
+    private Boolean useLogFile = null;
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.
@@ -95,7 +95,10 @@ public class PathSettingsCLIInputBean {
      * configuration input.
      */
     public boolean hasInput() {
-        return !tempFolder.equals("") || !paths.isEmpty() || logFolder != null;
+        return !tempFolder.equals("")
+                || !paths.isEmpty()
+                || logFolder != null
+                || useLogFile != null;
     }
 
     /**
@@ -115,6 +118,9 @@ public class PathSettingsCLIInputBean {
      * standard output
      */
     public boolean useLogFile() {
+        if (useLogFile == null) {
+            return true;
+        }
         return useLogFile;
     }
 }
