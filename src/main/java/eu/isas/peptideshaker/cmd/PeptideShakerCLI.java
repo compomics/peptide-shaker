@@ -269,7 +269,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             }
 
             // save project
-            if (cliInputBean.getOutput() != null) { 
+            if (cliInputBean.getOutput() != null) {
                 try {
                     psdbFile = cliInputBean.getOutput();
                     waitingHandler.appendReport("Saving results.", true, true);
@@ -552,7 +552,10 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                 );
                             } catch (Exception e) {
                                 waitingHandler.appendReport(
-                                        "An error occurred while exporting the documentation for " + reportType + ". " + getLogFileMessage(),
+                                        "An error occurred while exporting the documentation for "
+                                        + reportType
+                                        + ". "
+                                        + getLogFileMessage(),
                                         true,
                                         true
                                 );
@@ -785,50 +788,32 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         }
 
         if (report != null) {
+
             if (waitingHandler instanceof WaitingDialog) {
                 report = "<html><br>";
                 report += "<b>Report:</b><br>";
                 report += "<pre>" + ((WaitingDialog) waitingHandler).getReport(null) + "</pre>";
                 report += "</html>";
             }
-        }
-
-        if (report != null) {
 
             try {
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
-                File psReportFile;
-                File logReportFile = null;
+                File psReportFile = null;
                 PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
 
                 if (getPsdbFile() != null) {
                     String fileName = "PeptideShaker Report " + getPsdbFile().getName() + " " + df.format(new Date()) + ".html";
                     psReportFile = new File(getPsdbFile().getParentFile(), fileName);
-                    if (pathSettingsCLIInputBean.getLogFolder() != null) {
-                        logReportFile = new File(pathSettingsCLIInputBean.getLogFolder(), fileName);
-                    }
-                } else {
+                } else if (cliInputBean.getOutput() != null) {
                     String fileName = "PeptideShaker Report " + df.format(new Date()) + ".html";
-                    if (cliInputBean.getOutput() == null) {
-                        psReportFile = new File(logFolder.getAbsolutePath(), fileName);
-                    } else {
-                        psReportFile = new File(cliInputBean.getOutput().getParentFile(), fileName);
-                    }
-
-                    if (pathSettingsCLIInputBean.getLogFolder() != null) {
-                        logReportFile = new File(pathSettingsCLIInputBean.getLogFolder(), fileName);
-                    }
+                    psReportFile = new File(cliInputBean.getOutput().getParentFile(), fileName);
+                } else if (pathSettingsCLIInputBean.getLogFolder() != null) {
+                    String fileName = "PeptideShaker Report " + df.format(new Date()) + ".html";
+                    psReportFile = new File(pathSettingsCLIInputBean.getLogFolder(), fileName);
                 }
 
-                FileWriter fw = new FileWriter(psReportFile);
-                try {
-                    fw.write(report);
-                } finally {
-                    fw.close();
-                }
-
-                if (logReportFile != null) {
-                    fw = new FileWriter(logReportFile);
+                if (psReportFile != null) {
+                    FileWriter fw = new FileWriter(psReportFile);
                     try {
                         fw.write(report);
                     } finally {
@@ -837,7 +822,12 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 }
 
             } catch (Exception ex) {
-                waitingHandler.appendReport("An error occurred while saving the PeptideShaker report. " + getLogFileMessage(), true, true);
+                waitingHandler.appendReport(
+                        "An error occurred while saving the PeptideShaker report. "
+                        + getLogFileMessage(),
+                        true,
+                        true
+                );
                 ex.printStackTrace();
             }
         }
