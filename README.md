@@ -81,7 +81,7 @@ To start using PeptideShaker, unzip the downloaded file, and double-click the `P
 
 ### Minimum Requirements ###
 
-It should be possible to run PeptideShaker on almost any computer where Java 1.6 or newer is installed. We recommend always using the latest version of Java, 1.7 or newer is recommend.
+It should be possible to run PeptideShaker on almost any computer where Java 1.8 or newer is installed. We recommend always using the latest version of Java.
 
 However to get the best out of PeptideShaker a newer machine with at least 4 GB of memory is recommended. If parsing big datasets even more memory is required: the bigger the dataset the more memory you need.
 
