@@ -100,7 +100,6 @@ public class PSExportFactory implements ExportFactory {
 
             } catch (Exception e) {
 
-                e.printStackTrace();
                 instance = new PSExportFactory();
 
                 try {
