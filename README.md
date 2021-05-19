@@ -16,7 +16,7 @@
 
 |   |   |   |
 | :------------------------- | :---------------: | :--: |
-| [![download](https://github.com/compomics/peptide-shaker/wiki/images/download_button.png)](http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/2.0.24/PeptideShaker-2.0.24.zip) | *v2.0.24 - All platforms* | [ReleaseNotes](https://github.com/compomics/peptide-shaker/wiki/ReleaseNotes) |
+| [![download](https://github.com/compomics/peptide-shaker/wiki/images/download_button.png)](http://genesis.ugent.be/maven2/eu/isas/peptideshaker/PeptideShaker/2.0.25/PeptideShaker-2.0.25.zip) | *v2.0.25 - All platforms* | [ReleaseNotes](https://github.com/compomics/peptide-shaker/wiki/ReleaseNotes) |
 
 ---
 
@@ -81,7 +81,7 @@ To start using PeptideShaker, unzip the downloaded file, and double-click the `P
 
 ### Minimum Requirements ###
 
-It should be possible to run PeptideShaker on almost any computer where Java 1.6 or newer is installed. We recommend always using the latest version of Java, 1.7 or newer is recommend.
+It should be possible to run PeptideShaker on almost any computer where Java 1.8 or newer is installed. We recommend always using the latest version of Java.
 
 However to get the best out of PeptideShaker a newer machine with at least 4 GB of memory is recommended. If parsing big datasets even more memory is required: the bigger the dataset the more memory you need.
 

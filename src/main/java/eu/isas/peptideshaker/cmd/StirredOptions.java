@@ -11,10 +11,10 @@ import org.apache.commons.cli.Options;
  */
 public enum StirredOptions {
 
-    input("i", "input", "The file containing the peptides.", true, true),
+    input("i", "input", "The peptide identification file.", true, true),
     spectrum("s", "spectrum", "The file containing the spectra. Mandatory when not provided in a SearchGUI packaged output file.", false, true),
     fasta("f", "fasta", "The file containing the protein or peptide sequences. Mandatory when not provided in a SearchGUI packaged output file.", false, true),
-    identificationParametersFile("p", "identificationParametersFile", "The file containing the identification parameters. Mandatory when not provided in a SearchGUI packaged output file.", false, true),
+    identificationParametersFile("p", "id_params", "The file containing the identification parameters. Mandatory when not provided in a SearchGUI packaged output file.", false, true),
     tempFolder("tmp", "tempFolder", "The temp folder to use for temp files. Default: next to output file.", false, true),
     log("l", "log", "The file to write the log to. Default: next to output file.", false, true),
     nThreads("t", "nThreads", "The number of threads to use. Default: the number of available processors.", false, true),
@@ -23,9 +23,9 @@ public enum StirredOptions {
     contactLastName("cln", "contactLastName", "The last name of the contact to annotate in the mzIdentML file. Default: 'Unknown'.", false, true),
     contactAddress("ca", "contactAddress", "The address of the contact to annotate in the mzIdentML file. Default: 'Unknown'.", false, true),
     contactEmail("ce", "contactEmail", "The email of the contact to annotate in the mzIdentML file. Default: 'Unknown'.", false, true),
-    contactOrganizationName("con", "contactOrganizationName", "The name of the organization of the contact to annotate in the mzIdentML file. Default: 'Unknown'.", false, true),
-    contactOrganizationAddress("coa", "contactOrganizationAddress", "The address of the organization of the contact to annotate in the mzIdentML file. Default: 'Unknown'.", false, true),
-    contactOrganizationEmail("coe", "contactOrganizationEmail", "The email of the organization of the contact to annotate in the mzIdentML file. Default: 'Unknown'.", false, true),
+    contactOrganizationName("con", "contactOrgName", "The name of the organization of the contact to annotate in the mzIdentML file. Default: 'Unknown'.", false, true),
+    contactOrganizationAddress("coa", "contactOrgAddress", "The address of the organization of the contact to annotate in the mzIdentML file. Default: 'Unknown'.", false, true),
+    contactOrganizationEmail("coe", "contactOrgEmail", "The email of the organization of the contact to annotate in the mzIdentML file. Default: 'Unknown'.", false, true),
     output("o", "output", "The folder where to write the results.", true, true);
 
     /**
