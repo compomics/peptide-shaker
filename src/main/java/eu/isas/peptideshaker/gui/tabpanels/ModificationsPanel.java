@@ -42,8 +42,6 @@ import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelD
 import eu.isas.peptideshaker.gui.ModificationSiteInferenceDialog;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
-import com.compomics.util.experiment.mass_spectrometry.spectra.SpectrumUtil;
-import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
