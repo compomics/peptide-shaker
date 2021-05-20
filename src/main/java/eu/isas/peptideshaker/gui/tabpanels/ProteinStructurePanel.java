@@ -1735,12 +1735,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 public void run() {
 
                     progressDialog.setPrimaryProgressCounterIndeterminate(true);
-
                     int selectedPdbIndex = (Integer) pdbMatchesJTable.getValueAt(pdbMatchesJTable.getSelectedRow(), 0);
                     PdbParameter lParam = uniProtPdb.getPdbs().get(selectedPdbIndex - 1);
-
-                    String link = "http://www.rcsb.org/pdb/files/" + lParam.getPdbaccession() + ".pdb";
-
+                    String link = "https://files.rcsb.org/download/" + lParam.getPdbaccession() + ".pdb";
                     jmolPanel.getViewer().openFile(link);
                     if (ribbonModel) {
                         jmolPanel.getViewer().evalString("select all; ribbon only;");
@@ -3077,17 +3074,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             long peptideKey = peptideTableMap.get(getPeptideIndex(i));
             PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
             String peptideSequence = peptideMatch.getPeptide().getSequence();
-            AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
-
+//            AminoAcidPattern aminoAcidPattern = AminoAcidPattern.getAminoAcidPatternFromString(peptideSequence);
             for (int peptideStart : peptideMatch.getPeptide().getProteinMapping().get(proteinMatch.getLeadingAccession())) {
-
                 int peptideEnd = peptideStart + peptideSequence.length();
-
                 jmolPanel.getViewer().evalString("select resno >=" + (peptideStart + 1 - chains[selectedChainIndex - 1].getDifference())
                         + " and resno <=" + (peptideEnd - chains[selectedChainIndex - 1].getDifference())
                         + " and chain = " + currentChain + "; color green");
-
-                if (aminoAcidPattern.getIndexes(chainSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters()).length != 0) {
+                if (peptideStart >= chains[selectedChainIndex - 1].getStartProtein()&& peptideEnd <= chains[selectedChainIndex - 1].getEndProtein()) {//if (aminoAcidPattern.getIndexes(chainSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters()).length != 0) {
                     peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
                     peptidePdbArray.add(peptideKey);
                 }
@@ -3593,7 +3586,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                 if (tableIndex == TableIndex.PDB_CHAINS) {
 
-                    try ( SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
+                    try (SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
 
                         writer.writeLine(
                                 "",
@@ -3626,7 +3619,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                 } else if (tableIndex == TableIndex.PDB_MATCHES) {
 
-                    try ( BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile))) {
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile))) {
 
                         Util.tableToFile(
                                 pdbMatchesJTable,
@@ -3785,9 +3778,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     && spectrumTitle != null) {
 
                 peptideShakerGUI.setSelectedItems(
-                        peptideShakerGUI.getSelectedProteinKey(), 
-                        peptideShakerGUI.getSelectedPeptideKey(), 
-                        spectrumFile, 
+                        peptideShakerGUI.getSelectedProteinKey(),
+                        peptideShakerGUI.getSelectedPeptideKey(),
+                        spectrumFile,
                         spectrumTitle
                 );
 
