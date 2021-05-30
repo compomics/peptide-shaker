@@ -180,8 +180,8 @@ public class PsPsmSection {
         }
 
         SpectrumMatchesIterator psmIterator = identification.getSpectrumMatchesIterator(keys, waitingHandler);
-
         SpectrumMatch spectrumMatch;
+
         while ((spectrumMatch = psmIterator.next()) != null) {
 
             if (waitingHandler != null) {
@@ -202,7 +202,10 @@ public class PsPsmSection {
 
                 if (peptideAssumption != null || tagAssumption != null) {
 
-                    if (decoys || peptideAssumption == null || !PeptideUtils.isDecoy(peptideAssumption.getPeptide(), sequenceProvider)) {
+                    if (decoys 
+                            || (peptideAssumption != null && !PeptideUtils.isDecoy(peptideAssumption.getPeptide(), sequenceProvider))
+                            || (tagAssumption != null) // @TODO: check whether the tag is a decoy..?
+                            ) {
 
                         boolean first = true;
 
@@ -232,6 +235,7 @@ public class PsPsmSection {
                             }
 
                             String feature;
+
                             if (peptideAssumption != null) {
 
                                 feature = PsIdentificationAlgorithmMatchesSection.getPeptideAssumptionFeature(
@@ -251,7 +255,7 @@ public class PsPsmSection {
                                         waitingHandler
                                 );
 
-                            } else if (spectrumMatch.getBestTagAssumption() != null) {
+                            } else if (tagAssumption != null) {
 
                                 feature = PsIdentificationAlgorithmMatchesSection.getTagAssumptionFeature(
                                         identification,
@@ -269,7 +273,13 @@ public class PsPsmSection {
 
                             } else {
 
-                                throw new IllegalArgumentException("No best match found for spectrum " + spectrumTitle + " in " + spectrumFile + ".");
+                                throw new IllegalArgumentException(
+                                        "No best match found for spectrum "
+                                        + spectrumTitle
+                                        + " in "
+                                        + spectrumFile
+                                        + "."
+                                );
 
                             }
 
@@ -313,12 +323,12 @@ public class PsPsmSection {
                             fractionPrefix.append(line).append(".");
                             writer.increaseDepth();
 
-                            if (spectrumMatch.getBestPeptideAssumption() != null) {
+                            if (peptideAssumption != null) {
 
                                 fragmentSection.writeSection(
                                         spectrumFile,
                                         spectrumTitle,
-                                        spectrumMatch.getBestPeptideAssumption(),
+                                        peptideAssumption,
                                         sequenceProvider,
                                         spectrumProvider,
                                         identificationParameters,
@@ -326,12 +336,12 @@ public class PsPsmSection {
                                         null
                                 );
 
-                            } else if (spectrumMatch.getBestTagAssumption() != null) {
+                            } else if (tagAssumption != null) {
 
                                 fragmentSection.writeSection(
                                         spectrumFile,
                                         spectrumTitle,
-                                        spectrumMatch.getBestTagAssumption(),
+                                        tagAssumption,
                                         sequenceProvider,
                                         spectrumProvider,
                                         identificationParameters,
