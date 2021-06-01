@@ -603,8 +603,8 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
                 File projectFolder = psdbFile.getParentFile();
                 File dataFolder = new File(projectFolder, "data");
 
-                File fileInProjectFolder = new File(projectFolder, providedFastaLocation.getName());
-                File fileInDataFolder = new File(dataFolder, providedFastaLocation.getName());
+                File fileInProjectFolder = new File(projectFolder, IoUtil.getFileName(providedFastaLocation));
+                File fileInDataFolder = new File(dataFolder, IoUtil.getFileName(providedFastaLocation));
 
                 if (fileInProjectFolder.exists()) {
 
