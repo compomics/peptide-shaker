@@ -12,6 +12,7 @@ import eu.isas.peptideshaker.utils.PsdbParent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -63,6 +64,22 @@ public class ReportCLI extends PsdbParent {
      * @return returns 1 if the process was canceled
      */
     public Object call() {
+
+        // turn off illegal access log messages
+        try {
+            Class loggerClass = Class.forName("jdk.internal.module.IllegalAccessLogger");
+            Field loggerField = loggerClass.getDeclaredField("logger");
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Object unsafe = unsafeField.get(null);
+            Long offset = (Long) unsafeClass.getMethod("staticFieldOffset", Field.class).invoke(unsafe, loggerField);
+            unsafeClass.getMethod("putObjectVolatile", Object.class, long.class, Object.class) //
+                    .invoke(unsafe, loggerClass, offset, null);
+        } catch (Throwable ex) {
+            // ignore, i.e. simply show the warnings...
+            //ex.printStackTrace();
+        }
 
         setDbFolder(PeptideShaker.getMatchesFolder());
 
@@ -120,7 +137,7 @@ public class ReportCLI extends PsdbParent {
 
         // load the spectrum files
         try {
-            
+
             if (!loadSpectrumFiles(waitingHandler)) {
 
                 if (identification.getFractions().size() > 1) {
@@ -188,13 +205,13 @@ public class ReportCLI extends PsdbParent {
 
         // export report(s)
         if (reportCLIInputBean.exportNeeded()) {
-            
+
             int nSurroundingAAs = 2; //@TODO: this should not be hard coded
-            
+
             for (String reportType : reportCLIInputBean.getReportTypes()) {
-                
+
                 try {
-                    
+
                     CLIExportMethods.exportReport(
                             reportCLIInputBean,
                             reportType,
@@ -211,18 +228,18 @@ public class ReportCLI extends PsdbParent {
                             spectrumCountingParameters,
                             waitingHandler
                     );
-                    
+
                 } catch (Exception e) {
-                    
+
                     waitingHandler.appendReport(
-                            "An error occurred while exporting the " + reportType + ".", 
-                            true, 
+                            "An error occurred while exporting the " + reportType + ".",
+                            true,
                             true
                     );
-                    
+
                     e.printStackTrace();
                     waitingHandler.setRunCanceled();
-                
+
                 }
             }
         }
@@ -243,11 +260,11 @@ public class ReportCLI extends PsdbParent {
                 } catch (Exception e) {
 
                     waitingHandler.appendReport(
-                            "An error occurred while exporting the documentation for " + reportType + ".", 
-                            true, 
+                            "An error occurred while exporting the documentation for " + reportType + ".",
+                            true,
                             true
                     );
-                    
+
                     e.printStackTrace();
                     waitingHandler.setRunCanceled();
 

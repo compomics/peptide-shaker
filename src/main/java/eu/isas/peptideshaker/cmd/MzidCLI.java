@@ -11,6 +11,7 @@ import eu.isas.peptideshaker.utils.PsdbParent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
@@ -61,6 +62,22 @@ public class MzidCLI extends PsdbParent {
      * @return returns 1 if the process was canceled
      */
     public Object call() {
+
+        // turn off illegal access log messages
+        try {
+            Class loggerClass = Class.forName("jdk.internal.module.IllegalAccessLogger");
+            Field loggerField = loggerClass.getDeclaredField("logger");
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Object unsafe = unsafeField.get(null);
+            Long offset = (Long) unsafeClass.getMethod("staticFieldOffset", Field.class).invoke(unsafe, loggerField);
+            unsafeClass.getMethod("putObjectVolatile", Object.class, long.class, Object.class) //
+                    .invoke(unsafe, loggerClass, offset, null);
+        } catch (Throwable ex) {
+            // ignore, i.e. simply show the warnings...
+            //ex.printStackTrace();
+        }
 
         setDbFolder(PeptideShaker.getMatchesFolder());
 
@@ -130,19 +147,19 @@ public class MzidCLI extends PsdbParent {
             }
             return 1;
         }
-        
+
         // If not available on the computer, parse summary information about the fasta file
         try {
-            
+
             loadFastaFile(waitingHandler);
-            
+
         } catch (IOException e) {
-            
+
             e.printStackTrace();
             waitingHandler.appendReport("An error occurred while parsing the fasta file.", true, true);
             waitingHandler.setRunCanceled();
             return 1;
-            
+
         }
 
         // Load project specific PTMs
