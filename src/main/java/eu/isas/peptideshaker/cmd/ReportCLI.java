@@ -22,6 +22,7 @@ import org.apache.commons.cli.Options;
  * This class performs the command line export of reports in command line.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ReportCLI extends PsdbParent {
 
@@ -113,14 +114,24 @@ public class ReportCLI extends PsdbParent {
 
             } else {
 
-                waitingHandler.appendReport("PeptideShaker project input missing.", true, true);
+                waitingHandler.appendReport(
+                        "PeptideShaker project input missing.",
+                        true,
+                        true
+                );
+
                 return 1;
 
             }
 
         } catch (IOException e) {
 
-            waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
+            waitingHandler.appendReport(
+                    "An error occurred while reading: " + inputFilePath + ".",
+                    true,
+                    true
+            );
+
             e.printStackTrace();
 
             try {
@@ -142,11 +153,21 @@ public class ReportCLI extends PsdbParent {
 
                 if (identification.getFractions().size() > 1) {
 
-                    waitingHandler.appendReport("The spectrum files were not found. Please provide their location in the command line parameters.", true, true);
+                    waitingHandler.appendReport(
+                            "The spectrum files were not found. Please provide "
+                            + "their location in the command line parameters.",
+                            true,
+                            true
+                    );
 
                 } else {
 
-                    waitingHandler.appendReport("The spectrum file was not found. Please provide its location in the command line parameters.", true, true);
+                    waitingHandler.appendReport(
+                            "The spectrum file was not found. Please provide its "
+                            + "location in the command line parameters.",
+                            true,
+                            true
+                    );
 
                 }
                 try {
@@ -155,7 +176,12 @@ public class ReportCLI extends PsdbParent {
 
                 } catch (Exception e2) {
 
-                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                    waitingHandler.appendReport(
+                            "An error occurred while closing PeptideShaker.",
+                            true,
+                            true
+                    );
+
                     e2.printStackTrace();
 
                 }
@@ -165,7 +191,12 @@ public class ReportCLI extends PsdbParent {
             }
         } catch (Exception e) {
 
-            waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
+            waitingHandler.appendReport(
+                    "An error occurred while loading the spectrum file(s).",
+                    true,
+                    true
+            );
+
             e.printStackTrace();
 
             try {
@@ -174,7 +205,12 @@ public class ReportCLI extends PsdbParent {
 
             } catch (Exception e2) {
 
-                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                waitingHandler.appendReport(
+                        "An error occurred while closing PeptideShaker.",
+                        true,
+                        true
+                );
+
                 e2.printStackTrace();
 
             }
@@ -191,13 +227,19 @@ public class ReportCLI extends PsdbParent {
         } catch (IOException e) {
 
             e.printStackTrace();
-            waitingHandler.appendReport("An error occurred while parsing the fasta file.", true, true);
+
+            waitingHandler.appendReport(
+                    "An error occurred while parsing the fasta file.",
+                    true,
+                    true
+            );
+
             waitingHandler.setRunCanceled();
             return 1;
 
         }
 
-        // Load project specific PTMs
+        // Load project-specific PTMs
         String error = PeptideShaker.loadModifications(getIdentificationParameters().getSearchParameters());
         if (error != null) {
             System.out.println(error);
@@ -205,8 +247,6 @@ public class ReportCLI extends PsdbParent {
 
         // export report(s)
         if (reportCLIInputBean.exportNeeded()) {
-
-            int nSurroundingAAs = 2; //@TODO: this should not be hard coded
 
             for (String reportType : reportCLIInputBean.getReportTypes()) {
 
@@ -224,7 +264,7 @@ public class ReportCLI extends PsdbParent {
                             sequenceProvider,
                             proteinDetailsProvider,
                             msFileHandler,
-                            nSurroundingAAs,
+                            displayParameters.getnAASurroundingPeptides(),
                             spectrumCountingParameters,
                             waitingHandler
                     );
@@ -273,20 +313,40 @@ public class ReportCLI extends PsdbParent {
         }
 
         try {
+
             PeptideShakerCLI.closePeptideShaker(identification);
         } catch (Exception e2) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+
+            waitingHandler.appendReport(
+                    "An error occurred while closing PeptideShaker.",
+                    true,
+                    true
+            );
+
             e2.printStackTrace();
+
         }
 
         if (!waitingHandler.isRunCanceled()) {
-            waitingHandler.appendReport("Report export completed.", true, true);
+
+            waitingHandler.appendReport(
+                    "Report export completed.",
+                    true,
+                    true
+            );
+
             System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
-            // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+
+            // Note that if a different solution is found, the DummyFrame has to
+            // be closed similar to the setVisible method in the WelcomeDialog!!
             return 0;
+
         } else {
+
             System.exit(1); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
-            // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+
+            // Note that if a different solution is found, the DummyFrame has to 
+            // be closed similar to the setVisible method in the WelcomeDialog!!
             return 1;
         }
     }
@@ -295,19 +355,27 @@ public class ReportCLI extends PsdbParent {
      * PeptideShaker report CLI header message when printing the usage.
      */
     private static String getHeader() {
+
         return System.getProperty("line.separator")
-                + "The PeptideShaker report command line takes a psdb file and generates various types of reports." + System.getProperty("line.separator")
+                + "The PeptideShaker report command line takes a psdb file and "
+                + "generates various types of reports."
                 + System.getProperty("line.separator")
-                + "For further help see https://compomics.github.io/projects/peptide-shaker.html and https://compomics.github.io/projects/peptide-shaker/wiki/PeptideShakerCLI.html." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "Or contact the developers at https://groups.google.com/group/peptide-shaker." + System.getProperty("line.separator")
+                + "For further help see https://compomics.github.io/projects/peptide-shaker.html "
+                + "and https://compomics.github.io/projects/peptide-shaker/wiki/PeptideShakerCLI.html."
+                + System.getProperty("line.separator")
+                + System.getProperty("line.separator")
+                + "Or contact the developers at https://groups.google.com/group/peptide-shaker."
+                + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "----------------------"
                 + System.getProperty("line.separator")
                 + "OPTIONS"
                 + System.getProperty("line.separator")
-                + "----------------------" + System.getProperty("line.separator")
+                + "----------------------"
+                + System.getProperty("line.separator")
                 + System.getProperty("line.separator");
+
     }
 
     /**
@@ -322,27 +390,67 @@ public class ReportCLI extends PsdbParent {
         if (aLine.getOptions().length == 0) {
             return false;
         }
-        if (!aLine.hasOption(ReportCLIParams.PSDB_FILE.id) || ((String) aLine.getOptionValue(ReportCLIParams.PSDB_FILE.id)).equals("")) {
-            System.out.println("\n" + ReportCLIParams.PSDB_FILE.description + " not specified.\n");
+
+        if (!aLine.hasOption(ReportCLIParams.PSDB_FILE.id)
+                || ((String) aLine.getOptionValue(ReportCLIParams.PSDB_FILE.id)).equals("")) {
+
+            System.out.println(
+                    "\n"
+                    + ReportCLIParams.PSDB_FILE.description
+                    + " not specified.\n"
+            );
+
             return false;
+
         } else {
+
             String fileTxt = aLine.getOptionValue(ReportCLIParams.PSDB_FILE.id);
             File testFile = new File(fileTxt.trim());
+
             if (!testFile.exists()) {
-                System.out.println("\n" + ReportCLIParams.PSDB_FILE.description + " \'" + testFile.getAbsolutePath() + "\' not found.\n");
+
+                System.out.println(
+                        "\n"
+                        + ReportCLIParams.PSDB_FILE.description
+                        + " \'"
+                        + testFile.getAbsolutePath()
+                        + "\' not found.\n"
+                );
+
                 return false;
             }
+
         }
-        if (!aLine.hasOption(ReportCLIParams.EXPORT_FOLDER.id) || ((String) aLine.getOptionValue(ReportCLIParams.EXPORT_FOLDER.id)).equals("")) {
-            System.out.println("\n" + ReportCLIParams.EXPORT_FOLDER.description + " not specified.\n");
+
+        if (!aLine.hasOption(ReportCLIParams.EXPORT_FOLDER.id)
+                || ((String) aLine.getOptionValue(ReportCLIParams.EXPORT_FOLDER.id)).equals("")) {
+
+            System.out.println(
+                    "\n"
+                    + ReportCLIParams.EXPORT_FOLDER.description
+                    + " not specified.\n"
+            );
+
             return false;
+
         } else {
+
             String fileTxt = aLine.getOptionValue(ReportCLIParams.EXPORT_FOLDER.id);
             File testFile = new File(fileTxt.trim());
+
             if (!testFile.exists()) {
-                System.out.println("\n" + ReportCLIParams.EXPORT_FOLDER.description + " \'" + testFile.getAbsolutePath() + "\' not found.\n");
+
+                System.out.println(
+                        "\n"
+                        + ReportCLIParams.EXPORT_FOLDER.description
+                        + " \'"
+                        + testFile.getAbsolutePath()
+                        + "\' not found.\n"
+                );
+
                 return false;
             }
+
         }
 
         return true;
@@ -367,33 +475,80 @@ public class ReportCLI extends PsdbParent {
             CommandLine line = parser.parse(nonPathOptions, nonPathSettingArgsAsList);
 
             if (!isValidStartup(line)) {
+
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
-                lPrintWriter.print(System.getProperty("line.separator") + "===============================================" + System.getProperty("line.separator"));
-                lPrintWriter.print("PeptideShaker Report Exporter - Command Line" + System.getProperty("line.separator"));
-                lPrintWriter.print("===============================================" + System.getProperty("line.separator"));
+
+                lPrintWriter.print(
+                        System.getProperty("line.separator")
+                        + "==============================================="
+                        + System.getProperty("line.separator")
+                );
+
+                lPrintWriter.print(
+                        "PeptideShaker Report Exporter - Command Line"
+                        + System.getProperty("line.separator")
+                );
+
+                lPrintWriter.print(
+                        "==============================================="
+                        + System.getProperty("line.separator")
+                );
+
                 lPrintWriter.print(getHeader());
                 lPrintWriter.print(ReportCLIParams.getOptionsAsString());
                 lPrintWriter.flush();
                 lPrintWriter.close();
 
                 System.exit(0);
+
             } else {
+
                 ReportCLIInputBean lCLIBean = new ReportCLIInputBean(line);
                 ReportCLI cli = new ReportCLI(lCLIBean);
                 cli.call();
+
             }
         } catch (OutOfMemoryError e) {
-            System.out.println("<CompomicsError>PeptideShaker used up all the memory and had to be stopped. See the PeptideShaker log for details.</CompomicsError>");
+
+            System.out.println(
+                    "<CompomicsError>PeptideShaker used up all the memory and "
+                    + "had to be stopped. See the PeptideShaker log for details."
+                    + "</CompomicsError>"
+            );
+
             System.err.println("Ran out of memory!");
-            System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory() + ".");
-            System.err.println("Memory used by the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
-            System.err.println("Free memory in the Java virtual machine: " + Runtime.getRuntime().freeMemory() + ".");
+
+            System.err.println(
+                    "Memory given to the Java virtual machine: "
+                    + Runtime.getRuntime().maxMemory()
+                    + "."
+            );
+
+            System.err.println(
+                    "Memory used by the Java virtual machine: "
+                    + Runtime.getRuntime().totalMemory()
+                    + "."
+            );
+
+            System.err.println(
+                    "Free memory in the Java virtual machine: "
+                    + Runtime.getRuntime().freeMemory()
+                    + "."
+            );
+
             e.printStackTrace();
             System.exit(1);
+
         } catch (Exception e) {
-            System.out.print("<CompomicsError>PeptideShaker processing failed. See the PeptideShaker log for details.</CompomicsError>");
+
+            System.out.print(
+                    "<CompomicsError>PeptideShaker processing failed. See the "
+                    + "PeptideShaker log for details.</CompomicsError>"
+            );
+
             e.printStackTrace();
             System.exit(1);
+
         }
     }
 
