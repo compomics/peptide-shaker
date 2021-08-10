@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>2.0.33</version>
+    <version>2.0.34</version>
     <name>PeptideShaker</name>
     <url>https://github.com/compomics/peptide-shaker</url>
     <description>Interpretation of proteomics identification results</description>
@@ -347,7 +347,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>5.0.24</version>
+            <version>5.0.25</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -365,29 +365,9 @@
                     <artifactId>swing-layout</artifactId>
                     <groupId>org.swinglabs</groupId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>sqlite-jdbc</artifactId>
-                    <groupId>org.xerial</groupId>
-                </exclusion>
             </exclusions>
         </dependency>
-        
-        
-        
-        <!-- ZooDB as the new backend -->
-        <dependency>
-            <groupId>org.zoodb</groupId>
-            <artifactId>zoodb</artifactId>
-            <version>0.6.0</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.18.0</version>
-         </dependency>
-        
-       
+
         <dependency>
             <groupId>de.proteinms.omxparser</groupId>
             <artifactId>omssa-parser</artifactId>
