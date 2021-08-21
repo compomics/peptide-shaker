@@ -84,7 +84,7 @@ public class PsmProcessor {
             ExceptionHandler exceptionHandler
     ) throws InterruptedException, TimeoutException {
 
-        ConcurrentLinkedQueue<Long> spectrumMatchKeysIterator 
+        ConcurrentLinkedQueue<Long> spectrumMatchKeysIterator
                 = new ConcurrentLinkedQueue<>(identification.getSpectrumIdentificationKeys());
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);

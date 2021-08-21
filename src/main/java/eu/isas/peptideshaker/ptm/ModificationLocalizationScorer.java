@@ -1109,8 +1109,6 @@ public class ModificationLocalizationScorer extends ExperimentObject {
             HashMap<Double, HashMap<Integer, HashSet<String>>> preferentialSites
     ) {
 
-        
-
         int nMasses = nRepresentativesMap.size();
         HashMap<Double, Integer> nToSelectMap = new HashMap<>(nMasses);
         HashMap<Double, Integer> nSelectedMap = new HashMap<>(nMasses);
@@ -2074,7 +2072,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                     }
                 }
             }
-
+            
             // Assign modifications to the sites passing the threshold.
             if (!scoreToSiteMap.isEmpty()) {
 
