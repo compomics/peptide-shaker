@@ -107,6 +107,7 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, PEPTIDESHAKER_OUTPUT.id) + " " + PEPTIDESHAKER_OUTPUT.description + "\n";
         
         output += "\n\nOptional Processing Parameters:\n\n";
+        output += "-" + String.format(formatter, PROJECT_TYPE.id) + " " + PROJECT_TYPE.description + "\n";
         output += "-" + String.format(formatter, GUI.id) + " " + GUI.description + "\n";
         output += "-" + String.format(formatter, THREADS.id) + " " + THREADS.description + "\n";
 
