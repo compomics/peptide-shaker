@@ -470,6 +470,31 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     }
                 }
 
+                // DeepLC export
+                if (followUpCLIInputBean.deepLcExportNeeded()) {
+                    try {
+                        followupAnalysisFiles.addAll(
+                                CLIExportMethods.exportDeepLC(
+                                        followUpCLIInputBean,
+                                        identification,
+                                        identificationParameters.getSearchParameters().getModificationParameters(),
+                                        identificationParameters.getSequenceMatchingParameters(),
+                                        sequenceProvider,
+                                        msFileHandler,
+                                        waitingHandler
+                                )
+                        );
+                    } catch (Exception e) {
+                        waitingHandler.appendReport(
+                                "An error occurred while generating the proteoforms list.",
+                                true,
+                                true
+                        );
+                        e.printStackTrace();
+                        waitingHandler.setRunCanceled();
+                    }
+                }
+
             }
 
             // report export if needed

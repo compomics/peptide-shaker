@@ -96,6 +96,10 @@ public class FollowUpCLIInputBean {
      */
     private File proteoformsFile = null;
     /**
+     * The stem to use for the path to DeepLC training files.
+     */
+    private String deepLcStem = null;
+    /**
      * The path settings.
      */
     private final PathSettingsCLIInputBean pathSettingsCLIInputBean;
@@ -169,6 +173,9 @@ public class FollowUpCLIInputBean {
         }
         if (aLine.hasOption(FollowUpCLIParams.PROTEOFORMS_FILE.id)) {
             proteoformsFile = new File(aLine.getOptionValue(FollowUpCLIParams.PROTEOFORMS_FILE.id));
+        }
+        if (aLine.hasOption(FollowUpCLIParams.DEEPLC_FILE.id)) {
+            deepLcStem = aLine.getOptionValue(FollowUpCLIParams.DEEPLC_FILE.id);
         }
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
     }
@@ -298,6 +305,15 @@ public class FollowUpCLIInputBean {
      */
     public File getProteoformsFile() {
         return proteoformsFile;
+    }
+
+    /**
+     * Returns the stem to use for the path to DeepLC training files.
+     * 
+     * @return The stem to use for the path to DeepLC training files.
+     */
+    public String getDeepLcStem() {
+        return deepLcStem;
     }
 
     /**
@@ -453,6 +469,15 @@ public class FollowUpCLIInputBean {
      */
     public boolean proteoformsNeeded() {
         return proteoformsFile != null;
+    }
+
+    /**
+     * Indicates whether DeepLC export is needed.
+     *
+     * @return whether DeepLC export is needed
+     */
+    public boolean deepLcExportNeeded() {
+        return deepLcStem != null;
     }
 
     /**

@@ -457,6 +457,35 @@ public class FollowUpCLI extends PsdbParent {
             }
         }
 
+        // DeepLC export
+        if (followUpCLIInputBean.deepLcExportNeeded()) {
+
+            try {
+
+                CLIExportMethods.exportDeepLC(
+                        followUpCLIInputBean,
+                        identification,
+                        identificationParameters.getSearchParameters().getModificationParameters(),
+                        identificationParameters.getSequenceMatchingParameters(),
+                        sequenceProvider,
+                        msFileHandler,
+                        waitingHandler
+                );
+
+            } catch (Exception e) {
+
+                waitingHandler.appendReport(
+                        "An error occurred while generating the DeepLC export.",
+                        true,
+                        true
+                );
+
+                e.printStackTrace();
+                waitingHandler.setRunCanceled();
+
+            }
+        }
+
         try {
 
             PeptideShakerCLI.closePeptideShaker(identification);

@@ -60,7 +60,7 @@ public class FastaExport {
                                 accession -> !ProteinUtils.isDecoy(accession, sequenceProvider) && include(accession, exportType, identification)
                         )
                         .forEach(accession -> {
-                            writer.writeLine(String.join("", ">", sequenceProvider.getHeader(accession)));
+                            writer.writeLine(String.join("", ">", sequenceProvider.getHeaderAsString(accession)));
                             writer.write(sequenceProvider.getSequence(accession), true);
                             waitingHandler.increaseSecondaryProgressCounter();
                         });

@@ -35,7 +35,8 @@ public enum FollowUpCLIParams {
     INCLUSION_LIST_PROTEIN_FILTERS("inclusion_list_protein_filters", "Protein inference filters to be used for the inclusion list export (comma separated). " + InclusionListExport.getProteinFiltersCommandLineOptions(), true, false),
     INCLUSION_LIST_PEPTIDE_FILTERS("inclusion_list_peptide_filters", "Peptide filters to be used for the inclusion list export (comma separated). " + InclusionListExport.PeptideFilterType.getCommandLineOptions(), true, false),
     INCLUSION_LIST_RT_WINDOW("inclusion_list_rt_window", "Retention time window for the inclusion list export (in seconds).", true, false),
-    PROTEOFORMS_FILE("proteoforms_file", "Output file for the proteoforms. (Existing file will be overwritten.)", true, false);
+    PROTEOFORMS_FILE("proteoforms_file", "Output file for the proteoforms. (Existing file will be overwritten.)", true, false),
+    DEEPLC_FILE("deeplc_file", "Path to the file where to write DeepLC training files. If the PeptideShaker project was built using multiple MS files, one training file per MS file will be exported. (Should end with .gz. Existing file will be overwritten.)", true, false);
 
     /**
      * Short Id for the CLI parameter.

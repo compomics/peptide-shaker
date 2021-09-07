@@ -26,6 +26,8 @@ import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCo
 import eu.isas.peptideshaker.utils.PsdbParent;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
+import com.compomics.util.parameters.identification.search.ModificationParameters;
+import eu.isas.peptideshaker.followup.DeepLcExport;
 import eu.isas.peptideshaker.followup.ProteoformExport;
 import java.io.File;
 import java.io.IOException;
@@ -281,6 +283,7 @@ public class CLIExportMethods {
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param waitingHandler a waiting handler to display progress
+     * 
      * @return File file containing the proteoforms data
      */
     public static File exportProteoforms(
@@ -297,6 +300,40 @@ public class CLIExportMethods {
                 waitingHandler
         );
         return destinationFile;
+    }
+
+    /**
+     * Exports DeepLC training files.
+     *
+     * @param followUpCLIInputBean the follow up input bean
+     * @param identification the identification
+     * @param modificationParameters The modification parameters.
+     * @param sequenceMatchingParameters The sequence matching parameters.
+     * @param sequenceProvider The sequence provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param waitingHandler The waiting handler.
+     */
+    public static ArrayList<File> exportDeepLC(
+            FollowUpCLIInputBean followUpCLIInputBean,
+            Identification identification,
+            ModificationParameters modificationParameters,
+            SequenceMatchingParameters sequenceMatchingParameters,
+            SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
+            WaitingHandler waitingHandler
+    ) {
+
+        String destinationStem = followUpCLIInputBean.getDeepLcStem();
+
+        return DeepLcExport.deepLcExport(
+                destinationStem, 
+                identification, 
+                modificationParameters, 
+                sequenceMatchingParameters, 
+                sequenceProvider, 
+                spectrumProvider, 
+                waitingHandler
+        );
     }
 
     /**
