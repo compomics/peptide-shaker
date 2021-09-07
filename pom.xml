@@ -303,13 +303,6 @@
             <url>http://genesis.UGent.be/maven2</url>
             <layout>default</layout>
         </repository>
-        
-        <!-- old EBI repository -->
-        <repository>
-            <id>ebi-repo</id> 
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-        </repository>
 
         <!-- EBI repository -->
         <repository>
@@ -347,7 +340,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>5.0.29</version>
+            <version>5.0.30</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>

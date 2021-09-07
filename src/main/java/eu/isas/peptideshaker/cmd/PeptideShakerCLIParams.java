@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.cli.identification_parameters.IdentificationParametersCLIParams;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import static eu.isas.peptideshaker.cmd.PathSettingsCLIParams.LOG_FOLDER;
 import static eu.isas.peptideshaker.cmd.PathSettingsCLIParams.USE_LOG_FOLDER;
 import org.apache.commons.cli.Options;
@@ -18,6 +19,7 @@ public enum PeptideShakerCLIParams {
     // https://github.com/compomics/peptide-shaker/wiki/PeptideShakerCLI
     ///////////////////////////////////////////////////////////////////////////
     REFERENCE("reference", "The reference/name for the project.", true),
+    PROJECT_TYPE("project_type", "The type of project. " + ProjectType.getCommandLineOptions(), false),
     SPECTRUM_FILES("spectrum_files", "Spectrum files, comma separated list or an entire folder.", false),
     FASTA_FILE("fasta_file", "The complete path to the FASTA file.", false),
     IDENTIFICATION_FILES("identification_files", "Identification files, comma separated list or an entire folder.", true),

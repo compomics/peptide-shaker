@@ -1141,7 +1141,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         spectrumCountingParameters = new SpectrumCountingParameters();
 
         // set the project type
-        projectType = ProjectType.protein; // @TODO: make it a user setting
+        projectType = cliInputBean.getProjectType();
 
         // check the project reference
         for (String forbiddenChar : Util.FORBIDDEN_CHARACTERS) {

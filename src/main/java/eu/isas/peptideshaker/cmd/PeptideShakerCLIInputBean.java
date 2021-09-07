@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.cli.CommandLineUtils;
 import com.compomics.cli.identification_parameters.IdentificationParametersInputBean;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.File;
@@ -23,13 +24,9 @@ public class PeptideShakerCLIInputBean {
      */
     private String reference = null;
     /**
-     * The sample name.
+     * The project type.
      */
-    private String sampleID = null;
-    /**
-     * The replicate number.
-     */
-    private int replicate = 0;
+    private ProjectType projectType = ProjectType.protein;
     /**
      * The spectrum files.
      */
@@ -102,7 +99,29 @@ public class PeptideShakerCLIInputBean {
      */
     public PeptideShakerCLIInputBean(CommandLine aLine) throws IOException, ClassNotFoundException {
 
+        // reference
         reference = aLine.getOptionValue(PeptideShakerCLIParams.REFERENCE.id);
+
+        // project type
+        if (aLine.hasOption(PeptideShakerCLIParams.PROJECT_TYPE.id)) {
+
+            String optionValue = aLine.getOptionValue(PeptideShakerCLIParams.PROJECT_TYPE.id);
+
+            int index;
+
+            try {
+
+                index = Integer.parseInt(optionValue);
+
+            } catch (Exception e) {
+
+                throw new IllegalArgumentException("Input for " + PeptideShakerCLIParams.PROJECT_TYPE.id + " (" + optionValue + ") could not be parsed as an integer.");
+
+            }
+
+            projectType = ProjectType.getProjectType(index);
+
+        }
 
         if (aLine.hasOption(PeptideShakerCLIParams.SPECTRUM_FILES.id)) {
             String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
@@ -156,6 +175,15 @@ public class PeptideShakerCLIInputBean {
      * Empty constructor for API usage via other tools.
      */
     public PeptideShakerCLIInputBean() {
+    }
+
+    /**
+     * Returns the project type.
+     * 
+     * @return the project type
+     */
+    public ProjectType getProjectType() {
+        return projectType;
     }
 
     /**
@@ -215,24 +243,6 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the name of the sample.
-     *
-     * @return the name of the sample
-     */
-    public String getSampleID() {
-        return sampleID;
-    }
-
-    /**
-     * Sets the name of the sample.
-     *
-     * @param sampleID the name of the sample
-     */
-    public void setSampleID(String sampleID) {
-        this.sampleID = sampleID;
-    }
-
-    /**
      * Returns the identification files.
      *
      * @return the identification files
@@ -266,24 +276,6 @@ public class PeptideShakerCLIInputBean {
      */
     public void setPrideFile(File prideFile) {
         this.prideFile = prideFile;
-    }
-
-    /**
-     * Returns the replicate number.
-     *
-     * @return the replicate number
-     */
-    public int getReplicate() {
-        return replicate;
-    }
-
-    /**
-     * Sets the replicate number.
-     *
-     * @param replicate the replicate number
-     */
-    public void setReplicate(int replicate) {
-        this.replicate = replicate;
     }
 
     /**
