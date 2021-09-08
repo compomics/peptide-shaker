@@ -146,6 +146,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                         PeptideShaker.getVersion(),
                         true
                 );
+
                 ((WaitingDialog) waitingHandler).setCloseDialogWhenImportCompletes(false, false);
                 ((WaitingDialog) waitingHandler).setLocationRelativeTo(null);
                 Point tempLocation = ((WaitingDialog) waitingHandler).getLocation();
