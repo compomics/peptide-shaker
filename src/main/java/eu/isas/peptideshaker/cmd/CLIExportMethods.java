@@ -28,6 +28,7 @@ import com.compomics.util.experiment.identification.features.IdentificationFeatu
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.followup.DeepLcExport;
+import eu.isas.peptideshaker.followup.Ms2PipExport;
 import eu.isas.peptideshaker.followup.ProteoformExport;
 import java.io.File;
 import java.io.IOException;
@@ -303,7 +304,7 @@ public class CLIExportMethods {
     }
 
     /**
-     * Exports DeepLC training files.
+     * Exports files needed by DeepLC.
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
@@ -312,6 +313,8 @@ public class CLIExportMethods {
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The waiting handler.
+     * 
+     * @return The files created by the export.
      */
     public static ArrayList<File> exportDeepLC(
             FollowUpCLIInputBean followUpCLIInputBean,
@@ -329,6 +332,44 @@ public class CLIExportMethods {
                 destinationStem, 
                 identification, 
                 modificationParameters, 
+                sequenceMatchingParameters, 
+                sequenceProvider, 
+                spectrumProvider, 
+                waitingHandler
+        );
+    }
+
+    /**
+     * Exports the files needed by ms2pip.
+     *
+     * @param followUpCLIInputBean the follow up input bean
+     * @param identification the identification
+     * @param searchParameters The search parameters.
+     * @param sequenceMatchingParameters The sequence matching parameters.
+     * @param sequenceProvider The sequence provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param waitingHandler The waiting handler.
+     * 
+     * @return The files created by the export.
+     */
+    public static ArrayList<File> exportMs2pip(
+            FollowUpCLIInputBean followUpCLIInputBean,
+            Identification identification,
+            SearchParameters searchParameters,
+            SequenceMatchingParameters sequenceMatchingParameters,
+            SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
+            WaitingHandler waitingHandler
+    ) {
+
+        File destinationFile = followUpCLIInputBean.getMs2pipFile();
+        String[] models = followUpCLIInputBean.getMs2pipModels();
+
+        return Ms2PipExport.ms2pipExport(
+                destinationFile, 
+                models, 
+                identification, 
+                searchParameters, 
                 sequenceMatchingParameters, 
                 sequenceProvider, 
                 spectrumProvider, 

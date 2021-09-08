@@ -37,6 +37,7 @@ import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFolder;
 import com.compomics.util.experiment.io.mass_spectrometry.mgf.IndexedMgfReader;
 import com.compomics.util.experiment.io.mass_spectrometry.mgf.MgfIndex;
 import com.compomics.util.io.file.SerializationUtils;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import eu.isas.peptideshaker.utils.Properties;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
@@ -304,6 +305,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                 // recalibrate spectra
                 if (followUpCLIInputBean.recalibrationNeeded()) {
+
+                    waitingHandler.appendReport("Spectrum recalibration.", true, true);
+
                     try {
                         followupAnalysisFiles.addAll(
                                 CLIExportMethods.recalibrateSpectra(
@@ -328,6 +332,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                 // export spectra
                 if (followUpCLIInputBean.spectrumExportNeeded()) {
+
+                    waitingHandler.appendReport("Spectrum export.", true, true);
+
                     try {
                         followupAnalysisFiles.addAll(
                                 CLIExportMethods.exportSpectra(
@@ -351,6 +358,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                 // export protein accessions
                 if (followUpCLIInputBean.accessionExportNeeded()) {
+
+                    waitingHandler.appendReport("Protein accession export.", true, true);
+
                     try {
                         followupAnalysisFiles.add(
                                 CLIExportMethods.exportAccessions(
@@ -374,6 +384,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                 // export protein details
                 if (followUpCLIInputBean.proteinSequencesExportNeeded()) {
+
+                    waitingHandler.appendReport("Protein sequences export.", true, true);
+
                     try {
                         followupAnalysisFiles.add(
                                 CLIExportMethods.exportProteinSequences(
@@ -397,6 +410,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                 // progenesis export
                 if (followUpCLIInputBean.progenesisExportNeeded()) {
+
+                    waitingHandler.appendReport("Progenesis export.", true, true);
+
                     try {
                         followupAnalysisFiles.add(
                                 CLIExportMethods.exportProgenesis(
@@ -426,6 +442,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                 // inclusion list export
                 if (followUpCLIInputBean.inclusionListNeeded()) {
+
+                    waitingHandler.appendReport("Inclusion list export.", true, true);
+
                     try {
                         followupAnalysisFiles.add(
                                 CLIExportMethods.exportInclusionList(
@@ -451,6 +470,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                 // proteoforms export
                 if (followUpCLIInputBean.proteoformsNeeded()) {
+
+                    waitingHandler.appendReport("Proteoform export.", true, true);
+
                     try {
                         followupAnalysisFiles.add(
                                 CLIExportMethods.exportProteoforms(
@@ -472,6 +494,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                 // DeepLC export
                 if (followUpCLIInputBean.deepLcExportNeeded()) {
+
+                    waitingHandler.appendReport("DeepLC export.", true, true);
+
                     try {
                         followupAnalysisFiles.addAll(
                                 CLIExportMethods.exportDeepLC(
@@ -495,6 +520,33 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     }
                 }
 
+                // ms2pip export
+                if (followUpCLIInputBean.ms2pipExportNeeded()) {
+
+                    waitingHandler.appendReport("ms2pip export.", true, true);
+
+                    try {
+                        followupAnalysisFiles.addAll(
+                                CLIExportMethods.exportMs2pip(
+                                        followUpCLIInputBean,
+                                        identification,
+                                        identificationParameters.getSearchParameters(),
+                                        identificationParameters.getSequenceMatchingParameters(),
+                                        sequenceProvider,
+                                        msFileHandler,
+                                        waitingHandler
+                                )
+                        );
+                    } catch (Exception e) {
+                        waitingHandler.appendReport(
+                                "An error occurred while generating the proteoforms list.",
+                                true,
+                                true
+                        );
+                        e.printStackTrace();
+                        waitingHandler.setRunCanceled();
+                    }
+                }
             }
 
             // report export if needed
@@ -527,7 +579,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                 if (reportOutputFolderSet) {
 
-                    waitingHandler.appendReport("Starting report export.", true, true);
+                    waitingHandler.appendReport("Exporting reports.", true, true);
 
                     // Export report(s)
                     if (reportCLIInputBean.exportNeeded()) {
@@ -535,6 +587,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                         int nSurroundingAAs = 2; //@TODO: this shall not be hard coded //peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()
 
                         for (String reportType : reportCLIInputBean.getReportTypes()) {
+
+                            waitingHandler.appendReport("Exporting " + reportType + ".", true, true);
+
                             try {
                                 reportFiles.add(
                                         CLIExportMethods.exportReport(
@@ -568,6 +623,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                     // export documentation
                     if (reportCLIInputBean.documentationExportNeeded()) {
+
+                        waitingHandler.appendReport("Exporting report documentation.", true, true);
+
                         for (String reportType : reportCLIInputBean.getReportTypes()) {
                             try {
                                 CLIExportMethods.exportDocumentation(
@@ -791,7 +849,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
             // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
             return 0;
+
         } else {
+
             System.out.println("PeptideShaker process failed! " + getLogFileMessage());
             System.exit(1); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
             // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!

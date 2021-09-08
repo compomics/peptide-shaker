@@ -1,40 +1,42 @@
 package eu.isas.peptideshaker.followup;
 
+import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
+import com.compomics.util.experiment.biology.modifications.ModificationType;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.io.flat.SimpleFileWriter;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
+import com.compomics.util.parameters.identification.search.SearchParameters;
+import com.compomics.util.pride.CvTerm;
 import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.utils.DeepLcUtils;
+import eu.isas.peptideshaker.utils.Ms2PipUtils;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
 /**
- * Export for RT prediction using DeepLC.
+ * Export training files for ms2pip.
  *
  * @author Marc Vaudel
  * @author Dafni Skiadopoulou
  */
-public class DeepLcExport {
+public class Ms2PipExport {
 
     /**
-     * Exports DeepLC training files for each of the spectrum files. Returns an
-     * ArrayList of the files exported.
+     * Exports ms2pip config and peprec files. Returns an ArrayList of the files
+     * written.
      *
-     * @param destinationStem The stem to use for the path.
+     * @param peprecFile The file where to write the peptides.
+     * @param models The names of the models to write config files for.
      * @param identification The identification object containing the matches.
-     * @param modificationParameters The modification parameters.
+     * @param searchParameters The search parameters.
      * @param sequenceMatchingParameters The sequence matching parameters.
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
@@ -42,114 +44,142 @@ public class DeepLcExport {
      *
      * @return An ArrayList of the files exported.
      */
-    public static ArrayList<File> deepLcExport(
-            String destinationStem,
+    public static ArrayList<File> ms2pipExport(
+            File peprecFile,
+            String[] models,
             Identification identification,
-            ModificationParameters modificationParameters,
+            SearchParameters searchParameters,
             SequenceMatchingParameters sequenceMatchingParameters,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
             WaitingHandler waitingHandler
     ) {
 
-        HashMap<String, HashSet<Long>> spectrumIdentificationMap = identification.getSpectrumIdentification();
+        File destinationFolder = peprecFile.getParentFile();
 
         // reset the progress bar
         waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-        spectrumIdentificationMap.entrySet()
-                .parallelStream()
-                .forEach(
-                        entry -> deepLcExport(
-                                getDestinationFile(
-                                        destinationStem,
-                                        entry.getKey(),
-                                        spectrumIdentificationMap.size() > 1
-                                ),
-                                entry.getValue(),
-                                identification,
-                                modificationParameters,
-                                sequenceMatchingParameters,
-                                sequenceProvider,
-                                spectrumProvider,
-                                waitingHandler
-                        )
-                );
+        ms2pipExport(
+                peprecFile,
+                identification,
+                searchParameters.getModificationParameters(),
+                sequenceMatchingParameters,
+                sequenceProvider,
+                spectrumProvider,
+                waitingHandler
+        );
 
-        return getExportedFiles(destinationStem, identification);
+        ArrayList<File> configFiles = new ArrayList<>(models.length);
+
+        for (String model : models) {
+
+            File configFile = models.length == 1 ? new File(destinationFolder, "config.txt") : new File(destinationFolder, model + "_config.txt");
+
+            writeConfigFile(configFile, model, searchParameters);
+
+        }
+
+        configFiles.add(peprecFile);
+
+        return configFiles;
 
     }
 
     /**
-     * Returns an ArrayList of all the files that will be written by the export.
+     * Writes a config file for a given model.
      *
-     * @param destinationStem The stem to use for the path.
-     * @param identification The identification object containing the matches.
-     *
-     * @return An ArrayList of all the files that will be written by the export.
+     * @param configFile The file where to write.
+     * @param model The name of the model.
+     * @param searchParameters The search parameters.
      */
-    public static ArrayList<File> getExportedFiles(
-            String destinationStem,
-            Identification identification
+    public static void writeConfigFile(
+            File configFile,
+            String model,
+            SearchParameters searchParameters
     ) {
 
-        HashMap<String, HashSet<Long>> spectrumIdentificationMap = identification.getSpectrumIdentification();
+        ModificationFactory modificationFactory = ModificationFactory.getInstance();
 
-        return spectrumIdentificationMap.keySet()
-                .stream()
-                .map(
-                        spectrumFile -> getDestinationFile(
-                                destinationStem,
-                                spectrumFile,
-                                spectrumIdentificationMap.size() > 1
-                        )
-                )
-                .collect(
-                        Collectors.toCollection(ArrayList::new)
-                );
-    }
+        try (SimpleFileWriter writer = new SimpleFileWriter(configFile, false)) {
 
-    /**
-     * Returns the file where to write the export.
-     *
-     * @param destinationStem The stem to use for the path.
-     * @param spectrumFile The name of the spectrum file.
-     * @param addSuffix A boolean indicating whehter the name of the spectrum
-     * file should be appended to the stem.
-     *
-     * @return The file where to write the export.
-     */
-    public static File getDestinationFile(
-            String destinationStem,
-            String spectrumFile,
-            boolean addSuffix
-    ) {
+            writer.writeLine("model=" + model);
+            writer.writeLine("out=mgf");
+            writer.writeLine("frag_error=" + searchParameters.getFragmentIonAccuracyInDaltons());
 
-        if (!addSuffix) {
+            for (String modName : searchParameters.getModificationParameters().getAllModifications()) {
 
-            if (!destinationStem.endsWith(".gz")) {
+                Modification modification = modificationFactory.getModification(modName);
 
-                destinationStem = destinationStem + ".gz";
+                CvTerm cvTerm = modification.getUnimodCvTerm();
 
+                if (cvTerm == null) {
+
+                    throw new IllegalArgumentException("No Unimod id found for modification " + modName + ".");
+
+                }
+
+                String unimodName = cvTerm.getName();
+                double mass = modification.getMass();
+
+                ModificationType modificationType = modification.getModificationType();
+
+                switch (modificationType) {
+
+                    case modaa:
+                    case modcaa_peptide:
+                    case modcaa_protein:
+                    case modnaa_peptide:
+                    case modnaa_protein:
+
+                        for (Character targetAa : modification.getPattern().getAminoAcidsAtTarget()) {
+
+                            writer.writeLine(
+                                    String.join("",
+                                            "ptm=", unimodName, "," + Double.toString(mass), ",opt,", targetAa.toString()
+                                    )
+                            );
+
+                        }
+
+                        break;
+
+                    case modn_peptide:
+                    case modn_protein:
+
+                        writer.writeLine(
+                                String.join("",
+                                        "ptm=", unimodName, "," + Double.toString(mass), ",opt,N-term"
+                                )
+                        );
+
+                        break;
+
+                    case modc_peptide:
+                    case modc_protein:
+
+                        writer.writeLine(
+                                String.join("",
+                                        "ptm=", unimodName, "," + Double.toString(mass), ",opt,C-term"
+                                )
+                        );
+
+                        break;
+
+                    default:
+
+                        throw new UnsupportedOperationException("Modification type " + modificationType + " not supported.");
+
+                }
             }
-
-            return new File(destinationStem);
-
-        } else {
-
-            String path = String.join("_", destinationStem, spectrumFile, "deeplc_export.gz");
-
-            return new File(path);
-
         }
     }
 
     /**
-     * Exports a DeepLC training file for the given spectrum file.
+     * Exports a ms2pip training file for the given spectrum file.
      *
-     * @param destinationFile The file where to write the export.
-     * @param keys The keys of the spectrum matches.
+     * @param peprecFile The file where to write the export.
      * @param identification The identification object containing the matches.
      * @param modificationParameters The modification parameters.
      * @param sequenceMatchingParameters The sequence matching parameters.
@@ -157,9 +187,8 @@ public class DeepLcExport {
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The waiting handler.
      */
-    public static void deepLcExport(
-            File destinationFile,
-            HashSet<Long> keys,
+    public static void ms2pipExport(
+            File peprecFile,
             Identification identification,
             ModificationParameters modificationParameters,
             SequenceMatchingParameters sequenceMatchingParameters,
@@ -170,16 +199,14 @@ public class DeepLcExport {
 
         ModificationFactory modificationFactory = ModificationFactory.getInstance();
 
-        HashSet<Long> processedPeptideKeys = new HashSet<>();
-        SimpleSemaphore writingSemaphore = new SimpleSemaphore(1);
+        try (SimpleFileWriter writer = new SimpleFileWriter(peprecFile, true)) {
 
-        try (SimpleFileWriter writer = new SimpleFileWriter(destinationFile, true)) {
+            writer.writeLine("spec_id modifications peptide charge");
 
-            writer.writeLine("seq,modifications,rt");
+            SpectrumMatchesIterator spectrumMatchesIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
-            long[] spectrumKeys = keys.stream().mapToLong(a -> a).toArray();
-
-            SpectrumMatchesIterator spectrumMatchesIterator = identification.getSpectrumMatchesIterator(spectrumKeys, waitingHandler);
+            HashSet<Long> processedPeptideKeys = new HashSet<>();
+            SimpleSemaphore writingSemaphore = new SimpleSemaphore(1);
 
             SpectrumMatch spectrumMatch;
 
@@ -197,19 +224,12 @@ public class DeepLcExport {
                     }
                 }
 
-                // Measured retention time
-                String spectrumFile = spectrumMatch.getSpectrumFile();
-                String spectrumTitle = spectrumMatch.getSpectrumTitle();
-                Precursor precursor = spectrumProvider.getPrecursor(spectrumFile, spectrumTitle);
-                double retentionTime = precursor.rt;
-
                 // Export all candidate peptides
                 spectrumMatch.getAllPeptideAssumptions()
                         .parallel()
                         .forEach(
                                 peptideAssumption -> writePeptideCandidate(
                                         peptideAssumption,
-                                        retentionTime,
                                         modificationParameters,
                                         sequenceProvider,
                                         sequenceMatchingParameters,
@@ -239,7 +259,6 @@ public class DeepLcExport {
      */
     private static void writePeptideCandidate(
             PeptideAssumption peptideAssumption,
-            double retentionTime,
             ModificationParameters modificationParameters,
             SequenceProvider sequenceProvider,
             SequenceMatchingParameters sequenceMatchingParameters,
@@ -250,9 +269,8 @@ public class DeepLcExport {
     ) {
 
         // Get peptide data
-        String peptideData = DeepLcUtils.getPeptideData(
+        String peptideData = Ms2PipUtils.getPeptideData(
                 peptideAssumption,
-                retentionTime,
                 modificationParameters,
                 sequenceProvider,
                 sequenceMatchingParameters,
@@ -260,14 +278,14 @@ public class DeepLcExport {
         );
 
         // Get corresponding key
-        long peptideKey = DeepLcUtils.getPeptideKey(peptideData);
+        long peptideKey = Ms2PipUtils.getPeptideKey(peptideData);
 
         // Export if not done already
         writingSemaphore.acquire();
 
         if (!processedPeptides.contains(peptideKey)) {
 
-            String line = String.join(",", Long.toString(peptideKey), peptideData);
+            String line = String.join(" ", Long.toString(peptideKey), peptideData);
 
             writer.writeLine(line);
 

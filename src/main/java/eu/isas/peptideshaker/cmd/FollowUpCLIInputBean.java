@@ -96,9 +96,17 @@ public class FollowUpCLIInputBean {
      */
     private File proteoformsFile = null;
     /**
-     * The stem to use for the path to DeepLC training files.
+     * The stem to use for the path to DeepLC peptide files.
      */
     private String deepLcStem = null;
+    /**
+     * The file to use for the path to ms2pip peptides.
+     */
+    private File ms2pipFile = null;
+    /**
+     * The models to export ms2pip config files for.
+     */
+    private String[] ms2pipModels = new String[]{"CID", "HCD"};
     /**
      * The path settings.
      */
@@ -174,10 +182,35 @@ public class FollowUpCLIInputBean {
         if (aLine.hasOption(FollowUpCLIParams.PROTEOFORMS_FILE.id)) {
             proteoformsFile = new File(aLine.getOptionValue(FollowUpCLIParams.PROTEOFORMS_FILE.id));
         }
+        
         if (aLine.hasOption(FollowUpCLIParams.DEEPLC_FILE.id)) {
+            
             deepLcStem = aLine.getOptionValue(FollowUpCLIParams.DEEPLC_FILE.id);
+            
         }
+        
+        if (aLine.hasOption(FollowUpCLIParams.MS2PIP_FILE.id)) {
+            
+            String path = aLine.getOptionValue(FollowUpCLIParams.MS2PIP_FILE.id);
+            
+            if (!path.endsWith(".gz")) {
+                
+                path = path + ".gz";
+                
+            }
+            
+            ms2pipFile = new File(path);
+            
+        }
+        
+        if (aLine.hasOption(FollowUpCLIParams.MS2PIP_MODELS.id)) {
+            
+            ms2pipModels = aLine.getOptionValue(FollowUpCLIParams.MS2PIP_FILE.id).split(",");
+            
+        }
+        
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
+        
     }
 
     /**
@@ -308,12 +341,30 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * Returns the stem to use for the path to DeepLC training files.
+     * Returns the stem to use for the path to DeepLC files.
      * 
-     * @return The stem to use for the path to DeepLC training files.
+     * @return The stem to use for the path to DeepLC files.
      */
     public String getDeepLcStem() {
         return deepLcStem;
+    }
+
+    /**
+     * Returns the file where to write the peptides for ms2pip.
+     * 
+     * @return The file where to write the peptides for ms2pip.
+     */
+    public File getMs2pipFile() {
+        return ms2pipFile;
+    }
+
+    /**
+     * Returns the models for which to write an ms2pip config file.
+     * 
+     * @return The models for which to write an ms2pip config file.
+     */
+    public String[] getMs2pipModels() {
+        return ms2pipModels;
     }
 
     /**
@@ -405,7 +456,9 @@ public class FollowUpCLIInputBean {
                 || proteinSequencesExportNeeded()
                 || progenesisExportNeeded()
                 || inclusionListNeeded()
-                || proteoformsNeeded();
+                || proteoformsNeeded()
+                || deepLcExportNeeded()
+                || ms2pipExportNeeded();
     }
 
     /**
@@ -478,6 +531,15 @@ public class FollowUpCLIInputBean {
      */
     public boolean deepLcExportNeeded() {
         return deepLcStem != null;
+    }
+
+    /**
+     * Indicates whether DeepLC export is needed.
+     *
+     * @return whether DeepLC export is needed
+     */
+    public boolean ms2pipExportNeeded() {
+        return ms2pipFile != null;
     }
 
     /**

@@ -36,7 +36,9 @@ public enum FollowUpCLIParams {
     INCLUSION_LIST_PEPTIDE_FILTERS("inclusion_list_peptide_filters", "Peptide filters to be used for the inclusion list export (comma separated). " + InclusionListExport.PeptideFilterType.getCommandLineOptions(), true, false),
     INCLUSION_LIST_RT_WINDOW("inclusion_list_rt_window", "Retention time window for the inclusion list export (in seconds).", true, false),
     PROTEOFORMS_FILE("proteoforms_file", "Output file for the proteoforms. (Existing file will be overwritten.)", true, false),
-    DEEPLC_FILE("deeplc_file", "Path to the file where to write DeepLC training files. If the PeptideShaker project was built using multiple MS files, one training file per MS file will be exported. (Should end with .gz. Existing file will be overwritten.)", true, false);
+    DEEPLC_FILE("deeplc_file", "Path to the file where to write DeepLC peptide files. If the PeptideShaker project was built using multiple MS files, one file per MS file will be exported. (Should end with .gz. Existing file will be overwritten.)", true, false),
+    MS2PIP_FILE("ms2pip_file", "Path to the file where to write ms2pip peptide files. If the PeptideShaker project was built using multiple MS files, one file will be exported for all. (Should end with .gz. Existing file will be overwritten.)", true, false),
+    MS2PIP_MODELS("ms2pip_models", "Comma separated list of models to write a config file for. Default: CID,HCD.", true, false);
 
     /**
      * Short Id for the CLI parameter.

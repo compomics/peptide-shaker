@@ -6,6 +6,7 @@ import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.parameters.UtilitiesUserParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.utils.PsdbParent;
 import java.io.File;
@@ -245,6 +246,8 @@ public class FollowUpCLI extends PsdbParent {
         // recalibrate spectra
         if (followUpCLIInputBean.recalibrationNeeded()) {
 
+            waitingHandler.appendReport("Recalibration of spectra.", true, true);
+
             try {
 
                 CLIExportMethods.recalibrateSpectra(
@@ -278,6 +281,8 @@ public class FollowUpCLI extends PsdbParent {
         // export spectra
         if (followUpCLIInputBean.spectrumExportNeeded()) {
 
+            waitingHandler.appendReport("Spectrum export.", true, true);
+
             try {
 
                 CLIExportMethods.exportSpectra(
@@ -310,6 +315,8 @@ public class FollowUpCLI extends PsdbParent {
         // export protein accessions
         if (followUpCLIInputBean.accessionExportNeeded()) {
 
+            waitingHandler.appendReport("Protein accession export.", true, true);
+
             try {
 
                 CLIExportMethods.exportAccessions(
@@ -340,6 +347,8 @@ public class FollowUpCLI extends PsdbParent {
 
         // export protein details
         if (followUpCLIInputBean.proteinSequencesExportNeeded()) {
+
+            waitingHandler.appendReport("Protein sequences export.", true, true);
 
             try {
 
@@ -372,6 +381,8 @@ public class FollowUpCLI extends PsdbParent {
 
         // progenesis export
         if (followUpCLIInputBean.progenesisExportNeeded()) {
+
+            waitingHandler.appendReport("Progenesis export.", true, true);
 
             try {
 
@@ -406,6 +417,8 @@ public class FollowUpCLI extends PsdbParent {
         // inclusion list export
         if (followUpCLIInputBean.inclusionListNeeded()) {
 
+            waitingHandler.appendReport("Inclusion list export.", true, true);
+
             try {
 
                 CLIExportMethods.exportInclusionList(
@@ -435,6 +448,8 @@ public class FollowUpCLI extends PsdbParent {
         // proteoforms export
         if (followUpCLIInputBean.proteoformsNeeded()) {
 
+            waitingHandler.appendReport("Proteoform export.", true, true);
+
             try {
 
                 CLIExportMethods.exportProteoforms(
@@ -460,12 +475,45 @@ public class FollowUpCLI extends PsdbParent {
         // DeepLC export
         if (followUpCLIInputBean.deepLcExportNeeded()) {
 
+            waitingHandler.appendReport("DeepLC export.", true, true);
+
             try {
 
                 CLIExportMethods.exportDeepLC(
                         followUpCLIInputBean,
                         identification,
                         identificationParameters.getSearchParameters().getModificationParameters(),
+                        identificationParameters.getSequenceMatchingParameters(),
+                        sequenceProvider,
+                        msFileHandler,
+                        waitingHandler
+                );
+
+            } catch (Exception e) {
+
+                waitingHandler.appendReport(
+                        "An error occurred while generating the DeepLC export.",
+                        true,
+                        true
+                );
+
+                e.printStackTrace();
+                waitingHandler.setRunCanceled();
+
+            }
+        }
+
+        // ms2pip export
+        if (followUpCLIInputBean.ms2pipExportNeeded()) {
+
+            waitingHandler.appendReport("ms2pip export.", true, true);
+
+            try {
+
+                CLIExportMethods.exportMs2pip(
+                        followUpCLIInputBean,
+                        identification,
+                        identificationParameters.getSearchParameters(),
                         identificationParameters.getSequenceMatchingParameters(),
                         sequenceProvider,
                         msFileHandler,
