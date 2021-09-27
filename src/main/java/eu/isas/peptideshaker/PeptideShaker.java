@@ -495,23 +495,6 @@ public class PeptideShaker {
         identification.getObjectsDB().commit();
         System.gc();
 
-        for (long key : identification.getSpectrumIdentificationKeys()) {
-
-            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
-
-            spectrumMatch.getAllPeptideAssumptions().forEach(
-                    peptideAssumption -> DeepLcUtils.getPeptideData(
-                            peptideAssumption,
-                            0.0,
-                            identificationParameters.getSearchParameters().getModificationParameters(),
-                            sequenceProvider,
-                            identificationParameters.getSequenceMatchingParameters(),
-                            modificationFactory
-                    )
-            );
-
-        }
-
         if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
 
             waitingHandler.appendReport(

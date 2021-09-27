@@ -112,9 +112,9 @@ public class Ms2PipUtils {
         }
 
         return new StringBuilder()
-                .append(peptideSequence)
-                .append(' ')
                 .append(modificationSites)
+                .append(' ')
+                .append(peptideSequence)
                 .append(' ')
                 .append(peptideAssumption.getIdentificationCharge())
                 .toString();
