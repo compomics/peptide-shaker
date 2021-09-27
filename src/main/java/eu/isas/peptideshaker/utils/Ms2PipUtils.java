@@ -78,13 +78,15 @@ public class Ms2PipUtils {
         }
 
         // Variable modifications
-        for (int i = 0; i < peptide.getIndexedVariableModifications().length; i++) {
+        String[] variableModifications = peptide.getIndexedVariableModifications();
+        
+        for (int i = 0; i < variableModifications.length; i++) {
 
-            if (fixedModifications[i] != null) {
+            if (variableModifications[i] != null) {
 
                 int site = i < peptideSequence.length() + 1 ? i : -1;
 
-                String modName = fixedModifications[i];
+                String modName = variableModifications[i];
                 Modification modification = modificationFactory.getModification(modName);
                 CvTerm cvTerm = modification.getUnimodCvTerm();
                 

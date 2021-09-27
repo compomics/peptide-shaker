@@ -44,6 +44,8 @@ import eu.isas.peptideshaker.processing.ProteinProcessor;
 import eu.isas.peptideshaker.processing.PsmProcessor;
 import eu.isas.peptideshaker.protein_inference.GroupSimplification;
 import com.compomics.util.experiment.identification.peptide_inference.PeptideInference;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
+import eu.isas.peptideshaker.utils.DeepLcUtils;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 
 import java.io.File;
@@ -436,9 +438,9 @@ public class PeptideShaker {
             ModificationLocalizationParameters modificationScoringPreferences = identificationParameters.getModificationLocalizationParameters();
 
             if (modificationScoringPreferences.getAlignNonConfidentModifications()) {
-                
+
                 waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
-                
+
                 peptideInference.peptideInference(
                         identification,
                         identificationParameters,
@@ -492,6 +494,23 @@ public class PeptideShaker {
 
         identification.getObjectsDB().commit();
         System.gc();
+
+        for (long key : identification.getSpectrumIdentificationKeys()) {
+
+            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
+
+            spectrumMatch.getAllPeptideAssumptions().forEach(
+                    peptideAssumption -> DeepLcUtils.getPeptideData(
+                            peptideAssumption,
+                            0.0,
+                            identificationParameters.getSearchParameters().getModificationParameters(),
+                            sequenceProvider,
+                            identificationParameters.getSequenceMatchingParameters(),
+                            modificationFactory
+                    )
+            );
+
+        }
 
         if (projectType == ProjectType.peptide || projectType == ProjectType.protein) {
 
@@ -1007,23 +1026,23 @@ public class PeptideShaker {
 
         PeptideAndProteinBuilder peptideAndProteinBuilder = new PeptideAndProteinBuilder(identification);
 
-            identification.getSpectrumIdentification().values().stream()
-                    .flatMap(keys -> keys.stream())
-                    .parallel()
-                    .map(
-                            key -> identification.getSpectrumMatch(key)
-                    )
-                    .forEach(
-                            spectrumMatch -> attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(
-                                    spectrumMatch,
-                                    peptideAndProteinBuilder,
-                                    sequenceProvider,
-                                    sequenceMatchingPreferences,
-                                    projectType,
-                                    fastaParameters,
-                                    waitingHandler
-                            )
-                    );
+        identification.getSpectrumIdentification().values().stream()
+                .flatMap(keys -> keys.stream())
+                .parallel()
+                .map(
+                        key -> identification.getSpectrumMatch(key)
+                )
+                .forEach(
+                        spectrumMatch -> attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(
+                                spectrumMatch,
+                                peptideAndProteinBuilder,
+                                sequenceProvider,
+                                sequenceMatchingPreferences,
+                                projectType,
+                                fastaParameters,
+                                waitingHandler
+                        )
+                );
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
