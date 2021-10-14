@@ -362,9 +362,9 @@ public class DeepLcExport {
 
         if (!processedPeptides.contains(peptideKey)) {
 
-            String line = String.join(",", Long.toString(peptideKey), peptideData);
-
-            writer.writeLine(line);
+            writer.writeLine(peptideData);
+            
+            processedPeptides.add(peptideKey);
 
         }
 
