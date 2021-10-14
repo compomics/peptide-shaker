@@ -244,11 +244,11 @@ public class DeepLcExport {
 
         try (SimpleFileWriter writer = new SimpleFileWriter(destinationFile, true)) {
 
-            writer.writeLine("seq,modifications,rt");
+            writer.writeLine("seq,modifications,tr");
 
             try (SimpleFileWriter writerConfident = new SimpleFileWriter(confidentHitsDestinationFile, true)) {
 
-                writerConfident.writeLine("seq,modifications,rt");
+                writerConfident.writeLine("seq,modifications,tr");
 
                 long[] spectrumKeys = keys.stream().mapToLong(a -> a).toArray();
 
