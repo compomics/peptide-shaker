@@ -309,7 +309,7 @@ public class DeepLcExport {
                                 modificationFactory,
                                 processedPeptideKeys,
                                 writingSemaphore,
-                                writer
+                                writerConfident
                         );
 
                     }
