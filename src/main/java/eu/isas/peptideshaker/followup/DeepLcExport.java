@@ -4,6 +4,7 @@ import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
+import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
@@ -67,6 +68,11 @@ public class DeepLcExport {
                                         entry.getKey(),
                                         spectrumIdentificationMap.size() > 1
                                 ),
+                                getConfidentHitsDestinationFile(
+                                        destinationStem,
+                                        entry.getKey(),
+                                        spectrumIdentificationMap.size() > 1
+                                ),
                                 entry.getValue(),
                                 identification,
                                 modificationParameters,
@@ -96,18 +102,39 @@ public class DeepLcExport {
 
         HashMap<String, HashSet<Long>> spectrumIdentificationMap = identification.getSpectrumIdentification();
 
-        return spectrumIdentificationMap.keySet()
-                .stream()
-                .map(
-                        spectrumFile -> getDestinationFile(
-                                destinationStem,
-                                spectrumFile,
-                                spectrumIdentificationMap.size() > 1
+        ArrayList<File> result = new ArrayList<>(0);
+
+        result.addAll(
+                spectrumIdentificationMap.keySet()
+                        .stream()
+                        .map(
+                                spectrumFile -> getDestinationFile(
+                                        destinationStem,
+                                        spectrumFile,
+                                        spectrumIdentificationMap.size() > 1
+                                )
                         )
-                )
-                .collect(
-                        Collectors.toCollection(ArrayList::new)
-                );
+                        .collect(
+                                Collectors.toCollection(ArrayList::new)
+                        )
+        );
+
+        result.addAll(
+                spectrumIdentificationMap.keySet()
+                        .stream()
+                        .map(
+                                spectrumFile -> getDestinationFile(
+                                        destinationStem,
+                                        spectrumFile,
+                                        spectrumIdentificationMap.size() > 1
+                                )
+                        )
+                        .collect(
+                                Collectors.toCollection(ArrayList::new)
+                        )
+        );
+
+        return result;
     }
 
     /**
@@ -146,9 +173,50 @@ public class DeepLcExport {
     }
 
     /**
+     * Returns the file where to write the export for confident hits.
+     *
+     * @param destinationStem The stem to use for the path.
+     * @param spectrumFile The name of the spectrum file.
+     * @param addSuffix A boolean indicating whehter the name of the spectrum
+     * file should be appended to the stem.
+     *
+     * @return The file where to write the export.
+     */
+    public static File getConfidentHitsDestinationFile(
+            String destinationStem,
+            String spectrumFile,
+            boolean addSuffix
+    ) {
+
+        if (!addSuffix) {
+
+            if (!destinationStem.endsWith(".gz")) {
+
+                destinationStem = destinationStem + "_confident.gz";
+
+            } else {
+
+                destinationStem = destinationStem.substring(0, destinationStem.length() - 3) + "_confident.gz";
+
+            }
+
+            return new File(destinationStem);
+
+        } else {
+
+            String path = String.join("_", destinationStem, spectrumFile, "deeplc_export_confident.gz");
+
+            return new File(path);
+
+        }
+    }
+
+    /**
      * Exports a DeepLC training file for the given spectrum file.
      *
      * @param destinationFile The file where to write the export.
+     * @param confidentHitsDestinationFile The file where to write the export
+     * for confident hits.
      * @param keys The keys of the spectrum matches.
      * @param identification The identification object containing the matches.
      * @param modificationParameters The modification parameters.
@@ -159,6 +227,7 @@ public class DeepLcExport {
      */
     public static void deepLcExport(
             File destinationFile,
+            File confidentHitsDestinationFile,
             HashSet<Long> keys,
             Identification identification,
             ModificationParameters modificationParameters,
@@ -177,48 +246,74 @@ public class DeepLcExport {
 
             writer.writeLine("seq,modifications,rt");
 
-            long[] spectrumKeys = keys.stream().mapToLong(a -> a).toArray();
+            try (SimpleFileWriter writerConfident = new SimpleFileWriter(confidentHitsDestinationFile, true)) {
 
-            SpectrumMatchesIterator spectrumMatchesIterator = identification.getSpectrumMatchesIterator(spectrumKeys, waitingHandler);
+                writerConfident.writeLine("seq,modifications,rt");
 
-            SpectrumMatch spectrumMatch;
+                long[] spectrumKeys = keys.stream().mapToLong(a -> a).toArray();
 
-            while ((spectrumMatch = spectrumMatchesIterator.next()) != null) {
+                SpectrumMatchesIterator spectrumMatchesIterator = identification.getSpectrumMatchesIterator(spectrumKeys, waitingHandler);
 
-                // Display progress
-                if (waitingHandler != null) {
+                SpectrumMatch spectrumMatch;
 
-                    waitingHandler.increaseSecondaryProgressCounter();
+                while ((spectrumMatch = spectrumMatchesIterator.next()) != null) {
 
-                    if (waitingHandler.isRunCanceled()) {
+                    // Display progress
+                    if (waitingHandler != null) {
 
-                        return;
+                        waitingHandler.increaseSecondaryProgressCounter();
+
+                        if (waitingHandler.isRunCanceled()) {
+
+                            return;
+
+                        }
+                    }
+
+                    // Measured retention time
+                    String spectrumFile = spectrumMatch.getSpectrumFile();
+                    String spectrumTitle = spectrumMatch.getSpectrumTitle();
+                    Precursor precursor = spectrumProvider.getPrecursor(spectrumFile, spectrumTitle);
+                    double retentionTime = precursor.rt;
+
+                    // Export all candidate peptides
+                    spectrumMatch.getAllPeptideAssumptions()
+                            .parallel()
+                            .forEach(
+                                    peptideAssumption -> writePeptideCandidate(
+                                            peptideAssumption,
+                                            retentionTime,
+                                            modificationParameters,
+                                            sequenceProvider,
+                                            sequenceMatchingParameters,
+                                            modificationFactory,
+                                            processedPeptideKeys,
+                                            writingSemaphore,
+                                            writer
+                                    )
+                            );
+
+                    // Check whether the spectrum yielded a confident peptide
+                    if (spectrumMatch.getBestPeptideAssumption() != null
+                            && ((PSParameter) spectrumMatch.getUrParam(PSParameter.dummy))
+                                    .getMatchValidationLevel()
+                                    .isValidated()) {
+
+                        // Export the confident peptide to the confident peptides file
+                        writePeptideCandidate(
+                                spectrumMatch.getBestPeptideAssumption(),
+                                retentionTime,
+                                modificationParameters,
+                                sequenceProvider,
+                                sequenceMatchingParameters,
+                                modificationFactory,
+                                processedPeptideKeys,
+                                writingSemaphore,
+                                writer
+                        );
 
                     }
                 }
-
-                // Measured retention time
-                String spectrumFile = spectrumMatch.getSpectrumFile();
-                String spectrumTitle = spectrumMatch.getSpectrumTitle();
-                Precursor precursor = spectrumProvider.getPrecursor(spectrumFile, spectrumTitle);
-                double retentionTime = precursor.rt;
-
-                // Export all candidate peptides
-                spectrumMatch.getAllPeptideAssumptions()
-                        .parallel()
-                        .forEach(
-                                peptideAssumption -> writePeptideCandidate(
-                                        peptideAssumption,
-                                        retentionTime,
-                                        modificationParameters,
-                                        sequenceProvider,
-                                        sequenceMatchingParameters,
-                                        modificationFactory,
-                                        processedPeptideKeys,
-                                        writingSemaphore,
-                                        writer
-                                )
-                        );
             }
         }
     }
