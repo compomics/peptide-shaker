@@ -288,6 +288,8 @@ public class Ms2PipExport {
             String line = String.join(" ", Long.toString(peptideKey), peptideData);
 
             writer.writeLine(line);
+            
+            processedPeptides.add(peptideKey);
 
         }
 
