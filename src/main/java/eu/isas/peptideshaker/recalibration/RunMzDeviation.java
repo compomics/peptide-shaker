@@ -343,7 +343,7 @@ public class RunMzDeviation {
                 if (bestPeptideAssumption != null) {
 
                     SearchParameters searchParameters = identificationParameters.getSearchParameters();
-                    double error = bestPeptideAssumption.getDeltaMass(
+                    double error = bestPeptideAssumption.getDeltaMz(
                             precursorMz,
                             false,
                             searchParameters.getMinIsotopicCorrection(),

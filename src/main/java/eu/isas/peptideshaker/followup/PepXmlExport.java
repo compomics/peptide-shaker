@@ -689,7 +689,7 @@ public class PepXmlExport {
                 .append("\" ")
                 .append("massdiff=\"")
                 .append(
-                        peptideAssumption.getDeltaMass(
+                        peptideAssumption.getDeltaMz(
                                 precursorMz,
                                 false,
                                 identificationParameters.getSearchParameters().getMinIsotopicCorrection(),

@@ -198,7 +198,7 @@ public class TieBreaker {
         }
 
         double massError1 = Math.abs(
-                peptideAssumption1.getDeltaMass(
+                peptideAssumption1.getDeltaMz(
                         spectrum.getPrecursor().mz,
                         searchParameters.isPrecursorAccuracyTypePpm(),
                         searchParameters.getMinIsotopicCorrection(),
@@ -207,7 +207,7 @@ public class TieBreaker {
         );
 
         double massError2 = Math.abs(
-                peptideAssumption2.getDeltaMass(
+                peptideAssumption2.getDeltaMz(
                         spectrum.getPrecursor().mz,
                         searchParameters.isPrecursorAccuracyTypePpm(),
                         searchParameters.getMinIsotopicCorrection(),

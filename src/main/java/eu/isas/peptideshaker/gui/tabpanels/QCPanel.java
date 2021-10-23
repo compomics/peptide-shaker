@@ -2038,7 +2038,7 @@ public class QCPanel extends javax.swing.JPanel {
                             .getPrecursorMz(spectrumFile, spectrumTitle);
 
                     SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
-                    double value = spectrumMatch.getBestPeptideAssumption().getDeltaMass(
+                    double value = spectrumMatch.getBestPeptideAssumption().getDeltaMz(
                             precursorMz,
                             searchParameters.isPrecursorAccuracyTypePpm(),
                             searchParameters.getMinIsotopicCorrection(),

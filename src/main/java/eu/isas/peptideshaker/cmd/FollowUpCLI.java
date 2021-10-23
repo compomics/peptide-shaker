@@ -6,7 +6,6 @@ import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.parameters.UtilitiesUserParameters;
-import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.utils.PsdbParent;
 import java.io.File;
@@ -515,6 +514,39 @@ public class FollowUpCLI extends PsdbParent {
                         identification,
                         identificationParameters.getSearchParameters(),
                         identificationParameters.getSequenceMatchingParameters(),
+                        sequenceProvider,
+                        msFileHandler,
+                        waitingHandler
+                );
+
+            } catch (Exception e) {
+
+                waitingHandler.appendReport(
+                        "An error occurred while generating the DeepLC export.",
+                        true,
+                        true
+                );
+
+                e.printStackTrace();
+                waitingHandler.setRunCanceled();
+
+            }
+        }
+
+        // Percolator export
+        if (followUpCLIInputBean.percolatorExportNeeded()) {
+
+            waitingHandler.appendReport("Percolator export.", true, true);
+
+            try {
+
+                CLIExportMethods.exportPercolator(
+                        followUpCLIInputBean,
+                        identification,
+                        identificationParameters.getSearchParameters(),
+                        identificationParameters.getSequenceMatchingParameters(),
+                        identificationParameters.getAnnotationParameters(),
+                        identificationParameters.getModificationLocalizationParameters(),
                         sequenceProvider,
                         msFileHandler,
                         waitingHandler

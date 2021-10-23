@@ -624,10 +624,10 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                 spectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
                 Peptide peptide = peptideAssumption.getPeptide();
-                AnnotationParameters annotationPreferences = identificationParameters.getAnnotationParameters();
+                AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
                 modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                SpecificAnnotationParameters specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(
+                SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
                         spectrumFile,
                         spectrumTitle,
                         peptideAssumption,
@@ -636,9 +636,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                         modificationSequenceMatchingParameters,
                         peptideSpectrumAnnotator
                 );
-                IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
-                        annotationPreferences,
-                        specificAnnotationPreferences,
+                IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters,
+                        specificAnnotationParameters,
                         spectrumFile,
                         spectrumTitle,
                         spectrum,
@@ -655,10 +654,13 @@ public class PsIdentificationAlgorithmMatchesSection {
                 double coverage = 100 * coveredIntensity / spectrum.getTotalIntensity();
                 return Double.toString(coverage);
 
+
+
             case mz_error_ppm:
 
                 precursorMz = spectrumProvider.getPrecursorMz(spectrumFile, spectrumTitle);
-                return Double.toString(peptideAssumption.getDeltaMass(
+                return Double.toString(
+                        peptideAssumption.getDeltaMz(
                         precursorMz,
                         true,
                         identificationParameters.getSearchParameters().getMinIsotopicCorrection(),
@@ -669,7 +671,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case mz_error_da:
 
                 precursorMz = spectrumProvider.getPrecursorMz(spectrumFile, spectrumTitle);
-                return Double.toString(peptideAssumption.getDeltaMass(
+                return Double.toString(peptideAssumption.getDeltaMz(
                         precursorMz,
                         false,
                         identificationParameters.getSearchParameters().getMinIsotopicCorrection(),
@@ -807,10 +809,10 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                 peptide = peptideAssumption.getPeptide();
                 spectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
-                annotationPreferences = identificationParameters.getAnnotationParameters();
+                annotationParameters = identificationParameters.getAnnotationParameters();
                 modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(
+                specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
                         spectrumFile,
                         spectrumTitle,
                         peptideAssumption,
@@ -819,9 +821,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                         modificationSequenceMatchingParameters,
                         peptideSpectrumAnnotator
                 );
-                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
-                        annotationPreferences,
-                        specificAnnotationPreferences,
+                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters,
+                        specificAnnotationParameters,
                         spectrumFile,
                         spectrumTitle,
                         spectrum,
@@ -846,10 +847,10 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                 peptide = peptideAssumption.getPeptide();
                 spectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
-                annotationPreferences = identificationParameters.getAnnotationParameters();
+                annotationParameters = identificationParameters.getAnnotationParameters();
                 modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(
+                specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
                         spectrumFile,
                         spectrumTitle,
                         peptideAssumption,
@@ -858,9 +859,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                         modificationSequenceMatchingParameters,
                         peptideSpectrumAnnotator
                 );
-                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
-                        annotationPreferences,
-                        specificAnnotationPreferences,
+                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters,
+                        specificAnnotationParameters,
                         spectrumFile,
                         spectrumTitle,
                         spectrum,
@@ -952,10 +952,10 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                 peptide = peptideAssumption.getPeptide();
                 spectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
-                annotationPreferences = identificationParameters.getAnnotationParameters();
+                annotationParameters = identificationParameters.getAnnotationParameters();
                 modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(
+                specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
                         spectrumFile,
                         spectrumTitle,
                         peptideAssumption,
@@ -964,9 +964,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                         modificationSequenceMatchingParameters,
                         peptideSpectrumAnnotator
                 );
-                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
-                        annotationPreferences,
-                        specificAnnotationPreferences,
+                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters,
+                        specificAnnotationParameters,
                         spectrumFile,
                         spectrumTitle,
                         spectrum,
@@ -1046,10 +1045,10 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                 peptide = peptideAssumption.getPeptide();
                 spectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
-                annotationPreferences = identificationParameters.getAnnotationParameters();
+                annotationParameters = identificationParameters.getAnnotationParameters();
                 modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
                 modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
-                specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationParameters(
+                specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
                         spectrumFile,
                         spectrumTitle,
                         peptideAssumption,
@@ -1058,9 +1057,8 @@ public class PsIdentificationAlgorithmMatchesSection {
                         modificationSequenceMatchingParameters,
                         peptideSpectrumAnnotator
                 );
-                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
-                        annotationPreferences,
-                        specificAnnotationPreferences,
+                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters,
+                        specificAnnotationParameters,
                         spectrumFile,
                         spectrumTitle,
                         spectrum,
@@ -1276,7 +1274,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                 precursorMz = spectrumProvider.getPrecursorMz(spectrumFile, spectrumTitle);
                 return Double.toString(
-                        tagAssumption.getDeltaMass(
+                        tagAssumption.getDeltaMz(
                                 precursorMz,
                                 true,
                                 identificationParameters.getSearchParameters().getMinIsotopicCorrection(),

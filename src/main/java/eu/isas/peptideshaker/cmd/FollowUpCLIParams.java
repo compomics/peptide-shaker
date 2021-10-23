@@ -38,7 +38,10 @@ public enum FollowUpCLIParams {
     PROTEOFORMS_FILE("proteoforms_file", "Output file for the proteoforms. (Existing file will be overwritten.)", true, false),
     DEEPLC_FILE("deeplc_file", "Path to the file where to write DeepLC peptide files. If the PeptideShaker project was built using multiple MS files, one file per MS file will be exported. (Should end with .gz. Existing file will be overwritten.)", true, false),
     MS2PIP_FILE("ms2pip_file", "Path to the file where to write ms2pip peptide files. If the PeptideShaker project was built using multiple MS files, one file will be exported for all. (Should end with .gz. Existing file will be overwritten.)", true, false),
-    MS2PIP_MODELS("ms2pip_models", "Comma separated list of models to write a config file for. Default: CID,HCD.", true, false);
+    MS2PIP_MODELS("ms2pip_models", "Comma separated list of models to write a config file for. Default: CID,HCD.", true, false),
+    PERCOLATOR_RT("precolator_rt_file", "Path to the file containing the RT predictions to include in the percolator training file.", true, false),
+    PERCOLATOR_FRAGMENTATION("precolator_fragmentation_file", "Path to the file containing the fragmentation predictions to include in the percolator training file.", true, false),
+    PERCOLATOR_FILE("precolator_file", "Path to the file where to write the percolator training file. DeepLC and ms2pip files can be provided using the respective options. (Should end with .gz. Existing file will be overwritten.)", true, false);
 
     /**
      * Short Id for the CLI parameter.

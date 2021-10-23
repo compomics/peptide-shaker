@@ -104,6 +104,18 @@ public class FollowUpCLIInputBean {
      */
     private File ms2pipFile = null;
     /**
+     * The file containing the RT predictions for Percolator.
+     */
+    private File percolatorRtFile = null;
+    /**
+     * The file containing the fragmentation predictions for Percolator.
+     */
+    private File percolatorFragmentationFile = null;
+    /**
+     * The file where to write the Percolator training file.
+     */
+    private File percolatorFile = null;
+    /**
      * The models to export ms2pip config files for.
      */
     private String[] ms2pipModels = new String[]{"CID", "HCD"};
@@ -207,6 +219,39 @@ public class FollowUpCLIInputBean {
             
             ms2pipModels = aLine.getOptionValue(FollowUpCLIParams.MS2PIP_FILE.id).split(",");
             
+        }
+        
+        if (aLine.hasOption(FollowUpCLIParams.PERCOLATOR_RT.id)) {
+            
+            percolatorRtFile = new File(aLine.getOptionValue(FollowUpCLIParams.PERCOLATOR_RT.id));
+            
+            if (!percolatorRtFile.exists()) {
+                
+                throw new IllegalArgumentException("Percolator RT file '" + percolatorRtFile + "' not found.");
+                
+            }
+        }
+        
+        if (aLine.hasOption(FollowUpCLIParams.PERCOLATOR_FRAGMENTATION.id)) {
+            
+            percolatorFragmentationFile = new File(aLine.getOptionValue(FollowUpCLIParams.PERCOLATOR_FRAGMENTATION.id));
+            
+            if (!percolatorFragmentationFile.exists()) {
+                
+                throw new IllegalArgumentException("Percolator RT file '" + percolatorFragmentationFile + "' not found.");
+                
+            }
+        }
+        
+        if (aLine.hasOption(FollowUpCLIParams.PERCOLATOR_FILE.id)) {
+            
+            percolatorFile = new File(aLine.getOptionValue(FollowUpCLIParams.PERCOLATOR_FILE.id));
+            
+            if (!percolatorFile.getParentFile().exists()) {
+                
+                throw new IllegalArgumentException("Folder where to write the percolator RT file '" + percolatorFile + "' not found.");
+                
+            }
         }
         
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
@@ -365,6 +410,33 @@ public class FollowUpCLIInputBean {
      */
     public String[] getMs2pipModels() {
         return ms2pipModels;
+    }
+
+    /**
+     * Returns the file with retention time values for Percolator.
+     * 
+     * @return The file with retention time values for Percolator.
+     */
+    public File getPercolatorRtFile() {
+        return percolatorRtFile;
+    }
+
+    /**
+     * Returns the file with fragmentation values for Percolator.
+     * 
+     * @return The file with fragmentation values for Percolator.
+     */
+    public File getPercolatorFragmentationFile() {
+        return percolatorFragmentationFile;
+    }
+
+    /**
+     * Returns the file where to write the training file for Percolator.
+     * 
+     * @return The file where to write the training file for Percolator.
+     */
+    public File getPercolatorFile() {
+        return percolatorFile;
     }
 
     /**
@@ -540,6 +612,15 @@ public class FollowUpCLIInputBean {
      */
     public boolean ms2pipExportNeeded() {
         return ms2pipFile != null;
+    }
+
+    /**
+     * Indicates whether DeepLC export is needed.
+     *
+     * @return whether DeepLC export is needed
+     */
+    public boolean percolatorExportNeeded() {
+        return percolatorFile != null;
     }
 
     /**

@@ -381,7 +381,7 @@ public class PsmFirstHitRunnable implements Runnable {
         maxPeptideErrorPpm = Math.max(
                 maxPeptideErrorPpm,
                 Math.abs(
-                        peptideAssumption.getDeltaMass(
+                        peptideAssumption.getDeltaMz(
                                 precursorMz,
                                 true,
                                 searchParameters.getMinIsotopicCorrection(),
@@ -393,7 +393,7 @@ public class PsmFirstHitRunnable implements Runnable {
         maxPeptideErrorDa = Math.max(
                 maxPeptideErrorDa,
                 Math.abs(
-                        peptideAssumption.getDeltaMass(
+                        peptideAssumption.getDeltaMz(
                                 precursorMz,
                                 false,
                                 searchParameters.getMinIsotopicCorrection(),
@@ -428,7 +428,7 @@ public class PsmFirstHitRunnable implements Runnable {
         maxTagErrorPpm = Math.max(
                 maxTagErrorPpm,
                 Math.abs(
-                        tagAssumption.getDeltaMass(
+                        tagAssumption.getDeltaMz(
                                 precursorMz, 
                                 true, 
                                 searchParameters.getMinIsotopicCorrection(), 
@@ -440,7 +440,7 @@ public class PsmFirstHitRunnable implements Runnable {
         maxTagErrorDa = Math.max(
                 maxTagErrorDa,
                 Math.abs(
-                        tagAssumption.getDeltaMass(
+                        tagAssumption.getDeltaMz(
                                 precursorMz, 
                                 false, 
                                 searchParameters.getMinIsotopicCorrection(), 

@@ -40,8 +40,33 @@ public class DeepLcUtils {
             ModificationFactory modificationFactory
     ) {
 
-        // Peptide sequence
-        Peptide peptide = peptideAssumption.getPeptide();
+        return String.join(",",
+                peptideAssumption.getPeptide().getSequence(),
+                getModifications(peptideAssumption.getPeptide(), modificationParameters, sequenceProvider, sequenceMatchingParameters, modificationFactory),
+                Double.toString(retentionTime)
+        );
+    }
+
+    /**
+     * Returns the modifications of the peptides encoded as required by DeepLc.
+     *
+     * @param peptide The pepitde.
+     * @param modificationParameters The modification parameters of the search.
+     * @param sequenceMatchingParameters The sequence matching parameters.
+     * @param sequenceProvider The sequence provider.
+     * @param modificationFactory The factory containing the modification
+     * details
+     *
+     * @return the modifications of the peptides encoded as required by DeepLc.
+     */
+    public static String getModifications(
+            Peptide peptide,
+            ModificationParameters modificationParameters,
+            SequenceProvider sequenceProvider,
+            SequenceMatchingParameters sequenceMatchingParameters,
+            ModificationFactory modificationFactory
+    ) {
+
         String peptideSequence = peptide.getSequence();
 
         // Fixed modifications
@@ -58,13 +83,13 @@ public class DeepLcUtils {
                 String modName = fixedModifications[i];
                 Modification modification = modificationFactory.getModification(modName);
                 CvTerm cvTerm = modification.getUnimodCvTerm();
-                
+
                 if (cvTerm == null) {
-                    
+
                     throw new IllegalArgumentException("No Unimod id found for modification " + modName + ".");
-                    
+
                 }
-                
+
                 String unimodName = cvTerm.getName();
 
                 if (modificationSites.length() > 0) {
@@ -82,7 +107,7 @@ public class DeepLcUtils {
 
         // Variable modifications
         String[] variableModifications = peptide.getIndexedVariableModifications();
-        
+
         for (int i = 0; i < variableModifications.length; i++) {
 
             if (variableModifications[i] != null) {
@@ -91,15 +116,15 @@ public class DeepLcUtils {
 
                 String modName = variableModifications[i];
                 Modification modification = modificationFactory.getModification(modName);
-                
+
                 CvTerm cvTerm = modification.getUnimodCvTerm();
-                
+
                 if (cvTerm == null) {
-                    
+
                     throw new IllegalArgumentException("No Unimod id found for modification " + modName + ".");
-                    
+
                 }
-                
+
                 String unimodName = cvTerm.getName();
 
                 if (modificationSites.length() > 0) {
@@ -115,13 +140,7 @@ public class DeepLcUtils {
             }
         }
 
-        return new StringBuilder()
-                .append(peptideSequence)
-                .append(',')
-                .append(modificationSites)
-                .append(',')
-                .append(retentionTime)
-                .toString();
+        return modificationSites.toString();
 
     }
 

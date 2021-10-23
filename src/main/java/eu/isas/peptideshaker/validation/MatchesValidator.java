@@ -1763,7 +1763,7 @@ public class MatchesValidator {
                                     spectrumMatch.getSpectrumTitle()
                             );
                             SearchParameters searchParameters = identificationParameters.getSearchParameters();
-                            double precursorMzError = peptideAssumption.getDeltaMass(
+                            double precursorMzError = peptideAssumption.getDeltaMz(
                                     precursorMz,
                                     searchParameters.isPrecursorAccuracyTypePpm(),
                                     searchParameters.getMinIsotopicCorrection(),
