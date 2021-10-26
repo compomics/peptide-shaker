@@ -110,6 +110,10 @@ public class Ms2PipUtils {
 
             }
         }
+        
+        if (modificationSites.length() == 0) {
+            modificationSites.append('-');
+        }
 
         return new StringBuilder()
                 .append(modificationSites)
