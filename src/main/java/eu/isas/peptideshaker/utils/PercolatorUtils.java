@@ -83,6 +83,8 @@ public class PercolatorUtils {
                 searchParameters.getMaxIsotopicCorrection()
         );
         line.append("\t").append(deltaMz);
+        
+        PeptideUtils.isDecoy(peptide, sequenceProvider);
 
         // pep
         PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
@@ -90,7 +92,7 @@ public class PercolatorUtils {
         line.append("\t").append(pep);
         double deltaPep = psParameter.getDeltaPEP();
         line.append("\t").append(deltaPep);
-
+        
         // Ion fraction
         PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         String spectrumFile = spectrumMatch.getSpectrumFile();
