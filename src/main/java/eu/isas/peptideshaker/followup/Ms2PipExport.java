@@ -105,7 +105,7 @@ public class Ms2PipExport {
         try (SimpleFileWriter writer = new SimpleFileWriter(configFile, false)) {
 
             writer.writeLine("model=" + model);
-            writer.writeLine("out=mgf");
+            writer.writeLine("out=csv");
             writer.writeLine("frag_error=" + searchParameters.getFragmentIonAccuracyInDaltons());
 
             for (String modName : searchParameters.getModificationParameters().getAllModifications()) {
@@ -279,7 +279,7 @@ public class Ms2PipExport {
 
         // Get corresponding key
         long peptideKey = Ms2PipUtils.getPeptideKey(peptideData);
-
+        
         // Export if not done already
         writingSemaphore.acquire();
 

@@ -154,6 +154,18 @@ public enum FollowUpCLIParams {
         output += "\nProteoforms Export:\n\n";
         output += "-" + String.format(formatter, PROTEOFORMS_FILE.id) + " " + PROTEOFORMS_FILE.description + "\n";
 
+        output += "\nDeepLC Export:\n\n";
+        output += "-" + String.format(formatter, DEEPLC_FILE.id) + " " + DEEPLC_FILE.description + "\n";
+        
+        output += "\nMS2PIP Export:\n\n";
+        output += "-" + String.format(formatter, MS2PIP_FILE.id) + " " + MS2PIP_FILE.description + "\n";
+        output += "-" + String.format(formatter, MS2PIP_MODELS.id) + " " + MS2PIP_MODELS.description + "\n";
+        
+        output += "\nPercolator Export:\n\n";
+        output += "-" + String.format(formatter, PERCOLATOR_RT.id) + " " + PERCOLATOR_RT.description + "\n";
+        output += "-" + String.format(formatter, PERCOLATOR_FRAGMENTATION.id) + " " + PERCOLATOR_FRAGMENTATION.description + "\n";
+        output += "-" + String.format(formatter, PERCOLATOR_FILE.id) + " " + PERCOLATOR_FILE.description + "\n";
+        
         return output;
     }
 }
