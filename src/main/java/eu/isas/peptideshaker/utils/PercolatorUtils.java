@@ -34,6 +34,47 @@ import java.util.Map.Entry;
 public class PercolatorUtils {
 
     /**
+     * Returns the header of the Percolator training file.
+     * 
+     * @param searchParameters The parameters of the search.
+     * 
+     * @return The header of the Percolator training file.
+     */
+    public static String getHeader(
+    SearchParameters searchParameters
+    ) {
+        
+            StringBuilder header = new StringBuilder();
+            header.append(
+                    String.join("\t", "PSMId", "Label", "ScanNr", "measured_mz", "mz_error", "pep", "delta_pep", "ion_fraction", "peptide_length")
+            );
+            for (int charge = searchParameters.getMinChargeSearched(); charge <= searchParameters.getMaxChargeSearched(); charge++) {
+
+                header.append("\t").append("charge_").append(charge);
+
+            }
+            for (int isotope = searchParameters.getMinIsotopicCorrection(); isotope <= searchParameters.getMaxChargeSearched(); isotope++) {
+
+                header.append("\t").append("isotope_").append(isotope);
+
+            }
+
+            if (searchParameters.getDigestionParameters().hasEnzymes()) {
+
+                header.append("\t").append("unspecific");
+                header.append("\t").append("enzymatic_N");
+                header.append("\t").append("enzymatic_C");
+                header.append("\t").append("enzymatic");
+
+            }
+
+            header.append("\t").append("measured_rt").append("\t").append("rt_error");
+        
+            return header.toString();
+            
+    }
+    
+    /**
      * Gets the peptide data to provide to percolator.
      *
      * @param spectrumMatch The spectrum match where the peptide was found.
@@ -65,14 +106,20 @@ public class PercolatorUtils {
         
         StringBuilder line = new StringBuilder();
 
-        // Identifiers
+        // PSM id
         long spectrumKey = spectrumMatch.getKey();
-        line.append(spectrumKey);
 
         Peptide peptide = peptideAssumption.getPeptide();
         long peptideKey = peptide.getMatchingKey();
-        line.append("\t").append(peptideKey);
+        line.append(spectrumKey).append("_").append(peptideKey);
+        
+        // Label
+        String decoyFlag = PeptideUtils.isDecoy(peptideAssumption.getPeptide(), sequenceProvider) ? "-1" : "1";
+        line.append("\t").append(decoyFlag);
 
+        // Spectrum number
+        line.append(spectrumKey);
+        
         // m/z
         double measuredMz = spectrumProvider.getPrecursorMz(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
         line.append("\t").append(measuredMz);

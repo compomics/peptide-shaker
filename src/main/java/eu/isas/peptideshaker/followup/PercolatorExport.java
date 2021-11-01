@@ -188,34 +188,10 @@ public class PercolatorExport {
         SimpleSemaphore writingSemaphore = new SimpleSemaphore(1);
 
         try (SimpleFileWriter writer = new SimpleFileWriter(destinationFile, true)) {
+            
+            String header = PercolatorUtils.getHeader(searchParameters);
 
-            StringBuilder header = new StringBuilder();
-            header.append(
-                    String.join("\t", "spectrum_id", "peptide_id", "measured_mz", "mz_error", "pep", "delta_pep", "ion_fraction", "peptide_length")
-            );
-            for (int charge = searchParameters.getMinChargeSearched(); charge <= searchParameters.getMaxChargeSearched(); charge++) {
-
-                header.append("\t").append("charge_").append(charge);
-
-            }
-            for (int isotope = searchParameters.getMinIsotopicCorrection(); isotope <= searchParameters.getMaxChargeSearched(); isotope++) {
-
-                header.append("\t").append("isotope_").append(isotope);
-
-            }
-
-            if (searchParameters.getDigestionParameters().hasEnzymes()) {
-
-                header.append("\t").append("unspecific");
-                header.append("\t").append("enzymatic_N");
-                header.append("\t").append("enzymatic_C");
-                header.append("\t").append("enzymatic");
-
-            }
-
-            header.append("\t").append("measured_rt").append("\t").append("rt_error");
-
-            writer.writeLine(header.toString());
+            writer.writeLine(header);
 
             SpectrumMatchesIterator spectrumMatchesIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
@@ -299,7 +275,7 @@ public class PercolatorExport {
             SimpleFileWriter writer
     ) {
 
-        // Get DeepLC key
+        // Get Percolator key
         ArrayList<Double> predictedRts = null;
 
         if (rtPrediction != null) {
