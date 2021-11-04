@@ -37,11 +37,13 @@ public class PercolatorUtils {
      * Returns the header of the Percolator training file.
      * 
      * @param searchParameters The parameters of the search.
+     * @param rtPredictionsAvailable Flag indicating whether RT predictions are given
      * 
      * @return The header of the Percolator training file.
      */
     public static String getHeader(
-    SearchParameters searchParameters
+    SearchParameters searchParameters,
+    Boolean rtPredictionsAvailable
     ) {
         
             StringBuilder header = new StringBuilder();
@@ -67,8 +69,12 @@ public class PercolatorUtils {
                 header.append("\t").append("enzymatic");
 
             }
-
-            header.append("\t").append("measured_rt").append("\t").append("rt_error");
+            
+            if (rtPredictionsAvailable){
+                header.append("\t").append("measured_rt").append("\t").append("rt_error");
+            }
+            
+            header.append("\t").append("Peptide").append("\t").append("Proteins");
         
             return header.toString();
             
@@ -94,6 +100,7 @@ public class PercolatorUtils {
     public static String getPeptideData(
             SpectrumMatch spectrumMatch,
             PeptideAssumption peptideAssumption,
+            Boolean rtPredictionsAvailable,
             ArrayList<Double> predictedRts,
             SearchParameters searchParameters,
             SequenceProvider sequenceProvider,
@@ -118,7 +125,7 @@ public class PercolatorUtils {
         line.append("\t").append(decoyFlag);
 
         // Spectrum number
-        line.append(spectrumKey);
+        line.append("\t").append(spectrumKey);
         
         // m/z
         double measuredMz = spectrumProvider.getPrecursorMz(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
@@ -270,15 +277,19 @@ public class PercolatorUtils {
         }
 
         // Retention time
-        double measuredRt = spectrumProvider.getPrecursorRt(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
-        double rtError = predictedRts == null ? Double.NaN : predictedRts.stream()
-                .mapToDouble(
-                        predictedRt -> Math.abs(predictedRt - measuredRt)
-                )
-                .min()
-                .orElse(Double.NaN);
+        if (rtPredictionsAvailable){
+            double measuredRt = spectrumProvider.getPrecursorRt(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
+            double rtError = predictedRts == null ? Double.NaN : predictedRts.stream()
+                    .mapToDouble(
+                            predictedRt -> Math.abs(predictedRt - measuredRt)
+                    )
+                    .min()
+                    .orElse(Double.NaN);
 
-        line.append("\t").append(measuredRt).append("\t").append(rtError);
+            line.append("\t").append(measuredRt).append("\t").append(rtError);
+        }
+        
+        line.append("\t").append("-.-.-").append("\t").append("-");
 
         return line.toString();
 

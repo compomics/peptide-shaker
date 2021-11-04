@@ -126,11 +126,12 @@ public class PercolatorExport {
 
             while ((line = reader.readLine()) != null) {
 
-                String[] lineSplit = line.split("\t");
+                //String[] lineSplit = line.split("\t");
+                String[] lineSplit = line.split(",");
 
                 String key = String.join(",", lineSplit[1], lineSplit[2]);
 
-                double rt = Double.parseDouble(lineSplit[3]);
+                double rt = Double.parseDouble(lineSplit[4]);
 
                 ArrayList<Double> rtsForPeptide = result.get(key);
 
@@ -189,7 +190,9 @@ public class PercolatorExport {
 
         try (SimpleFileWriter writer = new SimpleFileWriter(destinationFile, true)) {
             
-            String header = PercolatorUtils.getHeader(searchParameters);
+            Boolean rtPredictionsAvailable = rtPrediction != null;
+            
+            String header = PercolatorUtils.getHeader(searchParameters, rtPredictionsAvailable);
 
             writer.writeLine(header);
 
@@ -289,9 +292,13 @@ public class PercolatorExport {
         }
 
         // Get peptide data
+        
+        Boolean rtPredictionsAvailable = rtPrediction != null;
+        
         String peptideData = PercolatorUtils.getPeptideData(
                 spectrumMatch,
                 peptideAssumption,
+                rtPredictionsAvailable,
                 predictedRts,
                 searchParameters,
                 sequenceProvider,
