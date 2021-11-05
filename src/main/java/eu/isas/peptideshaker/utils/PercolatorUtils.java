@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.experiment.biology.enzymes.Enzyme;
-import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.matches.IonMatch;
@@ -18,9 +17,7 @@ import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
 import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.parameters.identification.advanced.ModificationLocalizationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
-import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.pride.CvTerm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -35,62 +32,80 @@ public class PercolatorUtils {
 
     /**
      * Returns the header of the Percolator training file.
-     * 
+     *
      * @param searchParameters The parameters of the search.
-     * @param rtPredictionsAvailable Flag indicating whether RT predictions are given
-     * 
+     * @param rtPredictionsAvailable Flag indicating whether RT predictions are
+     * given.
+     *
      * @return The header of the Percolator training file.
      */
     public static String getHeader(
-    SearchParameters searchParameters,
-    Boolean rtPredictionsAvailable
+            SearchParameters searchParameters,
+            Boolean rtPredictionsAvailable
     ) {
-        
-            StringBuilder header = new StringBuilder();
-            header.append(
-                    String.join("\t", "PSMId", "Label", "ScanNr", "measured_mz", "mz_error", "pep", "delta_pep", "ion_fraction", "peptide_length")
-            );
-            for (int charge = searchParameters.getMinChargeSearched(); charge <= searchParameters.getMaxChargeSearched(); charge++) {
 
-                header.append("\t").append("charge_").append(charge);
+        StringBuilder header = new StringBuilder();
 
-            }
-            for (int isotope = searchParameters.getMinIsotopicCorrection(); isotope <= searchParameters.getMaxChargeSearched(); isotope++) {
+        header.append(
+                String.join(
+                        "\t",
+                        "PSMId",
+                        "Label",
+                        "ScanNr",
+                        "measured_mz",
+                        "mz_error",
+                        "pep",
+                        "delta_pep",
+                        "ion_fraction",
+                        "peptide_length"
+                )
+        );
 
-                header.append("\t").append("isotope_").append(isotope);
+        for (int charge = searchParameters.getMinChargeSearched(); charge <= searchParameters.getMaxChargeSearched(); charge++) {
 
-            }
+            header.append("\t").append("charge_").append(charge);
 
-            if (searchParameters.getDigestionParameters().hasEnzymes()) {
+        }
 
-                header.append("\t").append("unspecific");
-                header.append("\t").append("enzymatic_N");
-                header.append("\t").append("enzymatic_C");
-                header.append("\t").append("enzymatic");
+        for (int isotope = searchParameters.getMinIsotopicCorrection(); isotope <= searchParameters.getMaxChargeSearched(); isotope++) {
 
-            }
-            
-            if (rtPredictionsAvailable){
-                header.append("\t").append("measured_rt").append("\t").append("rt_error");
-            }
-            
-            header.append("\t").append("Peptide").append("\t").append("Proteins");
-        
-            return header.toString();
-            
+            header.append("\t").append("isotope_").append(isotope);
+
+        }
+
+        if (searchParameters.getDigestionParameters().hasEnzymes()) {
+
+            header.append("\t").append("unspecific");
+            header.append("\t").append("enzymatic_N");
+            header.append("\t").append("enzymatic_C");
+            header.append("\t").append("enzymatic");
+
+        }
+
+        if (rtPredictionsAvailable) {
+            header.append("\t").append("measured_rt").append("\t").append("rt_error");
+        }
+
+        header.append("\t").append("Peptide").append("\t").append("Proteins");
+
+        return header.toString();
+
     }
-    
+
     /**
      * Gets the peptide data to provide to percolator.
      *
      * @param spectrumMatch The spectrum match where the peptide was found.
      * @param peptideAssumption The peptide assumption.
+     * @param rtPredictionsAvailable Flag indicating whether retention time
+     * predictions are given.
      * @param predictedRts The retention time predictions for this peptide.
      * @param searchParameters The parameters of the search.
      * @param sequenceProvider The sequence provider.
      * @param sequenceMatchingParameters The sequence matching parameters.
      * @param annotationParameters The annotation parameters.
-     * @param modificationLocalizationParameters The modification localization parameters.
+     * @param modificationLocalizationParameters The modification localization
+     * parameters.
      * @param modificationFactory The factory containing the modification
      * details.
      * @param spectrumProvider The spectrum provider.
@@ -110,7 +125,7 @@ public class PercolatorUtils {
             ModificationFactory modificationFactory,
             SpectrumProvider spectrumProvider
     ) {
-        
+
         StringBuilder line = new StringBuilder();
 
         // PSM id
@@ -119,25 +134,27 @@ public class PercolatorUtils {
         Peptide peptide = peptideAssumption.getPeptide();
         long peptideKey = peptide.getMatchingKey();
         line.append(spectrumKey).append("_").append(peptideKey);
-        
+
         // Label
         String decoyFlag = PeptideUtils.isDecoy(peptideAssumption.getPeptide(), sequenceProvider) ? "-1" : "1";
         line.append("\t").append(decoyFlag);
 
         // Spectrum number
         line.append("\t").append(spectrumKey);
-        
+
         // m/z
         double measuredMz = spectrumProvider.getPrecursorMz(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
         line.append("\t").append(measuredMz);
+
         double deltaMz = peptideAssumption.getDeltaMz(
                 measuredMz,
                 searchParameters.isPrecursorAccuracyTypePpm(),
                 searchParameters.getMinIsotopicCorrection(),
                 searchParameters.getMaxIsotopicCorrection()
         );
+
         line.append("\t").append(deltaMz);
-        
+
         PeptideUtils.isDecoy(peptide, sequenceProvider);
 
         // pep
@@ -146,12 +163,13 @@ public class PercolatorUtils {
         line.append("\t").append(pep);
         double deltaPep = psParameter.getDeltaPEP();
         line.append("\t").append(deltaPep);
-        
+
         // Ion fraction
         PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         String spectrumFile = spectrumMatch.getSpectrumFile();
         String spectrumTitle = spectrumMatch.getSpectrumTitle();
         Spectrum spectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
+
         SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
                 spectrumFile,
                 spectrumTitle,
@@ -161,6 +179,7 @@ public class PercolatorUtils {
                 modificationLocalizationParameters.getSequenceMatchingParameters(),
                 peptideSpectrumAnnotator
         );
+
         IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters,
                 specificAnnotationParameters,
                 spectrumFile,
@@ -171,11 +190,13 @@ public class PercolatorUtils {
                 sequenceProvider,
                 modificationLocalizationParameters.getSequenceMatchingParameters()
         );
+
         double coveredIntensity = Arrays.stream(matches)
                 .mapToDouble(
                         ionMatch -> ionMatch.peakIntensity
                 )
                 .sum();
+
         double intensityCoverage = coveredIntensity / spectrum.getTotalIntensity();
         line.append("\t").append(intensityCoverage);
 
@@ -223,6 +244,7 @@ public class PercolatorUtils {
                             locationN = true;
 
                         }
+
                         if (PeptideUtils.isCtermEnzymatic(start, end, proteinSequence, enzyme)) {
 
                             locationC = true;
@@ -236,11 +258,13 @@ public class PercolatorUtils {
                         nc = true;
 
                     }
+
                     if (locationN) {
 
                         n = true;
 
                     }
+
                     if (locationC) {
 
                         c = true;
@@ -277,8 +301,10 @@ public class PercolatorUtils {
         }
 
         // Retention time
-        if (rtPredictionsAvailable){
+        if (rtPredictionsAvailable) {
+
             double measuredRt = spectrumProvider.getPrecursorRt(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
+
             double rtError = predictedRts == null ? Double.NaN : predictedRts.stream()
                     .mapToDouble(
                             predictedRt -> Math.abs(predictedRt - measuredRt)
@@ -287,8 +313,9 @@ public class PercolatorUtils {
                     .orElse(Double.NaN);
 
             line.append("\t").append(measuredRt).append("\t").append(rtError);
+
         }
-        
+
         line.append("\t").append("-.-.-").append("\t").append("-");
 
         return line.toString();
