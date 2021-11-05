@@ -155,8 +155,6 @@ public class PercolatorUtils {
 
         line.append("\t").append(deltaMz);
 
-        PeptideUtils.isDecoy(peptide, sequenceProvider);
-
         // pep
         PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
         double pep = psParameter.getProbability();
