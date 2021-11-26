@@ -10,11 +10,13 @@ import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.identification.writers.SimpleMzIdentMLExporter;
 import com.compomics.util.experiment.io.mass_spectrometry.MsFileHandler;
 import com.compomics.util.experiment.io.temp.TempFilesManager;
+import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.io.IoUtil;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.io.flat.SimpleFileReader;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.Duration;
+import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.PsmImporter;
 import eu.isas.peptideshaker.stirred.modules.IdImporter;
@@ -209,6 +211,8 @@ public class Stirred {
         // Start
         cliLogger.logMessage("Stirred process start");
         totalDuration.start();
+        
+        WaitingHandler waitingHandler = new WaitingHandlerCLIImpl();
 
         String inputFileName = inputFile.getName();
 
@@ -218,7 +222,7 @@ public class Stirred {
             File unzipFolder = new File(tempFolder, PsZipUtils.getUnzipSubFolder());
             unzipFolder.mkdir();
             TempFilesManager.registerTempFolder(unzipFolder);
-            ZipUtils.unzip(inputFile, unzipFolder, null);
+            ZipUtils.unzip(inputFile, unzipFolder, waitingHandler);
 
             // Get the files
             File dataFasta = fastaFile;
@@ -372,7 +376,7 @@ public class Stirred {
             FMIndex fmIndex = new FMIndex(
                     dataFasta,
                     identificationParameters.getFastaParameters(),
-                    null,
+                    waitingHandler,
                     true,
                     identificationParameters.getPeptideVariantsParameters(),
                     identificationParameters.getSearchParameters()
@@ -380,7 +384,7 @@ public class Stirred {
             FastaSummary fastaSummary = FastaSummary.getSummary(
                     dataFasta.getAbsolutePath(),
                     identificationParameters.getFastaParameters(),
-                    null
+                    waitingHandler
             );
 
             // Import spectrum files
@@ -392,7 +396,7 @@ public class Stirred {
                 msFileHandler.register(
                         spectrumFile,
                         tempFolder,
-                        null
+                        waitingHandler
                 );
 
             }
@@ -417,7 +421,8 @@ public class Stirred {
                                             fmIndex,
                                             fastaSummary,
                                             msFileHandler,
-                                            identificationParameters
+                                            identificationParameters,
+                                            waitingHandler
                                     );
                                 } catch (Exception e) {
                                     throw new RuntimeException(e);
@@ -453,7 +458,7 @@ public class Stirred {
             FMIndex fmIndex = new FMIndex(
                     fastaFile,
                     identificationParameters.getFastaParameters(),
-                    null,
+                    waitingHandler,
                     true,  
                     identificationParameters.getPeptideVariantsParameters(),
                     identificationParameters.getSearchParameters()
@@ -461,7 +466,7 @@ public class Stirred {
             FastaSummary fastaSummary = FastaSummary.getSummary(
                     fastaFile.getAbsolutePath(),
                     identificationParameters.getFastaParameters(),
-                    null
+                    waitingHandler
             );
 
             // Import spectrum file
@@ -470,7 +475,7 @@ public class Stirred {
             msFileHandler.register(
                     spectrumFile,
                     tempFolder,
-                    null
+                    waitingHandler
             );
 
             // Create output file
@@ -484,7 +489,8 @@ public class Stirred {
                     fmIndex,
                     fastaSummary,
                     msFileHandler,
-                    identificationParameters
+                    identificationParameters,
+                    waitingHandler
             );
 
         }
@@ -505,6 +511,7 @@ public class Stirred {
      * @param fastaSummary The summary information on the fasta file.
      * @param msFileHandler The mass spectrometry file handler to use.
      * @param identificationParameters The identification parameters.
+     * @param waitingHandler The waiting handler to use.
      *
      * @throws InterruptedException Exception thrown if a thread is interrupted.
      * @throws TimeoutException Exception thrown if the process times out.
@@ -518,7 +525,8 @@ public class Stirred {
             FMIndex fmIndex,
             FastaSummary fastaSummary,
             MsFileHandler msFileHandler,
-            IdentificationParameters identificationParameters
+            IdentificationParameters identificationParameters,
+            WaitingHandler waitingHandler
     ) throws InterruptedException, TimeoutException, IOException {
 
         // Start
@@ -534,7 +542,7 @@ public class Stirred {
         ArrayList<SpectrumMatch> spectrumMatches = idImporter.loadSpectrumMatches(
                 identificationParameters,
                 msFileHandler,
-                null
+                waitingHandler
         );
         HashMap<String, ArrayList<String>> softwareVersions = idImporter.getIdFileReader().getSoftwareVersions();
 
