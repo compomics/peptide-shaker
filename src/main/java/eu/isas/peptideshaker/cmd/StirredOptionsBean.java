@@ -92,43 +92,43 @@ public class StirredOptionsBean {
         // Check that mandatory options are provided
         for (StirredOptions option : StirredOptions.values()) {
 
-            if (option.mandatory && !aLine.hasOption(option.opt)) {
+            if (option.mandatory && !hasOption(aLine, option)) {
 
-                throw new IllegalArgumentException("No value found for mandatory option " + option.opt + ".");
+                throw new IllegalArgumentException("No value found for mandatory option " + option.opt + " (" + option.longOpt + ").");
 
             }
         }
 
         // Input file
-        String arg = aLine.getOptionValue(StirredOptions.input.opt);
+        String arg = getOptionValue(aLine, StirredOptions.input);
         inputFile = new File(arg);
 
         // Spectrum file
-        if (aLine.hasOption(StirredOptions.spectrum.opt)) {
+        if (hasOption(aLine, StirredOptions.spectrum)) {
 
-            arg = aLine.getOptionValue(StirredOptions.spectrum.opt);
+            arg = getOptionValue(aLine, StirredOptions.spectrum);
             spectrumFile = new File(arg);
 
         }
 
         // Fasta file
-        if (aLine.hasOption(StirredOptions.fasta.opt)) {
+        if (hasOption(aLine, StirredOptions.fasta)) {
 
-            arg = aLine.getOptionValue(StirredOptions.fasta.opt);
+            arg = getOptionValue(aLine, StirredOptions.fasta);
             fastaFile = new File(arg);
 
         }
 
         // Spectrum file
-        if (aLine.hasOption(StirredOptions.identificationParametersFile.opt)) {
+        if (hasOption(aLine, StirredOptions.identificationParametersFile)) {
 
-            arg = aLine.getOptionValue(StirredOptions.identificationParametersFile.opt);
+            arg = getOptionValue(aLine, StirredOptions.identificationParametersFile);
             identificationParametersFile = new File(arg);
 
         }
 
         // Output folder
-        arg = aLine.getOptionValue(StirredOptions.output.opt);
+        arg = getOptionValue(aLine, StirredOptions.output);
         outputFolder = new File(arg);
 
         if (!outputFolder.exists()) {
@@ -143,9 +143,9 @@ public class StirredOptionsBean {
         }
 
         // Log file
-        if (aLine.hasOption(StirredOptions.log.opt)) {
+        if (hasOption(aLine, StirredOptions.log)) {
 
-            arg = aLine.getOptionValue(StirredOptions.log.opt);
+            arg = getOptionValue(aLine, StirredOptions.log);
             logFile = new File(arg);
 
         } else {
@@ -155,15 +155,15 @@ public class StirredOptionsBean {
         }
 
         // Temp folder
-        if (aLine.hasOption(StirredOptions.tempFolder.opt)) {
+        if (hasOption(aLine, StirredOptions.tempFolder)) {
 
-            arg = aLine.getOptionValue(StirredOptions.tempFolder.opt);
+            arg = getOptionValue(aLine, StirredOptions.tempFolder);
             tempFolder = new File(arg);
-            
+
             if (!tempFolder.exists()) {
-                
+
                 tempFolder.mkdir();
-                
+
             }
 
         } else {
@@ -173,9 +173,9 @@ public class StirredOptionsBean {
         }
 
         // Number of threads to use
-        if (aLine.hasOption(StirredOptions.nThreads.opt)) {
+        if (hasOption(aLine, StirredOptions.nThreads)) {
 
-            String argString = aLine.getOptionValue(StirredOptions.nThreads.opt);
+            String argString = getOptionValue(aLine, StirredOptions.nThreads);
 
             try {
 
@@ -201,9 +201,9 @@ public class StirredOptionsBean {
         }
 
         // Time out
-        if (aLine.hasOption(StirredOptions.timeOutDays.opt)) {
+        if (hasOption(aLine, StirredOptions.timeOutDays)) {
 
-            String argString = aLine.getOptionValue(StirredOptions.timeOutDays.opt);
+            String argString = getOptionValue(aLine, StirredOptions.timeOutDays);
 
             try {
 
@@ -229,52 +229,97 @@ public class StirredOptionsBean {
         }
 
         // The contact first name
-        if (aLine.hasOption(StirredOptions.contactFirstName.opt)) {
+        if (hasOption(aLine, StirredOptions.contactFirstName)) {
 
-            contactFirstName = aLine.getOptionValue(StirredOptions.contactFirstName.opt);
+            contactFirstName = getOptionValue(aLine, StirredOptions.contactFirstName);
 
         }
 
         // The contact last name
-        if (aLine.hasOption(StirredOptions.contactLastName.opt)) {
+        if (hasOption(aLine, StirredOptions.contactLastName)) {
 
-            contactLastName = aLine.getOptionValue(StirredOptions.contactLastName.opt);
+            contactLastName = getOptionValue(aLine, StirredOptions.contactLastName);
 
         }
 
         // The contact address
-        if (aLine.hasOption(StirredOptions.contactAddress.opt)) {
+        if (hasOption(aLine, StirredOptions.contactAddress)) {
 
-            contactAddress = aLine.getOptionValue(StirredOptions.contactAddress.opt);
+            contactAddress = getOptionValue(aLine, StirredOptions.contactAddress);
 
         }
 
         // The contact email
-        if (aLine.hasOption(StirredOptions.contactEmail.opt)) {
+        if (hasOption(aLine, StirredOptions.contactEmail)) {
 
-            contactEmail = aLine.getOptionValue(StirredOptions.contactEmail.opt);
+            contactEmail = getOptionValue(aLine, StirredOptions.contactEmail);
 
         }
 
         // The contact organization name
-        if (aLine.hasOption(StirredOptions.contactOrganizationName.opt)) {
+        if (hasOption(aLine, StirredOptions.contactOrganizationName)) {
 
-            contactOrganizationName = aLine.getOptionValue(StirredOptions.contactOrganizationName.opt);
+            contactOrganizationName = getOptionValue(aLine, StirredOptions.contactOrganizationName);
 
         }
 
         // The contact organization address
-        if (aLine.hasOption(StirredOptions.contactOrganizationAddress.opt)) {
+        if (hasOption(aLine, StirredOptions.contactOrganizationAddress)) {
 
-            contactOrganizationAddress = aLine.getOptionValue(StirredOptions.contactOrganizationAddress.opt);
+            contactOrganizationAddress = getOptionValue(aLine, StirredOptions.contactOrganizationAddress);
 
         }
 
         // The contact organization email
-        if (aLine.hasOption(StirredOptions.contactOrganizationEmail.opt)) {
+        if (hasOption(aLine, StirredOptions.contactOrganizationEmail)) {
 
-            contactOrganizationEmail = aLine.getOptionValue(StirredOptions.contactOrganizationEmail.opt);
+            contactOrganizationEmail = getOptionValue(aLine, StirredOptions.contactOrganizationEmail);
 
         }
+    }
+
+    /**
+     * Returns a boolean indicating whether the given command line has the given option.
+     * 
+     * @param commandLine The command line.
+     * @param option The option.
+     * 
+     * @return A boolean indicating whether the given command line has the given option.
+     */
+    private static boolean hasOption(
+            CommandLine commandLine,
+            StirredOptions option
+    ) {
+
+        return commandLine.hasOption(option.opt) || commandLine.hasOption(option.longOpt);
+
+    }
+
+    /**
+     * Returns the value for the given option in the given command line.
+     * 
+     * @param commandLine The command line.
+     * @param option The option.
+     * 
+     * @return The value for the given option in the given command line.
+     */
+    private static String getOptionValue(
+            CommandLine commandLine,
+            StirredOptions option
+    ) {
+
+        if (commandLine.hasOption(option.opt)) {
+
+            return commandLine.getOptionValue(option.opt);
+
+        }
+        if (commandLine.hasOption(option.longOpt)) {
+
+            return commandLine.getOptionValue(option.longOpt);
+
+        }
+
+        return null;
+
     }
 }
