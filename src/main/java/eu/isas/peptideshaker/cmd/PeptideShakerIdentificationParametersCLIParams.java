@@ -219,7 +219,7 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.TIDE_MAX_PREC_MASS.id) + " " + IdentificationParametersCLIParams.TIDE_MAX_PREC_MASS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.TIDE_MONOISOTOPIC.id) + " " + IdentificationParametersCLIParams.TIDE_MONOISOTOPIC.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.TIDE_CLIP_N_TERM.id) + " " + IdentificationParametersCLIParams.TIDE_CLIP_N_TERM.description + "\n";
-        output += "-" + String.format(formatter, IdentificationParametersCLIParams.TIDE_MIN_PTMS.id) + " " + IdentificationParametersCLIParams.TIDE_MIN_PTMS.description + "\n";
+        //output += "-" + String.format(formatter, IdentificationParametersCLIParams.TIDE_MIN_PTMS.id) + " " + IdentificationParametersCLIParams.TIDE_MIN_PTMS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.TIDE_MAX_PTMS.id) + " " + IdentificationParametersCLIParams.TIDE_MAX_PTMS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.TIDE_PTMS_PER_TYPE.id) + " " + IdentificationParametersCLIParams.TIDE_PTMS_PER_TYPE.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.TIDE_DIGESTION_TYPE.id) + " " + IdentificationParametersCLIParams.TIDE_DIGESTION_TYPE.description + "\n";
