@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.parameters;
 
-import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.io.biology.protein.ProteinDetailsProvider;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
@@ -72,11 +71,9 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      */
     public static final long KEY = ExperimentObject.asLong("PeptideShaker_parameters");
     /**
-     * The path for the FM index
+     * The path for the FM index.
      */
     private String fmIndexPath;
-    
-    
 
     /**
      * Empty default constructor.
@@ -146,8 +143,6 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      */
     public IdentificationParameters getIdentificationParameters() {
 
-        
-
         return identificationParameters;
 
     }
@@ -158,8 +153,6 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      * @return the spectrum counting preferences of the project
      */
     public SpectrumCountingParameters getSpectrumCountingPreferences() {
-
-        
 
         return spectrumCountingPreferences;
 
@@ -172,8 +165,6 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      */
     public ProjectDetails getProjectDetails() {
 
-        
-
         return projectDetails;
 
     }
@@ -184,8 +175,6 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      * @return the GUI display parameters
      */
     public FilterParameters getFilterParameters() {
-
-        
 
         return filterParameters;
 
@@ -198,8 +187,6 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      */
     public DisplayParameters getDisplayParameters() {
 
-        
-
         return displayParameters;
 
     }
@@ -210,8 +197,6 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      * @return the metrics saved when loading the files
      */
     public Metrics getMetrics() {
-
-        
 
         return metrics;
 
@@ -224,8 +209,6 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      */
     public SequenceProvider getSequenceProvider() {
 
-        
-
         return sequenceProvider;
 
     }
@@ -236,8 +219,6 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      * @return the protein details provider
      */
     public ProteinDetailsProvider getProteinDetailsProvider() {
-
-        
 
         return proteinDetailsProvider;
 
@@ -250,8 +231,6 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      */
     public GeneMaps getGeneMaps() {
 
-        
-
         return geneMaps;
 
     }
@@ -263,8 +242,6 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      * @return the identification features cache
      */
     public IdentificationFeaturesCache getIdentificationFeaturesCache() {
-
-        
 
         return identificationFeaturesCache;
 
@@ -282,37 +259,34 @@ public class PeptideShakerParameters extends ExperimentObject implements UrParam
      */
     public ProjectType getProjectType() {
 
-        
-
         return projectType;
     }
 
-    
     /**
      * Cleans the SequenceProvider and ProteinDetailsProvider, please use only
      * temporary or if you know what you do
      */
-    public void cleanProviders(){
+    public void cleanProviders() {
         sequenceProvider = null;
         proteinDetailsProvider = null;
     }
-    
-    
+
     /**
      * Setter for the sequence provider
+     *
      * @param sequenceProvider the sequence provider instance
      */
-    public void setSequenceProvider(SequenceProvider sequenceProvider){
+    public void setSequenceProvider(SequenceProvider sequenceProvider) {
         this.sequenceProvider = sequenceProvider;
     }
-    
-    
+
     /**
      * Setter for the protein details provider
+     *
      * @param proteinDetailsProvider the protein details provider instance
      */
-    public void setProteinDetailsProvider(ProteinDetailsProvider proteinDetailsProvider){
+    public void setProteinDetailsProvider(ProteinDetailsProvider proteinDetailsProvider) {
         this.proteinDetailsProvider = proteinDetailsProvider;
     }
-    
+
 }
