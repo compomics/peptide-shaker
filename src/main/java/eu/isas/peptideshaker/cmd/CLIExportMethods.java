@@ -31,6 +31,7 @@ import com.compomics.util.parameters.identification.advanced.ModificationLocaliz
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.followup.DeepLcExport;
 import eu.isas.peptideshaker.followup.Ms2PipExport;
+import eu.isas.peptideshaker.followup.PSMIdentExport;
 import eu.isas.peptideshaker.followup.PercolatorExport;
 import eu.isas.peptideshaker.followup.ProteoformExport;
 import java.io.File;
@@ -330,9 +331,11 @@ public class CLIExportMethods {
     ) {
 
         String destinationStem = followUpCLIInputBean.getDeepLcStem();
+        File percolatorBenchmarkResultsFile = followUpCLIInputBean.getPercolatorBenchmarkResultsFile();
 
         return DeepLcExport.deepLcExport(
-                destinationStem, 
+                destinationStem,
+                percolatorBenchmarkResultsFile,
                 identification, 
                 modificationParameters, 
                 sequenceMatchingParameters, 
@@ -390,6 +393,7 @@ public class CLIExportMethods {
      * @param annotationParameters The annotation parameters.
      * @param modificationLocalizationParameters The modification localization
      * parameters.
+     * @param modificationParameters The modification parameters.
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The waiting handler.
@@ -401,6 +405,7 @@ public class CLIExportMethods {
             SequenceMatchingParameters sequenceMatchingParameters,
             AnnotationParameters annotationParameters,
             ModificationLocalizationParameters modificationLocalizationParameters,
+            ModificationParameters modificationParameters,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
             WaitingHandler waitingHandler
@@ -409,19 +414,84 @@ public class CLIExportMethods {
         File deepLcFile = followUpCLIInputBean.getPercolatorRtFile();
         File ms2pipFile = followUpCLIInputBean.getPercolatorFragmentationFile();
         File destinationFile = followUpCLIInputBean.getPercolatorFile();
+        
+        File rtObsPredsFile = followUpCLIInputBean.getRTObsPredsFile();
 
         PercolatorExport.percolatorExport(
                 destinationFile, 
-                deepLcFile, 
+                deepLcFile,
+                rtObsPredsFile,
                 ms2pipFile, 
                 identification, 
                 searchParameters, 
                 sequenceMatchingParameters, 
                 annotationParameters, 
-                modificationLocalizationParameters, 
+                modificationLocalizationParameters,
+                modificationParameters,
                 sequenceProvider, 
                 spectrumProvider, 
                 waitingHandler
+        );
+    }
+    
+    /**
+     * Exports the files needed by Percolator.
+     *
+     * @param followUpCLIInputBean the follow up input bean
+     * @param identification the identification
+     * @param searchParameters The search parameters.
+     * @param sequenceMatchingParameters The sequence matching parameters.
+     * @param annotationParameters The annotation parameters.
+     * @param modificationLocalizationParameters The modification localization
+     * parameters.
+     * @param modificationParameters The modification parameters.
+     * @param sequenceProvider The sequence provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param waitingHandler The waiting handler.
+     */
+    public static void exportRTValues(
+            FollowUpCLIInputBean followUpCLIInputBean,
+            Identification identification,
+            SearchParameters searchParameters,
+            SequenceMatchingParameters sequenceMatchingParameters,
+            AnnotationParameters annotationParameters,
+            ModificationLocalizationParameters modificationLocalizationParameters,
+            ModificationParameters modificationParameters,
+            SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
+            WaitingHandler waitingHandler
+    ) {
+
+        File deepLcFile = followUpCLIInputBean.getPercolatorRtFile();
+        File rtObsPredsFile = followUpCLIInputBean.getRTObsPredsFile();
+
+        PercolatorExport.RTValuesExport(
+                deepLcFile,
+                rtObsPredsFile,
+                identification, 
+                searchParameters, 
+                sequenceMatchingParameters, 
+                annotationParameters, 
+                modificationLocalizationParameters,
+                modificationParameters,
+                sequenceProvider, 
+                spectrumProvider, 
+                waitingHandler
+        );
+    }
+    
+    public static void exportPSMIdentifiers(
+            FollowUpCLIInputBean followUpCLIInputBean,
+            Identification identification,
+            WaitingHandler waitingHandler
+    ) {
+
+        File psmIdentifiersFile = followUpCLIInputBean.getPSMIdentifiersFile();
+
+        PSMIdentExport.psmIdentExport(
+            psmIdentifiersFile,
+            identification,
+            waitingHandler
         );
     }
 
