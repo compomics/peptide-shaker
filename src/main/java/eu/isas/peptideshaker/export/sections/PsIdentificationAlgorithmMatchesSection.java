@@ -515,6 +515,7 @@ public class PsIdentificationAlgorithmMatchesSection {
     ) {
 
         switch (exportFeature) {
+
             case rank:
 
                 return Integer.toString(peptideAssumption.getRank());
@@ -654,18 +655,16 @@ public class PsIdentificationAlgorithmMatchesSection {
                 double coverage = 100 * coveredIntensity / spectrum.getTotalIntensity();
                 return Double.toString(coverage);
 
-
-
             case mz_error_ppm:
 
                 precursorMz = spectrumProvider.getPrecursorMz(spectrumFile, spectrumTitle);
                 return Double.toString(
                         peptideAssumption.getDeltaMz(
-                        precursorMz,
-                        true,
-                        identificationParameters.getSearchParameters().getMinIsotopicCorrection(),
-                        identificationParameters.getSearchParameters().getMaxIsotopicCorrection()
-                )
+                                precursorMz,
+                                true,
+                                identificationParameters.getSearchParameters().getMinIsotopicCorrection(),
+                                identificationParameters.getSearchParameters().getMaxIsotopicCorrection()
+                        )
                 );
 
             case mz_error_da:
@@ -803,7 +802,11 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case validated:
 
-                return psParameter.getMatchValidationLevel().toString();
+                if (psParameter.getMatchValidationLevel() != null) {
+                    return psParameter.getMatchValidationLevel().toString();
+                } else {
+                    return "";
+                }
 
             case sequence_coverage:
 
