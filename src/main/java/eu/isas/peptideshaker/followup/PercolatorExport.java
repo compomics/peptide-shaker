@@ -20,9 +20,11 @@ import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.utils.DeepLcUtils;
+import eu.isas.peptideshaker.utils.Ms2PipUtils;
 import eu.isas.peptideshaker.utils.PercolatorUtils;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -48,7 +50,7 @@ public class PercolatorExport {
      * @param sequenceMatchingParameters The sequence matching parameters.
      * @param annotationParameters The annotation parameters.
      * @param modificationLocalizationParameters The modification localization
-     * @param modificationParameters
+     * @param modificationParameters The modification parameters
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The waiting handler.
@@ -81,13 +83,14 @@ public class PercolatorExport {
         }
 
         // Parse fragmentation prediction
-        HashMap<String, ArrayList<Spectrum>> fragmentationPrediction = null;
+        HashMap<String, Spectrum> fragmentationPrediction = null;
 
         if (ms2pipFile != null) {
 
             waitingHandler.setWaitingText("Exporting Percolator output - Parsing ms2pip results");
 
-            //@TODO 
+            fragmentationPrediction = getIntensitiesPrediction(ms2pipFile);
+            
         }
 
         // Export Percolator training file
@@ -116,7 +119,7 @@ public class PercolatorExport {
      * Expected format: ,seq,modifications,predicted_tr
      * 0,NSVNGTFPAEPMKGPIAMQSGPKPLFR,12|Oxidation,3878.9216854262777
      *
-     * @param deepLcFile
+     * @param deepLcFile File with RT predictions from DeepLC.
      * @return
      */
     private static HashMap<String, ArrayList<Double>> getRtPrediction(
@@ -166,6 +169,104 @@ public class PercolatorExport {
         return result;
 
     }
+    
+    /**
+     * Parses the peaks intensities prediction from MS2PIP.
+     *
+     * Expected format: spec_id,charge,ion,ionnumber,mz,prediction
+     * 2238942014911164193,3,B,1,138.066,0
+     *
+     * @param ms2pipFile File with spectra fragmentation predictions from MS2PIP.
+     * 
+     * @return Map with pairs (Ms2PipKey, Spectrum)
+     */
+    public static HashMap<String, Spectrum> getIntensitiesPrediction(
+            File ms2pipFile
+    ) {
+
+        //HashMap<String, ArrayList<Spectrum>> result = new HashMap<>();
+        HashMap<String, Spectrum> result = new HashMap<>();
+
+        try (SimpleFileReader reader = SimpleFileReader.getFileReader(ms2pipFile)) {
+
+            String line = reader.readLine();
+            
+            //read 1st line of data outside while loop
+            String firstDataLine = reader.readLine();
+            String[] firstDataLineSplit = firstDataLine.split(",");
+
+            String spectrumKey = firstDataLineSplit[0];
+
+            double firstMz = Double.parseDouble(firstDataLineSplit[4]);
+            double firstPrediction = Double.parseDouble(firstDataLineSplit[5]);
+            
+            ArrayList<Double> mzs = new ArrayList<>();
+            ArrayList<Double> predictions = new ArrayList<>();
+            mzs.add(firstMz);
+            predictions.add(firstPrediction);
+
+            while ((line = reader.readLine()) != null) {
+
+                String[] lineSplit = line.split(",");
+
+                String key = lineSplit[0];
+                
+                double mz = Double.parseDouble(lineSplit[4]);
+                double prediction = Double.parseDouble(lineSplit[5]);
+
+                if (key.equals(spectrumKey)){
+                    mzs.add(mz);
+                    predictions.add(prediction);
+                }
+                else{
+                    
+                    ArrayList<Double> mzsUnsorted = new ArrayList<>(mzs);
+                    Collections.sort(mzs);
+                    
+                    double[] mzsArray = new double[mzs.size()];
+                    double[] predictionsArray = new double[mzs.size()];
+                    for (int i = 0; i < predictionsArray.length; i++) {
+                       mzsArray[i] = mzs.get(i);
+                       int index = mzsUnsorted.indexOf(mzs.get(i));
+                       predictionsArray[i] = predictions.get(index); 
+                    }
+                    
+                    Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray);
+                    result.put(spectrumKey, predictedSpectrum);
+                    
+                    
+                    mzs = new ArrayList<>();
+                    predictions = new ArrayList<>();
+                    
+                    mzs.add(mz);
+                    predictions.add(prediction);
+                    
+                    spectrumKey = key;
+                }
+
+            }
+            
+            ArrayList<Double> mzsUnsorted = new ArrayList<Double>(mzs);
+            Collections.sort(mzs);
+
+            double[] mzsArray = new double[mzs.size()];
+            double[] predictionsArray = new double[mzs.size()];
+            for (int i = 0; i < predictionsArray.length; i++) {
+               //mzsArray[i] = mzs.get(i).doubleValue();  // java 1.4 style
+               // or:
+               mzsArray[i] = mzs.get(i);
+               int index = mzsUnsorted.indexOf(mzs.get(i));
+               predictionsArray[i] = predictions.get(index); 
+            }
+
+            Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray);
+            result.put(spectrumKey, predictedSpectrum);
+            
+        }
+        
+        return result;
+
+    }
 
     /**
      * Exports a Percolator training file.
@@ -179,7 +280,7 @@ public class PercolatorExport {
      * @param sequenceMatchingParameters The sequence matching parameters.
      * @param annotationParameters The annotation parameters.
      * @param modificationLocalizationParameters The modification localization
-     * @param modificationParameters
+     * @param modificationParameters The modification parameters
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The waiting handler.
@@ -188,7 +289,7 @@ public class PercolatorExport {
             File destinationFile,
             File rtObsPredsFile,
             HashMap<String, ArrayList<Double>> rtPrediction,
-            HashMap<String, ArrayList<Spectrum>> fragmentationPrediction,
+            HashMap<String, Spectrum> fragmentationPrediction,
             Identification identification,
             SearchParameters searchParameters,
             SequenceMatchingParameters sequenceMatchingParameters,
@@ -232,8 +333,23 @@ public class PercolatorExport {
         try (SimpleFileWriter writer = new SimpleFileWriter(destinationFile, true)) {
             
             Boolean rtPredictionsAvailable = rtPrediction != null;
+            Boolean spectraPredictionsAvailable = fragmentationPrediction != null;
             
-            String header = PercolatorUtils.getHeader(searchParameters, rtPredictionsAvailable);
+            HashMap<String, ArrayList<Double>> allRTvalues = null;
+            if (rtPredictionsAvailable){
+                allRTvalues = getAllObservedPredictedRT(
+                    identification,
+                    rtPrediction,
+                    searchParameters,
+                    sequenceProvider,
+                    sequenceMatchingParameters,
+                    modificationFactory,
+                    spectrumProvider,
+                    waitingHandler
+                );
+            }
+            
+            String header = PercolatorUtils.getHeader(searchParameters, rtPredictionsAvailable, spectraPredictionsAvailable);
 
             writer.writeLine(header);
 
@@ -258,8 +374,9 @@ public class PercolatorExport {
                     }
                 }
                 
+                final HashMap<String, ArrayList<Double>> allRTs = allRTvalues;
                 Boolean rtFileWriterFlag = false;
-
+                
                 // Export all candidate peptides
                 SpectrumMatch tempSpectrumMatch = spectrumMatch;
                 tempSpectrumMatch.getAllPeptideAssumptions()
@@ -268,8 +385,9 @@ public class PercolatorExport {
                                 peptideAssumption -> writePeptideCandidate(
                                         tempSpectrumMatch,
                                         peptideAssumption,
-                                        rtPrediction,
+                                        allRTs,
                                         rtFileWriterFlag,
+                                        fragmentationPrediction,
                                         searchParameters,
                                         sequenceProvider,
                                         sequenceMatchingParameters,
@@ -291,6 +409,65 @@ public class PercolatorExport {
     
     /**
      *
+     * @param identification The identification object containing the matches.
+     * @param searchParameters The search parameters.
+     * @param sequenceMatchingParameters The sequence matching parameters.
+     * @param annotationParameters The annotation parameters.
+     * @param sequenceProvider The sequence provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param waitingHandler The waiting handler.
+     */
+    private static HashMap<String, ArrayList<Double>> getAllObservedPredictedRT(
+            Identification identification,
+            HashMap<String, ArrayList<Double>> rtPrediction,
+            SearchParameters searchParameters,
+            SequenceProvider sequenceProvider,
+            SequenceMatchingParameters sequenceMatchingParameters,
+            ModificationFactory modificationFactory,
+            SpectrumProvider spectrumProvider,
+            WaitingHandler waitingHandler
+    ){
+        
+        if (rtPrediction == null){
+            return null;
+        }
+        
+        HashMap<String, ArrayList<Double>> allRTvalues = new HashMap<>();
+        
+        SpectrumMatchesIterator spectrumMatchesIterator = identification.getSpectrumMatchesIterator(waitingHandler);
+
+        SpectrumMatch spectrumMatch;
+            
+        while ((spectrumMatch = spectrumMatchesIterator.next()) != null) {
+                    
+            final HashMap<String, ArrayList<Double>> rtPreds = rtPrediction;
+            
+            // Export all candidate peptides
+            SpectrumMatch tempSpectrumMatch = spectrumMatch;
+            tempSpectrumMatch.getAllPeptideAssumptions()
+                    .parallel()
+                    .forEach(
+                            peptideAssumption -> addPeptideCandidateRT(
+                                    allRTvalues,
+                                    tempSpectrumMatch,
+                                    peptideAssumption,
+                                    rtPreds,
+                                    searchParameters,
+                                    sequenceProvider,
+                                    sequenceMatchingParameters,
+                                    modificationFactory,
+                                    spectrumProvider
+                            )
+                    );
+        
+        }
+        
+        return allRTvalues;
+        
+    }
+    
+    /**
+     *
      * @param deepLcFile The deepLC results.
      * @param rtObsPredsFile The file to write RT observed and predicted values per PSM.
      * @param identification The identification object containing the matches.
@@ -298,7 +475,7 @@ public class PercolatorExport {
      * @param sequenceMatchingParameters The sequence matching parameters.
      * @param annotationParameters The annotation parameters.
      * @param modificationLocalizationParameters The modification localization.
-     * @param modificationParameters
+     * @param modificationParameters The modification parameters
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The waiting handler.
@@ -341,7 +518,7 @@ public class PercolatorExport {
         
         SimpleSemaphore writingSemaphore = new SimpleSemaphore(1);
         
-        HashMap<String, ArrayList<Double>> allRTvalues = getAllObservedPredictedRT(
+        HashMap<String, ArrayList<Double>> allRTvalues = getAllObservedPredictedRTScaled(
             identification,
             rtPrediction,
             searchParameters,
@@ -394,6 +571,7 @@ public class PercolatorExport {
                                         //rtPreds,
                                         allRTs,
                                         rtFileWriterFlag,
+                                        null,
                                         searchParameters,
                                         sequenceProvider,
                                         sequenceMatchingParameters,
@@ -413,7 +591,7 @@ public class PercolatorExport {
         
     }
     
-    private static HashMap<String, ArrayList<Double>> getAllObservedPredictedRT(
+    private static HashMap<String, ArrayList<Double>> getAllObservedPredictedRTScaled(
             Identification identification,
             HashMap<String, ArrayList<Double>> rtPrediction,
             SearchParameters searchParameters,
@@ -535,14 +713,6 @@ public class PercolatorExport {
         return allRTsCenterScale;
     }
     
-    private static String comparePeptideRTlinear(){
-        return "";
-    }
-    
-    private static String comparePeptideRTregression(){
-        return "";
-    }
-    
     private static ArrayList<Double> getPeptidePredictedRT(
             PeptideAssumption peptideAssumption,
             SearchParameters searchParameters,
@@ -604,7 +774,8 @@ public class PercolatorExport {
      *
      * @param spectrumMatch The spectrum match where the peptide was found.
      * @param peptideAssumption The peptide assumption.
-     * @param rtPrediction The retention time predictions for all peptides.
+     * @param allRTvalues The retention time predictions for all peptides.
+     * @param fragmentationPrediction The mass spectrum predictions for all peptides.
      * @param searchParameters The parameters of the search.
      * @param sequenceProvider The sequence provider.
      * @param sequenceMatchingParameters The sequence matching parameters.
@@ -622,9 +793,9 @@ public class PercolatorExport {
     private static void writePeptideCandidate(
             SpectrumMatch spectrumMatch,
             PeptideAssumption peptideAssumption,
-            //HashMap<String, ArrayList<Double>> rtPrediction,
             HashMap<String, ArrayList<Double>> allRTvalues,
             Boolean rtFileWriterFlag,
+            HashMap<String, Spectrum> fragmentationPrediction,
             SearchParameters searchParameters,
             SequenceProvider sequenceProvider,
             SequenceMatchingParameters sequenceMatchingParameters,
@@ -649,11 +820,29 @@ public class PercolatorExport {
             );
             peptideRTs = allRTvalues.get(deepLcKey);
         }
+        
+        //Get peptide's predicted spectrum
+        Spectrum predictedSpectrum = null;
+        Boolean spectraPredictionsAvailable = fragmentationPrediction != null;
+        if ( spectraPredictionsAvailable ){
+            // Get peptide data
+            String peptideData = Ms2PipUtils.getPeptideData(
+                    peptideAssumption,
+                    modificationParameters,
+                    sequenceProvider,
+                    sequenceMatchingParameters,
+                    modificationFactory
+            );
+            // Get corresponding key
+            long peptideKey = Ms2PipUtils.getPeptideKey(peptideData);
+            predictedSpectrum = fragmentationPrediction.get(Long.toString(peptideKey));
+        }
+        
 
         // Get peptide data
         String peptideData;
         
-        if (rtFileWriterFlag & rtPredictionsAvailable){
+        if (rtFileWriterFlag && rtPredictionsAvailable){
             peptideData = PercolatorUtils.getPeptideRTData(
                 spectrumMatch,
                 peptideAssumption,
@@ -668,6 +857,7 @@ public class PercolatorExport {
                 peptideAssumption,
                 rtPredictionsAvailable,
                 peptideRTs,
+                predictedSpectrum,
                 searchParameters,
                 sequenceProvider,
                 sequenceMatchingParameters,

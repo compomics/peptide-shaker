@@ -23,6 +23,7 @@ import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.pride.CvTerm;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map.Entry;
 
 /**
@@ -39,12 +40,15 @@ public class PercolatorUtils {
      * @param searchParameters The parameters of the search.
      * @param rtPredictionsAvailable Flag indicating whether RT predictions are
      * given.
+     * @param spectraPredictionsAvailable Flag indicating whether spectra predictions are
+     * given.
      *
      * @return The header of the Percolator training file.
      */
     public static String getHeader(
             SearchParameters searchParameters,
-            Boolean rtPredictionsAvailable
+            Boolean rtPredictionsAvailable,
+            Boolean spectraPredictionsAvailable
     ) {
 
         StringBuilder header = new StringBuilder();
@@ -91,6 +95,13 @@ public class PercolatorUtils {
             header.append("\t").append("rt_Square_error");
             header.append("\t").append("rt_Log_error");
         }
+        
+        if (spectraPredictionsAvailable) {
+            header.append("\t").append("matched_peaks");
+            header.append("\t").append("spectra_mse");
+            header.append("\t").append("spectra_cos");
+            header.append("\t").append("spectra_arccos");
+        }
 
         header.append("\t").append("Peptide").append("\t").append("Proteins");
 
@@ -131,6 +142,7 @@ public class PercolatorUtils {
      * @param rtPredictionsAvailable Flag indicating whether retention time
      * predictions are given.
      * @param peptideRTs The retention time predictions for this peptide.
+     * @param predictedSpectrum The predicted mass spectrum for this peptide.
      * @param searchParameters The parameters of the search.
      * @param sequenceProvider The sequence provider.
      * @param sequenceMatchingParameters The sequence matching parameters.
@@ -140,7 +152,8 @@ public class PercolatorUtils {
      * @param modificationFactory The factory containing the modification
      * details.
      * @param spectrumProvider The spectrum provider.
-     *
+     * @param modificationParameters The modification parameters
+     * 
      * @return The peptide data as string.
      */
     public static String getPeptideData(
@@ -148,6 +161,7 @@ public class PercolatorUtils {
             PeptideAssumption peptideAssumption,
             Boolean rtPredictionsAvailable,
             ArrayList<Double> peptideRTs,
+            Spectrum predictedSpectrum,
             SearchParameters searchParameters,
             SequenceProvider sequenceProvider,
             SequenceMatchingParameters sequenceMatchingParameters,
@@ -369,6 +383,26 @@ public class PercolatorUtils {
 
         }
         
+        // Distance of observed and predicted mass spectrum
+        
+        // Get measured spectrum
+        Spectrum measuredSpectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
+        
+        ArrayList<ArrayList<Integer>> aligned_peaks = getAlignedPeaks(measuredSpectrum, predictedSpectrum);
+        
+        double matchedPeaksRatio = findMatchedPeaksRatio(predictedSpectrum, aligned_peaks.size());
+        line.append("\t").append(matchedPeaksRatio);
+        
+        ArrayList<Spectrum> spectraScaledIntensities = scaleIntensities(measuredSpectrum, predictedSpectrum, aligned_peaks);
+        
+        double spectraMSEDistance = getSpectraMSE(spectraScaledIntensities.get(0), spectraScaledIntensities.get(1), aligned_peaks);
+        line.append("\t").append(spectraMSEDistance);
+        
+        double spectraCosineDistance = getSpectraCosine(spectraScaledIntensities.get(0), spectraScaledIntensities.get(1), aligned_peaks);
+        line.append("\t").append(spectraCosineDistance);
+        
+        line.append("\t").append(Math.acos(spectraCosineDistance));
+        
         //Peptide sequence
         
         String peptideSequence = getSequenceWithModifications(peptideAssumption.getPeptide(), modificationParameters, sequenceProvider, sequenceMatchingParameters, modificationFactory);
@@ -379,6 +413,264 @@ public class PercolatorUtils {
 
         return line.toString();
 
+    }
+    
+    /**
+     * Returns the ratio of matched predicted peaks.
+     *
+     * @param predictedSpectrum The predicted spectrum.
+     * @param alignedPeaksNum The number of matched peaks.
+     *
+     * @return #mathced peaks / #predicted peaks
+     */
+    public static double findMatchedPeaksRatio(
+            Spectrum predictedSpectrum,
+            int alignedPeaksNum
+    ){
+        if ( alignedPeaksNum == 0){
+            return 0.0;
+        }
+        
+        double[] predictedIntensities = predictedSpectrum.intensity;
+        
+        int nonZeroIntensityPeaks = 0;
+        for (int i=0; i<predictedIntensities.length; i++){
+            if (predictedIntensities[i] > 0.0){
+                nonZeroIntensityPeaks = nonZeroIntensityPeaks + 1;
+            }
+        }
+        double ratio = (double) alignedPeaksNum / nonZeroIntensityPeaks; 
+        
+        return ratio;
+    }
+    
+/**
+     * Scale the intensities of the observed and predicted spectra.
+     *
+     * @param measuredSpectrum The measured spectrum.
+     * @param predictedSpectrum The predicted spectrum.
+     * @param alignedPeaks The indices of the matched peaks.
+     *
+     * @return ArrayList(ScaledObservedSpectrum, ScaledPredictedSpectrum)
+     */
+    public static ArrayList<Spectrum> scaleIntensities(
+            Spectrum measuredSpectrum,
+            Spectrum predictedSpectrum,
+            ArrayList<ArrayList<Integer>> alignedPeaks
+    ){
+        
+        double[] measuredIntensity = measuredSpectrum.intensity;
+        double[] predictedIntensity = predictedSpectrum.intensity;
+        
+        double measuredMedian = 0.0;
+        double predictedMedian = 0.0;
+        if (alignedPeaks.size() == 0){
+            
+            double[] sortedMeasuredIntensity = Arrays.copyOf(measuredIntensity, measuredIntensity.length);
+            Arrays.sort(sortedMeasuredIntensity);
+            ArrayList<Double> nonZeroMeasuredIntensity = new ArrayList<>();
+            for (int i=0; i<sortedMeasuredIntensity.length; i++){
+                if (sortedMeasuredIntensity[i] != 0){
+                    nonZeroMeasuredIntensity.add(sortedMeasuredIntensity[i]);
+                }
+            }
+            double[] sortedPredictedIntensity = Arrays.copyOf(predictedIntensity, predictedIntensity.length);
+            Arrays.sort(sortedPredictedIntensity);
+            ArrayList<Double> nonZeroPredictedIntensity = new ArrayList<>();
+            for (int i=0; i<sortedPredictedIntensity.length; i++){
+                if (sortedPredictedIntensity[i] != 0){
+                    nonZeroPredictedIntensity.add(sortedPredictedIntensity[i]);
+                }
+            }
+            
+            int medianIndex = nonZeroMeasuredIntensity.size() / 2;
+            if (nonZeroMeasuredIntensity.size() % 2 == 0){
+                measuredMedian = (nonZeroMeasuredIntensity.get(medianIndex) + nonZeroMeasuredIntensity.get(medianIndex) + 1) / 2.0;
+            }
+            else{
+                measuredMedian = nonZeroMeasuredIntensity.get(medianIndex);
+            }
+            medianIndex = nonZeroPredictedIntensity.size() / 2;
+            if (nonZeroPredictedIntensity.size() % 2 == 0){
+                predictedMedian = (nonZeroPredictedIntensity.get(medianIndex) + nonZeroPredictedIntensity.get(medianIndex + 1)) / 2.0;
+            }
+            else{
+                predictedMedian = nonZeroPredictedIntensity.get(medianIndex);
+            } 
+        }
+        else if(alignedPeaks.size() == 1){
+            measuredMedian = measuredIntensity[alignedPeaks.get(0).get(0)];
+            predictedMedian = predictedIntensity[alignedPeaks.get(0).get(1)];
+        }
+        else{
+            
+            double[] measuredAlignedIntensities = new double[alignedPeaks.size()];
+            for (int i=0; i<measuredAlignedIntensities.length; i++){
+                measuredAlignedIntensities[i] = measuredIntensity[alignedPeaks.get(i).get(0)];
+            }
+            Arrays.sort(measuredAlignedIntensities);
+            
+            double[] predictedAlignedIntensities = new double[alignedPeaks.size()];
+            for (int i=0; i<measuredAlignedIntensities.length; i++){
+                predictedAlignedIntensities[i] = predictedIntensity[alignedPeaks.get(i).get(1)];
+            }
+            Arrays.sort(predictedAlignedIntensities);
+            
+            if (alignedPeaks.size() % 2 == 0){
+                measuredMedian = (measuredAlignedIntensities[alignedPeaks.size() / 2] + measuredAlignedIntensities[(alignedPeaks.size() / 2) - 1]) / 2.0;
+                predictedMedian = (predictedAlignedIntensities[alignedPeaks.size() / 2] + predictedAlignedIntensities[(alignedPeaks.size() / 2) - 1]) / 2.0;
+            }
+            else{
+                measuredMedian = measuredAlignedIntensities[alignedPeaks.size() / 2];
+                predictedMedian = predictedAlignedIntensities[alignedPeaks.size() / 2];
+            }
+        }
+        
+        if (measuredMedian == 0.0){
+            System.out.println("Measured median = 0.0");
+        }
+        if (predictedMedian == 0.0){
+            System.out.println("Predicted median = 0.0");
+            System.out.println(alignedPeaks.size());
+            System.out.println(Arrays.toString(predictedIntensity));
+        }
+        
+        double[] scaledMeasuredIntensity = new double[measuredIntensity.length];
+        for (int i=0; i<scaledMeasuredIntensity.length; i++){
+            scaledMeasuredIntensity[i] = measuredIntensity[i] / measuredMedian;
+        }
+        
+        double[] scaledPredictedIntensity = new double[predictedIntensity.length];
+        for (int i=0; i<scaledPredictedIntensity.length; i++){
+            scaledPredictedIntensity[i] = predictedIntensity[i] / predictedMedian;
+        }
+        
+        Spectrum scaledMeasuredSpectrum = new Spectrum(null, measuredSpectrum.mz, scaledMeasuredIntensity);
+        Spectrum scaledPredictedSpectrum = new Spectrum(null, predictedSpectrum.mz, scaledPredictedIntensity);
+        
+        ArrayList<Spectrum> scaledSpectra = new ArrayList<>();
+        scaledSpectra.add(scaledMeasuredSpectrum);
+        scaledSpectra.add(scaledPredictedSpectrum);
+        
+        return scaledSpectra;
+        
+    }
+    
+    /**
+     * Returns the cosine distance between the measured and predicted mass spectrum.
+     *
+     * @param measuredSpectrum The measured spectrum.
+     * @param predictedSpectrum The predicted spectrum.
+     * @param alignedPeaks The indices of the matched peaks.
+     *
+     * @return spectra cosine distance
+     */
+    public static double getSpectraCosine(
+            Spectrum measuredSpectrum,
+            Spectrum predictedSpectrum,
+            ArrayList<ArrayList<Integer>> alignedPeaks
+    ){
+        if (alignedPeaks.isEmpty()){
+            return -1.0;
+        }
+        
+        double[] measuredIntensities = measuredSpectrum.intensity;
+        double[] predictedIntensities = predictedSpectrum.intensity;
+        
+        double sumMP = 0.0;
+        double sumM = 0.0;
+        double sumP = 0.0;
+        for (int i=0; i < alignedPeaks.size(); i++){
+            sumMP += measuredIntensities[alignedPeaks.get(i).get(0)] * predictedIntensities[alignedPeaks.get(i).get(1)]; 
+            sumM += Math.pow(measuredIntensities[alignedPeaks.get(i).get(0)], 2.0); 
+            sumP += Math.pow(predictedIntensities[alignedPeaks.get(i).get(1)], 2.0);
+        }
+        sumM = Math.sqrt(sumM);
+        sumP = Math.sqrt(sumP);
+        
+        double cosDist = sumMP / (sumM * sumP);
+        
+        return cosDist;
+    }
+    
+    /**
+     * Returns the Mean Square Error between the measured and predicted mass spectrum.
+     *
+     * @param measuredSpectrum The measured spectrum.
+     * @param predictedSpectrum The predicted spectrum.
+     * @param alignedPeaks The indices of the matched peaks.
+     *
+     * @return spectra MSE
+     */
+    public static double getSpectraMSE(
+            Spectrum measuredSpectrum,
+            Spectrum predictedSpectrum,
+            ArrayList<ArrayList<Integer>> alignedPeaks
+    ){
+        if (alignedPeaks.isEmpty()){
+            return 10000000.0;
+        }
+        
+        double[] measuredIntensities = measuredSpectrum.intensity;
+        double[] predictedIntensities = predictedSpectrum.intensity;
+        
+        double mse = 0.0;
+        for (int i=0; i < alignedPeaks.size(); i++){
+            mse += Math.pow( (measuredIntensities[alignedPeaks.get(i).get(0)] - predictedIntensities[alignedPeaks.get(i).get(1)]) , 2.0); 
+        }
+        mse = mse / alignedPeaks.size();
+        
+        return mse;
+    }
+    
+    /**
+     * Returns the indices of the aligned peaks of measured and predicted mass spectrum.
+     *
+     * @param measuredSpectrum The measured spectrum.
+     * @param predictedSpectrum The predicted spectrum.
+     *
+     * @return [ [measuredMatchedPeakIndex_1, predictedMatchedPeakIndex_1], ... [] [measuredMatchedPeakIndex_n, predictedMatchedPeakIndex_n]]
+     */
+    public static ArrayList<ArrayList<Integer>> getAlignedPeaks(
+            Spectrum measuredSpectrum,
+            Spectrum predictedSpectrum
+    ){
+        double ppm_error_threshold = 10.0;
+        ArrayList<ArrayList<Integer>> alignedPeaks = new ArrayList<>();
+        
+        double[] measuredMzs = measuredSpectrum.mz;
+        double[] predictedMzs = predictedSpectrum.mz;
+        double[] predictedIntensities = predictedSpectrum.intensity;
+        
+        int measuredMzIndex = 0;
+        for (int i=0; i < predictedMzs.length; i++){
+            
+            if (predictedIntensities[i] == 0.0){
+                continue;
+            }
+            
+            double minMzDist = Math.abs(predictedMzs[i] - measuredMzs[measuredMzIndex]);
+            while (measuredMzIndex < measuredMzs.length - 1){
+                measuredMzIndex++;
+                double mzDist = Math.abs(predictedMzs[i] - measuredMzs[measuredMzIndex]);
+                if (minMzDist < mzDist){
+                    double ppm_error = 1000000 * minMzDist / predictedMzs[i];
+                    if (ppm_error <= ppm_error_threshold){
+                        ArrayList<Integer> matchedPeaksIndices = new ArrayList<>();
+                        matchedPeaksIndices.add(measuredMzIndex-1);
+                        matchedPeaksIndices.add(i);
+                        alignedPeaks.add(matchedPeaksIndices);
+                    }
+                    break;
+                }
+                else{
+                    minMzDist = mzDist;
+                }
+            }
+        }
+        
+        return alignedPeaks;
+        
     }
     
     /**
@@ -497,16 +789,10 @@ public class PercolatorUtils {
 
         // PSM id
         long spectrumKey = spectrumMatch.getKey();
-        String spectrumFile = spectrumMatch.getSpectrumFile();
-        String spectrumTitle = spectrumMatch.getSpectrumTitle();
         
         Peptide peptide = peptideAssumption.getPeptide();
         long peptideKey = peptide.getMatchingKey();
         line.append(spectrumKey).append("_").append(peptideKey);
-        
-        // Get measured spectrum
-        Spectrum measuredSpectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
-        measuredSpectrum.
 
         // Label
         String decoyFlag = PeptideUtils.isDecoy(peptideAssumption.getPeptide(), sequenceProvider) ? "-1" : "1";

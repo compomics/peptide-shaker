@@ -32,6 +32,7 @@ import com.compomics.util.parameters.identification.search.ModificationParameter
 import eu.isas.peptideshaker.followup.DeepLcExport;
 import eu.isas.peptideshaker.followup.Ms2PipExport;
 import eu.isas.peptideshaker.followup.PSMIdentExport;
+import eu.isas.peptideshaker.followup.PeaksIntensitiesExport;
 import eu.isas.peptideshaker.followup.PercolatorExport;
 import eu.isas.peptideshaker.followup.ProteoformExport;
 import java.io.File;
@@ -435,7 +436,50 @@ public class CLIExportMethods {
     }
     
     /**
-     * Exports the files needed by Percolator.
+     * Exports the peaks intensities (observed).
+     *
+     * @param followUpCLIInputBean the follow up input bean
+     * @param identification the identification
+     * @param searchParameters The search parameters.
+     * @param sequenceMatchingParameters The sequence matching parameters.
+     * @param modificationParameters The modification parameters.
+     * @param sequenceProvider The sequence provider.
+     * @param spectrumProvider The spectrum provider.
+     * @param waitingHandler The waiting handler.
+     */
+    public static void exportPeaksIntensities(
+            FollowUpCLIInputBean followUpCLIInputBean,
+            Identification identification,
+            SearchParameters searchParameters,
+            SequenceMatchingParameters sequenceMatchingParameters,
+            //AnnotationParameters annotationParameters,
+            //ModificationLocalizationParameters modificationLocalizationParameters,
+            ModificationParameters modificationParameters,
+            SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider,
+            WaitingHandler waitingHandler
+    ) {
+
+        File ms2pipFile = followUpCLIInputBean.getPercolatorFragmentationFile();
+        File peaksIntensitiesFile = followUpCLIInputBean.getPeaksIntensitiesObsFile();
+
+        PeaksIntensitiesExport.peaksIntensitiesExport(
+                peaksIntensitiesFile,
+                ms2pipFile,
+                identification, 
+                //searchParameters, 
+                sequenceMatchingParameters, 
+                //annotationParameters, 
+                //modificationLocalizationParameters,
+                modificationParameters,
+                sequenceProvider, 
+                spectrumProvider, 
+                waitingHandler
+        );
+    }
+    
+    /**
+     * Exports the RT values (observed,predicted).
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
@@ -483,6 +527,9 @@ public class CLIExportMethods {
     public static void exportPSMIdentifiers(
             FollowUpCLIInputBean followUpCLIInputBean,
             Identification identification,
+            ModificationParameters modificationParameters,
+            SequenceProvider sequenceProvider,
+            SequenceMatchingParameters sequenceMatchingParameters,
             WaitingHandler waitingHandler
     ) {
 
@@ -491,6 +538,9 @@ public class CLIExportMethods {
         PSMIdentExport.psmIdentExport(
             psmIdentifiersFile,
             identification,
+            modificationParameters,
+            sequenceProvider,
+            sequenceMatchingParameters,
             waitingHandler
         );
     }

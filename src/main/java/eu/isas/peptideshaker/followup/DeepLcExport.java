@@ -269,6 +269,7 @@ public class DeepLcExport {
      * @param destinationFile The file where to write the export.
      * @param confidentHitsDestinationFile The file where to write the export
      * for confident hits.
+     * @param confidenceScores Confidence score for each PSM.
      * @param keys The keys of the spectrum matches.
      * @param identification The identification object containing the matches.
      * @param modificationParameters The modification parameters.

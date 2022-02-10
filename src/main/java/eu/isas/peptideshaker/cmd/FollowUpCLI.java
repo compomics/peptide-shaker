@@ -611,6 +611,9 @@ public class FollowUpCLI extends PsdbParent {
                 CLIExportMethods.exportPSMIdentifiers(
                         followUpCLIInputBean,
                         identification,
+                        identificationParameters.getSearchParameters().getModificationParameters(),
+                        sequenceProvider,
+                        identificationParameters.getSequenceMatchingParameters(),
                         waitingHandler
                 );
 
@@ -618,6 +621,38 @@ public class FollowUpCLI extends PsdbParent {
 
                 waitingHandler.appendReport(
                         "An error occurred while generating the PSM identifiers export.",
+                        true,
+                        true
+                );
+
+                e.printStackTrace();
+                waitingHandler.setRunCanceled();
+
+            }
+        }
+        
+        // peaks intensities export
+        if (followUpCLIInputBean.peaksIntensitiesObsExportNeeded()) {
+
+            waitingHandler.appendReport("Peaks intensities export.", true, true);
+
+            try {
+
+                CLIExportMethods.exportPeaksIntensities(
+                        followUpCLIInputBean,
+                        identification,
+                        identificationParameters.getSearchParameters(),
+                        identificationParameters.getSequenceMatchingParameters(),
+                        identificationParameters.getSearchParameters().getModificationParameters(),
+                        sequenceProvider,
+                        msFileHandler,
+                        waitingHandler
+                );
+
+            } catch (Exception e) {
+
+                waitingHandler.appendReport(
+                        "An error occurred while generating the peaks intensities export.",
                         true,
                         true
                 );

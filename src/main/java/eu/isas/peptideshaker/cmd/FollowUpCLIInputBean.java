@@ -124,6 +124,10 @@ public class FollowUpCLIInputBean {
      */
     private File rtPredsObsFile = null;
     /**
+     * The file where to write the peaks intensities observed and predicted values.
+     */
+    private File peaksIntensitiesFile = null;
+    /**
      * The file where to write the RT observed and predicted values.
      */
     private File psmIdentifiersFile = null;
@@ -273,6 +277,18 @@ public class FollowUpCLIInputBean {
             if (!rtPredsObsFile.getParentFile().exists()) {
                 
                 throw new IllegalArgumentException("Folder where to write the RT observed and predicted values file '" + rtPredsObsFile + "' not found.");
+                
+            }
+            
+        }
+        
+        if (aLine.hasOption(FollowUpCLIParams.PEAK_INTS_OBS_PRED.id)){
+            
+            peaksIntensitiesFile = new File(aLine.getOptionValue(FollowUpCLIParams.PEAK_INTS_OBS_PRED.id));
+            
+            if (!peaksIntensitiesFile.getParentFile().exists()) {
+                
+                throw new IllegalArgumentException("Folder where to write the peaks intensities observed values file '" + peaksIntensitiesFile + "' not found.");
                 
             }
             
@@ -497,6 +513,15 @@ public class FollowUpCLIInputBean {
     }
     
     /**
+     * Returns the file where to write the peaks intensities observed values.
+     * 
+     * @return The file where to write the RT observed and predicted values.
+     */
+    public File getPeaksIntensitiesObsFile() {
+        return peaksIntensitiesFile;
+    }
+    
+    /**
      * Returns the file containing Percolator results for all PSMs to get confidence levels.
      * 
      * @return The file containing Percolator results for all PSMs to get confidence levels.
@@ -705,6 +730,15 @@ public class FollowUpCLIInputBean {
      */
     public boolean RTValuesExportNeeded() {
         return rtPredsObsFile != null;
+    }
+    
+    /**
+     * Indicates whether peaks intensities observed values export is needed.
+     *
+     * @return whether peaks intensities observed values export is needed
+     */
+    public boolean peaksIntensitiesObsExportNeeded() {
+        return peaksIntensitiesFile != null;
     }
     
     /**
