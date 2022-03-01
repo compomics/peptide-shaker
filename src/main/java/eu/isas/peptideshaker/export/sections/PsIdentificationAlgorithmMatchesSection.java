@@ -1372,7 +1372,11 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case validated:
 
-                return psParameter.getMatchValidationLevel().toString();
+                if (psParameter.getMatchValidationLevel() != null) {
+                    return psParameter.getMatchValidationLevel().toString();
+                } else {
+                    return "";
+                }
 
             case fragment_mz_accuracy_score:
             case intensity_score:
