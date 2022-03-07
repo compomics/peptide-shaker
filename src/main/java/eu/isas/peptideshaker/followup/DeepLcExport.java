@@ -17,6 +17,7 @@ import com.compomics.util.parameters.identification.search.ModificationParameter
 import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.utils.DeepLcUtils;
+import eu.isas.peptideshaker.utils.Ms2PipUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -431,10 +432,21 @@ public class DeepLcExport {
         
         if (confidenceScores != null){
             // PSM id
-            long spectrumKey = spectrumMatch.getKey();
-            Peptide peptide = peptideAssumption.getPeptide();
-            long peptideKey = peptide.getMatchingKey();
-            String psmID = String.join("_", String.valueOf(spectrumKey), String.valueOf(peptideKey));
+            long spectrumKey = spectrumMatch.getKey();            
+            // Get peptide data
+            String peptideData = Ms2PipUtils.getPeptideData(
+                    peptideAssumption,
+                    modificationParameters,
+                    sequenceProvider,
+                    sequenceMatchingParameters,
+                    modificationFactory
+            );
+            // Get corresponding key
+            long peptideMs2PipKey = Ms2PipUtils.getPeptideKey(peptideData);
+            String peptideID = Long.toString(peptideMs2PipKey);
+
+            String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
+            
             double q_value = confidenceScores.get(psmID);
             if (q_value > 0.01){
                 return;

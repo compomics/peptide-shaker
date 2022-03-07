@@ -16,6 +16,8 @@ import eu.isas.peptideshaker.utils.Ms2PipUtils;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -49,7 +51,7 @@ public class PSMIdentExport {
 
         try (SimpleFileWriter writer = new SimpleFileWriter(psmIdentifiersFile, true)){
             
-            String header = String.join("\t","PSMId","SpectrumTitle","Ms2pipId");
+            String header = String.join("\t", "PSMId", "SpectrumTitle", "Proteins", "Position", "Sequence");
             
             writer.writeLine(header);
             
@@ -110,11 +112,12 @@ public class PSMIdentExport {
         
         // PSM id
         long spectrumKey = spectrumMatch.getKey();
-        Peptide peptide = peptideAssumption.getPeptide();
-        long peptideKey = peptide.getMatchingKey();
-        String psmID = String.join("_", String.valueOf(spectrumKey), String.valueOf(peptideKey)); 
+        //Peptide peptide = peptideAssumption.getPeptide();
+        //long peptideKey = peptide.getMatchingKey();
+        //String psmID = String.join("_", String.valueOf(spectrumKey), String.valueOf(peptideKey)); 
         
         String spectrumTitle = spectrumMatch.getSpectrumTitle();
+        Peptide peptide = peptideAssumption.getPeptide();
         
         //Get MS2PIP id
         // Get peptide data
@@ -127,10 +130,33 @@ public class PSMIdentExport {
         );
         // Get corresponding key
         long peptideMs2PipKey = Ms2PipUtils.getPeptideKey(peptideData);
-        String ms2pipID = Long.toString(peptideMs2PipKey);
+        String peptideID = Long.toString(peptideMs2PipKey);
+        
+        String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
+        
+        // Get proteins
+        TreeMap<String, int[]> proteinMaps = peptide.getProteinMapping();
+        
+        StringBuilder proteins = new StringBuilder();
+        StringBuilder positions = new StringBuilder();
+        for(Map.Entry<String,int[]> entry : proteinMaps.entrySet()) {
+            String proteinID = entry.getKey();
+            int[] proteinPositions = entry.getValue();
+            
+            proteins.append(proteinID).append(";");
+            for (int i=0; i < proteinPositions.length; i++){
+                positions.append(proteinPositions[i]).append(",");
+            }
+            positions.setLength(positions.length() - 1);
+            positions.append(";");
+        }
+        proteins.setLength(proteins.length() - 1);
+        positions.setLength(positions.length() - 1);
+        
+        String peptideSequence = peptide.getSequence();
         
         // Get PSM data
-        String psmData = String.join("\t",psmID, spectrumTitle, ms2pipID);
+        String psmData = String.join("\t",psmID, spectrumTitle, proteins.toString(), positions.toString(), peptideSequence);
         
         // Export if not done already
         writingSemaphore.acquire();

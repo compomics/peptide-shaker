@@ -107,7 +107,7 @@ public class PeaksIntensitiesExport {
 
         try (SimpleFileWriter writer = new SimpleFileWriter(peaksIntensitiesFile, true)) {
             
-            String header = "spectrumId,measuredLabel,mz,intensity";
+            String header = "PSMId,measuredLabel,matchedLabel,mz,intensity";
             writer.writeLine(header);
 
             SpectrumMatchesIterator spectrumMatchesIterator = identification.getSpectrumMatchesIterator(waitingHandler);
@@ -199,7 +199,16 @@ public class PeaksIntensitiesExport {
         // Get corresponding key
         long peptideKey = Ms2PipUtils.getPeptideKey(peptideData);
         
+        // PSM id
+        long spectrumKey = spectrumMatch.getKey();
+        String peptideID = Long.toString(peptideKey);
+        String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
+        
         Spectrum predictedSpectrum = fragmentationPrediction.get(String.valueOf(peptideKey));
+        
+        if (predictedSpectrum == null){
+            return;
+        }
         
         String spectrumFile = spectrumMatch.getSpectrumFile();
         String spectrumTitle = spectrumMatch.getSpectrumTitle();
@@ -209,7 +218,18 @@ public class PeaksIntensitiesExport {
         
         ArrayList<ArrayList<Integer>> aligned_peaks = PercolatorUtils.getAlignedPeaks(measuredSpectrum, predictedSpectrum);
         
-        ArrayList<Spectrum> spectraScaledIntensities = PercolatorUtils.scaleIntensities(measuredSpectrum, predictedSpectrum, aligned_peaks);
+        ArrayList<ArrayList<Integer>> matchedPeaks = new ArrayList<>();
+        ArrayList<Integer> measuredAlignedIndices = new ArrayList<>();
+        ArrayList<Integer> predictedAlignedIndices = new ArrayList<>();
+        for (int i=0; i<aligned_peaks.size(); i++){
+            if (aligned_peaks.get(i).get(0) != -1){
+                matchedPeaks.add(aligned_peaks.get(i));
+                measuredAlignedIndices.add(aligned_peaks.get(i).get(0));
+                predictedAlignedIndices.add(aligned_peaks.get(i).get(1));
+            }
+        }
+        
+        ArrayList<Spectrum> spectraScaledIntensities = PercolatorUtils.scaleIntensities(measuredSpectrum, predictedSpectrum, matchedPeaks);
         
         Spectrum measuredScaledSpectrum = spectraScaledIntensities.get(0);
         Spectrum predictedScaledSpectrum = spectraScaledIntensities.get(1);
@@ -227,8 +247,12 @@ public class PeaksIntensitiesExport {
             double[] measuredIntensities = measuredScaledSpectrum.intensity;
             
             for (int i = 0; i < measuredMz.length; i++) {
+                int matchedLabel = 0;
+                if (measuredAlignedIndices.contains(i)){
+                    matchedLabel = 1;
+                }
                 
-                String line = String.join(",", Long.toString(peptideKey), "1", String.valueOf(measuredMz[i]), String.valueOf(measuredIntensities[i]));
+                String line = String.join(",", psmID, "1", String.valueOf(matchedLabel), String.valueOf(measuredMz[i]), String.valueOf(measuredIntensities[i]));
                 writer.writeLine(line);
                 
             }
@@ -237,8 +261,12 @@ public class PeaksIntensitiesExport {
             double[] predIntensities = predictedScaledSpectrum.intensity;
             
             for (int i = 0; i < predMz.length; i++) {
+                int matchedLabel = 0;
+                if (predictedAlignedIndices.contains(i)){
+                    matchedLabel = 1;
+                }
                 
-                String line = String.join(",", Long.toString(peptideKey), "-1", String.valueOf(predMz[i]), String.valueOf(predIntensities[i]));
+                String line = String.join(",", psmID, "-1", String.valueOf(matchedLabel), String.valueOf(predMz[i]), String.valueOf(predIntensities[i]));
                 writer.writeLine(line);
                 
             }

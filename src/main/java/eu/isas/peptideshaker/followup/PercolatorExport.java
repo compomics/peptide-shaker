@@ -759,6 +759,13 @@ public class PercolatorExport {
             modificationFactory,
             rtPrediction
         );
+
+        if (predictedRts == null){
+                ArrayList<Double> peptideRTs = new ArrayList<Double>();
+                peptideRTs.add(1000000.0);
+                allRTvalues.put(deepLcKey, peptideRTs);
+                return;
+        }
         
         ArrayList<Double> peptideRTs = PercolatorUtils.getPeptideObservedPredictedRT(
                 spectrumMatch,
@@ -836,7 +843,15 @@ public class PercolatorExport {
             // Get corresponding key
             long peptideKey = Ms2PipUtils.getPeptideKey(peptideData);
             predictedSpectrum = fragmentationPrediction.get(Long.toString(peptideKey));
+            
+            //MS2PIP prediction is missing
+            if (predictedSpectrum == null){
+                System.out.println("Missing MS2PIP prediction for peptide: " + Long.toString(peptideKey));
+                return;
+            }
         }
+        
+        
         
 
         // Get peptide data
@@ -846,16 +861,18 @@ public class PercolatorExport {
             peptideData = PercolatorUtils.getPeptideRTData(
                 spectrumMatch,
                 peptideAssumption,
+                modificationParameters,
                 peptideRTs,
                 sequenceProvider,
-                spectrumProvider
+                spectrumProvider,
+                sequenceMatchingParameters,
+                modificationFactory
             );
         }
         else{
             peptideData = PercolatorUtils.getPeptideData(
                 spectrumMatch,
                 peptideAssumption,
-                rtPredictionsAvailable,
                 peptideRTs,
                 predictedSpectrum,
                 searchParameters,
