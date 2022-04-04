@@ -1905,21 +1905,22 @@ public class ModificationLocalizationScorer extends ExperimentObject {
             if (!modificationToSiteToScore.isEmpty()) {
 
                 // Distribute modifications among acceptor sites based on their score
-                HashMap<Double, ArrayList<Integer>> matchedSiteByModification = ModificationPeptideMapping.mapModifications(
+                HashMap<Double, TreeSet<Integer>> matchedSiteByModification = ModificationPeptideMapping.mapModifications(
                         modificationToPossibleSiteMap,
                         modificationOccurrenceMap,
                         modificationToSiteToScore
                 );
 
                 // Assign confidence levels to the sites mapped
-                for (Entry<Double, ArrayList<Integer>> entry : matchedSiteByModification.entrySet()) {
+                for (Entry<Double, TreeSet<Integer>> entry : matchedSiteByModification.entrySet()) {
 
                     double modificationMass = entry.getKey();
-                    ArrayList<Integer> selectedSites = entry.getValue();
+                    int[] sortedSelectedSites = entry.getValue().stream().mapToInt(a -> a).toArray();
+                    int[] sortedPossibleSites = modificationToSiteToScore.get(modificationMass).keySet().stream().mapToInt(a -> a).toArray();
 
                     ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modificationMass);
 
-                    if (selectedSites.size() > modificationMatches.size()) {
+                    if (sortedSelectedSites.length > modificationMatches.size()) {
 
                         throw new IllegalArgumentException("More sites than modifications found when assigning confidence levels at mass " + modificationMass + ".");
 
@@ -1933,7 +1934,9 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                     double confidenceThreshold = modificationScoringParameters.getProbabilisticScoreThreshold();
                     double dThreshold = modificationScoringParameters.getDScoreThreshold();
 
-                    for (int site : selectedSites) {
+                    for (int siteI = 0; siteI < sortedSelectedSites.length; siteI++) {
+
+                        int site = sortedSelectedSites[siteI];
 
                         String modName = modificationPossibleSites.get(site);
 
@@ -1956,6 +1959,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
                             modificationScoring.setSiteConfidence(site, ModificationScoring.CONFIDENT);
                             modificationMatch.setConfident(true);
+                            modificationScores.addConfidentModificationSite(modName, site);
 
                         } else if (modificationScoringParameters.isProbabilisticScoreCalculation() && score > randomScoreThreshold) {
 
@@ -1968,6 +1972,43 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                             modificationMatch.setConfident(false);
 
                         }
+
+                        // Assign the closest secondary sites to this one
+                        HashMap<Integer, HashSet<String>> secondarySites = new HashMap<>(1);
+
+                        for (int secondarySite : sortedPossibleSites) {
+
+                            if (secondarySite < site) {
+
+                                if (siteI > 0 && site - secondarySite < sortedSelectedSites[siteI - 1] || siteI == 0) {
+
+                                    HashSet<String> modNames = new HashSet<>(1);
+                                    modNames.add(modificationPossibleSites.get(secondarySite));
+                                    secondarySites.put(secondarySite, modNames);
+
+                                }
+
+                            } else if (secondarySite > site) {
+
+                                if (siteI < sortedSelectedSites.length - 1 && secondarySite - site <= sortedSelectedSites[siteI + 1] || siteI == sortedSelectedSites.length) {
+
+                                    HashSet<String> modNames = new HashSet<>(1);
+                                    modNames.add(modificationPossibleSites.get(secondarySite));
+                                    secondarySites.put(secondarySite, modNames);
+
+                                }
+
+                            } else {
+
+                                    HashSet<String> modNames = new HashSet<>(1);
+                                    modNames.add(modName);
+                                    secondarySites.put(site, modNames);
+
+                            }
+                        }
+
+                        modificationScores.addAmbiguousModificationSites(site, secondarySites);
+
                     }
                 }
             }
