@@ -1980,7 +1980,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
                             if (secondarySite < site) {
 
-                                if (siteI > 0 && site - secondarySite < sortedSelectedSites[siteI - 1] || siteI == 0) {
+                                if (siteI > 0 && secondarySite < sortedSelectedSites[siteI - 1] && site - secondarySite < sortedSelectedSites[siteI - 1] || siteI == 0) {
 
                                     HashSet<String> modNames = new HashSet<>(1);
                                     modNames.add(modificationPossibleSites.get(secondarySite));
@@ -1990,7 +1990,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
                             } else if (secondarySite > site) {
 
-                                if (siteI < sortedSelectedSites.length - 1 && secondarySite - site <= sortedSelectedSites[siteI + 1] || siteI == sortedSelectedSites.length) {
+                                if (siteI < sortedSelectedSites.length - 1 && secondarySite < sortedSelectedSites[siteI + 1] && secondarySite - site <= sortedSelectedSites[siteI + 1] - secondarySite || siteI == sortedSelectedSites.length - 1) {
 
                                     HashSet<String> modNames = new HashSet<>(1);
                                     modNames.add(modificationPossibleSites.get(secondarySite));
