@@ -965,11 +965,23 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
             HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap;
 
-            representativeToSecondaryMap = getRepresentativeToSecondaryMap(
-                    ambiguousSites,
-                    nRepresentativesMap,
-                    inferredSites
-            );
+            try {
+
+                representativeToSecondaryMap = getRepresentativeToSecondaryMap(
+                        ambiguousSites,
+                        nRepresentativesMap,
+                        inferredSites
+                );
+
+            } catch (Exception e) {
+
+                representativeToSecondaryMap = getRepresentativeToSecondaryMap(
+                        ambiguousSites,
+                        nRepresentativesMap,
+                        inferredSites
+                );
+
+            }
 
             for (Double modMass : representativeToSecondaryMap.keySet()) {
 
@@ -1720,23 +1732,27 @@ public class ModificationLocalizationScorer extends ExperimentObject {
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
         identification.getPeptideIdentification().stream()
-                .map(key -> identification.getPeptideMatch(key))
-                .forEach(peptideMatch -> {
+                .map(
+                        key -> identification.getPeptideMatch(key)
+                )
+                .forEach(
+                        peptideMatch -> {
 
-                    scorePTMs(
-                            identification,
-                            peptideMatch,
-                            identificationParameters,
-                            modificationProvider,
-                            waitingHandler
-                    );
+                            scorePTMs(
+                                    identification,
+                                    peptideMatch,
+                                    identificationParameters,
+                                    modificationProvider,
+                                    waitingHandler
+                            );
 
-                    waitingHandler.increaseSecondaryProgressCounter();
+                            waitingHandler.increaseSecondaryProgressCounter();
 
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
-                    }
-                });
+                            if (waitingHandler.isRunCanceled()) {
+                                return;
+                            }
+                        }
+                );
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
@@ -1860,6 +1876,8 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                         modMatch.setConfident(true);
 
                         assignedModifications.add(modMatch);
+
+                        modificationScores.addConfidentModificationSite(modName, site);
 
                     }
 
@@ -2000,9 +2018,9 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
                             } else {
 
-                                    HashSet<String> modNames = new HashSet<>(1);
-                                    modNames.add(modName);
-                                    secondarySites.put(site, modNames);
+                                HashSet<String> modNames = new HashSet<>(1);
+                                modNames.add(modName);
+                                secondarySites.put(site, modNames);
 
                             }
                         }
