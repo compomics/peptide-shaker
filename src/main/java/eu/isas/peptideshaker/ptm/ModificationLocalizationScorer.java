@@ -56,7 +56,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
     /**
      * The compomics modification factory.
      */
-    private ModificationFactory modificationFactory = ModificationFactory.getInstance();
+    private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
 
     /**
      * Constructor.
@@ -289,7 +289,8 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                             scoringParameters.isProbabilisticScoreNeutralLosses(),
                             sequenceMatchingParameters,
                             modificationSequenceMatchingParameters,
-                            peptideSpectrumAnnotator
+                            peptideSpectrumAnnotator,
+                            modificationProvider
                     );
 
                     if (scores == null) {

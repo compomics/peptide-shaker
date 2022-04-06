@@ -476,7 +476,8 @@ public class StirRunnable implements Runnable {
                                         modificationLocalizationParameters.isProbabilisticScoreNeutralLosses(),
                                         sequenceMatchingParameters,
                                         modificationSequenceMatchingParameters,
-                                        peptideSpectrumAnnotator
+                                        peptideSpectrumAnnotator,
+                                        modificationFactory
                                 ),
                                 (a, b) -> a,
                                 TreeMap::new
