@@ -431,15 +431,15 @@ public class PercolatorUtils {
             
             ArrayList<ArrayList<Integer>> aligned_peaks = getAlignedPeaks(measuredSpectrum, predictedSpectrum);
             
-            double matchedPeaksRatio = findMatchedPeaksRatio(predictedSpectrum, aligned_peaks.size());
-            line.append("\t").append(matchedPeaksRatio);
-            
             ArrayList<ArrayList<Integer>> matchedPeaks = new ArrayList<>();
             for (int i=0; i<aligned_peaks.size(); i++){
                 if (aligned_peaks.get(i).get(0) != -1){
                     matchedPeaks.add(aligned_peaks.get(i));
                 }
             }
+            
+            double matchedPeaksRatio = findMatchedPeaksRatio(predictedSpectrum, matchedPeaks.size());
+            line.append("\t").append(matchedPeaksRatio);
             
             ArrayList<Spectrum> spectraScaledIntensities = scaleIntensities(measuredSpectrum, predictedSpectrum, matchedPeaks);
 
