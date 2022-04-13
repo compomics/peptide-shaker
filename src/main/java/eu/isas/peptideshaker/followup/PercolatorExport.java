@@ -83,7 +83,7 @@ public class PercolatorExport {
         }
 
         // Parse fragmentation prediction
-        HashMap<String, Spectrum> fragmentationPrediction = null;
+        HashMap<String, ArrayList<Spectrum>> fragmentationPrediction = null;
 
         if (ms2pipFile != null) {
 
@@ -178,14 +178,14 @@ public class PercolatorExport {
      *
      * @param ms2pipFile File with spectra fragmentation predictions from MS2PIP.
      * 
-     * @return Map with pairs (Ms2PipKey, Spectrum)
+     * @return Map with pairs (Ms2PipKey, [Spectrum, bSpectrum, ySpectrum])
      */
-    public static HashMap<String, Spectrum> getIntensitiesPrediction(
+    public static HashMap<String, ArrayList<Spectrum>> getIntensitiesPrediction(
             File ms2pipFile
     ) {
 
         //HashMap<String, ArrayList<Spectrum>> result = new HashMap<>();
-        HashMap<String, Spectrum> result = new HashMap<>();
+        HashMap<String, ArrayList<Spectrum>> result = new HashMap<>();
 
         try (SimpleFileReader reader = SimpleFileReader.getFileReader(ms2pipFile)) {
 
@@ -196,6 +196,8 @@ public class PercolatorExport {
             String[] firstDataLineSplit = firstDataLine.split(",");
 
             String spectrumKey = firstDataLineSplit[0];
+            
+            String firstIon = firstDataLineSplit[2];
 
             double firstMz = Double.parseDouble(firstDataLineSplit[4]);
             double firstPrediction = Double.parseDouble(firstDataLineSplit[5]);
@@ -204,6 +206,20 @@ public class PercolatorExport {
             ArrayList<Double> predictions = new ArrayList<>();
             mzs.add(firstMz);
             predictions.add(firstPrediction);
+            
+            ArrayList<Double> mzsB = new ArrayList<>();
+            ArrayList<Double> predictionsB = new ArrayList<>();
+            ArrayList<Double> mzsY = new ArrayList<>();
+            ArrayList<Double> predictionsY = new ArrayList<>();
+            
+            if (firstIon.equals("B")){
+                mzsB.add(firstMz);
+                predictionsB.add(firstPrediction);
+            }
+            else{
+                mzsY.add(firstMz);
+                predictionsY.add(firstPrediction);
+            }
 
             while ((line = reader.readLine()) != null) {
 
@@ -211,12 +227,24 @@ public class PercolatorExport {
 
                 String key = lineSplit[0];
                 
+                String ion = lineSplit[2];
+                
                 double mz = Double.parseDouble(lineSplit[4]);
                 double prediction = Double.parseDouble(lineSplit[5]);
 
                 if (key.equals(spectrumKey)){
                     mzs.add(mz);
                     predictions.add(prediction);
+                    
+                    if (ion.equals("B")){
+                        mzsB.add(mz);
+                        predictionsB.add(prediction);
+                    }
+                    else{
+                        mzsY.add(mz);
+                        predictionsY.add(prediction);
+                    }
+                    
                 }
                 else{
                     
@@ -232,14 +260,51 @@ public class PercolatorExport {
                     }
                     
                     Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray);
-                    result.put(spectrumKey, predictedSpectrum);
                     
+                    double[] mzsBArray = new double[mzsB.size()];
+                    double[] predictionsBArray = new double[mzsB.size()];
+                    for (int i = 0; i < predictionsBArray.length; i++) {
+                        mzsBArray[i] = mzsB.get(i);
+                        predictionsBArray[i] = predictionsB.get(i);
+                    }
+                    
+                    Spectrum predictedBionSpectrum = new Spectrum(null, mzsBArray, predictionsBArray);
+                    
+                    double[] mzsYArray = new double[mzsY.size()];
+                    double[] predictionsYArray = new double[mzsY.size()];
+                    for (int i = 0; i < predictionsYArray.length; i++) {
+                        mzsYArray[i] = mzsY.get(i);
+                        predictionsYArray[i] = predictionsY.get(i);
+                    }
+                    
+                    Spectrum predictedYionSpectrum = new Spectrum(null, mzsYArray, predictionsYArray);
+                    
+                    ArrayList<Spectrum> predictedSpectra = new ArrayList<>();
+                    predictedSpectra.add(predictedSpectrum);
+                    predictedSpectra.add(predictedBionSpectrum);
+                    predictedSpectra.add(predictedYionSpectrum);
+                    
+                    result.put(spectrumKey, predictedSpectra);
                     
                     mzs = new ArrayList<>();
                     predictions = new ArrayList<>();
                     
                     mzs.add(mz);
                     predictions.add(prediction);
+                    
+                    mzsB = new ArrayList<>();
+                    predictionsB = new ArrayList<>();
+                    mzsY = new ArrayList<>();
+                    predictionsY = new ArrayList<>();
+                    
+                    if (ion.equals("B")){
+                        mzsB.add(mz);
+                        predictionsB.add(prediction);
+                    }
+                    else{
+                        mzsY.add(mz);
+                        predictionsY.add(prediction);
+                    }
                     
                     spectrumKey = key;
                 }
@@ -260,7 +325,31 @@ public class PercolatorExport {
             }
 
             Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray);
-            result.put(spectrumKey, predictedSpectrum);
+            
+            double[] mzsBArray = new double[mzsB.size()];
+            double[] predictionsBArray = new double[mzsB.size()];
+            for (int i = 0; i < predictionsBArray.length; i++) {
+                mzsBArray[i] = mzsB.get(i);
+                predictionsBArray[i] = predictionsB.get(i);
+            }
+
+            Spectrum predictedBionSpectrum = new Spectrum(null, mzsBArray, predictionsBArray);
+
+            double[] mzsYArray = new double[mzsY.size()];
+            double[] predictionsYArray = new double[mzsY.size()];
+            for (int i = 0; i < predictionsYArray.length; i++) {
+                mzsYArray[i] = mzsY.get(i);
+                predictionsYArray[i] = predictionsY.get(i);
+            }
+
+            Spectrum predictedYionSpectrum = new Spectrum(null, mzsYArray, predictionsYArray);
+            
+            ArrayList<Spectrum> predictedSpectra = new ArrayList<>();
+            predictedSpectra.add(predictedSpectrum);
+            predictedSpectra.add(predictedBionSpectrum);
+            predictedSpectra.add(predictedYionSpectrum);
+            
+            result.put(spectrumKey, predictedSpectra);
             
         }
         
@@ -289,7 +378,7 @@ public class PercolatorExport {
             File destinationFile,
             File rtObsPredsFile,
             HashMap<String, ArrayList<Double>> rtPrediction,
-            HashMap<String, Spectrum> fragmentationPrediction,
+            HashMap<String, ArrayList<Spectrum>> fragmentationPrediction,
             Identification identification,
             SearchParameters searchParameters,
             SequenceMatchingParameters sequenceMatchingParameters,
@@ -802,7 +891,7 @@ public class PercolatorExport {
             PeptideAssumption peptideAssumption,
             HashMap<String, ArrayList<Double>> allRTvalues,
             Boolean rtFileWriterFlag,
-            HashMap<String, Spectrum> fragmentationPrediction,
+            HashMap<String, ArrayList<Spectrum>> fragmentationPrediction,
             SearchParameters searchParameters,
             SequenceProvider sequenceProvider,
             SequenceMatchingParameters sequenceMatchingParameters,
@@ -829,7 +918,7 @@ public class PercolatorExport {
         }
         
         //Get peptide's predicted spectrum
-        Spectrum predictedSpectrum = null;
+        ArrayList<Spectrum> predictedSpectrum = null;
         Boolean spectraPredictionsAvailable = fragmentationPrediction != null;
         if ( spectraPredictionsAvailable ){
             // Get peptide data

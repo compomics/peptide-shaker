@@ -102,6 +102,21 @@ public class PercolatorUtils {
             header.append("\t").append("spectra_mse");
             header.append("\t").append("spectra_cos_similarity");
             header.append("\t").append("spectra_angular_similarity");
+            header.append("\t").append("spectra_cross_entropy");
+            
+            header.append("\t").append("b_ion_coverage");
+            header.append("\t").append("b_ion_matched_peaks");
+            header.append("\t").append("b_ion_spectra_mse");
+            header.append("\t").append("b_ion_spectra_cos_similarity");
+            header.append("\t").append("b_ion_spectra_angular_similarity");
+            header.append("\t").append("b_ion_spectra_cross_entropy");
+            
+            header.append("\t").append("y_ion_coverage");
+            header.append("\t").append("y_ion_matched_peaks");
+            header.append("\t").append("y_ion_spectra_mse");
+            header.append("\t").append("y_ion_spectra_cos_similarity");
+            header.append("\t").append("y_ion_spectra_angular_similarity");
+            header.append("\t").append("y_ion_spectra_cross_entropy");
         }
 
         header.append("\t").append("Peptide").append("\t").append("Proteins");
@@ -159,7 +174,7 @@ public class PercolatorUtils {
             SpectrumMatch spectrumMatch,
             PeptideAssumption peptideAssumption,
             ArrayList<Double> peptideRTs,
-            Spectrum predictedSpectrum,
+            ArrayList<Spectrum> predictedSpectra,
             SearchParameters searchParameters,
             SequenceProvider sequenceProvider,
             SequenceMatchingParameters sequenceMatchingParameters,
@@ -423,34 +438,35 @@ public class PercolatorUtils {
         }
         
         // Distance of observed and predicted mass spectrum
-        Boolean spectraPredictionsAvailable = predictedSpectrum != null;
+        Boolean spectraPredictionsAvailable = predictedSpectra != null;
         if (spectraPredictionsAvailable){
 
             // Get measured spectrum
             Spectrum measuredSpectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
             
-            ArrayList<ArrayList<Integer>> aligned_peaks = getAlignedPeaks(measuredSpectrum, predictedSpectrum);
+            Spectrum predictedSpectrum = predictedSpectra.get(0);
             
-            ArrayList<ArrayList<Integer>> matchedPeaks = new ArrayList<>();
-            for (int i=0; i<aligned_peaks.size(); i++){
-                if (aligned_peaks.get(i).get(0) != -1){
-                    matchedPeaks.add(aligned_peaks.get(i));
-                }
-            }
+            String ionSpectrum = "whole";
             
-            double matchedPeaksRatio = findMatchedPeaksRatio(predictedSpectrum, matchedPeaks.size());
-            line.append("\t").append(matchedPeaksRatio);
+            StringBuilder wholeSpectrumMetrics = calculateSpectraDistances(measuredSpectrum, predictedSpectrum, ionSpectrum);
             
-            ArrayList<Spectrum> spectraScaledIntensities = scaleIntensities(measuredSpectrum, predictedSpectrum, matchedPeaks);
-
-            double spectraLogDistance = getSpectraLogDist(spectraScaledIntensities.get(0), spectraScaledIntensities.get(1), aligned_peaks);
-            line.append("\t").append(spectraLogDistance);
-
-            double spectraCosineSimilarity = getSpectraCosine(spectraScaledIntensities.get(0), spectraScaledIntensities.get(1), aligned_peaks);
-            line.append("\t").append(spectraCosineSimilarity);
-
-            double angularSimilarity = 1.0 - (Math.acos(spectraCosineSimilarity) / Math.PI);
-            line.append("\t").append(angularSimilarity);
+            line.append("\t").append(wholeSpectrumMetrics);
+            
+            Spectrum predictedSpectrumBIon = predictedSpectra.get(1);
+            
+            ionSpectrum = "B";
+            
+            StringBuilder BIonSpectrumMetrics = calculateSpectraDistances(measuredSpectrum, predictedSpectrumBIon, ionSpectrum);
+            
+            line.append("\t").append(BIonSpectrumMetrics);
+            
+            Spectrum predictedSpectrumYIon = predictedSpectra.get(2);
+            
+            ionSpectrum = "Y";
+            
+            StringBuilder YIonSpectrumMetrics = calculateSpectraDistances(measuredSpectrum, predictedSpectrumYIon, ionSpectrum);
+            
+            line.append("\t").append(YIonSpectrumMetrics);
 
         }
         
@@ -464,6 +480,98 @@ public class PercolatorUtils {
 
         return line.toString();
 
+    }
+    
+    /**
+     * Returns the spectra metrics.
+     *
+     * @param measuredSpectrum The measured spectrum.
+     * @param predictedSpectrum The predicted spectrum.
+     * @param ionSpectrum String showing whether the spectrum consists of only B or Y ions.
+     *
+     * @return String builder with the spectra distances.
+     */
+    public static StringBuilder calculateSpectraDistances(
+            Spectrum measuredSpectrum,
+            Spectrum predictedSpectrum,
+            String ionSpectrum
+    ){
+            StringBuilder results = new StringBuilder();
+        
+            ArrayList<ArrayList<Integer>> aligned_peaks = getAlignedPeaks(measuredSpectrum, predictedSpectrum);
+            
+            ArrayList<ArrayList<Integer>> matchedPeaks = new ArrayList<>();
+            for (int i=0; i<aligned_peaks.size(); i++){
+                if (aligned_peaks.get(i).get(0) != -1){
+                    matchedPeaks.add(aligned_peaks.get(i));
+                }
+            }
+            
+            if (ionSpectrum.equals("B") || ionSpectrum.equals("Y")){
+                int terminusCoverage = findTerminiCoverage(aligned_peaks, ionSpectrum);
+                results.append(terminusCoverage).append("\t");
+            }
+            
+            double matchedPeaksRatio = findMatchedPeaksRatio(predictedSpectrum, matchedPeaks.size());
+            results.append(matchedPeaksRatio);
+            
+            ArrayList<Spectrum> spectraScaledIntensities = scaleIntensities(measuredSpectrum, predictedSpectrum, matchedPeaks);
+
+            double spectraLogDistance = getSpectraLogDist(spectraScaledIntensities.get(0), spectraScaledIntensities.get(1), aligned_peaks);
+            results.append("\t").append(spectraLogDistance);
+
+            double spectraCosineSimilarity = getSpectraCosine(spectraScaledIntensities.get(0), spectraScaledIntensities.get(1), aligned_peaks);
+            results.append("\t").append(spectraCosineSimilarity);
+
+            double angularSimilarity = 1.0 - (Math.acos(spectraCosineSimilarity) / Math.PI);
+            results.append("\t").append(angularSimilarity);
+            
+            ArrayList<Spectrum> normalizedIntensities = normalizeIntensities(measuredSpectrum, predictedSpectrum, matchedPeaks);
+            
+            double crossEntropy = getCrossEntropy(normalizedIntensities.get(0), normalizedIntensities.get(1));
+            results.append("\t").append(crossEntropy);
+            
+            return results;
+    }
+    
+    /**
+     * Returns the ratio of matched predicted peaks.
+     *
+     * @param aligned_peaks The indices of aligned peaks.
+     * @param ion "B" or "Y" ion.
+     *
+     * @return #mathced peaks / #predicted peaks
+     */
+    public static int findTerminiCoverage(
+            ArrayList<ArrayList<Integer>> aligned_peaks,
+            String ion
+    ){
+        int coverage = 0;
+        
+        if ( aligned_peaks.size() == 0){
+            return coverage;
+        }
+        
+        if (ion.equals("B")){
+            for (int i=0; i<aligned_peaks.size(); i++){
+                if (aligned_peaks.get(i).get(0) == -1){
+                    coverage = i;
+                    return coverage;
+                }
+            }
+            coverage = aligned_peaks.size();
+        }
+        else{
+            for (int i=aligned_peaks.size() - 1; i>=0; i--){
+                if (aligned_peaks.get(i).get(0) == -1){
+                    coverage = aligned_peaks.size() - i -1;
+                    return coverage;
+                }
+            }
+            coverage = aligned_peaks.size();
+        }
+        
+        return coverage;
     }
     
     /**
@@ -591,6 +699,82 @@ public class PercolatorUtils {
         scaledSpectra.add(scaledPredictedSpectrum);
         
         return scaledSpectra;
+        
+    }
+    
+    /**
+     * Normalize the intensities of the observed and predicted spectra,
+     * as probability distributions for cross entropy computation.
+     *
+     * @param measuredSpectrum The measured spectrum.
+     * @param predictedSpectrum The predicted spectrum.
+     * @param matchedPeaks The indices of the matched peaks.
+     *
+     * @return ArrayList(NormalizedObservedSpectrum, NormalizedPredictedSpectrum)
+     */
+    public static ArrayList<Spectrum> normalizeIntensities(
+            Spectrum measuredSpectrum,
+            Spectrum predictedSpectrum,
+            ArrayList<ArrayList<Integer>> matchedPeaks
+    ){
+        
+        double[] measuredIntensity = measuredSpectrum.intensity;
+        double[] predictedIntensity = predictedSpectrum.intensity;
+        
+        double predictedIntsSum = 0.0;
+        double measuredIntsSum = 0.0;
+        for (int i=0; i<matchedPeaks.size(); i++){
+            predictedIntsSum += predictedIntensity[matchedPeaks.get(i).get(1)];
+            measuredIntsSum += measuredIntensity[matchedPeaks.get(i).get(0)];
+        }
+        
+        double[] normMeasuredInts = new double[matchedPeaks.size()];
+        double[] normPredictedInts = new double[matchedPeaks.size()];
+        double[] mzs = new double[matchedPeaks.size()];
+        for (int i=0; i<matchedPeaks.size(); i++){
+            normMeasuredInts[i] = measuredIntensity[matchedPeaks.get(i).get(0)] / measuredIntsSum;
+            normPredictedInts[i] = predictedIntensity[matchedPeaks.get(i).get(1)] / predictedIntsSum;
+            mzs[i] = measuredSpectrum.mz[matchedPeaks.get(i).get(0)];
+        }
+        
+        Spectrum normMeasuredSpectrum = new Spectrum(null, mzs, normMeasuredInts);
+        Spectrum normPredictedSpectrum = new Spectrum(null, mzs, normPredictedInts);
+        
+        ArrayList<Spectrum> normSpectra = new ArrayList<>();
+        normSpectra.add(normMeasuredSpectrum);
+        normSpectra.add(normPredictedSpectrum);
+        
+        return normSpectra;
+        
+    }
+    
+    //ArrayList<ArrayList<Integer>> alignedPeaks
+    /**
+     * Returns the cross entropy between the measured and predicted mass spectrum.
+     *
+     * @param measuredSpectrum The measured spectrum.
+     * @param predictedSpectrum The predicted spectrum.
+     * //@param alignedPeaks The indices of the matched peaks.
+     *
+     * @return spectra cross entropy
+     */
+    public static double getCrossEntropy(
+            Spectrum measuredSpectrum,
+            Spectrum predictedSpectrum
+            
+    ){
+        
+        double[] measuredIntensities = measuredSpectrum.intensity;
+        double[] predictedIntensities = predictedSpectrum.intensity;
+        
+        double crossEntropy = 0.0;
+        for (int i=0; i < measuredIntensities.length; i++){
+            double predictedIntensity = predictedIntensities[i];
+            double measuredIntensity = measuredIntensities[i] ;
+            crossEntropy = crossEntropy - (measuredIntensity * Math.log(predictedIntensity));
+        }
+        
+        return crossEntropy;
         
     }
     

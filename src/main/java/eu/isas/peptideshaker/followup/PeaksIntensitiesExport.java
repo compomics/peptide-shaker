@@ -53,7 +53,7 @@ public class PeaksIntensitiesExport {
             WaitingHandler waitingHandler
     ){
         
-        HashMap<String, Spectrum> fragmentationPrediction = null;
+        HashMap<String, ArrayList<Spectrum>> fragmentationPrediction = null;
 
         if (ms2pipFile != null) {
 
@@ -88,7 +88,7 @@ public class PeaksIntensitiesExport {
      */
     public static void peaksIntensitiesExport(
             File peaksIntensitiesFile,
-            HashMap<String, Spectrum> fragmentationPrediction,
+            HashMap<String, ArrayList<Spectrum>> fragmentationPrediction,
             Identification identification,
             ModificationParameters modificationParameters,
             SequenceProvider sequenceProvider,
@@ -174,7 +174,7 @@ public class PeaksIntensitiesExport {
      * @param writer The writer to use.
      */
     private static void writePeptideCandidate(
-            HashMap<String, Spectrum> fragmentationPrediction,
+            HashMap<String, ArrayList<Spectrum>> fragmentationPrediction,
             PeptideAssumption peptideAssumption,
             ModificationParameters modificationParameters,
             SequenceProvider sequenceProvider,
@@ -204,7 +204,8 @@ public class PeaksIntensitiesExport {
         String peptideID = Long.toString(peptideKey);
         String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
         
-        Spectrum predictedSpectrum = fragmentationPrediction.get(String.valueOf(peptideKey));
+        ArrayList<Spectrum> predictedSpectra = fragmentationPrediction.get(String.valueOf(peptideKey));
+        Spectrum predictedSpectrum = predictedSpectra.get(0);
         
         if (predictedSpectrum == null){
             return;
