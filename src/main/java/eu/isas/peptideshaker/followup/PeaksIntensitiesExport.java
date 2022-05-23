@@ -205,9 +205,14 @@ public class PeaksIntensitiesExport {
         String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
         
         ArrayList<Spectrum> predictedSpectra = fragmentationPrediction.get(String.valueOf(peptideKey));
+        if (predictedSpectra == null){
+            System.out.println("No MS2PIP prediction for PSM with ID: " + psmID);
+            return;
+        }
         Spectrum predictedSpectrum = predictedSpectra.get(0);
         
         if (predictedSpectrum == null){
+            System.out.println("No MS2PIP prediction for PSM with ID: " + psmID);
             return;
         }
         
