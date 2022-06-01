@@ -99,21 +99,21 @@ public class PercolatorUtils {
         
         if (spectraPredictionsAvailable) {
             header.append("\t").append("matched_peaks");
-            header.append("\t").append("spectra_mse");
+            header.append("\t").append("spectra_log");
             header.append("\t").append("spectra_cos_similarity");
             header.append("\t").append("spectra_angular_similarity");
             header.append("\t").append("spectra_cross_entropy");
             
             header.append("\t").append("b_ion_coverage");
             header.append("\t").append("b_ion_matched_peaks");
-            header.append("\t").append("b_ion_spectra_mse");
+            header.append("\t").append("b_ion_spectra_log");
             header.append("\t").append("b_ion_spectra_cos_similarity");
             header.append("\t").append("b_ion_spectra_angular_similarity");
             header.append("\t").append("b_ion_spectra_cross_entropy");
             
             header.append("\t").append("y_ion_coverage");
             header.append("\t").append("y_ion_matched_peaks");
-            header.append("\t").append("y_ion_spectra_mse");
+            header.append("\t").append("y_ion_spectra_log");
             header.append("\t").append("y_ion_spectra_cos_similarity");
             header.append("\t").append("y_ion_spectra_angular_similarity");
             header.append("\t").append("y_ion_spectra_cross_entropy");
