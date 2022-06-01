@@ -89,6 +89,7 @@ public class StirredCLI {
         } catch (Throwable e) {
 
             e.printStackTrace();
+            System.exit(1);
         }
     }
 
