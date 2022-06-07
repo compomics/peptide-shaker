@@ -61,12 +61,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param modal modal or not modal
      */
     public WelcomeDialog(
-            PeptideShakerGUI peptideShakerGUI, 
-            boolean showLowMemoryWarning, 
-            boolean showJavaVersionWarning, 
+            PeptideShakerGUI peptideShakerGUI,
+            boolean showLowMemoryWarning,
+            boolean showJavaVersionWarning,
             boolean modal
     ) {
-        
+
         super(DUMMY_PARENT_FRAME.setNewTitle(peptideShakerGUI.getTitle()), modal);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
@@ -77,7 +77,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         if (showJavaVersionWarning) {
             lowMemoryWarningLabel.setText("<html><u>Java Version Warning!</u>");
         }
-        
+
         // incrementing the counter for a new PeptideShaker start
         if (peptideShakerGUI.getUtilitiesUserParameters().isAutoUpdate()) {
             Util.sendGAUpdate("UA-36198780-1", "toolstart", "peptide-shaker-" + PeptideShaker.getVersion());
@@ -507,17 +507,17 @@ public class WelcomeDialog extends javax.swing.JDialog {
         String psdbFileFilterDescription = "PeptideShaker Database (.psdb)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        
+
         FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(
-                this, 
+                this,
                 new String[]{".psdb", ".zip"},
-                new String[]{psdbFileFilterDescription, zipFileFilterDescription}, 
-                "Open PeptideShaker Project", 
-                lastSelectedFolderPath, 
-                null, 
-                true, 
-                false, 
-                false, 
+                new String[]{psdbFileFilterDescription, zipFileFilterDescription},
+                "Open PeptideShaker Project",
+                lastSelectedFolderPath,
+                null,
+                true,
+                false,
+                false,
                 0
         );
 
@@ -541,11 +541,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 lastSelectedFolder.setLastSelectedFolder(selectedFile.getAbsolutePath());
                 dispose();
             } else {
-                
+
                 JOptionPane.showMessageDialog(
-                        this, 
-                        "Not a PeptideShaker file (.psdb).", 
-                        "Unsupported File.", 
+                        this,
+                        "Not a PeptideShaker file (.psdb).",
+                        "Unsupported File.",
                         JOptionPane.WARNING_MESSAGE
                 );
             }
@@ -653,20 +653,20 @@ public class WelcomeDialog extends javax.swing.JDialog {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    
+
                     ToolFactory.startSearchGUI(
-                            DUMMY_PARENT_FRAME, 
-                            null, 
-                            null, 
-                            null, 
-                            null, 
-                            null, 
-                            null, 
-                            null, 
+                            DUMMY_PARENT_FRAME,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
                             null
                     );
                     peptideShakerGUI.close();
-                
+
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
@@ -682,9 +682,9 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void quantifyJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantifyJButtonActionPerformed
 
         JOptionPane.showMessageDialog(
-                this, 
-                "In development. Coming soon...", 
-                "In Developement...", 
+                this,
+                "In development. Coming soon...",
+                "In Developement...",
                 JOptionPane.INFORMATION_MESSAGE,
                 new javax.swing.ImageIcon(getClass().getResource("/icons/reporter_logo.png")
                 )
@@ -891,12 +891,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void bugReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bugReportMenuItemActionPerformed
         new BugReport(
-                this, 
-                peptideShakerGUI.getLastSelectedFolder(), 
-                "PeptideShaker", 
+                this,
+                peptideShakerGUI.getLastSelectedFolder(),
+                "PeptideShaker",
                 "peptide-shaker",
-                PeptideShaker.getVersion(), 
-                "peptide-shaker", 
+                PeptideShaker.getVersion(),
+                "peptide-shaker",
                 "PeptideShaker",
                 new File(PeptideShaker.getJarFilePath() + "/resources/PeptideShaker.log")
         );
@@ -909,7 +909,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
         new HelpDialog(
-                peptideShakerGUI, 
+                peptideShakerGUI,
                 getClass().getResource("/helpFiles/AboutPeptideShaker.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -942,10 +942,10 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void lowMemoryWarningLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lowMemoryWarningLabelMouseReleased
         new JavaParametersDialog(
-                DUMMY_PARENT_FRAME, 
-                peptideShakerGUI, 
-                this, 
-                "PeptideShaker", 
+                DUMMY_PARENT_FRAME,
+                peptideShakerGUI,
+                this,
+                "PeptideShaker",
                 true
         );
     }//GEN-LAST:event_lowMemoryWarningLabelMouseReleased
@@ -1016,16 +1016,18 @@ public class WelcomeDialog extends javax.swing.JDialog {
             String searchGuiJarPath
     ) {
         try {
-            
+
             File jarFile = new File(searchGuiJarPath);
             MavenJarFile oldMavenJarFile = new MavenJarFile(jarFile.toURI());
+
             URL jarRepository = new URL(
-                    "http", 
-                    "genesis.ugent.be", 
-                    "/maven2/"
+                    "https",
+                    "genesis.ugent.be",
+                    "/archiva/repository/maven2/"
             );
+
             return WebDAO.newVersionReleased(oldMavenJarFile, jarRepository);
-            
+
         } catch (UnknownHostException ex) {
             System.out.println("Checking for new version failed. No internet connection.");
             // no internet connection
@@ -1060,11 +1062,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
         if (installPath == null) {
             installPath = "user.home";
             downloadFolder = FileChooserUtil.getUserSelectedFolder(
-                    this, 
-                    "Select SearchGUI Folder", 
-                    installPath, 
-                    "SearchGUI Folder", 
-                    "Select", 
+                    this,
+                    "Select SearchGUI Folder",
+                    installPath,
+                    "SearchGUI Folder",
+                    "Select",
                     false
             );
         } else {
@@ -1099,37 +1101,37 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 public void run() {
                     try {
                         URL jarRepository = new URL(
-                                "http", 
-                                "genesis.ugent.be", 
+                                "http",
+                                "genesis.ugent.be",
                                 "/maven2/"
                         );
-                        
+
                         if (finalFirstTimeInstall) {
-                        
+
                             downloadLatestZipFromRepo(
-                                    downloadFolder, 
-                                    "SearchGUI", 
-                                    "eu.isas.searchgui", 
-                                    "SearchGUI", 
+                                    downloadFolder,
+                                    "SearchGUI",
+                                    "eu.isas.searchgui",
+                                    "SearchGUI",
                                     "searchgui.ico",
-                                    null, 
-                                    jarRepository, 
-                                    false, 
-                                    true, 
-                                    new GUIFileDAO(), 
+                                    null,
+                                    jarRepository,
+                                    false,
+                                    true,
+                                    new GUIFileDAO(),
                                     progressDialog
                             );
                         } else {
                             downloadLatestZipFromRepo(
-                                    new File(peptideShakerGUI.getUtilitiesUserParameters().getSearchGuiPath()).toURI().toURL(), 
-                                    "SearchGUI", 
+                                    new File(peptideShakerGUI.getUtilitiesUserParameters().getSearchGuiPath()).toURI().toURL(),
+                                    "SearchGUI",
                                     false,
-                                    "searchgui.ico", 
-                                    null, 
-                                    jarRepository, 
-                                    false, 
-                                    true, 
-                                    new GUIFileDAO(), 
+                                    "searchgui.ico",
+                                    null,
+                                    jarRepository,
+                                    false,
+                                    true,
+                                    new GUIFileDAO(),
                                     progressDialog
                             );
                         }

@@ -8470,10 +8470,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             );
 
             MavenJarFile oldMavenJarFile = new MavenJarFile(jarFile.toURI());
+
             URL jarRepository = new URL(
-                    "http",
+                    "https",
                     "genesis.ugent.be",
-                    "/maven2/"
+                    "/archiva/repository/maven2/"
             );
 
             return CompomicsWrapper.checkForNewDeployedVersion(
