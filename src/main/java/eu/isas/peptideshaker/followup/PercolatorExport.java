@@ -30,6 +30,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Export for Percolator.
  *
@@ -96,21 +101,25 @@ public class PercolatorExport {
         // Export Percolator training file
         waitingHandler.setWaitingText("Exporting Percolator output - Writing export");
 
-        percolatorExport(
-                destinationFile,
-                rtObsPredsFile,
-                rtPrediction,
-                fragmentationPrediction,
-                identification,
-                searchParameters,
-                sequenceMatchingParameters,
-                annotationParameters,
-                modificationLocalizationParameters,
-                modificationParameters,
-                sequenceProvider,
-                spectrumProvider,
-                waitingHandler
-        );
+        try {
+            percolatorExport(
+                    destinationFile,
+                    rtObsPredsFile,
+                    rtPrediction,
+                    fragmentationPrediction,
+                    identification,
+                    searchParameters,
+                    sequenceMatchingParameters,
+                    annotationParameters,
+                    modificationLocalizationParameters,
+                    modificationParameters,
+                    sequenceProvider,
+                    spectrumProvider,
+                    waitingHandler
+            );
+        } catch (InterruptedException | ExecutionException ex) {
+            Logger.getLogger(PercolatorExport.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -388,28 +397,10 @@ public class PercolatorExport {
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
             WaitingHandler waitingHandler
-    ) {
+    ) throws InterruptedException, ExecutionException {
         
-        /*if (rtObsPredsFile != null){
-            
-            // Export Percolator training file
-            waitingHandler.setWaitingText("Exporting RT observed and predicted values - Writing export");
-
-            RTValuesExport(
-                    rtObsPredsFile,
-                    rtPrediction,
-                    identification,
-                    searchParameters,
-                    sequenceMatchingParameters,
-                    annotationParameters,
-                    modificationLocalizationParameters,
-                    modificationParameters,
-                    sequenceProvider,
-                    spectrumProvider,
-                    waitingHandler
-            );
-            
-        }*/
+        //Hard-coded number of threads;
+        int threadCount = 4;
 
         // reset the progress bar
         waitingHandler.resetSecondaryProgressCounter();
@@ -437,16 +428,34 @@ public class PercolatorExport {
                     waitingHandler
                 );
             }
+            final HashMap<String, ArrayList<Double>> allRTs = allRTvalues;
             
             String header = PercolatorUtils.getHeader(searchParameters, rtPredictionsAvailable, spectraPredictionsAvailable);
 
             writer.writeLine(header);
 
             SpectrumMatchesIterator spectrumMatchesIterator = identification.getSpectrumMatchesIterator(waitingHandler);
+            
+            // create a custom thread pool to manage the number of threads
+            System.out.println("Creating a custom thread pool: " + threadCount + " threads.");
+            ForkJoinPool customThreadPool = new ForkJoinPool(threadCount);
+            
+             // aggregate all the spectrum matches into a list -> iterate over it
+            SpectrumMatch match = null;
+            ArrayList<SpectrumMatch> allSpectrumMatches = new ArrayList<>();
+            while ((match = spectrumMatchesIterator.next()) != null) {
+                allSpectrumMatches.add(match);
+            }
+            System.out.println("Processing " + allSpectrumMatches.size() + " matches");
 
-            SpectrumMatch spectrumMatch;
-
-            while ((spectrumMatch = spectrumMatchesIterator.next()) != null) {
+            //while ((spectrumMatch = spectrumMatchesIterator.next()) != null) {
+            // parallelize over all scans
+            try {
+            customThreadPool.submit(() -> allSpectrumMatches.parallelStream().forEach(spectrumMatch -> {
+                //SpectrumMatch spectrumMatch = spectrumMatchesIterator.next();
+                if (spectrumMatch == null) {
+                    return;
+                }
 
                 // Make sure that there is no duplicate in the export
                 HashSet<Long> processedPeptideKeys = new HashSet<>();
@@ -463,13 +472,12 @@ public class PercolatorExport {
                     }
                 }
                 
-                final HashMap<String, ArrayList<Double>> allRTs = allRTvalues;
                 Boolean rtFileWriterFlag = false;
                 
                 // Export all candidate peptides
                 SpectrumMatch tempSpectrumMatch = spectrumMatch;
                 tempSpectrumMatch.getAllPeptideAssumptions()
-                        .parallel()
+                        //.parallel()
                         .forEach(
                                 peptideAssumption -> writePeptideCandidate(
                                         tempSpectrumMatch,
@@ -490,7 +498,13 @@ public class PercolatorExport {
                                         writer
                                 )
                         );
+            })).join();
+            
+            } finally {
+                System.out.println("Shutting down thread pool.");
+                customThreadPool.shutdown();
             }
+
         }
         
         

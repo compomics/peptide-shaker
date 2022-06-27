@@ -495,7 +495,7 @@ public class PercolatorUtils {
             Spectrum measuredSpectrum,
             Spectrum predictedSpectrum,
             String ionSpectrum
-    ){
+    ){        
             StringBuilder results = new StringBuilder();
         
             ArrayList<ArrayList<Integer>> aligned_peaks = getAlignedPeaks(measuredSpectrum, predictedSpectrum);
@@ -526,9 +526,9 @@ public class PercolatorUtils {
             double angularSimilarity = 1.0 - (Math.acos(spectraCosineSimilarity) / Math.PI);
             results.append("\t").append(angularSimilarity);
             
-            ArrayList<Spectrum> normalizedIntensities = normalizeIntensities(measuredSpectrum, predictedSpectrum, matchedPeaks);
+            ArrayList<Spectrum> normalizedIntensities = normalizeIntensities(measuredSpectrum, predictedSpectrum, aligned_peaks);
             
-            double crossEntropy = getCrossEntropy(normalizedIntensities.get(0), normalizedIntensities.get(1));
+            double crossEntropy = getCrossEntropy(normalizedIntensities.get(0), normalizedIntensities.get(1), matchedPeaksRatio);
             results.append("\t").append(crossEntropy);
             
             return results;
@@ -708,14 +708,14 @@ public class PercolatorUtils {
      *
      * @param measuredSpectrum The measured spectrum.
      * @param predictedSpectrum The predicted spectrum.
-     * @param matchedPeaks The indices of the matched peaks.
+     * @param alignedPeaks The indices of the matched peaks.
      *
      * @return ArrayList(NormalizedObservedSpectrum, NormalizedPredictedSpectrum)
      */
     public static ArrayList<Spectrum> normalizeIntensities(
             Spectrum measuredSpectrum,
             Spectrum predictedSpectrum,
-            ArrayList<ArrayList<Integer>> matchedPeaks
+            ArrayList<ArrayList<Integer>> alignedPeaks
     ){
         
         double[] measuredIntensity = measuredSpectrum.intensity;
@@ -723,18 +723,25 @@ public class PercolatorUtils {
         
         double predictedIntsSum = 0.0;
         double measuredIntsSum = 0.0;
-        for (int i=0; i<matchedPeaks.size(); i++){
-            predictedIntsSum += predictedIntensity[matchedPeaks.get(i).get(1)];
-            measuredIntsSum += measuredIntensity[matchedPeaks.get(i).get(0)];
+        for (int i=0; i<alignedPeaks.size(); i++){
+            predictedIntsSum += predictedIntensity[alignedPeaks.get(i).get(1)];
+            if (alignedPeaks.get(i).get(0) != -1){
+                measuredIntsSum += measuredIntensity[alignedPeaks.get(i).get(0)];
+            }
         }
         
-        double[] normMeasuredInts = new double[matchedPeaks.size()];
-        double[] normPredictedInts = new double[matchedPeaks.size()];
-        double[] mzs = new double[matchedPeaks.size()];
-        for (int i=0; i<matchedPeaks.size(); i++){
-            normMeasuredInts[i] = measuredIntensity[matchedPeaks.get(i).get(0)] / measuredIntsSum;
-            normPredictedInts[i] = predictedIntensity[matchedPeaks.get(i).get(1)] / predictedIntsSum;
-            mzs[i] = measuredSpectrum.mz[matchedPeaks.get(i).get(0)];
+        double[] normMeasuredInts = new double[alignedPeaks.size()];
+        double[] normPredictedInts = new double[alignedPeaks.size()];
+        double[] mzs = new double[alignedPeaks.size()];
+        for (int i=0; i<alignedPeaks.size(); i++){
+            if (alignedPeaks.get(i).get(0) != -1){
+                normMeasuredInts[i] = measuredIntensity[alignedPeaks.get(i).get(0)] / measuredIntsSum;
+            }
+            else{
+                normMeasuredInts[i] = 0.0;
+            }
+            normPredictedInts[i] = predictedIntensity[alignedPeaks.get(i).get(1)] / predictedIntsSum;
+            mzs[i] = predictedSpectrum.mz[alignedPeaks.get(i).get(1)];
         }
         
         Spectrum normMeasuredSpectrum = new Spectrum(null, mzs, normMeasuredInts);
@@ -754,20 +761,27 @@ public class PercolatorUtils {
      *
      * @param measuredSpectrum The measured spectrum.
      * @param predictedSpectrum The predicted spectrum.
+     * @param matchedPeaksRatio The ratio of matched predicted peaks.
      * //@param alignedPeaks The indices of the matched peaks.
      *
      * @return spectra cross entropy
      */
     public static double getCrossEntropy(
             Spectrum measuredSpectrum,
-            Spectrum predictedSpectrum
+            Spectrum predictedSpectrum,
+            double matchedPeaksRatio
             
     ){
+        
+        //Need to define a max value for all the spectra with 0 matched peaks
+        if (matchedPeaksRatio==0.0){
+            return 10.0;
+        }
         
         double[] measuredIntensities = measuredSpectrum.intensity;
         double[] predictedIntensities = predictedSpectrum.intensity;
         
-        double crossEntropy = 0.0;
+        double crossEntropy=0.0;
         for (int i=0; i < measuredIntensities.length; i++){
             double predictedIntensity = predictedIntensities[i];
             double measuredIntensity = measuredIntensities[i] ;
@@ -838,10 +852,15 @@ public class PercolatorUtils {
             ArrayList<ArrayList<Integer>> alignedPeaks
     ){
         
+        //Need to define a max value for all the spectra with 0 matched peaks
+        if (alignedPeaks.size() == 0){
+            return 18.0;
+        }
+        
         double[] measuredIntensities = measuredSpectrum.intensity;
         double[] predictedIntensities = predictedSpectrum.intensity;
         
-        double mse = 0.0;
+        double dist = 0.0;
         for (int i=0; i < alignedPeaks.size(); i++){
             double predictedIntensity = predictedIntensities[alignedPeaks.get(i).get(1)];
             double measuredIntensity = 0.0;
@@ -857,11 +876,11 @@ public class PercolatorUtils {
             }
             predictedIntensity = Math.log(predictedIntensity);
             measuredIntensity = Math.log(measuredIntensity);
-            mse += Math.abs(measuredIntensity - predictedIntensity); 
+            dist += Math.abs(measuredIntensity - predictedIntensity); 
         }
-        mse = mse / alignedPeaks.size();
+        dist = dist / alignedPeaks.size();
         
-        return mse;
+        return dist;
     }
     
     /**
