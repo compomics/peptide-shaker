@@ -178,7 +178,7 @@ public class PeptideShaker {
      * @param spectrumProvider the spectrum provider
      * @param identificationParameters identification parameters
      * @param projectDetails the project details
-     * @param processingPreferences the initial processing preferences
+     * @param processingParameters the initial processing preferences
      * @param exceptionHandler the exception handler
      *
      * @return 0 if the import went fine, 1 otherwise
@@ -189,7 +189,7 @@ public class PeptideShaker {
             SpectrumProvider spectrumProvider,
             IdentificationParameters identificationParameters,
             ProjectDetails projectDetails,
-            ProcessingParameters processingPreferences,
+            ProcessingParameters processingParameters,
             ExceptionHandler exceptionHandler
     ) {
 
@@ -209,7 +209,7 @@ public class PeptideShaker {
         fileImporter = new FileImporter(
                 identification,
                 identificationParameters,
-                processingPreferences,
+                processingParameters,
                 metrics,
                 projectDetails,
                 spectrumProvider,

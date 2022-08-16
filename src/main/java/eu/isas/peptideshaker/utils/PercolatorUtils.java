@@ -11,6 +11,8 @@ import com.compomics.util.experiment.identification.spectrum_annotation.Specific
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
+import com.compomics.util.experiment.identification.validation.percolator.PercolatorFeature;
+import com.compomics.util.experiment.identification.validation.percolator.PercolatorFeaturesCache;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
@@ -126,6 +128,14 @@ public class PercolatorUtils {
             SpectrumProvider spectrumProvider
     ) {
 
+        PercolatorFeaturesCache percolatorFeaturesCache = (PercolatorFeaturesCache) peptideAssumption.getUrParam(PercolatorFeaturesCache.dummy);
+
+        if (percolatorFeaturesCache == null) {
+
+            percolatorFeaturesCache = new PercolatorFeaturesCache();
+
+        }
+
         StringBuilder line = new StringBuilder();
 
         // PSM id
@@ -143,17 +153,26 @@ public class PercolatorUtils {
         line.append("\t").append(spectrumKey);
 
         // m/z
-        double measuredMz = spectrumProvider.getPrecursorMz(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
-        line.append("\t").append(measuredMz);
+        Object cacheValue = percolatorFeaturesCache.cache.get(PercolatorFeature.measuredAndDeltaMz);
 
-        double deltaMz = peptideAssumption.getDeltaMz(
-                measuredMz,
-                searchParameters.isPrecursorAccuracyTypePpm(),
-                searchParameters.getMinIsotopicCorrection(),
-                searchParameters.getMaxIsotopicCorrection()
-        );
+        if (cacheValue == null) {
 
-        line.append("\t").append(deltaMz);
+            cacheValue = getMeasuredAndDeltaMzFeature(
+                    spectrumMatch, 
+                    peptideAssumption, 
+                    searchParameters, 
+                    spectrumProvider
+            );
+
+        }
+
+        double[] measuredAndDeltaMz = (double[]) cacheValue;
+
+        double measuredMz = measuredAndDeltaMz[0];
+        double deltaMz = measuredAndDeltaMz[1];
+
+        line.append("\t").append(measuredMz)
+                .append("\t").append(deltaMz);
 
         // pep
         PSParameter psParameter = (PSParameter) peptideAssumption.getUrParam(PSParameter.dummy);
@@ -163,42 +182,27 @@ public class PercolatorUtils {
         line.append("\t").append(deltaPep);
 
         // Ion fraction
-        PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
-        String spectrumFile = spectrumMatch.getSpectrumFile();
-        String spectrumTitle = spectrumMatch.getSpectrumTitle();
-        Spectrum spectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
+        cacheValue = percolatorFeaturesCache.cache.get(PercolatorFeature.intensityCoverage);
 
-        SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
-                spectrumFile,
-                spectrumTitle,
-                peptideAssumption,
-                searchParameters.getModificationParameters(),
-                sequenceProvider,
-                modificationLocalizationParameters.getSequenceMatchingParameters(),
-                peptideSpectrumAnnotator
-        );
+        if (cacheValue == null) {
 
-        IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters,
-                specificAnnotationParameters,
-                spectrumFile,
-                spectrumTitle,
-                spectrum,
-                peptide,
-                searchParameters.getModificationParameters(),
-                sequenceProvider,
-                modificationLocalizationParameters.getSequenceMatchingParameters()
-        );
+            cacheValue = getIntensityCoverageFeature(
+                    spectrumMatch, 
+                    peptideAssumption, 
+                    searchParameters, 
+                    annotationParameters, 
+                    modificationLocalizationParameters, 
+                    sequenceProvider, 
+                    spectrumProvider
+            );
 
-        double coveredIntensity = Arrays.stream(matches)
-                .mapToDouble(
-                        ionMatch -> ionMatch.peakIntensity
-                )
-                .sum();
+        }
 
-        double intensityCoverage = coveredIntensity / spectrum.getTotalIntensity();
+        double intensityCoverage = (double) cacheValue;
+
         line.append("\t").append(intensityCoverage);
 
-        // Peptide length
+// Peptide length
         line.append("\t").append(peptide.getSequence().length());
 
         // Charge
@@ -220,9 +224,131 @@ public class PercolatorUtils {
         // Enzymaticity
         if (searchParameters.getDigestionParameters().hasEnzymes()) {
 
+            cacheValue = percolatorFeaturesCache.cache.get(PercolatorFeature.enzymaticity);
+
+            if (cacheValue == null) {
+
+                cacheValue = getEnzymaticityFeature(
+                        peptideAssumption, 
+                        searchParameters, 
+                        sequenceProvider
+                );
+
+            }
+
+            boolean[] enzymaticity = (boolean[]) cacheValue;
+
+            line.append("\t");
+
+            if (enzymaticity[0]) {
+
+                line.append("1");
+
+            } else {
+
+                line.append("0");
+
+            }
+
+            line.append("\t");
+
+            if (enzymaticity[1]) {
+
+                line.append("1");
+
+            } else {
+
+                line.append("0");
+
+            }
+
+            line.append("\t");
+
+            if (enzymaticity[2]) {
+
+                line.append("1");
+
+            } else {
+
+                line.append("0");
+
+            }
+
+            line.append("\t");
+
+            if (enzymaticity[3]) {
+
+                line.append("1");
+
+            } else {
+
+                line.append("0");
+
+            }
+        }
+
+        // Retention time
+        if (rtPredictionsAvailable) {
+
+            double measuredRt = spectrumProvider.getPrecursorRt(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
+
+            double rtError = predictedRts == null ? Double.NaN : predictedRts.stream()
+                    .mapToDouble(
+                            predictedRt -> Math.abs(predictedRt - measuredRt)
+                    )
+                    .min()
+                    .orElse(Double.NaN);
+
+            line.append("\t").append(measuredRt).append("\t").append(rtError);
+
+        }
+
+        line.append("\t").append("-.-.-").append("\t").append("-");
+
+        return line.toString();
+
+    }
+
+    /**
+     * Returns a unique key corresponding to the given peptide.
+     *
+     * @param peptideData The peptide data as string.
+     *
+     * @return The unique key corresponding to the peptide data.
+     */
+    public static long getPeptideKey(
+            String peptideData
+    ) {
+
+        return ExperimentObject.asLong(peptideData);
+
+    }
+
+    /**
+     * Computes the value for the enzymaticity feature.
+     *
+     * @param peptideAssumption The peptide assumption object.
+     * @param searchParameters The search parameters.
+     * @param sequenceProvider The sequence provider to use for protein
+     * sequences.
+     *
+     * @return The value of the given feature as object.
+     */
+    public static boolean[] getEnzymaticityFeature(
+            PeptideAssumption peptideAssumption,
+            SearchParameters searchParameters,
+            SequenceProvider sequenceProvider
+    ) {
+
+        boolean[] enzymaticity = new boolean[4];
+
+        if (searchParameters.getDigestionParameters().hasEnzymes()) {
+
             boolean n = false;
             boolean c = false;
             boolean nc = false;
+
+            Peptide peptide = peptideAssumption.getPeptide();
 
             for (Entry<String, int[]> entry : peptide.getProteinMapping().entrySet()) {
 
@@ -273,65 +399,131 @@ public class PercolatorUtils {
 
             if (!n && !c && !nc) {
 
-                line.append("\t").append('1');
-                line.append("\t").append('0');
-                line.append("\t").append('0');
-                line.append("\t").append('0');
+                enzymaticity[0] = true;
+                enzymaticity[1] = false;
+                enzymaticity[2] = false;
+                enzymaticity[3] = false;
 
             } else if (nc) {
 
-                line.append("\t").append('0');
-                line.append("\t").append('0');
-                line.append("\t").append('0');
-                line.append("\t").append('1');
+                enzymaticity[0] = false;
+                enzymaticity[1] = false;
+                enzymaticity[2] = false;
+                enzymaticity[3] = true;
 
             } else {
 
-                char nChar = n ? '1' : '0';
-                char cChar = c ? '1' : '0';
-
-                line.append("\t").append('0');
-                line.append("\t").append(nChar);
-                line.append("\t").append(cChar);
-                line.append("\t").append('0');
+                enzymaticity[0] = false;
+                enzymaticity[1] = n;
+                enzymaticity[2] = c;
+                enzymaticity[3] = false;
 
             }
-        }
 
-        // Retention time
-        if (rtPredictionsAvailable) {
-
-            double measuredRt = spectrumProvider.getPrecursorRt(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
-
-            double rtError = predictedRts == null ? Double.NaN : predictedRts.stream()
-                    .mapToDouble(
-                            predictedRt -> Math.abs(predictedRt - measuredRt)
-                    )
-                    .min()
-                    .orElse(Double.NaN);
-
-            line.append("\t").append(measuredRt).append("\t").append(rtError);
+            return enzymaticity;
 
         }
 
-        line.append("\t").append("-.-.-").append("\t").append("-");
-
-        return line.toString();
+        return null;
 
     }
 
     /**
-     * Returns a unique key corresponding to the given peptide.
+     * Computes the value for the measured and delta mass feature.
      *
-     * @param peptideData The peptide data as string.
+     * @param spectrumMatch The spectrum match object.
+     * @param peptideAssumption The peptide assumption object.
+     * @param searchParameters The search parameters.
+     * @param spectrumProvider The spectrum provider to use for spectra.
      *
-     * @return The unique key corresponding to the peptide data.
+     * @return The value of the given feature as object.
      */
-    public static long getPeptideKey(
-            String peptideData
+    public static double[] getMeasuredAndDeltaMzFeature(
+            SpectrumMatch spectrumMatch,
+            PeptideAssumption peptideAssumption,
+            SearchParameters searchParameters,
+            SpectrumProvider spectrumProvider
     ) {
 
-        return ExperimentObject.asLong(peptideData);
+        double[] measuredAndDeltaMz = new double[2];
+
+        double measuredMz = spectrumProvider.getPrecursorMz(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
+
+        measuredAndDeltaMz[0] = measuredMz;
+
+        double deltaMz = peptideAssumption.getDeltaMz(
+                measuredMz,
+                searchParameters.isPrecursorAccuracyTypePpm(),
+                searchParameters.getMinIsotopicCorrection(),
+                searchParameters.getMaxIsotopicCorrection()
+        );
+
+        measuredAndDeltaMz[1] = deltaMz;
+
+        return measuredAndDeltaMz;
+
+    }
+
+    /**
+     * Computes the value for the intensity coverage feature.
+     *
+     * @param spectrumMatch The spectrum match object.
+     * @param peptideAssumption The peptide assumption object.
+     * @param searchParameters The search parameters.
+     * @param annotationParameters The annotation parameters.
+     * @param modificationLocalizationParameters The modification localization
+     * parameters.
+     * @param sequenceProvider The sequence provider to use for protein
+     * sequences.
+     * @param spectrumProvider The spectrum provider to use for spectra.
+     *
+     * @return The value of the given feature as object.
+     */
+    public static double getIntensityCoverageFeature(
+            SpectrumMatch spectrumMatch,
+            PeptideAssumption peptideAssumption,
+            SearchParameters searchParameters,
+            AnnotationParameters annotationParameters,
+            ModificationLocalizationParameters modificationLocalizationParameters,
+            SequenceProvider sequenceProvider,
+            SpectrumProvider spectrumProvider
+    ) {
+
+        PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+        String spectrumFile = spectrumMatch.getSpectrumFile();
+        String spectrumTitle = spectrumMatch.getSpectrumTitle();
+        Spectrum spectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
+
+        SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
+                spectrumFile,
+                spectrumTitle,
+                peptideAssumption,
+                searchParameters.getModificationParameters(),
+                sequenceProvider,
+                modificationLocalizationParameters.getSequenceMatchingParameters(),
+                peptideSpectrumAnnotator
+        );
+
+        IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationParameters,
+                specificAnnotationParameters,
+                spectrumFile,
+                spectrumTitle,
+                spectrum,
+                peptideAssumption.getPeptide(),
+                searchParameters.getModificationParameters(),
+                sequenceProvider,
+                modificationLocalizationParameters.getSequenceMatchingParameters()
+        );
+
+        double coveredIntensity = Arrays.stream(matches)
+                .mapToDouble(
+                        ionMatch -> ionMatch.peakIntensity
+                )
+                .sum();
+
+        double intensityCoverage = coveredIntensity / spectrum.getTotalIntensity();
+
+        return intensityCoverage;
 
     }
 

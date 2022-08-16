@@ -15,6 +15,7 @@ import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
+import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
 import static eu.isas.peptideshaker.PeptideShaker.TIMEOUT_DAYS;
@@ -131,7 +132,7 @@ public class PsmImporter {
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param fastaMapper The sequence mapper.
-     * @param nThreads The number of threads to use.
+     * @param processingParameters The processing parameters.
      * @param waitingHandler The waiting handler to display progress and allow
      * canceling the import.
      * @param exceptionHandler The handler of exceptions.
@@ -151,11 +152,13 @@ public class PsmImporter {
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
             FastaMapper fastaMapper,
-            int nThreads,
+            ProcessingParameters processingParameters,
             WaitingHandler waitingHandler,
             ExceptionHandler exceptionHandler
     ) 
             throws InterruptedException, TimeoutException {
+        
+        int nThreads = processingParameters.getnThreads();
 
         ConcurrentLinkedQueue<SpectrumMatch> spectrumMatchQueue = new ConcurrentLinkedQueue<>(spectrumMatches);
 
@@ -169,6 +172,7 @@ public class PsmImporter {
                     new PsmImportRunnable(
                             spectrumMatchQueue,
                             identificationParameters,
+                            processingParameters,
                             fileReader,
                             idFile,
                             identification,

@@ -15,13 +15,18 @@ import com.compomics.util.experiment.identification.protein_inference.FastaMappe
 import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.identification.spectrum_assumptions.TagAssumption;
+import com.compomics.util.experiment.identification.validation.percolator.PercolatorFeature;
+import com.compomics.util.experiment.identification.validation.percolator.PercolatorFeaturesCache;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.io.identification.IdfileReader;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.parameters.identification.search.SearchParameters;
+import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.utils.PercolatorUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,6 +104,10 @@ public class PsmImportRunnable implements Runnable {
      */
     private final IdentificationParameters identificationParameters;
     /**
+     * The processing parameters.
+     */
+    private final ProcessingParameters processingParameters;
+    /**
      * The sequence provider.
      */
     private final SequenceProvider sequenceProvider;
@@ -120,6 +129,7 @@ public class PsmImportRunnable implements Runnable {
      *
      * @param spectrumMatchQueue the spectrum matches iterator to use
      * @param identificationParameters the identification parameters
+     * @param processingParameters the processing parameters
      * @param fileReader the reader of the file which the matches are imported
      * from
      * @param idFile the file which the matches are imported from
@@ -134,6 +144,7 @@ public class PsmImportRunnable implements Runnable {
     public PsmImportRunnable(
             ConcurrentLinkedQueue<SpectrumMatch> spectrumMatchQueue,
             IdentificationParameters identificationParameters,
+            ProcessingParameters processingParameters,
             IdfileReader fileReader,
             File idFile,
             Identification identification,
@@ -145,6 +156,7 @@ public class PsmImportRunnable implements Runnable {
 
         this.spectrumMatchQueue = spectrumMatchQueue;
         this.identificationParameters = identificationParameters;
+        this.processingParameters = processingParameters;
         this.fileReader = fileReader;
         this.idFile = idFile;
         this.identification = identification;
@@ -477,6 +489,27 @@ public class PsmImportRunnable implements Runnable {
                                 } else {
                                     proteinCount.put(protein, 1);
                                 }
+                            }
+
+                            // Cache the Percolator features
+                            if (processingParameters.cachePercolatorFeatures()) {
+
+                                PercolatorFeaturesCache percolatorFeaturesCache = (PercolatorFeaturesCache) peptideAssumption.getUrParam(PercolatorFeaturesCache.dummy);
+
+                                if (percolatorFeaturesCache == null) {
+
+                                    percolatorFeaturesCache = new PercolatorFeaturesCache();
+                                    peptideAssumption.addUrParam(percolatorFeaturesCache);
+
+                                }
+
+                                boolean[] enzymaticity = PercolatorUtils.getEnzymaticityFeature(
+                                        peptideAssumption,
+                                        searchParameters,
+                                        sequenceProvider
+                                );
+                                percolatorFeaturesCache.cache.put(PercolatorFeature.enzymaticity, enzymaticity);
+
                             }
 
                         } else {
