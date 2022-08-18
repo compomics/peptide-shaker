@@ -7,7 +7,6 @@ import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -42,10 +41,13 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.identification.peptide_shaker.Metrics;
+import com.compomics.util.experiment.identification.validation.percolator.PercolatorFeature;
+import com.compomics.util.experiment.identification.validation.percolator.PercolatorFeaturesCache;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
+import eu.isas.peptideshaker.utils.PercolatorUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -188,11 +190,7 @@ public class MatchesValidator {
         );
 
         // validate the spectrum matches
-        if (inputMap != null) {
-
-            inputMap.resetAdvocateContributions();
-
-        }
+        inputMap.resetAdvocateContributions();
 
         AnnotationParameters annotationParameters = identificationParameters.getAnnotationParameters();
         double intensityLimit = annotationParameters.getAnnotationIntensityLimit();
@@ -215,6 +213,7 @@ public class MatchesValidator {
                     spectrumProvider,
                     geneMaps,
                     identificationParameters,
+                    processingParameters,
                     waitingHandler,
                     exceptionHandler,
                     inputMap,
@@ -357,6 +356,7 @@ public class MatchesValidator {
                     spectrumProvider,
                     geneMaps,
                     identificationParameters,
+                    processingParameters,
                     waitingHandler,
                     exceptionHandler,
                     inputMap,
@@ -1639,6 +1639,10 @@ public class MatchesValidator {
          * If true, advocate contributions will be stored in the input map.
          */
         private final boolean storeContributions;
+        /**
+         * The processing parameters.
+         */
+        private final ProcessingParameters processingParameters;
 
         /**
          * Constructor.
@@ -1653,6 +1657,7 @@ public class MatchesValidator {
          * @param proteinDetailsProvider a protein details provider
          * @param geneMaps the gene maps
          * @param identificationParameters the identification parameters
+         * @param processingParameters the processing parameters
          * @param waitingHandler a waiting handler to display progress and allow
          * canceling the process
          * @param exceptionHandler handler for exceptions
@@ -1672,6 +1677,7 @@ public class MatchesValidator {
                 SpectrumProvider spectrumProvider,
                 GeneMaps geneMaps,
                 IdentificationParameters identificationParameters,
+                ProcessingParameters processingParameters,
                 WaitingHandler waitingHandler,
                 ExceptionHandler exceptionHandler,
                 InputMap inputMap,
@@ -1687,6 +1693,7 @@ public class MatchesValidator {
             this.spectrumProvider = spectrumProvider;
             this.geneMaps = geneMaps;
             this.identificationParameters = identificationParameters;
+            this.processingParameters = processingParameters;
             this.waitingHandler = waitingHandler;
             this.exceptionHandler = exceptionHandler;
             this.inputMap = inputMap;
@@ -1731,7 +1738,7 @@ public class MatchesValidator {
 
                         for (ArrayList<PeptideAssumption> scoreList : algorithmMap.values()) {
 
-                            for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : scoreList) {
+                            for (PeptideAssumption peptideAssumption : scoreList) {
 
                                 PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
 
@@ -1753,6 +1760,39 @@ public class MatchesValidator {
                                         peptideAssumption,
                                         applyQCFilters
                                 );
+
+                                // Cache the Percolator features
+                                if (processingParameters.cachePercolatorFeatures()) {
+
+                                    PercolatorFeaturesCache percolatorFeaturesCache = (PercolatorFeaturesCache) peptideAssumption.getUrParam(PercolatorFeaturesCache.dummy);
+
+                                    if (percolatorFeaturesCache == null) {
+
+                                        percolatorFeaturesCache = new PercolatorFeaturesCache();
+                                        peptideAssumption.addUrParam(percolatorFeaturesCache);
+
+                                    }
+
+                                    double[] measuredAndDeltaMz = PercolatorUtils.getMeasuredAndDeltaMzFeature(
+                                            spectrumMatch,
+                                            peptideAssumption,
+                                            identificationParameters.getSearchParameters(),
+                                            spectrumProvider
+                                    );
+                                    percolatorFeaturesCache.cache.put(PercolatorFeature.measuredAndDeltaMz, measuredAndDeltaMz);
+
+                                    double intensityCoverage = PercolatorUtils.getIntensityCoverageFeature(
+                                            spectrumMatch,
+                                            peptideAssumption,
+                                            identificationParameters.getSearchParameters(),
+                                            identificationParameters.getAnnotationParameters(),
+                                            identificationParameters.getModificationLocalizationParameters(),
+                                            sequenceProvider,
+                                            spectrumProvider
+                                    );
+                                    percolatorFeaturesCache.cache.put(PercolatorFeature.intensityCoverage, intensityCoverage);
+
+                                }
 
                             }
                         }

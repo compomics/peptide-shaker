@@ -88,6 +88,10 @@ public class PeptideShakerCLIInputBean {
      * The number of threads to use.
      */
     private Integer nThreads = null;
+    /**
+     * The Percolator feature cache option.
+     */
+    private Boolean cachePercolatorFeatures = null;
 
     /**
      * Construct a PeptideShakerCLIInputBean from an Apache CLI instance.
@@ -153,8 +157,8 @@ public class PeptideShakerCLIInputBean {
 
         // mgf exported out of the zip file
         if (aLine.hasOption(PeptideShakerCLIParams.OUTPUT_MGF.id)) {
-            String mgfOption = aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT_MGF.id);
-            if (mgfOption.trim().equals("1")) {
+            String option = aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT_MGF.id);
+            if (option.trim().equals("1")) {
                 mgfExternalExportWhenZip = true;
             }
         }
@@ -162,6 +166,16 @@ public class PeptideShakerCLIInputBean {
         // n threads
         if (aLine.hasOption(PeptideShakerCLIParams.THREADS.id)) {
             nThreads = Integer.valueOf(aLine.getOptionValue(PeptideShakerCLIParams.THREADS.id));
+        }
+
+        // Percolator cache
+        if (aLine.hasOption(PeptideShakerCLIParams.PERCOLATOR_CACHE.id)) {
+            String option = aLine.getOptionValue(PeptideShakerCLIParams.PERCOLATOR_CACHE.id);
+            if (option.trim().equals("1")) {
+                cachePercolatorFeatures = true;
+            } else if (option.trim().equals("0")) {
+                cachePercolatorFeatures = false;
+            }
         }
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
@@ -437,6 +451,15 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
+     * Returns wether the user enabled the caching of Percolator features.
+     * 
+     * @return A boolean indicating wether the user enabled the caching of Percolator features.
+     */
+    public Boolean getCachePercolatorFeatures() {
+        return cachePercolatorFeatures;
+    }
+
+    /**
      * Verifies the command line start parameters.
      *
      * @param aLine the command line to validate
@@ -501,6 +524,24 @@ public class PeptideShakerCLIInputBean {
                 && !aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id)) {
             System.out.println("\nThe out option is mandatory when using the zip option.\n");
             return false;
+        }
+
+        // Mgf output cache
+        if (aLine.hasOption(PeptideShakerCLIParams.OUTPUT_MGF.id)) {
+            String option = aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT_MGF.id);
+            if (!option.trim().equals("1") && !option.trim().equals("0")) {
+                System.out.println("\nThe value for the \'" + PeptideShakerCLIParams.OUTPUT_MGF.id + "\' option should be \'0\' or \'1\', \'" + option + "\' found.\n");
+                    return false;
+            }
+        }
+
+        // Percolator cache
+        if (aLine.hasOption(PeptideShakerCLIParams.PERCOLATOR_CACHE.id)) {
+            String option = aLine.getOptionValue(PeptideShakerCLIParams.PERCOLATOR_CACHE.id);
+            if (!option.trim().equals("1") && !option.trim().equals("0")) {
+                System.out.println("\nThe value for the \'" + PeptideShakerCLIParams.PERCOLATOR_CACHE.id + "\' option should be \'0\' or \'1\', \'" + option + "\' found.\n");
+                    return false;
+            }
         }
 
 //        // Check the identification parameters
