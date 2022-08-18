@@ -1740,8 +1740,6 @@ public class MatchesValidator {
 
                             for (PeptideAssumption peptideAssumption : scoreList) {
 
-                                PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
-
                                 peptideAssumption.getPeptide().getMass(
                                         identificationParameters.getSearchParameters().getModificationParameters(),
                                         sequenceProvider,
