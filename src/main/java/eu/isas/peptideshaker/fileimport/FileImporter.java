@@ -623,7 +623,7 @@ public class FileImporter {
                         sequenceProvider,
                         spectrumProvider,
                         fastaMapper,
-                        processingParameters.getnThreads(),
+                        processingParameters,
                         waitingHandler,
                         exceptionHandler
                 );

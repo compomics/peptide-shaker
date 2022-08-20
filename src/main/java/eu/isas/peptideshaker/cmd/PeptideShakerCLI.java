@@ -28,7 +28,6 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
-import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.utils.PsdbParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -37,7 +36,6 @@ import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFolder;
 import com.compomics.util.experiment.io.mass_spectrometry.mgf.IndexedMgfReader;
 import com.compomics.util.experiment.io.mass_spectrometry.mgf.MgfIndex;
 import com.compomics.util.io.file.SerializationUtils;
-import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import eu.isas.peptideshaker.utils.Properties;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
@@ -1221,6 +1219,10 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         Integer nThreads = cliInputBean.getnThreads();
         if (nThreads != null) {
             processingParameters.setnThreads(nThreads);
+        }
+        Boolean cachePercolatorFeatures = cliInputBean.getCachePercolatorFeatures();
+        if (cachePercolatorFeatures != null) {
+            processingParameters.setCachePercolatorFeatures(cachePercolatorFeatures);
         }
 
         // set the spectrum counting prefrences

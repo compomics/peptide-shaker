@@ -400,7 +400,7 @@ public class PercolatorExport {
     ) throws InterruptedException, ExecutionException {
         
         //Hard-coded number of threads;
-        int threadCount = 4;
+        int threadCount = 10;
 
         // reset the progress bar
         waitingHandler.resetSecondaryProgressCounter();
@@ -929,6 +929,12 @@ public class PercolatorExport {
                     DeepLcUtils.getModifications(peptideAssumption.getPeptide(), searchParameters.getModificationParameters(), sequenceProvider, sequenceMatchingParameters, modificationFactory)
             );
             peptideRTs = allRTvalues.get(deepLcKey);
+            
+            //DeepLC prediction is missing
+            if (peptideRTs == null){
+                System.out.println("Missing DeepLC prediction for peptide: " + deepLcKey);
+                return;
+            }
         }
         
         //Get peptide's predicted spectrum

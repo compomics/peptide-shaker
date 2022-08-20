@@ -27,7 +27,8 @@ public enum PeptideShakerCLIParams {
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is '0').", false),
     ZIP("zip", "Exports the entire project as a zip file in the file specified.", false),
     OUTPUT_MGF("output_mgf", "When using zipped output, exports mgf file(s) out of the zip file into the same folder in addition (0: no, 1: yes, default is '0').", false),
-    THREADS("threads", "The number of threads to use. Defaults to the number of available CPUs.", false);
+    THREADS("threads", "The number of threads to use. Defaults to the number of available CPUs.", false),
+    PERCOLATOR_CACHE("percolator_cache", "Enable the caching of Percolator features (1: true, 0: false, default is '0').", false);
 
     /**
      * Short Id for the CLI parameter.
@@ -110,6 +111,7 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, PROJECT_TYPE.id) + " " + PROJECT_TYPE.description + "\n";
         output += "-" + String.format(formatter, GUI.id) + " " + GUI.description + "\n";
         output += "-" + String.format(formatter, THREADS.id) + " " + THREADS.description + "\n";
+        output += "-" + String.format(formatter, PERCOLATOR_CACHE.id) + " " + PERCOLATOR_CACHE.description + "\n";
 
         output += "\n\nOptional Export Parameters:\n\n";
         output += "-" + String.format(formatter, ZIP.id) + " " + ZIP.description + "\n";
