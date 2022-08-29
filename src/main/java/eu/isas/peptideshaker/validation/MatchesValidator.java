@@ -45,6 +45,7 @@ import com.compomics.util.experiment.identification.validation.percolator.Percol
 import com.compomics.util.experiment.identification.validation.percolator.PercolatorFeaturesCache;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
+import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import eu.isas.peptideshaker.utils.PercolatorUtils;
 import java.util.ArrayList;
@@ -1739,6 +1740,12 @@ public class MatchesValidator {
 
                             for (PeptideAssumption peptideAssumption : scoreList) {
 
+                                peptideAssumption.getPeptide().getMass(
+                                        identificationParameters.getSearchParameters().getModificationParameters(),
+                                        sequenceProvider,
+                                        identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters()
+                                );
+
                                 updatePeptideAssumptionValidationLevel(
                                         identification,
                                         identificationFeaturesGenerator,
@@ -1795,6 +1802,12 @@ public class MatchesValidator {
                     PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
                     if (peptideAssumption != null) {
+
+                        peptideAssumption.getPeptide().getMass(
+                                identificationParameters.getSearchParameters().getModificationParameters(),
+                                sequenceProvider,
+                                identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters()
+                        );
 
                         if (psParameter.getMatchValidationLevel().isValidated() && !PeptideUtils.isDecoy(peptideAssumption.getPeptide(), sequenceProvider)) {
 
