@@ -464,6 +464,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
      * @param peptideMatch The peptide match to score.
      * @param identificationParameters The identification parameters.
      * @param modificationProvider The modification provider to use.
+     * @param sequenceProvider The sequence matching parameters.
      * @param waitingHandler The waiting handler to use, ignored if null.
      */
     public void scorePTMs(
@@ -471,6 +472,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
             PeptideMatch peptideMatch,
             IdentificationParameters identificationParameters,
             ModificationProvider modificationProvider,
+            SequenceProvider sequenceProvider,
             WaitingHandler waitingHandler
     ) {
 
@@ -483,7 +485,8 @@ public class ModificationLocalizationScorer extends ExperimentObject {
         }
 
         SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
-        ModificationParameters modificationSettings = identificationParameters.getSearchParameters().getModificationParameters();
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        ModificationParameters modificationParameters = searchParameters.getModificationParameters();
 
         PSModificationScores peptideScores = new PSModificationScores();
 
@@ -504,7 +507,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
             if (!maybeNotTerminal) {
 
-                for (String otherPtmName : modificationSettings.getAllNotFixedModifications()) {
+                for (String otherPtmName : modificationParameters.getAllNotFixedModifications()) {
 
                     if (!otherPtmName.equals(modName)) {
 
@@ -1051,9 +1054,15 @@ public class ModificationLocalizationScorer extends ExperimentObject {
             peptideScores.addConfidentModificationSite(nTermModConfident.getName(), 0);
 
         }
+        
+        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
-        double mass = peptide.getMass();
-        peptide.setVariableModifications(newModificationMatches.toArray(new ModificationMatch[newModificationMatches.size()]));
+        double mass = peptide.getMass(
+             modificationParameters,
+             sequenceProvider,
+             modificationSequenceMatchingParameters
+                    );
+        peptide.setVariableModifications(newModificationMatches.toArray(new ModificationMatch[0]));
         peptide.setMass(mass);
 
         peptideMatch.addUrParam(peptideScores);
@@ -1523,6 +1532,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
      * @param identificationParameters The identification parameters.
      * @param scorePeptides If true, peptides will be scored as well.
      * @param modificationProvider The modification provider to use.
+     * @param sequenceProvider The sequence provider to use.
      * @param waitingHandler The waiting handler to sue, ignored if null.
      */
     public void scorePTMs(
@@ -1531,6 +1541,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
             IdentificationParameters identificationParameters,
             boolean scorePeptides,
             ModificationProvider modificationProvider,
+            SequenceProvider sequenceProvider,
             WaitingHandler waitingHandler
     ) {
 
@@ -1554,6 +1565,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                             peptideMatch,
                             identificationParameters,
                             modificationProvider,
+                            sequenceProvider,
                             waitingHandler
                     );
                     peptideScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
@@ -1716,12 +1728,14 @@ public class ModificationLocalizationScorer extends ExperimentObject {
      * @param identification identification object containing the identification
      * matches
      * @param modificationProvider The modification provider to use.
+     * @param sequenceProvider The sequence provider to use.
      * @param waitingHandler the handler displaying feedback to the user
      * @param identificationParameters the identification parameters
      */
     public void scorePeptidePtms(
             Identification identification,
             ModificationProvider modificationProvider,
+            SequenceProvider sequenceProvider,
             WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters
     ) {
@@ -1744,6 +1758,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                                     peptideMatch,
                                     identificationParameters,
                                     modificationProvider,
+                                    sequenceProvider,
                                     waitingHandler
                             );
 

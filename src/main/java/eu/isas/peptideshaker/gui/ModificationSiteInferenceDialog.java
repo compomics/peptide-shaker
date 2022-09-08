@@ -584,6 +584,7 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
 
                 // update protein level PTM scoring
                 ModificationLocalizationScorer ptmScorer = new ModificationLocalizationScorer();
+        SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
                 IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                 identification.getProteinMatches(peptideMatch.getKey())
                         .stream()
@@ -597,6 +598,7 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
                                         identificationParameters, 
                                         false, 
                                         modificationFactory,
+                                        sequenceProvider,
                                         null
                                 )
                         );

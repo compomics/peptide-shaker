@@ -25,8 +25,6 @@ import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.pride.CvTerm;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map.Entry;
 
 /**
@@ -158,7 +156,7 @@ public class PercolatorUtils {
      * @param spectrumMatch The spectrum match where the peptide was found.
      * @param peptideAssumption The peptide assumption.
      * @param peptideRTs The retention time predictions for this peptide.
-     * @param predictedSpectrum The predicted mass spectrum for this peptide.
+     * @param predictedSpectra The predicted mass spectra for this peptide.
      * @param searchParameters The parameters of the search.
      * @param sequenceProvider The sequence provider.
      * @param sequenceMatchingParameters The sequence matching parameters.
@@ -653,7 +651,7 @@ public class PercolatorUtils {
     ) {
         int coverage = 0;
 
-        if (aligned_peaks.size() == 0) {
+        if (aligned_peaks.isEmpty()) {
             return coverage;
         }
 
@@ -956,7 +954,7 @@ public class PercolatorUtils {
     ) {
 
         //Need to define a max value for all the spectra with 0 matched peaks
-        if (alignedPeaks.size() == 0) {
+        if (alignedPeaks.isEmpty()) {
             return 18.0;
         }
 
@@ -1106,7 +1104,7 @@ public class PercolatorUtils {
         // Variable modifications
         String[] variableModifications = peptide.getIndexedVariableModifications();
 
-        ArrayList<String> variableModificationsInfo = new ArrayList<String>();
+        ArrayList<String> variableModificationsInfo = new ArrayList<>();
 
         for (int i = 0; i < variableModifications.length; i++) {
 

@@ -5371,6 +5371,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             ModificationLocalizationScorer ptmScorer = new ModificationLocalizationScorer();
             Identification identification = getIdentification();
+        SequenceProvider sequenceProvider = getSequenceProvider();
             ProteinMatch proteinMatch = identification.getProteinMatch(selectedProteinKey);
             ptmScorer.scorePTMs(
                     identification,
@@ -5378,6 +5379,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     getIdentificationParameters(),
                     false,
                     modificationFactory,
+                    sequenceProvider,
                     null
             );
 
@@ -6000,7 +6002,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     ) {
 
         SequenceProvider sequenceProvider = getSequenceProvider();
-        SpectrumProvider spectrumProvider = getSpectrumProvider();
         IdentificationParameters identificationParameters = getIdentificationParameters();
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
