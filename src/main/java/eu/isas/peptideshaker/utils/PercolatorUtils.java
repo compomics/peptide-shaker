@@ -142,7 +142,8 @@ public class PercolatorUtils {
                         "measured_rt",
                         "predicted_rt",
                         "scaled_measured_rt",
-                        "scaled_predicted_rt"
+                        "scaled_predicted_rt",
+                        "engine_score"
                 )
         );
 
@@ -1195,10 +1196,14 @@ public class PercolatorUtils {
         }
         double bestRTprediction = predictedRts.get(bestRTindex);
         line.append("\t").append(bestRTprediction);*/
+        
         line.append("\t").append(peptideRTs.get(0));
         line.append("\t").append(peptideRTs.get(1));
         line.append("\t").append(peptideRTs.get(2));
         line.append("\t").append(peptideRTs.get(3));
+        
+        double searchEngineScore = peptideAssumption.getScore();
+        line.append("\t").append(searchEngineScore);
 
         return line.toString();
     }

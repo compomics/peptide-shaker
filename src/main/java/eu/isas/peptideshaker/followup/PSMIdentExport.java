@@ -143,12 +143,15 @@ public class PSMIdentExport {
             String proteinID = entry.getKey();
             int[] proteinPositions = entry.getValue();
             
-            proteins.append(proteinID).append(";");
+            //proteins.append(proteinID).append(";");
             for (int i=0; i < proteinPositions.length; i++){
+                proteins.append(proteinID).append(",");
                 positions.append(proteinPositions[i]).append(",");
             }
             positions.setLength(positions.length() - 1);
             positions.append(";");
+            proteins.setLength(proteins.length() - 1);
+            proteins.append(";");
         }
         proteins.setLength(proteins.length() - 1);
         positions.setLength(positions.length() - 1);
