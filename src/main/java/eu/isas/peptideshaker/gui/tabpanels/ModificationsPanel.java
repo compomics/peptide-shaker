@@ -2521,27 +2521,30 @@ public class ModificationsPanel extends javax.swing.JPanel {
      */
     private void relatedPsmsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPsmsTableMouseReleased
 
-        int column = relatedPsmsTable.columnAtPoint(evt.getPoint());
-        int row = relatedPsmsTable.rowAtPoint(evt.getPoint());
+        if (evt != null) {
 
-        // star/unstar a psm
-        if (column == relatedPsmsTable.getColumn("   ").getModelIndex()) {
+            int column = relatedPsmsTable.columnAtPoint(evt.getPoint());
+            int row = relatedPsmsTable.rowAtPoint(evt.getPoint());
 
-            PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(true));
-            long psmKey = peptideMatch.getSpectrumMatchesKeys()[relatedPsmsTable.convertRowIndexToModel(row)];
-            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
-            PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+            // star/unstar a psm
+            if (column == relatedPsmsTable.getColumn("   ").getModelIndex()) {
 
-            if (!psParameter.getStarred()) {
-                peptideShakerGUI.getStarHider().starPsm(psmKey);
-            } else {
-                peptideShakerGUI.getStarHider().unStarPsm(psmKey);
+                PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(true));
+                long psmKey = peptideMatch.getSpectrumMatchesKeys()[relatedPsmsTable.convertRowIndexToModel(row)];
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
+                PSParameter psParameter = (PSParameter) spectrumMatch.getUrParam(PSParameter.dummy);
+
+                if (!psParameter.getStarred()) {
+                    peptideShakerGUI.getStarHider().starPsm(psmKey);
+                } else {
+                    peptideShakerGUI.getStarHider().unStarPsm(psmKey);
+                }
+                peptideShakerGUI.setDataSaved(false);
+
+                relatedPsmsTable.revalidate();
+                relatedPsmsTable.repaint();
+
             }
-            peptideShakerGUI.setDataSaved(false);
-
-            relatedPsmsTable.revalidate();
-            relatedPsmsTable.repaint();
-
         }
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -4133,29 +4136,27 @@ public class ModificationsPanel extends javax.swing.JPanel {
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
-        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
-        String spectrumFile = spectrumMatch.getSpectrumFile();
-        String spectrumTitle = spectrumMatch.getSpectrumTitle();
+        SpectrumMatch firstSpectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
+        String firstSpectrumFile = firstSpectrumMatch.getSpectrumFile();
+        String firstSpectrumTitle = firstSpectrumMatch.getSpectrumTitle();
 
-        Spectrum currentSpectrum = spectrumProvider.getSpectrum(
-                spectrumFile,
-                spectrumTitle
+        Spectrum firstSpectrum = spectrumProvider.getSpectrum(
+                firstSpectrumFile,
+                firstSpectrumTitle
         );
         SpectrumMatch secondSpectrumMatch = null;
 
-        if (currentSpectrum != null && currentSpectrum.mz.length > 0) {
-
-            Precursor precursor = currentSpectrum.getPrecursor();
+        if (firstSpectrum != null && firstSpectrum.mz.length > 0) {
 
             double[] intensityArray = secondSpectrumMatchKey == null
-                    ? currentSpectrum.intensity
-                    : ArrayUtil.scaleToMax(currentSpectrum.intensity);
+                    ? firstSpectrum.intensity
+                    : ArrayUtil.scaleToMax(firstSpectrum.intensity);
 
             spectrumPanel = new SpectrumPanel(
-                    currentSpectrum.mz,
+                    firstSpectrum.mz,
                     intensityArray,
-                    precursor.mz,
-                    Charge.toString(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge()),
+                    firstSpectrum.getPrecursor().mz,
+                    Charge.toString(firstSpectrumMatch.getBestPeptideAssumption().getIdentificationCharge()),
                     "",
                     40,
                     false,
@@ -4173,35 +4174,38 @@ public class ModificationsPanel extends javax.swing.JPanel {
             spectrumPanel.setPeakWidth(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumAnnotatedPeakWidth());
             spectrumPanel.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserParameters().getSpectrumBackgroundPeakWidth());
 
-            int identificationChargeFirstPsm = 0;
-            int identificationChargeSecondPsm = 0;
             HashSet<String> allModifications = new HashSet<>(2);
 
             // get the spectrum annotations
-            PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
-            Peptide peptide = peptideAssumption.getPeptide();
-            identificationChargeFirstPsm = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
+            PeptideAssumption firstPeptideAssumption = firstSpectrumMatch.getBestPeptideAssumption();
+            Peptide firstPeptide = firstPeptideAssumption.getPeptide();
+
+            int identificationChargeFirstPsm = firstSpectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
+            int identificationChargeSecondPsm = 0;
+
             allModifications.addAll(
                     ModificationUtils.getAllModifications(
-                            peptide,
+                            firstPeptide,
                             modificationParameters,
                             sequenceProvider,
                             modificationSequenceMatchingParameters
                     )
             );
+
             PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
             SpecificAnnotationParameters specificAnnotationParameters = peptideShakerGUI.getSpecificAnnotationParameters(
-                    spectrumFile,
-                    spectrumTitle,
-                    peptideAssumption
+                    firstSpectrumFile,
+                    firstSpectrumTitle,
+                    firstPeptideAssumption
             );
+
             IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(
                     annotationParameters,
                     specificAnnotationParameters,
-                    spectrumFile,
-                    spectrumTitle,
-                    currentSpectrum,
-                    peptide,
+                    firstSpectrumFile,
+                    firstSpectrumTitle,
+                    firstSpectrum,
+                    firstPeptide,
                     modificationParameters,
                     sequenceProvider,
                     modificationSequenceMatchingParameters
@@ -4212,6 +4216,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     SpectrumAnnotator.getSpectrumAnnotation(annotations),
                     annotationParameters.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense
             );
+
             spectrumPanel.showAnnotatedPeaksOnly(!annotationParameters.showAllPeaks());
             spectrumPanel.setYAxisZoomExcludesBackgroundPeaks(annotationParameters.yAxisZoomExcludesBackgroundPeaks());
 
@@ -4220,7 +4225,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             Integer forwardIon = searchParameters.getForwardIons().get(0);
             Integer rewindIon = searchParameters.getRewindIons().get(0);
 
-            spectrumPanel.addAutomaticDeNovoSequencing(peptide, annotations,
+            spectrumPanel.addAutomaticDeNovoSequencing(firstPeptide, annotations,
                     forwardIon, rewindIon, annotationParameters.getDeNovoCharge(),
                     annotationParameters.showForwardIonDeNovoTags(),
                     annotationParameters.showRewindIonDeNovoTags(), false,
@@ -4230,21 +4235,19 @@ public class ModificationsPanel extends javax.swing.JPanel {
             if (secondSpectrumMatchKey != null) {
 
                 secondSpectrumMatch = identification.getSpectrumMatch(secondSpectrumMatchKey);
-                spectrumFile = spectrumMatch.getSpectrumFile();
-                spectrumTitle = spectrumMatch.getSpectrumTitle();
-                currentSpectrum = spectrumProvider.getSpectrum(
-                        spectrumFile,
-                        spectrumTitle
+                String secondSpectrumFile = secondSpectrumMatch.getSpectrumFile();
+                String secondSpectrumTitle = secondSpectrumMatch.getSpectrumTitle();
+                Spectrum secondSpectrum = spectrumProvider.getSpectrum(
+                        secondSpectrumFile,
+                        secondSpectrumTitle
                 );
 
-                if (currentSpectrum != null && currentSpectrum.mz.length > 0) {
-
-                    precursor = currentSpectrum.getPrecursor();
+                if (secondSpectrum != null && secondSpectrum.mz.length > 0) {
 
                     spectrumPanel.addMirroredSpectrum(
-                            currentSpectrum.mz,
-                            ArrayUtil.scaleToMax(currentSpectrum.intensity),
-                            currentSpectrum.getPrecursor().mz,
+                            secondSpectrum.mz,
+                            ArrayUtil.scaleToMax(secondSpectrum.intensity),
+                            secondSpectrum.getPrecursor().mz,
                             Charge.toString(secondSpectrumMatch.getBestPeptideAssumption().getIdentificationCharge()),
                             "",
                             false,
@@ -4253,39 +4256,41 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     );
 
                     // get the spectrum annotations
-                    peptideAssumption = secondSpectrumMatch.getBestPeptideAssumption();
-                    peptide = peptideAssumption.getPeptide();
+                    PeptideAssumption secondPeptideAssumption = secondSpectrumMatch.getBestPeptideAssumption();
+                    Peptide secondPeptide = secondPeptideAssumption.getPeptide();
                     identificationChargeSecondPsm = secondSpectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
                     allModifications.addAll(
                             ModificationUtils.getAllModifications(
-                                    peptide,
+                                    secondPeptide,
                                     modificationParameters,
                                     sequenceProvider,
                                     modificationSequenceMatchingParameters
                             )
                     );
+
                     specificAnnotationParameters = peptideShakerGUI.getSpecificAnnotationParameters(
-                            spectrumFile,
-                            spectrumTitle,
-                            peptideAssumption
+                            secondSpectrumFile,
+                            secondSpectrumTitle,
+                            secondPeptideAssumption
                     );
-                    annotations = spectrumAnnotator.getSpectrumAnnotation(
+
+                    IonMatch[] mirroredAnnotations = spectrumAnnotator.getSpectrumAnnotation(
                             annotationParameters,
                             specificAnnotationParameters,
-                            spectrumFile,
-                            spectrumTitle,
-                            currentSpectrum,
-                            peptide,
+                            secondSpectrumFile,
+                            secondSpectrumTitle,
+                            secondSpectrum,
+                            secondPeptide,
                             modificationParameters,
                             sequenceProvider,
                             modificationSequenceMatchingParameters
                     );
 
-                    spectrumPanel.setAnnotationsMirrored(SpectrumAnnotator.getSpectrumAnnotation(annotations));
+                    spectrumPanel.setAnnotationsMirrored(SpectrumAnnotator.getSpectrumAnnotation(mirroredAnnotations));
 
                     // add de novo sequencing
                     spectrumPanel.addAutomaticDeNovoSequencing(
-                            peptide,
+                            secondPeptide,
                             annotations,
                             forwardIon,
                             rewindIon,
@@ -4312,7 +4317,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
             String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator()
                     .getTaggedPeptideSequence(
-                            spectrumMatch,
+                            firstSpectrumMatch,
                             false,
                             false,
                             true
