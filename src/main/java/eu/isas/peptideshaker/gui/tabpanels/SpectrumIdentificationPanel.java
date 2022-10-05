@@ -2986,7 +2986,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 double[] intensitiesAsArray = searchResultsTable.getSelectedRowCount() == 1
                         ? currentSpectrum.intensity
-                        : ArrayUtil.scaleToMax(currentSpectrum.intensity);
+                        : ArrayUtil.scaleToMax(currentSpectrum.intensity, true);
 
                 spectrumPanel = new SpectrumPanel(
                         currentSpectrum.mz,
@@ -3015,7 +3015,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     spectrumPanel.addMirroredSpectrum(
                             currentSpectrum.mz,
-                            ArrayUtil.scaleToMax(currentSpectrum.intensity),
+                            ArrayUtil.scaleToMax(currentSpectrum.intensity, true),
                             precursor.mz,
                             chargeAsString,
                             "",

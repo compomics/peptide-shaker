@@ -4121,7 +4121,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         Spectrum spectrum = allSpectra.get(i);
                         spectrumPanel = new SpectrumPanel(
                                 spectrum.mz,
-                                ArrayUtil.scaleToMax(spectrum.intensity),
+                                ArrayUtil.scaleToMax(spectrum.intensity, true),
                                 500,
                                 "2",
                                 "",
@@ -4175,7 +4175,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         Spectrum spectrum = allSpectra.get(i);
                         spectrumPanel.addMirroredSpectrum(
                                 spectrum.mz,
-                                ArrayUtil.scaleToMax(spectrum.intensity),
+                                ArrayUtil.scaleToMax(spectrum.intensity, true),
                                 500,
                                 "2",
                                 "",
