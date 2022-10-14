@@ -619,7 +619,6 @@ public class FileImporter {
                         identificationParameters,
                         inputMap,
                         fileReader,
-                        idFile,
                         sequenceProvider,
                         spectrumProvider,
                         fastaMapper,
