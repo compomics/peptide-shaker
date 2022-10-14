@@ -284,11 +284,10 @@ public class StirRunnable implements Runnable {
 
             ModificationLocalizationMapper.modificationLocalization(
                     peptide,
-                    expectedNames,
-                    modNames,
                     identificationParameters,
                     idfileReader,
-                    modificationFactory
+                    modificationFactory,
+                    sequenceProvider
             );
 
         }
