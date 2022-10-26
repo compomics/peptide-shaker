@@ -152,11 +152,11 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="psmPrecursorMassErrorJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="psmPrecursorChargeJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="729" max="32767" attributes="0"/>
+                              <EmptySpace pref="767" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -168,7 +168,7 @@
                                   <Component id="psmPrecursorMassErrorJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="psmPrecursorChargeJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -353,17 +353,19 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="peptideValidatedPsmsJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="peptideMissedCleavagesJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="peptideCleavageSitesJRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="peptideLengthJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="peptideModificationsJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="peptideModificationEfficiencyJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="peptideModificationSpecificityJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="181" max="32767" attributes="0"/>
+                              <EmptySpace pref="84" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -378,8 +380,9 @@
                                   <Component id="peptideModificationEfficiencyJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideModificationsJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideModificationSpecificityJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideCleavageSitesJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -456,6 +459,20 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideModificationSpecificityJRadioButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JRadioButton" name="peptideCleavageSitesJRadioButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="peptideButtonGroup"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Cleavages Sites"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Not yet implemented"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideCleavageSitesJRadioButtonActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
@@ -688,13 +705,13 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="proteinNumberValidatedPeptidesJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="proteinSequenceCoverageJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="proteinSequenceLengthJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="proteinSpectrumCountingScoreJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="405" max="32767" attributes="0"/>
+                              <EmptySpace pref="434" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -708,7 +725,7 @@
                                   <Component id="proteinSequenceCoverageJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinSequenceLengthJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
