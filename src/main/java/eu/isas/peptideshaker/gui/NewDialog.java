@@ -1077,6 +1077,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || fileName.endsWith(".pnovo.txt")
                         || fileName.endsWith(".novor.csv")
                         || fileName.endsWith(".coss.tsv")
+                        || fileName.endsWith(".pin")
                         || fileName.endsWith(".psm")
                         || fileName.endsWith(".omx.gz")
                         || fileName.endsWith(".t.xml.gz")
@@ -1089,6 +1090,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || fileName.endsWith(".pnovo.txt.gz")
                         || fileName.endsWith(".novor.csv.gz")
                         || fileName.endsWith(".coss.tsv.gz")
+                        || fileName.endsWith(".pin.gz")
                         || fileName.endsWith(".psm.gz")
                         || fileName.endsWith(".zip")
                         || myFile.isDirectory();
@@ -1314,6 +1316,24 @@ public class NewDialog extends javax.swing.JDialog {
                 return "COSS (.coss.tsv, .coss.tsv.gz)";
             }
         };
+        
+        // filter for pin only
+        FileFilter pinFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                String fileName = myFile.getName().toLowerCase();
+
+                return fileName.endsWith(".pin")
+                        || fileName.endsWith(".pin.gz")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Percolator Input Format (.pin, .pin.gz)";
+            }
+        };
 
         // filter for Onyase only
         FileFilter onyaseFilter = new FileFilter() {
@@ -1364,6 +1384,7 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.addChoosableFileFilter(novorFilter);
         fileChooser.addChoosableFileFilter(pNovoFilter);
         fileChooser.addChoosableFileFilter(cossFilter);
+        fileChooser.addChoosableFileFilter(pinFilter);
 
         int returnVal = fileChooser.showDialog(this, "Add");
 
@@ -2741,6 +2762,7 @@ public class NewDialog extends javax.swing.JDialog {
                 || lowerCaseName.endsWith(".mzid")
                 || lowerCaseName.endsWith(".csv")
                 || lowerCaseName.endsWith(".tsv")
+                || lowerCaseName.endsWith(".pin")
                 || lowerCaseName.endsWith(".tags")
                 || lowerCaseName.endsWith(".pnovo.txt")
                 || lowerCaseName.endsWith(".tide-search.target.txt")
@@ -2751,6 +2773,7 @@ public class NewDialog extends javax.swing.JDialog {
                 || lowerCaseName.endsWith(".mzid.gz")
                 || lowerCaseName.endsWith(".csv.gz")
                 || lowerCaseName.endsWith(".tsv.gz")
+                || lowerCaseName.endsWith(".pin.gz")
                 || lowerCaseName.endsWith(".tags.gz")
                 || lowerCaseName.endsWith(".pnovo.txt.gz")
                 || lowerCaseName.endsWith(".tide-search.target.txt.gz")
