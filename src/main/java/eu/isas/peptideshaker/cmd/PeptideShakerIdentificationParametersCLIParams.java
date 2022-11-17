@@ -318,6 +318,7 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MIN_PEP_MASS.id) + " " + IdentificationParametersCLIParams.SAGE_MIN_PEP_MASS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MAX_PEP_MASS.id) + " " + IdentificationParametersCLIParams.SAGE_MAX_PEP_MASS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MIN_ION_INDEX.id) + " " + IdentificationParametersCLIParams.SAGE_MIN_ION_INDEX.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MAX_VAR_MODS.id) + " " + IdentificationParametersCLIParams.SAGE_MAX_VAR_MODS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_DECOY_TAG.id) + " " + IdentificationParametersCLIParams.SAGE_DECOY_TAG.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_GENERATE_DECOYS.id) + " " + IdentificationParametersCLIParams.SAGE_GENERATE_DECOYS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_TMT.id) + " " + IdentificationParametersCLIParams.SAGE_TMT.description + "\n";
