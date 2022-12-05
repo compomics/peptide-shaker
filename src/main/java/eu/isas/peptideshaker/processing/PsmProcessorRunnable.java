@@ -200,7 +200,7 @@ public class PsmProcessorRunnable implements Runnable {
         );
 
         if (spectrumMatch.getBestPeptideAssumption() != null) {
-
+            
             // Score modification localization
             modificationLocalizationScorer.scorePTMs(
                     identification,

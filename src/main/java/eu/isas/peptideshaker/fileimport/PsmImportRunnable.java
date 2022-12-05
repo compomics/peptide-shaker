@@ -6,11 +6,9 @@ import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideVariantMatches;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.modification.search_engine_mapping.ModificationLocalizationMapper;
-import com.compomics.util.experiment.identification.modification.search_engine_mapping.ModificationNameMapper;
 import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
 import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -26,16 +24,13 @@ import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.utils.PercolatorUtils;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**

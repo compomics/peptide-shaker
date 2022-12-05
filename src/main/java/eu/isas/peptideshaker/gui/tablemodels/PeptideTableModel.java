@@ -204,7 +204,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
 
                 case 3:
                     return displayFeaturesGenerator.getTaggedPeptideSequence(peptideMatch, true, true, true);
-
+                        
                 case 4:
                     int[] startIndexes = peptideMatch.getPeptide().getProteinMapping().get(proteinAccession);
 
