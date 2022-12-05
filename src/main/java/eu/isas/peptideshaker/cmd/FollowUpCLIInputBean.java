@@ -128,6 +128,10 @@ public class FollowUpCLIInputBean {
      */
     private File peaksIntensitiesFile = null;
     /**
+     * The file containing the IDs of the PSMs for spectra peaks export.
+     */
+    private File psmIDsPeaksExportFile = null;
+    /**
      * The file where to write the RT observed and predicted values.
      */
     private File psmIdentifiersFile = null;
@@ -285,10 +289,16 @@ public class FollowUpCLIInputBean {
         if (aLine.hasOption(FollowUpCLIParams.PEAK_INTS_OBS_PRED.id)){
             
             peaksIntensitiesFile = new File(aLine.getOptionValue(FollowUpCLIParams.PEAK_INTS_OBS_PRED.id));
+            psmIDsPeaksExportFile = new File(aLine.getOptionValue(FollowUpCLIParams.PSM_IDS_FOR_PEAKS_EXPORT.id));
             
             if (!peaksIntensitiesFile.getParentFile().exists()) {
                 
                 throw new IllegalArgumentException("Folder where to write the peaks intensities observed values file '" + peaksIntensitiesFile + "' not found.");
+                
+            }
+            if (!psmIDsPeaksExportFile.exists()) {
+                
+                throw new IllegalArgumentException("PSM identifiers file '" + psmIDsPeaksExportFile + "' not found.");
                 
             }
             
@@ -522,6 +532,15 @@ public class FollowUpCLIInputBean {
     }
     
     /**
+     * Returns the file where to read the PSM ids for the peaks export.
+     * 
+     * @return The file where to read the PSM ids for the peaks export.
+     */
+    public File getPSMIDsPeaksExportFile() {
+        return psmIDsPeaksExportFile;
+    }
+    
+    /**
      * Returns the file containing Percolator results for all PSMs to get confidence levels.
      * 
      * @return The file containing Percolator results for all PSMs to get confidence levels.
@@ -733,9 +752,9 @@ public class FollowUpCLIInputBean {
     }
     
     /**
-     * Indicates whether peaks intensities observed values export is needed.
+     * Indicates whether peaks intensities observed/predicted values export is needed.
      *
-     * @return whether peaks intensities observed values export is needed
+     * @return whether peaks intensities observed/predicted values export is needed
      */
     public boolean peaksIntensitiesObsExportNeeded() {
         return peaksIntensitiesFile != null;

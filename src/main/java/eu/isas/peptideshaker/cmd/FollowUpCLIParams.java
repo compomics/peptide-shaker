@@ -45,6 +45,7 @@ public enum FollowUpCLIParams {
 
     RT_OBS_PRED("rt_obs_pred_file", "Path to the file where to write the observed and predicted RT values for each PSM. (Existing file will be overwritten.)", true, false),
     PEAK_INTS_OBS_PRED("peaks_intensities_file", "Path to the file where to write the observed and predicted peaks intensities for each PSM. (Existing file will be overwritten.)", true, false),
+    PSM_IDS_FOR_PEAKS_EXPORT("psm_ids_for_peaks_export", "Path to the file which includes the IDs of the PSMs for which the peaks of the predicted and observed spectra will be exported.", true, false),
     
     PERCOLATOR_BENCHMARK_RESULTS("percolator_benchmark_results", "Path to the file containing Percolator results for each PSM. (Existing file will be overwritten.)", true, false),
 
@@ -175,6 +176,7 @@ public enum FollowUpCLIParams {
         
         output += "-" + String.format(formatter, RT_OBS_PRED.id) + " " + RT_OBS_PRED.description + "\n";
         output += "-" + String.format(formatter, PEAK_INTS_OBS_PRED.id) + " " + PEAK_INTS_OBS_PRED.description + "\n";
+        output += "-" + String.format(formatter, PSM_IDS_FOR_PEAKS_EXPORT.id) + " " + PSM_IDS_FOR_PEAKS_EXPORT.description + "\n";
         
         output += "-" + String.format(formatter, PERCOLATOR_BENCHMARK_RESULTS.id) + " " + PERCOLATOR_BENCHMARK_RESULTS.description + "\n";
         

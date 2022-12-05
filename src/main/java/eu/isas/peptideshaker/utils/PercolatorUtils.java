@@ -1,3 +1,4 @@
+
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.experiment.biology.enzymes.Enzyme;
@@ -621,13 +622,14 @@ public class PercolatorUtils {
 
         ArrayList<Spectrum> spectraScaledIntensities = scaleIntensities(measuredSpectrum, predictedSpectrum, matchedPeaks);
 
-        double spectraLogDistance = getSpectraLogDist(spectraScaledIntensities.get(0), spectraScaledIntensities.get(1), aligned_peaks);
+        double spectraLogDistance = getSpectraLogDist(spectraScaledIntensities.get(0), spectraScaledIntensities.get(1), aligned_peaks, matchedPeaksRatio);
         results.append("\t").append(spectraLogDistance);
 
         double spectraCosineSimilarity = getSpectraCosine(spectraScaledIntensities.get(0), spectraScaledIntensities.get(1), aligned_peaks);
         results.append("\t").append(spectraCosineSimilarity);
 
         double angularSimilarity = 1.0 - (Math.acos(spectraCosineSimilarity) / Math.PI);
+            
         results.append("\t").append(angularSimilarity);
 
         ArrayList<Spectrum> normalizedIntensities = normalizeIntensities(measuredSpectrum, predictedSpectrum, aligned_peaks);
@@ -875,17 +877,37 @@ public class PercolatorUtils {
 
         //Need to define a max value for all the spectra with 0 matched peaks
         if (matchedPeaksRatio == 0.0) {
-            return 10.0;
+            //return 10.0;
+            return 15.0;
         }
 
         double[] measuredIntensities = measuredSpectrum.intensity;
         double[] predictedIntensities = predictedSpectrum.intensity;
+        
+        /*
+        //Replace 0 measured intensity when peak is not matched
+        // with the entropy of the bionomial distribution for the 
+        // specific number of predicted peaks.
+        double entropy = 2 * Math.PI * Math.exp(1) * predictedIntensities.length;
+        entropy = entropy * matchedPeaksRatio * (1.0 - matchedPeaksRatio);
+        entropy = Math.log(entropy);
+        entropy = 0.5 * entropy;
+        */
+        
+        for (int i=0; i < measuredIntensities.length; i++){
+            if (measuredIntensities[i] == 0.0){
+                //measuredIntensities[i] = entropy;
+                measuredIntensities[i] = 0.000001;
+            }
+        }
+        
 
         double crossEntropy = 0.0;
         for (int i = 0; i < measuredIntensities.length; i++) {
             double predictedIntensity = predictedIntensities[i];
             double measuredIntensity = measuredIntensities[i];
-            crossEntropy = crossEntropy - (measuredIntensity * Math.log(predictedIntensity));
+            //crossEntropy = crossEntropy - (measuredIntensity * Math.log(predictedIntensity));
+            crossEntropy = crossEntropy - (predictedIntensity * Math.log(measuredIntensity));
         }
 
         return crossEntropy;
@@ -945,17 +967,19 @@ public class PercolatorUtils {
      * @param measuredSpectrum The measured spectrum.
      * @param predictedSpectrum The predicted spectrum.
      * @param alignedPeaks The indices of the matched peaks.
+     * @param matchedPeaksRatio The ratio of matched predicted peaks.
      *
      * @return spectra log distance
      */
     public static double getSpectraLogDist(
             Spectrum measuredSpectrum,
             Spectrum predictedSpectrum,
-            ArrayList<ArrayList<Integer>> alignedPeaks
+            ArrayList<ArrayList<Integer>> alignedPeaks,
+            double matchedPeaksRatio
     ) {
 
         //Need to define a max value for all the spectra with 0 matched peaks
-        if (alignedPeaks.isEmpty()) {
+        if (matchedPeaksRatio == 0.0) {
             return 18.0;
         }
 

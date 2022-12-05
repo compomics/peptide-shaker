@@ -462,10 +462,12 @@ public class CLIExportMethods {
 
         File ms2pipFile = followUpCLIInputBean.getPercolatorFragmentationFile();
         File peaksIntensitiesFile = followUpCLIInputBean.getPeaksIntensitiesObsFile();
+        File psmIDsForPeaksExport = followUpCLIInputBean.getPSMIDsPeaksExportFile();
 
         PeaksIntensitiesExport.peaksIntensitiesExport(
                 peaksIntensitiesFile,
                 ms2pipFile,
+                psmIDsForPeaksExport,
                 identification, 
                 //searchParameters, 
                 sequenceMatchingParameters, 
@@ -530,6 +532,7 @@ public class CLIExportMethods {
             ModificationParameters modificationParameters,
             SequenceProvider sequenceProvider,
             SequenceMatchingParameters sequenceMatchingParameters,
+            SpectrumProvider spectrumProvider,
             WaitingHandler waitingHandler
     ) {
 
@@ -541,6 +544,7 @@ public class CLIExportMethods {
             modificationParameters,
             sequenceProvider,
             sequenceMatchingParameters,
+            spectrumProvider,
             waitingHandler
         );
     }

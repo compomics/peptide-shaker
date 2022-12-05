@@ -12,6 +12,7 @@ import com.compomics.util.experiment.identification.spectrum_assumptions.Peptide
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
+import com.compomics.util.io.flat.SimpleFileReader;
 import com.compomics.util.io.flat.SimpleFileWriter;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
@@ -35,6 +36,7 @@ public class PeaksIntensitiesExport {
     /**
      * @param peaksIntensitiesFile The file to write the export.
      * @param ms2pipFile The file with ms2pip results.
+     * @param psmIDsFile The file with the PSM ids.
      * @param identification the identification
      * @param sequenceMatchingParameters The sequence matching parameters.
      * @param modificationParameters The modification parameters.
@@ -45,6 +47,7 @@ public class PeaksIntensitiesExport {
     public static void peaksIntensitiesExport(
             File peaksIntensitiesFile,
             File ms2pipFile,
+            File psmIDsFile,
             Identification identification,
             SequenceMatchingParameters sequenceMatchingParameters,
             ModificationParameters modificationParameters,
@@ -63,9 +66,20 @@ public class PeaksIntensitiesExport {
             
         }
         
+        ArrayList<String> psmIDs = null;
+
+        if (psmIDsFile != null) {
+
+            waitingHandler.setWaitingText("Exporting mass spectra peaks intensities - Parsing ms2pip results");
+
+            psmIDs = getPSMids(psmIDsFile);
+            
+        }
+        
         peaksIntensitiesExport(
                 peaksIntensitiesFile,
                 fragmentationPrediction,
+                psmIDs,
                 identification,
                 modificationParameters,
                 sequenceProvider,
@@ -77,8 +91,29 @@ public class PeaksIntensitiesExport {
     }
     
     /**
+     * @param psmIDsFile The file with the PSM ids.
+     */
+    private static ArrayList<String> getPSMids(
+            File psmIDsFile
+    ){
+        ArrayList<String> psmIDs = new ArrayList<>();
+        
+        try (SimpleFileReader reader = SimpleFileReader.getFileReader(psmIDsFile)) {
+         
+            String PSMid = "";
+
+            while ((PSMid = reader.readLine()) != null) {
+                psmIDs.add(PSMid);
+            }
+        }
+        
+        return psmIDs;
+    }
+    
+    /**
      * @param peaksIntensitiesFile The file to write the export.
      * @param fragmentationPrediction the map of spectrumKey to fragmentation predictions.
+     * @param psmIDs the list of PSM ids to be used for the export.
      * @param identification the identification
      * @param modificationParameters The modification parameters.
      * @param sequenceProvider The sequence provider.
@@ -89,6 +124,7 @@ public class PeaksIntensitiesExport {
     public static void peaksIntensitiesExport(
             File peaksIntensitiesFile,
             HashMap<String, ArrayList<Spectrum>> fragmentationPrediction,
+            ArrayList<String> psmIDs,
             Identification identification,
             ModificationParameters modificationParameters,
             SequenceProvider sequenceProvider,
@@ -138,6 +174,7 @@ public class PeaksIntensitiesExport {
                         .forEach(
                                 peptideAssumption -> writePeptideCandidate(
                                         fragmentationPrediction,
+                                        psmIDs,
                                         peptideAssumption,
                                         modificationParameters,
                                         sequenceProvider,
@@ -175,6 +212,7 @@ public class PeaksIntensitiesExport {
      */
     private static void writePeptideCandidate(
             HashMap<String, ArrayList<Spectrum>> fragmentationPrediction,
+            ArrayList<String> psmIDs,
             PeptideAssumption peptideAssumption,
             ModificationParameters modificationParameters,
             SequenceProvider sequenceProvider,
@@ -204,17 +242,16 @@ public class PeaksIntensitiesExport {
         String peptideID = Long.toString(peptideKey);
         String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
         
+        if (!psmIDs.contains(psmID)){
+            return;
+        }
+        
         ArrayList<Spectrum> predictedSpectra = fragmentationPrediction.get(String.valueOf(peptideKey));
         if (predictedSpectra == null){
             System.out.println("No MS2PIP prediction for PSM with ID: " + psmID);
             return;
         }
         Spectrum predictedSpectrum = predictedSpectra.get(0);
-        
-        if (predictedSpectrum == null){
-            System.out.println("No MS2PIP prediction for PSM with ID: " + psmID);
-            return;
-        }
         
         String spectrumFile = spectrumMatch.getSpectrumFile();
         String spectrumTitle = spectrumMatch.getSpectrumTitle();

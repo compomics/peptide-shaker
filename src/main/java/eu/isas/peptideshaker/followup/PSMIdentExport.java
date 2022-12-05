@@ -7,12 +7,14 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
+import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.io.flat.SimpleFileWriter;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.threading.SimpleSemaphore;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.utils.Ms2PipUtils;
+import eu.isas.peptideshaker.utils.PercolatorUtils;
 
 import java.io.File;
 import java.util.HashSet;
@@ -39,6 +41,7 @@ public class PSMIdentExport {
             ModificationParameters modificationParameters,
             SequenceProvider sequenceProvider,
             SequenceMatchingParameters sequenceMatchingParameters,
+            SpectrumProvider spectrumProvider,
             WaitingHandler waitingHandler
     ){
         // Export PSM identifiers file
@@ -51,13 +54,23 @@ public class PSMIdentExport {
 
         try (SimpleFileWriter writer = new SimpleFileWriter(psmIdentifiersFile, true)){
             
-            String header = String.join("\t", "PSMId", "SpectrumTitle", "Proteins", "Position", "Sequence");
+            String header = String.join("\t", "PSMId", "SpectrumTitle", "SpectrumFilename", "Proteins", "Position", "Sequence", "SequenceWithMods");
             
             writer.writeLine(header);
             
             SpectrumMatchesIterator spectrumMatchesIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
             SpectrumMatch spectrumMatch;
+            
+            //Add spectra filenames to the export
+            String[] spectraFilenames =  spectrumProvider.getOrderedFileNamesWithoutExtensions();
+            String spectraFilenamesString = spectraFilenames[0];
+            for ( int i=1; i < spectraFilenames.length ; i++) {
+                String fileNameWithoutExtension = spectraFilenames[i];
+                spectraFilenamesString = String.join(";", spectraFilenamesString, fileNameWithoutExtension);
+            }
+            
+            final String spectraFilenamesStringFinal = spectraFilenamesString;
             
             while ((spectrumMatch = spectrumMatchesIterator.next()) != null) {
 
@@ -82,6 +95,7 @@ public class PSMIdentExport {
                         .parallel()
                         .forEach(
                                 peptideAssumption -> writePeptideCandidate(
+                                        spectraFilenamesStringFinal,
                                         tempSpectrumMatch,
                                         peptideAssumption,
                                         processedPSMs,
@@ -99,6 +113,7 @@ public class PSMIdentExport {
     }
     
     private static void writePeptideCandidate(
+            String spectraFilenames,
             SpectrumMatch spectrumMatch,
             PeptideAssumption peptideAssumption,
             HashSet<String> processedPSMs,
@@ -158,8 +173,10 @@ public class PSMIdentExport {
         
         String peptideSequence = peptide.getSequence();
         
+        String peptideSeqWithMods = PercolatorUtils.getSequenceWithModifications(peptide, modificationParameters, sequenceProvider, sequenceMatchingParameters, modificationFactory);
+        
         // Get PSM data
-        String psmData = String.join("\t",psmID, spectrumTitle, proteins.toString(), positions.toString(), peptideSequence);
+        String psmData = String.join("\t",psmID, spectrumTitle, spectraFilenames, proteins.toString(), positions.toString(), peptideSequence, peptideSeqWithMods);
         
         // Export if not done already
         writingSemaphore.acquire();

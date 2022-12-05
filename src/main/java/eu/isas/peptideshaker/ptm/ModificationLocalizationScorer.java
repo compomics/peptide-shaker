@@ -1937,6 +1937,21 @@ public class ModificationLocalizationScorer extends ExperimentObject {
             }
 
             if (!modificationToSiteToScore.isEmpty()) {
+                
+                /*System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("Peptide sequence: " + peptide.getSequence());
+                
+                for (Double modID: modificationToPossibleSiteMap.keySet()) {
+                    
+                    int[] sites = modificationToPossibleSiteMap.get(modID);
+                    
+                    //display array
+                    System.out.println(modMatchesMap.get(modID));
+                    System.out.println( Arrays.toString(sites));
+                
+                }
+                
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");*/
 
                 // Distribute modifications among acceptor sites based on their score
                 HashMap<Double, TreeSet<Integer>> matchedSiteByModification = ModificationPeptideMapping.mapModifications(
@@ -1944,6 +1959,21 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                         modificationOccurrenceMap,
                         modificationToSiteToScore
                 );
+                
+                /*for (Double modID: matchedSiteByModification.keySet()) {
+                    
+                    TreeSet<Integer> sites = matchedSiteByModification.get(modID);
+                
+                    //convert TreeSet to an array
+                    Integer[] array = sites.toArray( new Integer[sites.size()] );
+                    
+                    //display array
+                    System.out.println(modMatchesMap.get(modID));
+                    System.out.println( Arrays.toString(array) );
+                
+                }
+                
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");*/
 
                 // Assign confidence levels to the sites mapped
                 for (Entry<Double, TreeSet<Integer>> entry : matchedSiteByModification.entrySet()) {
