@@ -728,6 +728,7 @@ public class PercolatorUtils {
 
         double scaleFactorMeasured = 0.0;
         double scaleFactorPredicted = 0.0;
+        
         if (alignedPeaks.size() <= 1) {
 
             double[] sortedMeasuredIntensity = Arrays.copyOf(measuredIntensity, measuredIntensity.length);
@@ -752,6 +753,7 @@ public class PercolatorUtils {
 
             scaleFactorMeasured = avgIntensityMeasured;
             scaleFactorPredicted = avgIntensityPredicted;
+            
         } else {
 
             double[] measuredAlignedIntensities = new double[alignedPeaks.size()];
@@ -796,7 +798,7 @@ public class PercolatorUtils {
         Spectrum scaledMeasuredSpectrum = new Spectrum(null, measuredSpectrum.mz, scaledMeasuredIntensity);
         Spectrum scaledPredictedSpectrum = new Spectrum(null, predictedSpectrum.mz, scaledPredictedIntensity);
 
-        ArrayList<Spectrum> scaledSpectra = new ArrayList<>();
+        ArrayList<Spectrum> scaledSpectra = new ArrayList<>(2);
         scaledSpectra.add(scaledMeasuredSpectrum);
         scaledSpectra.add(scaledPredictedSpectrum);
 

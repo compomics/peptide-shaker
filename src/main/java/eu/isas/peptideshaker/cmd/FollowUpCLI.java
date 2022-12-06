@@ -644,6 +644,8 @@ public class FollowUpCLI extends PsdbParent {
                         identification,
                         identificationParameters.getSearchParameters(),
                         identificationParameters.getSequenceMatchingParameters(),
+                        identificationParameters.getAnnotationParameters(),
+                        identificationParameters.getModificationLocalizationParameters(),
                         identificationParameters.getSearchParameters().getModificationParameters(),
                         sequenceProvider,
                         msFileHandler,
