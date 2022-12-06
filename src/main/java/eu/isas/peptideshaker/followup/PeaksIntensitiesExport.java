@@ -323,10 +323,10 @@ public class PeaksIntensitiesExport {
                         HashMap<Double, String> annotationMap = new HashMap<>(matches.length);
                         
                         for (IonMatch match : matches) {
-                            
+                                                       
                             double mz = match.peakMz;
                             String label = match.getPeakAnnotation();
-                            
+                                                        
                             String currentLabel = annotationMap.get(mz);
                             
                             if (currentLabel == null) {
@@ -355,15 +355,21 @@ public class PeaksIntensitiesExport {
             
             double[] measuredMz = measuredScaledSpectrum.mz;
             double[] measuredIntensities = measuredScaledSpectrum.intensity;
-            String annotation = annotationMap.get(measuredMz);
+            /*String annotation = annotationMap.get(measuredMz);
             
             if (annotation == null) {
-                
                 annotation = "";
                 
-            }
+            }*/
             
             for (int i = 0; i < measuredMz.length; i++) {
+                
+                String annotation = annotationMap.get(measuredMz[i]);
+            
+                if (annotation == null) {
+                    annotation = "";
+
+                }
                 
                 String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
                 
@@ -376,6 +382,13 @@ public class PeaksIntensitiesExport {
             double[] predIntensities = predictedScaledSpectrum.intensity;
             
             for (int i = 0; i < predMz.length; i++) {
+                
+                String annotation = annotationMap.get(predMz[i]);
+            
+                if (annotation == null) {
+                    annotation = "";
+
+                }
                 
                 String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
                 

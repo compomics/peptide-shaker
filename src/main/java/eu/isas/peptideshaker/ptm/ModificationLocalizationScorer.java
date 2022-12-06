@@ -1945,8 +1945,15 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                     
                     int[] sites = modificationToPossibleSiteMap.get(modID);
                     
+                    ArrayList<ModificationMatch> modificationMatches_toprint = modMatchesMap.get(modID);
+                    ArrayList<String> modNames_toprint = new ArrayList<>();
+                    for (int i = 0; i < modificationMatches_toprint.size(); i++){
+                        String modName_toprint = modificationMatches_toprint.get(i).getModification();
+                        modNames_toprint.add(modName_toprint);
+                    }
+                    
                     //display array
-                    System.out.println(modMatchesMap.get(modID));
+                    System.out.println(modNames_toprint);
                     System.out.println( Arrays.toString(sites));
                 
                 }
@@ -1966,9 +1973,15 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                 
                     //convert TreeSet to an array
                     Integer[] array = sites.toArray( new Integer[sites.size()] );
+                    ArrayList<ModificationMatch> modificationMatches_toprint = modMatchesMap.get(modID);
+                    ArrayList<String> modNames_toprint = new ArrayList<>();
+                    for (int i = 0; i < modificationMatches_toprint.size(); i++){
+                        String modName_toprint = modificationMatches_toprint.get(i).getModification();
+                        modNames_toprint.add(modName_toprint);
+                    }
                     
                     //display array
-                    System.out.println(modMatchesMap.get(modID));
+                    System.out.println(modNames_toprint);
                     System.out.println( Arrays.toString(array) );
                 
                 }
