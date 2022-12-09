@@ -31,13 +31,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-
 /**
  *
  * @author Dafni Skiadopoulou
  */
 public class PeaksIntensitiesExport {
-    
+
     /**
      * @param peaksIntensitiesFile The file to write the export.
      * @param ms2pipFile The file with ms2pip results.
@@ -61,8 +60,8 @@ public class PeaksIntensitiesExport {
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
             WaitingHandler waitingHandler
-    ){
-        
+    ) {
+
         HashMap<String, ArrayList<Spectrum>> fragmentationPrediction = null;
 
         if (ms2pipFile != null) {
@@ -70,9 +69,9 @@ public class PeaksIntensitiesExport {
             waitingHandler.setWaitingText("Exporting mass spectra peaks intensities - Parsing ms2pip results");
 
             fragmentationPrediction = PercolatorExport.getIntensitiesPrediction(ms2pipFile);
-            
+
         }
-        
+
         ArrayList<String> psmIDs = null;
 
         if (psmIDsFile != null) {
@@ -80,9 +79,9 @@ public class PeaksIntensitiesExport {
             waitingHandler.setWaitingText("Exporting mass spectra peaks intensities - Parsing ms2pip results");
 
             psmIDs = getPSMids(psmIDsFile);
-            
+
         }
-        
+
         peaksIntensitiesExport(
                 peaksIntensitiesFile,
                 fragmentationPrediction,
@@ -91,38 +90,39 @@ public class PeaksIntensitiesExport {
                 modificationParameters,
                 sequenceProvider,
                 sequenceMatchingParameters,
-                annotationParameters, 
+                annotationParameters,
                 modificationLocalizationParameters,
                 spectrumProvider,
                 waitingHandler
         );
-        
+
     }
-    
+
     /**
      * @param psmIDsFile The file with the PSM ids.
      */
     private static ArrayList<String> getPSMids(
             File psmIDsFile
-    ){
-        
+    ) {
+
         ArrayList<String> psmIDs = new ArrayList<>();
-        
-        try (SimpleFileReader reader = SimpleFileReader.getFileReader(psmIDsFile)) {
-         
+
+        try ( SimpleFileReader reader = SimpleFileReader.getFileReader(psmIDsFile)) {
+
             String psmId;
 
             while ((psmId = reader.readLine()) != null) {
                 psmIDs.add(psmId);
             }
         }
-        
+
         return psmIDs;
     }
-    
+
     /**
      * @param peaksIntensitiesFile The file to write the export.
-     * @param fragmentationPrediction the map of spectrumKey to fragmentation predictions.
+     * @param fragmentationPrediction the map of spectrumKey to fragmentation
+     * predictions.
      * @param psmIDs the list of PSM ids to be used for the export.
      * @param identification the identification
      * @param modificationParameters The modification parameters.
@@ -143,8 +143,8 @@ public class PeaksIntensitiesExport {
             ModificationLocalizationParameters modificationLocalizationParameters,
             SpectrumProvider spectrumProvider,
             WaitingHandler waitingHandler
-    ){
-        
+    ) {
+
         // reset the progress bar
         waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
@@ -153,8 +153,8 @@ public class PeaksIntensitiesExport {
 
         SimpleSemaphore writingSemaphore = new SimpleSemaphore(1);
 
-        try (SimpleFileWriter writer = new SimpleFileWriter(peaksIntensitiesFile, true)) {
-            
+        try ( SimpleFileWriter writer = new SimpleFileWriter(peaksIntensitiesFile, true)) {
+
             String header = "PSMId,measuredLabel,matchedLabel,mz,intensity,ion";
             writer.writeLine(header);
 
@@ -177,7 +177,7 @@ public class PeaksIntensitiesExport {
 
                     }
                 }
-                
+
                 SpectrumMatch spectrumMatchFinal = spectrumMatch;
 
                 // Export all candidate peptides
@@ -191,8 +191,8 @@ public class PeaksIntensitiesExport {
                                         modificationParameters,
                                         sequenceProvider,
                                         sequenceMatchingParameters,
-                annotationParameters, 
-                modificationLocalizationParameters,
+                                        annotationParameters,
+                                        modificationLocalizationParameters,
                                         modificationFactory,
                                         processedPeptideKeys,
                                         spectrumProvider,
@@ -201,16 +201,17 @@ public class PeaksIntensitiesExport {
                                         writer
                                 )
                         );
-                }  
-            
+            }
+
         }
-        
+
     }
-    
+
     /**
      * Writes a peptide candidate to the export if not done already.
      *
-     * @param fragmentationPrediction the map of spectrumKey to fragmentation predictions.
+     * @param fragmentationPrediction the map of spectrumKey to fragmentation
+     * predictions.
      * @param peptideAssumption The peptide assumption to write.
      * @param modificationParameters The modification parameters.
      * @param annotationParameters The annotation parameters.
@@ -241,7 +242,7 @@ public class PeaksIntensitiesExport {
             SimpleSemaphore writingSemaphore,
             SimpleFileWriter writer
     ) {
-        
+
         // Get peptide data
         String peptideData = Ms2PipUtils.getPeptideData(
                 peptideAssumption,
@@ -253,106 +254,138 @@ public class PeaksIntensitiesExport {
 
         // Get corresponding key
         long peptideKey = Ms2PipUtils.getPeptideKey(peptideData);
-        
+
         // PSM id
         long spectrumKey = spectrumMatch.getKey();
         String peptideID = Long.toString(peptideKey);
         String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
-        
-        if (!psmIDs.contains(psmID)){
+
+        if (!psmIDs.contains(psmID)) {
             return;
         }
-        
+
         ArrayList<Spectrum> predictedSpectra = fragmentationPrediction.get(String.valueOf(peptideKey));
-        
-        if (predictedSpectra == null){
+
+        if (predictedSpectra == null) {
             System.out.println("No MS2PIP prediction for PSM with ID: " + psmID);
             return;
         }
-        
+
         Spectrum predictedSpectrum = predictedSpectra.get(0);
-        
+
         String spectrumFile = spectrumMatch.getSpectrumFile();
         String spectrumTitle = spectrumMatch.getSpectrumTitle();
-        
+
         // Get measured spectrum
         Spectrum measuredSpectrum = spectrumProvider.getSpectrum(spectrumFile, spectrumTitle);
-        
+
         ArrayList<ArrayList<Integer>> aligned_peaks = PercolatorUtils.getAlignedPeaks(measuredSpectrum, predictedSpectrum);
-        
+
         ArrayList<ArrayList<Integer>> matchedPeaks = new ArrayList<>();
         ArrayList<Integer> measuredAlignedIndices = new ArrayList<>();
         ArrayList<Integer> predictedAlignedIndices = new ArrayList<>();
-        for (int i = 0; i < aligned_peaks.size(); i++){
-            if (aligned_peaks.get(i).get(0) != -1){
+        for (int i = 0; i < aligned_peaks.size(); i++) {
+            if (aligned_peaks.get(i).get(0) != -1) {
                 matchedPeaks.add(aligned_peaks.get(i));
                 measuredAlignedIndices.add(aligned_peaks.get(i).get(0));
                 predictedAlignedIndices.add(aligned_peaks.get(i).get(1));
             }
         }
-        
+
         ArrayList<Spectrum> spectraScaledIntensities = PercolatorUtils.scaleIntensities(measuredSpectrum, predictedSpectrum, matchedPeaks);
-        
+
         Spectrum measuredScaledSpectrum = spectraScaledIntensities.get(0);
         Spectrum predictedScaledSpectrum = spectraScaledIntensities.get(1);
-        
+
         // Get spectrum annotation
         PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
-                SequenceMatchingParameters modificationSequenceMatchingParameters = modificationLocalizationParameters.getSequenceMatchingParameters();
-                SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
-                        spectrumFile,
-                        spectrumTitle,
-                        peptideAssumption,
-                        modificationParameters,
-                        sequenceProvider,
-                        modificationSequenceMatchingParameters,
-                        peptideSpectrumAnnotator
-                );
-                        IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
-                        annotationParameters,
-                        specificAnnotationParameters,
-                        spectrumFile,
-                        spectrumTitle,
-                        measuredSpectrum,
-                        peptideAssumption.getPeptide(),
-                        modificationParameters,
-                        sequenceProvider,
-                        modificationSequenceMatchingParameters
-                );
-                        
-                        HashMap<Double, String> annotationMap = new HashMap<>(matches.length);
-                        
-                        for (IonMatch match : matches) {
-                                                       
-                            double mz = match.peakMz;
-                            String label = match.getPeakAnnotation();
-                                                        
-                            String currentLabel = annotationMap.get(mz);
-                            
-                            if (currentLabel == null) {
-                                
-                                currentLabel = label;
-                                
-                            } else {
-                                
-                                currentLabel = String.join(",", label);
-                                
-                            }
-                            
-                            annotationMap.put(mz, currentLabel);
-                            
-                        }
+        SequenceMatchingParameters modificationSequenceMatchingParameters = modificationLocalizationParameters.getSequenceMatchingParameters();
+        SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
+                spectrumFile,
+                spectrumTitle,
+                peptideAssumption,
+                modificationParameters,
+                sequenceProvider,
+                modificationSequenceMatchingParameters,
+                peptideSpectrumAnnotator
+        );
+        IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
+                annotationParameters,
+                specificAnnotationParameters,
+                spectrumFile,
+                spectrumTitle,
+                measuredSpectrum,
+                peptideAssumption.getPeptide(),
+                modificationParameters,
+                sequenceProvider,
+                modificationSequenceMatchingParameters,
+                false
+        );
+
+        HashMap<Double, String> annotationMap = new HashMap<>(matches.length);
+
+        for (IonMatch match : matches) {
+
+            double mz = match.peakMz;
+            String label = match.getPeakAnnotation();
+
+            String currentLabel = annotationMap.get(mz);
+
+            if (currentLabel == null) {
+
+                currentLabel = label;
+
+            } else {
+
+                currentLabel = String.join(",", label);
+
+            }
+
+            annotationMap.put(mz, currentLabel);
+
+        }
         
+        matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
+                annotationParameters,
+                specificAnnotationParameters,
+                spectrumFile,
+                spectrumTitle,
+                predictedSpectrum,
+                peptideAssumption.getPeptide(),
+                modificationParameters,
+                sequenceProvider,
+                modificationSequenceMatchingParameters,
+                false
+        );
         
+        for (IonMatch match : matches) {
+
+            double mz = match.peakMz;
+            String label = match.getPeakAnnotation();
+
+            String currentLabel = annotationMap.get(mz);
+
+            if (currentLabel == null) {
+
+                currentLabel = label;
+
+            } else {
+
+                currentLabel = String.join(",", label);
+
+            }
+
+            annotationMap.put(mz, currentLabel);
+
+        }
+
         // Export if not done already
         writingSemaphore.acquire();
 
         if (!processedPeptides.contains(peptideKey)) {
 
             //String line = String.join(" ", Long.toString(peptideKey), peptideData);
-
             //writer.writeLine(line);
-            
             double[] measuredMz = measuredScaledSpectrum.mz;
             double[] measuredIntensities = measuredScaledSpectrum.intensity;
             /*String annotation = annotationMap.get(measuredMz);
@@ -361,43 +394,42 @@ public class PeaksIntensitiesExport {
                 annotation = "";
                 
             }*/
-            
+
             for (int i = 0; i < measuredMz.length; i++) {
-                
+
                 String annotation = annotationMap.get(measuredMz[i]);
-            
+
                 if (annotation == null) {
                     annotation = "";
 
                 }
-                
+
                 String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
-                
+
                 String line = String.join(",", psmID, "1", matchedLabel, String.valueOf(measuredMz[i]), String.valueOf(measuredIntensities[i]), annotation);
                 writer.writeLine(line);
-                
+
             }
-            
+
             double[] predMz = predictedScaledSpectrum.mz;
             double[] predIntensities = predictedScaledSpectrum.intensity;
-            
+
             for (int i = 0; i < predMz.length; i++) {
-                
+
                 String annotation = annotationMap.get(predMz[i]);
-            
+
                 if (annotation == null) {
                     annotation = "";
 
                 }
-                
+
                 String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
-                
+
                 String line = String.join(",", psmID, "-1", matchedLabel, String.valueOf(predMz[i]), String.valueOf(predIntensities[i]), annotation);
                 writer.writeLine(line);
-                
+
             }
-            
-            
+
             processedPeptides.add(peptideKey);
 
         }
@@ -405,5 +437,5 @@ public class PeaksIntensitiesExport {
         writingSemaphore.release();
 
     }
-    
+
 }
