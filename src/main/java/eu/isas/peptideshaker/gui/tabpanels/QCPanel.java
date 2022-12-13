@@ -852,11 +852,11 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void exportPsmPlotJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPsmPlotJButtonActionPerformed
         new ExportGraphicsDialog(
-                peptideShakerGUI, 
-                peptideShakerGUI.getNormalIcon(), 
-                peptideShakerGUI.getWaitingIcon(), 
-                true, 
-                psmQCPlotPanel, 
+                peptideShakerGUI,
+                peptideShakerGUI.getNormalIcon(),
+                peptideShakerGUI.getWaitingIcon(),
+                true,
+                psmQCPlotPanel,
                 peptideShakerGUI.getLastSelectedFolder()
         );
     }//GEN-LAST:event_exportPsmPlotJButtonActionPerformed
@@ -887,7 +887,7 @@ public class QCPanel extends javax.swing.JPanel {
     private void psmPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpDialog(
-                peptideShakerGUI, 
+                peptideShakerGUI,
                 getClass().getResource("/helpFiles/QCPlots.html"), "#PSM",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -922,8 +922,8 @@ public class QCPanel extends javax.swing.JPanel {
     private void peptidesPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpDialog(
-                peptideShakerGUI, 
-                getClass().getResource("/helpFiles/QCPlots.html"), 
+                peptideShakerGUI,
+                getClass().getResource("/helpFiles/QCPlots.html"),
                 "#Peptide",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -957,11 +957,11 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void exportPeptidesPlotJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPeptidesPlotJButtonActionPerformed
         new ExportGraphicsDialog(
-                peptideShakerGUI, 
-                peptideShakerGUI.getNormalIcon(), 
-                peptideShakerGUI.getWaitingIcon(), 
-                true, 
-                peptideQCPlotPanel, 
+                peptideShakerGUI,
+                peptideShakerGUI.getNormalIcon(),
+                peptideShakerGUI.getWaitingIcon(),
+                true,
+                peptideQCPlotPanel,
                 peptideShakerGUI.getLastSelectedFolder()
         );
     }//GEN-LAST:event_exportPeptidesPlotJButtonActionPerformed
@@ -972,7 +972,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void peptidesPlotLayeredPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_peptidesPlotLayeredPaneComponentResized
-        
+
 // resize the layered panels
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -994,12 +994,12 @@ public class QCPanel extends javax.swing.JPanel {
 
                 // resize the plot area
                 peptidesPlotLayeredPane.getComponent(2).setBounds(
-                        0, 
-                        0, 
-                        peptidesPlotLayeredPane.getWidth(), 
+                        0,
+                        0,
+                        peptidesPlotLayeredPane.getWidth(),
                         peptidesPlotLayeredPane.getHeight()
                 );
-                
+
                 peptidesPlotLayeredPane.revalidate();
                 peptidesPlotLayeredPane.repaint();
             }
@@ -1032,7 +1032,7 @@ public class QCPanel extends javax.swing.JPanel {
     private void proteinsPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinsPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpDialog(
-                peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"), 
+                peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"),
                 "#Protein",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -1067,10 +1067,10 @@ public class QCPanel extends javax.swing.JPanel {
     private void exportProteinsPlotJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProteinsPlotJButtonActionPerformed
         new ExportGraphicsDialog(
                 peptideShakerGUI,
-                peptideShakerGUI.getNormalIcon(), 
-                peptideShakerGUI.getWaitingIcon(), 
-                true, 
-                proteinQCPlotPanel, 
+                peptideShakerGUI.getNormalIcon(),
+                peptideShakerGUI.getWaitingIcon(),
+                true,
+                proteinQCPlotPanel,
                 peptideShakerGUI.getLastSelectedFolder()
         );
     }//GEN-LAST:event_exportProteinsPlotJButtonActionPerformed
@@ -1081,7 +1081,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void proteinsPlotLayeredPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_proteinsPlotLayeredPaneComponentResized
-        
+
 // resize the layered panels
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -1103,12 +1103,12 @@ public class QCPanel extends javax.swing.JPanel {
 
                 // resize the plot area
                 proteinsPlotLayeredPane.getComponent(2).setBounds(
-                        0, 
-                        0, 
-                        proteinsPlotLayeredPane.getWidth(), 
+                        0,
+                        0,
+                        proteinsPlotLayeredPane.getWidth(),
                         proteinsPlotLayeredPane.getHeight()
                 );
-                
+
                 proteinsPlotLayeredPane.revalidate();
                 proteinsPlotLayeredPane.repaint();
             }
@@ -1139,33 +1139,33 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void tabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPaneStateChanged
-        
-        if (peptideShakerGUI.getIdentification() != null 
-                && peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.QC_PLOTS_TAB_INDEX 
+
+        if (peptideShakerGUI.getIdentification() != null
+                && peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.QC_PLOTS_TAB_INDEX
                 && validatedValues != null) {
-            
+
             switch (tabbedPane.getSelectedIndex()) {
                 case 0:
                     // psms
                     updatePsmQCPlot();
                     exportPsmPlotJButton.setEnabled(true);
                     break;
-                
+
                 case 1:
                     // peptides
                     updatePeptideQCPlot();
                     exportPeptidesPlotJButton.setEnabled(true);
                     break;
-                
+
                 case 2:
                     // proteins
                     updateProteinQCPlot();
                     exportProteinsPlotJButton.setEnabled(true);
                     break;
-                
+
                 default:
                     break;
-                    
+
             }
         }
     }//GEN-LAST:event_tabbedPaneStateChanged
@@ -1278,28 +1278,28 @@ public class QCPanel extends javax.swing.JPanel {
             currentPsmPlotType = PlotType.None;
 
             switch (tabbedPane.getSelectedIndex()) {
-                
+
                 case 0:
                     // psms
                     updatePsmQCPlot();
                     exportPsmPlotJButton.setEnabled(true);
                     break;
-                
+
                 case 1:
                     // peptides
                     updatePeptideQCPlot();
                     exportPeptidesPlotJButton.setEnabled(true);
                     break;
-                
+
                 case 2:
                     // proteins
                     updateProteinQCPlot();
                     exportProteinsPlotJButton.setEnabled(true);
                     break;
-                
+
                 default:
                     break;
-                    
+
             }
 
             peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, true);
@@ -1323,7 +1323,7 @@ public class QCPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true
             );
-            
+
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Loading QC Plot. Please Wait...");
 
@@ -1468,13 +1468,13 @@ public class QCPanel extends javax.swing.JPanel {
                     if (!progressDialog.isRunCanceled()) {
 
                         JFreeChart proteinChart = ChartFactory.createStackedBarChart(
-                                null, 
-                                null, 
-                                "Number of Proteins", 
-                                dataset, 
-                                PlotOrientation.VERTICAL, 
-                                true, 
-                                true, 
+                                null,
+                                null,
+                                "Number of Proteins",
+                                dataset,
+                                PlotOrientation.VERTICAL,
+                                true,
+                                true,
                                 true
                         );
 
@@ -1489,7 +1489,10 @@ public class QCPanel extends javax.swing.JPanel {
                         renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                         proteinChart.getCategoryPlot().setRenderer(0, renderer);
 
-                        ChartPanel chartPanel = new ChartPanel(proteinChart);
+                        ChartPanel chartPanel = new ChartPanel(
+                                proteinChart, 
+                                false //peptideShakerGUI.getDisplayParameters().getLowResolutionCharts()
+                        );
 
                         if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
                             proteinChart.getCategoryPlot().getDomainAxis().setLabel("Number of Validated Peptides");
@@ -1560,7 +1563,7 @@ public class QCPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true
             );
-            
+
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Loading QC Plot. Please Wait...");
 
@@ -1678,7 +1681,10 @@ public class QCPanel extends javax.swing.JPanel {
                             renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                             peptideChart.getCategoryPlot().setRenderer(0, renderer);
 
-                            ChartPanel chartPanel = new ChartPanel(peptideChart);
+                            ChartPanel chartPanel = new ChartPanel(
+                                    peptideChart,
+                                    false //peptideShakerGUI.getDisplayParameters().getLowResolutionCharts()
+                            );
 
                             if (peptideValidatedPsmsJRadioButton.isSelected()) {
                                 peptideChart.getCategoryPlot().getDomainAxis().setLabel("Number of Validated PSMs");
@@ -1751,7 +1757,7 @@ public class QCPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true
             );
-            
+
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Loading QC Plot. Please Wait...");
 
@@ -1811,13 +1817,13 @@ public class QCPanel extends javax.swing.JPanel {
                     if (!progressDialog.isRunCanceled()) {
 
                         JFreeChart psmChart = ChartFactory.createStackedBarChart(
-                                null, 
                                 null,
-                                "Number of PSMs", 
+                                null,
+                                "Number of PSMs",
                                 dataset,
-                                PlotOrientation.VERTICAL, 
-                                true, 
-                                true, 
+                                PlotOrientation.VERTICAL,
+                                true,
+                                true,
                                 true
                         );
 
@@ -1829,7 +1835,10 @@ public class QCPanel extends javax.swing.JPanel {
                         renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                         psmChart.getCategoryPlot().setRenderer(0, renderer);
 
-                        ChartPanel chartPanel = new ChartPanel(psmChart);
+                        ChartPanel chartPanel = new ChartPanel(
+                                psmChart,
+                                false //peptideShakerGUI.getDisplayParameters().getLowResolutionCharts()
+                        );
 
                         if (psmPrecursorMassErrorJRadioButton.isSelected()) {
                             psmChart.getCategoryPlot().getDomainAxis().setLabel("Precursor m/z Error");
@@ -2040,24 +2049,24 @@ public class QCPanel extends javax.swing.JPanel {
 
                     Double value = null;
                     DigestionParameters digestionParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getDigestionParameters();
-                    
+
                     if (digestionParameters.getCleavageParameter() == DigestionParameters.CleavageParameter.enzyme) {
-                        
+
                         for (Enzyme enzyme : digestionParameters.getEnzymes()) {
 
                             int enzymeMissedCleavages = enzyme.getNmissedCleavages(peptideMatch.getPeptide().getSequence());
-                            
+
                             if (value == null || enzymeMissedCleavages < value) {
                                 value = Double.valueOf(enzymeMissedCleavages);
                             }
                         }
-                        
+
                     }
-                    
+
                     if (value == null) {
                         value = 0.0;
                     }
-                    
+
                     if (value > 0) {
                         if (value > maxValue) {
                             maxValue = value;
@@ -2065,19 +2074,19 @@ public class QCPanel extends javax.swing.JPanel {
                     }
 
                     if (!PeptideUtils.isDecoy(peptideMatch.getPeptide(), sequenceProvider)) {
-                        
+
                         if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                            
+
                             if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                 validatedValues.add(value);
                             } else {
                                 validatedDoubtfulValues.add(value);
                             }
-                        
+
                         } else {
                             nonValidatedValues.add(value);
                         }
-                        
+
                     } else if (peptideParameter.getMatchValidationLevel().isValidated()) {
                         validatedDecoyValues.add(value);
                     } else {

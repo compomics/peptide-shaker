@@ -4966,7 +4966,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     intensityHistogram = new IntensityHistogram(
                             annotations,
                             currentSpectrum,
-                            annotationParameters.getAnnotationIntensityLimit()
+                            annotationParameters.getAnnotationIntensityLimit(),
+                            false //peptideShakerGUI.getDisplayParameters().getLowResolutionCharts()
                     );
                     secondarySpectrumPlotsJPanel.add(intensityHistogram);
 
@@ -4974,7 +4975,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     massErrorPlot = new MassErrorPlot(
                             annotations, currentSpectrum,
                             specificAnnotationParameters.getFragmentIonAccuracy(),
-                            peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM);
+                            peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentAccuracyType() == SearchParameters.MassAccuracyType.PPM,
+                            false //peptideShakerGUI.getDisplayParameters().getLowResolutionCharts()
+                    );
 
                     if (massErrorPlot.getNumberOfDataPointsInPlot() > 0) {
                         secondarySpectrumPlotsJPanel.add(massErrorPlot);

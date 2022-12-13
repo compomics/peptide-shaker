@@ -86,9 +86,13 @@ public class ProteinSequencePanel {
      * @param allowZooming if true, the user can zoom in the created plot/chart
      * @return a sequence plot
      */
-    public ChartPanel getSequencePlot(ProteinSequencePanelParent aProteinSequencePanelParent, JSparklinesDataset sparklineDataset,
+    public ChartPanel getSequencePlot(
+            ProteinSequencePanelParent aProteinSequencePanelParent, 
+            JSparklinesDataset sparklineDataset,
             HashMap<Integer, ArrayList<ResidueAnnotation>> proteinAnnotations,
-            boolean addReferenceLine, boolean allowZooming) {
+            boolean addReferenceLine, 
+            boolean allowZooming
+    ) {
 
         this.proteinSequencePanelParent = aProteinSequencePanelParent;
         DefaultCategoryDataset barChartDataset = new DefaultCategoryDataset();
@@ -109,7 +113,16 @@ public class ProteinSequencePanel {
         }
 
         // create the chart
-        JFreeChart chart = ChartFactory.createStackedBarChart(null, null, null, barChartDataset, PlotOrientation.HORIZONTAL, false, false, false);
+        JFreeChart chart = ChartFactory.createStackedBarChart(
+                null, 
+                null, 
+                null, 
+                barChartDataset, 
+                PlotOrientation.HORIZONTAL, 
+                false, 
+                false, 
+                false
+        );
 
         // fine tune the chart properites
         CategoryPlot plot = chart.getCategoryPlot();

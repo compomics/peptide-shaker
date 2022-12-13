@@ -3,11 +3,13 @@ package eu.isas.peptideshaker.gui.parameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 /**
  * DisplayPreferencesDialog.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class DisplayPreferencesDialog extends javax.swing.JDialog {
 
@@ -35,8 +37,9 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
      * Set up the GUI.
      */
     private void setUpGui() {
-        // centrally align the spinner  
+        // centrally align the spinner and combobox
         ((JSpinner.NumberEditor) nAASpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
+        lowResolutionChartsComboBox.setRenderer(new com.compomics.util.gui.renderers.AlignedListCellRenderer(SwingConstants.CENTER));
     }
 
     /**
@@ -45,8 +48,15 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
      * @param displayPreferences the display preferences to display
      */
     private void populateGUI(DisplayParameters displayPreferences) {
-        // set the values
+
         nAASpinner.setValue(displayPreferences.getnAASurroundingPeptides());
+
+//        if (displayPreferences.getLowResolutionCharts()) {
+//            lowResolutionChartsComboBox.setSelectedIndex(0);
+//        } else {
+//            lowResolutionChartsComboBox.setSelectedIndex(1);
+//        }
+
     }
 
     /**
@@ -64,22 +74,25 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
      * @return a boolean indicating whether the user input is valid
      */
     public boolean validateInput() {
-        // Nothing to validate yet
-        return true;
+        return true; // Nothing to validate yet
     }
 
     /**
      * Returns the new display preferences as set by the user.
-     * 
+     *
      * @return the new display preferences as set by the user
      */
     public DisplayParameters getDisplayPreferences() {
 
         DisplayParameters displayPreferences = new DisplayParameters();
+
         int selection = (Integer) nAASpinner.getValue();
         displayPreferences.setnAASurroundingPeptides(selection);
+
+//        displayPreferences.setLowResolutionCharts(lowResolutionChartsComboBox.getSelectedIndex() == 0);
+
         return displayPreferences;
-        
+
     }
 
     /**
@@ -91,13 +104,14 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jSeparator1 = new javax.swing.JSeparator();
         backgroundPanel = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         optionsPanel = new javax.swing.JPanel();
         surroundingAminoAcidsLabel = new javax.swing.JLabel();
         nAASpinner = new javax.swing.JSpinner();
+        lowResolutionChartsLabel = new javax.swing.JLabel();
+        lowResolutionChartsComboBox = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Display Settings");
@@ -123,12 +137,18 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Sequence"));
+        optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Display Settings"));
         optionsPanel.setOpaque(false);
 
         surroundingAminoAcidsLabel.setText("Surrounding Amino Acids");
 
         nAASpinner.setModel(new javax.swing.SpinnerNumberModel(2, 0, null, 1));
+
+        lowResolutionChartsLabel.setText("Low Resolution Charts");
+
+        lowResolutionChartsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Yes", "No" }));
+        lowResolutionChartsComboBox.setSelectedIndex(1);
+        lowResolutionChartsComboBox.setEnabled(false);
 
         javax.swing.GroupLayout optionsPanelLayout = new javax.swing.GroupLayout(optionsPanel);
         optionsPanel.setLayout(optionsPanelLayout);
@@ -136,9 +156,13 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
             optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(surroundingAminoAcidsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(lowResolutionChartsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(surroundingAminoAcidsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(nAASpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(nAASpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
+                    .addComponent(lowResolutionChartsComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         optionsPanelLayout.setVerticalGroup(
@@ -148,7 +172,11 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(surroundingAminoAcidsLabel)
                     .addComponent(nAASpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGap(0, 0, 0)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lowResolutionChartsLabel)
+                    .addComponent(lowResolutionChartsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
@@ -169,8 +197,8 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(optionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(optionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
@@ -193,8 +221,8 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Cancel the dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         canceled = true;
@@ -203,8 +231,8 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Close the dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
@@ -214,8 +242,8 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Cancel the dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         canceled = true;
@@ -224,7 +252,8 @@ public class DisplayPreferencesDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JComboBox<String> lowResolutionChartsComboBox;
+    private javax.swing.JLabel lowResolutionChartsLabel;
     private javax.swing.JSpinner nAASpinner;
     private javax.swing.JButton okButton;
     private javax.swing.JPanel optionsPanel;

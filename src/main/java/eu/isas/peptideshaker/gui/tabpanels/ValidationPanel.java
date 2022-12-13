@@ -2685,7 +2685,10 @@ public class ValidationPanel extends javax.swing.JPanel {
 
             // set up the chart
             JFreeChart confidenceChart = new JFreeChart(confidencePlot);
-            ChartPanel chartPanel = new ChartPanel(confidenceChart);
+            ChartPanel chartPanel = new ChartPanel(
+                    confidenceChart,
+                    false //peptideShakerGUI.getDisplayParameters().getLowResolutionCharts()
+            );
             confidenceChart.setTitle("Score vs. Confidence");
 
             // remove the temp 'Area' dataset from the legend
@@ -2790,23 +2793,46 @@ public class ValidationPanel extends javax.swing.JPanel {
         renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
         renderer.setItemMargin(0.0);
         ((CategoryPlot) targetDecoyChart.getPlot()).setRenderer(renderer);
-        CategoryAxis axis = targetDecoyPlot.getDomainAxis();
+        //CategoryAxis axis = targetDecoyPlot.getDomainAxis();
         //axis.setCategoryMargin(0);
 
         // add the confidence marker
         double confidenceValue = confidenceMarker.getValue();
 
-        for (String categorie : categories) {
-            int value = Integer.parseInt(categorie);
+        for (String category : categories) {
+
+            int value = Integer.parseInt(category);
+
             if (value < confidenceValue) {
-                targetDecoyPlot.addDomainMarker(new CategoryMarker(categorie, fdrHighlightColor, new BasicStroke(4)), Layer.BACKGROUND);
+
+                targetDecoyPlot.addDomainMarker(
+                        new CategoryMarker(
+                                category,
+                                fdrHighlightColor,
+                                new BasicStroke(4)
+                        ),
+                        Layer.BACKGROUND
+                );
+
             } else {
-                targetDecoyPlot.addDomainMarker(new CategoryMarker(categorie, fnrHighlightColor, new BasicStroke(4)), Layer.BACKGROUND);
+
+                targetDecoyPlot.addDomainMarker(
+                        new CategoryMarker(
+                                category,
+                                fnrHighlightColor,
+                                new BasicStroke(4)
+                        ),
+                        Layer.BACKGROUND
+                );
             }
         }
 
         // set the chart title
-        ChartPanel chartPanel = new ChartPanel(targetDecoyChart);
+        ChartPanel chartPanel = new ChartPanel(
+                targetDecoyChart,
+                false //peptideShakerGUI.getDisplayParameters().getLowResolutionCharts()
+        );
+
         targetDecoyChart.setTitle("Target vs. Decoy");
 
         // set background color
@@ -2840,7 +2866,11 @@ public class ValidationPanel extends javax.swing.JPanel {
         costBenefitPlot.setRenderer(1, benefitRendrer);
 
         JFreeChart benefitCostChart = new JFreeChart(costBenefitPlot);
-        ChartPanel chartPanel = new ChartPanel(benefitCostChart);
+        ChartPanel chartPanel = new ChartPanel(
+                benefitCostChart,
+                false //peptideShakerGUI.getDisplayParameters().getLowResolutionCharts()
+        );
+
         benefitCostChart.setTitle("FDR vs. Coverage");
 
         // set background color
@@ -2858,6 +2888,7 @@ public class ValidationPanel extends javax.swing.JPanel {
      * Removes the charts.
      */
     private void clearCharts() {
+
         confidenceChartPanel.removeAll();
         confidenceChartPanel.revalidate();
         confidenceChartPanel.repaint();
@@ -2867,12 +2898,14 @@ public class ValidationPanel extends javax.swing.JPanel {
         costBenefitChartPanel.removeAll();
         costBenefitChartPanel.revalidate();
         costBenefitChartPanel.repaint();
+
     }
 
     /**
      * Clears the GUI.
      */
     private void clearScreen() {
+
         nTotalTxt.setText("");
         nValidatedTxt.setText("");
         nFPTxt.setText("");
@@ -2883,6 +2916,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         fnrTxt.setText("");
         resolutionTxt.setText("");
         clearCharts();
+
     }
 
     /**
@@ -3038,9 +3072,9 @@ public class ValidationPanel extends javax.swing.JPanel {
                     PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getProjectParameters());
 
                     miniShaker.proteinMapChanged(
-                            peptideShakerGUI.getIdentification(), 
-                            progressDialog, 
-                            peptideShakerGUI.getIdentificationParameters(), 
+                            peptideShakerGUI.getIdentification(),
+                            progressDialog,
+                            peptideShakerGUI.getIdentificationParameters(),
                             peptideShakerGUI.getSequenceProvider()
                     );
                     modifiedMaps.put("Proteins", false);
@@ -3113,11 +3147,11 @@ public class ValidationPanel extends javax.swing.JPanel {
     private void applyThreshold(String selectedGroup, double threshold, int thresholdType) {
 
         if (threshold < 0 || threshold > 100) {
-            
+
             JOptionPane.showMessageDialog(
-                    this, 
-                    "Please verify the given threshold. Interval: [0, 100].", 
-                    "Threshold Error", 
+                    this,
+                    "Please verify the given threshold. Interval: [0, 100].",
+                    "Threshold Error",
                     JOptionPane.WARNING_MESSAGE
             );
         } else {

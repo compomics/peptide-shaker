@@ -125,7 +125,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="projectReferenceLabel" min="-2" pref="130" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="projectNameIdTxt" pref="521" max="32767" attributes="2"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="typeCmb" min="-2" pref="144" max="-2" attributes="0"/>
@@ -142,7 +142,7 @@
                           <Component id="projectReferenceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="typeCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="13" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -235,13 +235,13 @@
                           <Component id="addSettingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="settingsComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="projectSettingsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="projectSettingsTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="projectSettingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="processingLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="processingTxt" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -391,14 +391,14 @@
                           <Component id="clearId" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseId" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="spectrumFilesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="clearSpectra" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseSpectra" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="spectrumFilesTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="clearDbButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseDbButton" alignment="3" min="-2" max="-2" attributes="0"/>
