@@ -133,7 +133,7 @@
                           <Component id="spectrumCountingLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editSpectrumCountingButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="editDisplayPreferencesButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="displayLbl" alignment="3" min="-2" max="-2" attributes="0"/>

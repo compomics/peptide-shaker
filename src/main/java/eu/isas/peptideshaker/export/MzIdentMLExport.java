@@ -57,7 +57,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
@@ -775,7 +774,23 @@ public class MzIdentMLExport {
                         if (ptmCvTerm != null) {
 
                             tabCounter++;
-                            writeCvTerm(ptmCvTerm, false);
+
+                            if (ptmCvTerm != null) {
+
+                                writeCvTerm(ptmCvTerm);
+
+                            } else {
+
+                                writeCvTerm(
+                                        new CvTerm(
+                                                "PSI-MS",
+                                                "MS:1001460",
+                                                "unknown modification",
+                                                null
+                                        )
+                                );
+                            }
+
                             tabCounter--;
 
                         }
@@ -820,7 +835,23 @@ public class MzIdentMLExport {
                     ptmCvTerm = modification.getPsiModCvTerm();
 
                     tabCounter++;
-                    writeCvTerm(ptmCvTerm, false);
+
+                    if (ptmCvTerm != null) {
+
+                        writeCvTerm(ptmCvTerm);
+
+                    } else {
+
+                        writeCvTerm(
+                                new CvTerm(
+                                        "PSI-MS",
+                                        "MS:1001460",
+                                        "unknown modification",
+                                        null
+                                )
+                        );
+                    }
+
                     tabCounter--;
 
                 }
@@ -2361,16 +2392,10 @@ public class MzIdentMLExport {
                     tabCounter++;
 
                     // add the fragment ions
-                    Iterator<String> fragmentTypeIterator = allFragmentIons.keySet().iterator();
+                    for (String fragmentType : allFragmentIons.keySet()) {
 
-                    while (fragmentTypeIterator.hasNext()) {
+                        for (Integer fragmentCharge : allFragmentIons.get(fragmentType).keySet()) {
 
-                        String fragmentType = fragmentTypeIterator.next();
-                        Iterator<Integer> chargeTypeIterator = allFragmentIons.get(fragmentType).keySet().iterator();
-
-                        while (chargeTypeIterator.hasNext()) {
-
-                            Integer fragmentCharge = chargeTypeIterator.next();
                             ArrayList<IonMatch> ionMatches = allFragmentIons.get(fragmentType).get(fragmentCharge);
                             Ion currentIon = ionMatches.get(0).ion;
                             CvTerm fragmentIonCvTerm = currentIon.getPsiMsCvTerm();

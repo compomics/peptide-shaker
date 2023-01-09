@@ -309,6 +309,29 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.META_MORPHEUS_GPTM.id) + " " + IdentificationParametersCLIParams.META_MORPHEUS_GPTM.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.META_MORPHEUS_GPTM_CATEGORIES.id) + " " + IdentificationParametersCLIParams.META_MORPHEUS_GPTM_CATEGORIES.description + "\n";
         
+        output += "\n\nSage advanced parameters:\n\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_BUCKET_SIZE.id) + " " + IdentificationParametersCLIParams.SAGE_BUCKET_SIZE.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MIN_PEP_LENGTH.id) + " " + IdentificationParametersCLIParams.SAGE_MIN_PEP_LENGTH.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MAX_PEP_LENGTH.id) + " " + IdentificationParametersCLIParams.SAGE_MAX_PEP_LENGTH.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MIN_FRAG_MZ.id) + " " + IdentificationParametersCLIParams.SAGE_MIN_FRAG_MZ.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MAX_FRAG_MZ.id) + " " + IdentificationParametersCLIParams.SAGE_MAX_FRAG_MZ.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MIN_PEP_MASS.id) + " " + IdentificationParametersCLIParams.SAGE_MIN_PEP_MASS.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MAX_PEP_MASS.id) + " " + IdentificationParametersCLIParams.SAGE_MAX_PEP_MASS.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MIN_ION_INDEX.id) + " " + IdentificationParametersCLIParams.SAGE_MIN_ION_INDEX.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MAX_VAR_MODS.id) + " " + IdentificationParametersCLIParams.SAGE_MAX_VAR_MODS.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_DECOY_TAG.id) + " " + IdentificationParametersCLIParams.SAGE_DECOY_TAG.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_GENERATE_DECOYS.id) + " " + IdentificationParametersCLIParams.SAGE_GENERATE_DECOYS.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_TMT.id) + " " + IdentificationParametersCLIParams.SAGE_TMT.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_LFQ.id) + " " + IdentificationParametersCLIParams.SAGE_LFQ.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_DEISOTOPE.id) + " " + IdentificationParametersCLIParams.SAGE_DEISOTOPE.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_CHIMERA.id) + " " + IdentificationParametersCLIParams.SAGE_CHIMERA.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_PREDICT_RT.id) + " " + IdentificationParametersCLIParams.SAGE_PREDICT_RT.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MIN_PEAKS.id) + " " + IdentificationParametersCLIParams.SAGE_MIN_PEAKS.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MAX_PEAKS.id) + " " + IdentificationParametersCLIParams.SAGE_MAX_PEAKS.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_MAX_FRAGMENT_CHARGE.id) + " " + IdentificationParametersCLIParams.SAGE_MAX_FRAGMENT_CHARGE.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_NUM_PSMS.id) + " " + IdentificationParametersCLIParams.SAGE_NUM_PSMS.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_PARALLEL.id) + " " + IdentificationParametersCLIParams.SAGE_PARALLEL.description + "\n";
+        
         output += "\n\nNovor:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.NOVOR_FRAGMENTATION.id) + " " + IdentificationParametersCLIParams.NOVOR_FRAGMENTATION.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.NOVOR_MASS_ANALYZER.id) + " " + IdentificationParametersCLIParams.NOVOR_MASS_ANALYZER.description + "\n";

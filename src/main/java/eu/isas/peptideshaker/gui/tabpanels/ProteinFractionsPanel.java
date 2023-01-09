@@ -554,7 +554,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         // create the peptide chart
         JFreeChart chart = ChartFactory.createBarChart(null, "Fraction", "#Peptides", peptidePlotDataset, PlotOrientation.VERTICAL, false, true, true);
-        ChartPanel chartPanel = new ChartPanel(chart);
+        ChartPanel chartPanel = new ChartPanel(chart, false);
+        //ChartPanel chartPanel = new ChartPanel(chart, peptideShakerGUI.getDisplayParameters().getLowResolutionCharts());
 
         AbstractCategoryItemRenderer renderer;
 
@@ -589,7 +590,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         // create the spectrum chart
         chart = ChartFactory.createBarChart(null, "Fraction", "#Spectra", spectrumPlotDataset, PlotOrientation.VERTICAL, false, true, true);
-        chartPanel = new ChartPanel(chart);
+        chartPanel = new ChartPanel(chart, false);
+        //chartPanel = new ChartPanel(chart, peptideShakerGUI.getDisplayParameters().getLowResolutionCharts());
 
         // set up the renderer
         //if (selectedRows.length == 1) {
@@ -622,7 +624,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         // create the intensity chart
         chart = ChartFactory.createBarChart(null, "Fraction", "Summed Intensity", intensityPlotDataset, PlotOrientation.VERTICAL, false, true, true);
-        chartPanel = new ChartPanel(chart);
+        chartPanel = new ChartPanel(chart, false);
+        //chartPanel = new ChartPanel(chart, peptideShakerGUI.getDisplayParameters().getLowResolutionCharts());
 
         // set up the renderer
 //            if (selectedRows.length == 1) {
@@ -655,7 +658,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         // create the mw chart
         chart = ChartFactory.createBoxAndWhiskerChart(null, "Fraction", "Expected Molecular Weight (kDa)", mwPlotDataset, false);
-        chartPanel = new ChartPanel(chart);
+        chartPanel = new ChartPanel(chart, false);
+        //chartPanel = new ChartPanel(chart, peptideShakerGUI.getDisplayParameters().getLowResolutionCharts());
 
         // set up the renderer
         BoxAndWhiskerRenderer boxPlotRenderer = new BoxAndWhiskerRenderer();
@@ -680,7 +684,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         // create the total peptides count chart
         chart = ChartFactory.createBarChart(null, "Fraction", "Total Peptide Count", totalPeptidesPerFractionPlotDataset, PlotOrientation.VERTICAL, false, true, true);
-        chartPanel = new ChartPanel(chart);
+        chartPanel = new ChartPanel(chart, false);
+        //chartPanel = new ChartPanel(chart, peptideShakerGUI.getDisplayParameters().getLowResolutionCharts());
         renderer = new BarRenderer();
         ((BarRenderer) renderer).setShadowVisible(false);
         renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());

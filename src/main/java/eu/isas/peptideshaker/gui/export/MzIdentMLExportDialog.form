@@ -146,17 +146,17 @@
                           <Component id="contactLastNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="contactLastNameJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="contactEmailLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="contactEmailJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="contactAddressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="contactAddressJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="contactUrlLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="contactUrlJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -304,17 +304,17 @@
                           <Component id="organizationNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="organizationNameJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="organizationEmailLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="organizationEmailJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="organizationAddressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="organizationAddressJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="organizationUrlLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="organizationUrlJTextField" alignment="3" min="-2" max="-2" attributes="0"/>

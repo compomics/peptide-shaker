@@ -431,6 +431,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             // edit the default font?
             //defaults.put("defaultFont", new Font("Segoe UI", Font.PLAIN, 12));
         } catch (Exception e) {
+            // ignore error
         }
 
         if (!numbusLookAndFeelSet) {
@@ -643,9 +644,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             boolean java64bit = CompomicsWrapper.is64BitJava();
             boolean memoryOk = (utilitiesUserParameters.getMemoryParameter() >= 4000);
             String javaVersion = System.getProperty("java.version");
-            boolean javaVersionWarning = javaVersion.startsWith("1.5") 
-                || javaVersion.startsWith("1.6")
-                || javaVersion.startsWith("1.7");
+            boolean javaVersionWarning = javaVersion.startsWith("1.5")
+                    || javaVersion.startsWith("1.6")
+                    || javaVersion.startsWith("1.7");
 
             // add desktop shortcut?
             if (!PeptideShaker.getJarFilePath().equalsIgnoreCase(".")
@@ -2793,20 +2794,30 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             }
 
-            // See if the display preferences need to be updated
+            // check if the display preferences need to be updated
             DisplayParameters newDisplayParameters = projectParametersDialog.getDisplayParameters();
-            // @TODO: uncomment the code below when the display prefrences have been set
-//            if (!newDisplayParameters.isSameAs(getDisplayParameters())) {
-//                setDisplayParameters(newDisplayParameters);
-//                //@TODO: update the display
-//            }
             if (newDisplayParameters.getnAASurroundingPeptides() != getDisplayParameters().getnAASurroundingPeptides()) {
-
                 getDisplayParameters().setnAASurroundingPeptides(newDisplayParameters.getnAASurroundingPeptides());
                 updateSurroundingAminoAcids();
-
             }
         }
+
+        // @TODO: replace the code above when backwards compatibility can be broken
+//            DisplayParameters newDisplayParameters = projectParametersDialog.getDisplayParameters();
+//
+//            if (!newDisplayParameters.isSameAs(getDisplayParameters())) {
+//                
+//                setDisplayParameters(newDisplayParameters);
+//                
+//                //@TODO: update the charts!!!
+//                if (newDisplayParameters.getnAASurroundingPeptides() != getDisplayParameters().getnAASurroundingPeptides()) {
+//
+//                    getDisplayParameters().setnAASurroundingPeptides(newDisplayParameters.getnAASurroundingPeptides());
+//                    updateSurroundingAminoAcids();
+//
+//                }
+//            }
+
     }//GEN-LAST:event_preferencesMenuItemActionPerformed
 
     /**
@@ -3541,7 +3552,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void exportMzIdentMLMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMzIdentMLMenuItemActionPerformed
 
-// @TODO: check that all ptms are mapped to a cv term
         new MzIdentMLExportDialog(this, true);
 
     }//GEN-LAST:event_exportMzIdentMLMenuItemActionPerformed
@@ -5025,11 +5035,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                 databaseClosed = false;
                 e.printStackTrace();
-                
+
                 JOptionPane.showMessageDialog(
-                        null, 
-                        "Failed to close the database.", 
-                        "Database Error", 
+                        null,
+                        "Failed to close the database.",
+                        "Database Error",
                         JOptionPane.WARNING_MESSAGE
                 );
 
@@ -5058,9 +5068,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 if (matchFolder.listFiles() != null && matchFolder.listFiles().length > 0) {
 
                     JOptionPane.showMessageDialog(
-                            null, 
+                            null,
                             "Failed to empty the database folder:\n" + matchFolder.getPath() + ".",
-                            "Database Cleanup Failed", 
+                            "Database Cleanup Failed",
                             JOptionPane.WARNING_MESSAGE
                     );
 
@@ -7078,7 +7088,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (selectedFile != null) {
 
-                try (SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
+                try ( SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
 
                     for (Entry<String, TreeSet<String>> entry : selectedSpectra.entrySet()) {
 
@@ -7151,7 +7161,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                 TagSpectrumAnnotator tagSpectrumAnnotator = new TagSpectrumAnnotator();
 
-                try (SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
+                try ( SimpleFileWriter writer = new SimpleFileWriter(selectedFile, false)) {
 
                     for (long spectrumMatchKey : selectedAssumptions.keySet()) {
 
@@ -7351,11 +7361,38 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getSpectrum(), lastSelectedFolder);
+
+            new ExportGraphicsDialog(
+                    this,
+                    getNormalIcon(),
+                    getWaitingIcon(),
+                    true,
+                    (Component) overviewPanel.getSpectrum(),
+                    lastSelectedFolder
+            );
+
         } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) spectrumIdentificationPanel.getSpectrum(), lastSelectedFolder);
+
+            new ExportGraphicsDialog(
+                    this,
+                    getNormalIcon(),
+                    getWaitingIcon(),
+                    true,
+                    (Component) spectrumIdentificationPanel.getSpectrum(),
+                    lastSelectedFolder
+            );
+
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) modificationsPanel.getSpectrum(), lastSelectedFolder);
+
+            new ExportGraphicsDialog(
+                    this,
+                    getNormalIcon(),
+                    getWaitingIcon(),
+                    true,
+                    (Component) modificationsPanel.getSpectrum(),
+                    lastSelectedFolder
+            );
+
         }
     }
 
@@ -7366,7 +7403,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getSequenceFragmentationPlot(), lastSelectedFolder);
+
+            new ExportGraphicsDialog(
+                    this,
+                    getNormalIcon(),
+                    getWaitingIcon(),
+                    true,
+                    (Component) overviewPanel.getSequenceFragmentationPlot(),
+                    lastSelectedFolder
+            );
+
         }
 //        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
 //            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
@@ -7381,15 +7427,30 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Export the current intensity histogram as a figure.
      */
     public void exportIntensityHistogramAsFigure() {
+
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
 
             ChartPanel chartPanel = overviewPanel.getIntensityHistogramPlot().getChartPanel();
-            ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
-            tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
+            ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart(), false);
+            //ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart(), getDisplayParameters().getLowResolutionCharts());
+            tempChartPanel.setBounds(
+                    new Rectangle(
+                            chartPanel.getBounds().width * 5, 
+                            chartPanel.getBounds().height * 5
+                    )
+            );
 
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, tempChartPanel, lastSelectedFolder);
+            new ExportGraphicsDialog(
+                    this,
+                    getNormalIcon(),
+                    getWaitingIcon(),
+                    true,
+                    tempChartPanel,
+                    lastSelectedFolder
+            );
+
         }
 //        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
 //            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
@@ -7404,18 +7465,40 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Export the current mass error plot as a figure.
      */
     public void exportMassErrorPlotAsFigure() {
+
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
             if (overviewPanel.getMassErrorPlot() != null) {
 
                 ChartPanel chartPanel = overviewPanel.getMassErrorPlot().getChartPanel();
-                ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
-                tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
+                ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart(), false);
+                //ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart(), getDisplayParameters().getLowResolutionCharts());
+                tempChartPanel.setBounds(
+                        new Rectangle(
+                                chartPanel.getBounds().width * 5, 
+                                chartPanel.getBounds().height * 5
+                        )
+                );
 
-                new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, tempChartPanel, lastSelectedFolder);
+                new ExportGraphicsDialog(
+                        this,
+                        getNormalIcon(),
+                        getWaitingIcon(),
+                        true,
+                        tempChartPanel,
+                        lastSelectedFolder
+                );
+
             } else {
-                JOptionPane.showMessageDialog(this, "No m/z error plot to export!", "Export Error", JOptionPane.INFORMATION_MESSAGE);
+                
+                JOptionPane.showMessageDialog(
+                        this, 
+                        "No m/z error plot to export!", 
+                        "Export Error", 
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+                
             }
         }
 //        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
@@ -7435,9 +7518,27 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getBubblePlot(), lastSelectedFolder);
+
+            new ExportGraphicsDialog(
+                    this,
+                    getNormalIcon(),
+                    getWaitingIcon(),
+                    true,
+                    (Component) overviewPanel.getBubblePlot(),
+                    lastSelectedFolder
+            );
+
         } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) spectrumIdentificationPanel.getBubblePlot(), lastSelectedFolder);
+
+            new ExportGraphicsDialog(
+                    this,
+                    getNormalIcon(),
+                    getWaitingIcon(),
+                    true,
+                    (Component) spectrumIdentificationPanel.getBubblePlot(),
+                    lastSelectedFolder
+            );
+
         }
     }
 
@@ -7466,8 +7567,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         sequenceCoverageJCheckBoxMenuItem.setSelected(displayCoverage);
         spectrumJCheckBoxMenuItem.setSelected(displaySpectrum);
 
-        overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
+        overviewPanel.setDisplayOptions(
+                proteinsJCheckBoxMenuItem.isSelected(),
+                peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
+                sequenceCoverageJCheckBoxMenuItem.isSelected(),
+                spectrumJCheckBoxMenuItem.isSelected()
+        );
+
         overviewPanel.updateSeparators();
     }
 

@@ -39,7 +39,12 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param displayPreferences the display preferences
      */
-    public ProjectParametersDialog(java.awt.Frame parentFrame, Dialog owner, SpectrumCountingParameters spectrumCountingPreferences, DisplayParameters displayPreferences) {
+    public ProjectParametersDialog(
+            java.awt.Frame parentFrame, 
+            Dialog owner, 
+            SpectrumCountingParameters spectrumCountingPreferences, 
+            DisplayParameters displayPreferences
+    ) {
         
         super(owner, true);
         initComponents();
@@ -59,7 +64,11 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param displayPreferences the display preferences
      */
-    public ProjectParametersDialog(java.awt.Frame parentFrame, SpectrumCountingParameters spectrumCountingPreferences, DisplayParameters displayPreferences) {
+    public ProjectParametersDialog(
+            java.awt.Frame parentFrame, 
+            SpectrumCountingParameters spectrumCountingPreferences, 
+            DisplayParameters displayPreferences
+    ) {
         
         super(parentFrame, true);
         initComponents();
@@ -70,22 +79,6 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
 
         setLocationRelativeTo(parentFrame);
         setVisible(true);
-    }
-
-    /**
-     * Set up the GUI.
-     *
-     * @param editable boolean indicating whether the settings can be edited
-     */
-    private void setUpGui() {
-
-    }
-
-    /**
-     * Fills the GUI with the given settings.
-     */
-    private void populateGUI() {
-
     }
 
     /**
@@ -203,7 +196,7 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(spectrumCountingLbl)
                     .addComponent(editSpectrumCountingButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editDisplayPreferencesButton)
                     .addComponent(displayLbl))
@@ -311,12 +304,19 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
+        
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(parentFrame, getClass().getResource("/helpFiles/PreferencesDialog.html"),
+        
+        new HelpDialog(
+                parentFrame, 
+                getClass().getResource("/helpFiles/PreferencesDialog.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "Preferences - Help");
+                "Preferences - Help"
+        );
+        
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        
     }//GEN-LAST:event_helpJButtonActionPerformed
 
     /**
@@ -325,10 +325,14 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void editSpectrumCountingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSpectrumCountingButtonActionPerformed
-        SpectrumCountingSettingsDialog spectrumCountingPreferencesDialog = new SpectrumCountingSettingsDialog(parentFrame, spectrumCountingPreferences);
+        
+        SpectrumCountingSettingsDialog spectrumCountingPreferencesDialog 
+                = new SpectrumCountingSettingsDialog(parentFrame, spectrumCountingPreferences);
+        
         if (!spectrumCountingPreferencesDialog.isCanceled()) {
             spectrumCountingPreferences = spectrumCountingPreferencesDialog.getSpectrumCountingPreferences();
         }
+        
     }//GEN-LAST:event_editSpectrumCountingButtonActionPerformed
 
     /**
@@ -337,10 +341,14 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void editDisplayPreferencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editDisplayPreferencesButtonActionPerformed
-        DisplayPreferencesDialog displayPreferencesDialog = new DisplayPreferencesDialog(parentFrame, displayPreferences);
+        
+        DisplayPreferencesDialog displayPreferencesDialog 
+                = new DisplayPreferencesDialog(parentFrame, displayPreferences);
+        
         if (!displayPreferencesDialog.isCanceled()) {
             displayPreferences = displayPreferencesDialog.getDisplayPreferences();
         }
+        
     }//GEN-LAST:event_editDisplayPreferencesButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

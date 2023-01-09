@@ -672,7 +672,8 @@ public class GOEAPanel extends javax.swing.JPanel {
         maxLog2Diff = Math.ceil(maxLog2Diff);
 
         JFreeChart distributionChart = ChartFactory.createBarChart(null, "GO Terms", "Frequency (%)", frquencyPlotDataset, PlotOrientation.VERTICAL, false, true, true);
-        distributionChartPanel = new ChartPanel(distributionChart);
+        distributionChartPanel = new ChartPanel(distributionChart, false);
+        //distributionChartPanel = new ChartPanel(distributionChart, peptideShakerGUI.getDisplayParameters().getLowResolutionCharts());
 
         ((CategoryPlot) distributionChartPanel.getChart().getPlot()).getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
@@ -725,7 +726,8 @@ public class GOEAPanel extends javax.swing.JPanel {
         goFrequencyPlotPanel.repaint();
 
         JFreeChart significanceChart = ChartFactory.createBarChart(null, "GO Terms", "Log2 Difference", significancePlotDataset, PlotOrientation.VERTICAL, false, true, true);
-        signChartPanel = new ChartPanel(significanceChart);
+        signChartPanel = new ChartPanel(significanceChart, false);
+        //signChartPanel = new ChartPanel(significanceChart, peptideShakerGUI.getDisplayParameters().getLowResolutionCharts());
 
         ((CategoryPlot) signChartPanel.getChart().getPlot()).getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 

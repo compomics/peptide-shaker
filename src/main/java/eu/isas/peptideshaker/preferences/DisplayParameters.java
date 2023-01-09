@@ -48,6 +48,11 @@ public class DisplayParameters extends ExperimentObject {
      * The text displayed in the cell of a table in case the data is not loaded.
      */
     public static final String LOADING_MESSAGE = "Loading...";
+    /**
+     * If true, the charts are shown in low resolution. Basically using "new
+     * ChartPanel(chart, true)" instead of "new ChartPanel(chart, false)".
+     */
+    //private Boolean lowResolutionCharts = false;
 
     /**
      * Constructor.
@@ -62,7 +67,6 @@ public class DisplayParameters extends ExperimentObject {
      * should be displayed
      */
     public void showHiddenProteins(boolean showHiddenProteins) {
-        
         this.showHiddenProteins = showHiddenProteins;
     }
 
@@ -72,7 +76,6 @@ public class DisplayParameters extends ExperimentObject {
      * @return true if the hidden proteins should be displayed
      */
     public boolean showHiddenProteins() {
-        
         return showHiddenProteins;
     }
 
@@ -82,7 +85,6 @@ public class DisplayParameters extends ExperimentObject {
      * @param showScores a boolean indicating whether scores should be displayed
      */
     public void showScores(boolean showScores) {
-        
         this.showScores = showScores;
     }
 
@@ -92,7 +94,6 @@ public class DisplayParameters extends ExperimentObject {
      * @return true if the scores are to be displayed
      */
     public boolean showScores() {
-        
         return showScores;
     }
 
@@ -103,7 +104,6 @@ public class DisplayParameters extends ExperimentObject {
      * validated proteins should be displayed
      */
     public void showValidatedProteinsOnly(boolean showValidatedProteinsOnly) {
-        
         this.showValidatedProteinsOnly = showValidatedProteinsOnly;
     }
 
@@ -113,7 +113,6 @@ public class DisplayParameters extends ExperimentObject {
      * @return true if only the validated proteins are to be displayed
      */
     public boolean showValidatedProteinsOnly() {
-        
         return showValidatedProteinsOnly;
     }
 
@@ -124,7 +123,6 @@ public class DisplayParameters extends ExperimentObject {
      * @return the number of amino acids surrounding a peptide sequence
      */
     public int getnAASurroundingPeptides() {
-        
         return nAASurroundingPeptides;
     }
 
@@ -135,7 +133,6 @@ public class DisplayParameters extends ExperimentObject {
      * peptide sequence
      */
     public void setnAASurroundingPeptides(int nAASurroundingPeptides) {
-        
         this.nAASurroundingPeptides = nAASurroundingPeptides;
     }
 
@@ -146,7 +143,6 @@ public class DisplayParameters extends ExperimentObject {
      * @param displayed a boolean indicating whether the PTM shall be displayed
      */
     public void setDisplayedModification(String ptmName, boolean displayed) {
-        
         displayedPTMs.put(ptmName, displayed);
     }
 
@@ -158,7 +154,6 @@ public class DisplayParameters extends ExperimentObject {
      */
     public boolean isDisplayedPTM(String ptmName) {
 
-        
         Boolean result = displayedPTMs.get(ptmName);
 
         if (result == null) {
@@ -176,11 +171,10 @@ public class DisplayParameters extends ExperimentObject {
      */
     public void setDefaultSelection(ArrayList<String> modifications) {
 
-        
-
         for (String ptm : modifications) {
             setDisplayedModification(ptm, true);
         }
+
     }
 
     /**
@@ -190,12 +184,11 @@ public class DisplayParameters extends ExperimentObject {
      */
     public HashSet<String> getDisplayedModifications() {
 
-        
-
         return displayedPTMs.entrySet().stream()
                 .filter(entry -> entry.getValue())
                 .map(Entry::getKey)
                 .collect(Collectors.toCollection(HashSet::new));
+
     }
 
     /**
@@ -204,7 +197,6 @@ public class DisplayParameters extends ExperimentObject {
      * @return true if bars are to be shown in the bubble plot
      */
     public boolean showBars() {
-        
         return showBars;
     }
 
@@ -214,7 +206,6 @@ public class DisplayParameters extends ExperimentObject {
      * @param showBars if the bars in the bubble plot are to be shown
      */
     public void setShowBars(boolean showBars) {
-        
         this.showBars = showBars;
     }
 
@@ -226,7 +217,6 @@ public class DisplayParameters extends ExperimentObject {
      * displays the standard Mascot version
      */
     public boolean useIntensityIonTable() {
-        
         return intensityIonTable;
     }
 
@@ -237,7 +227,46 @@ public class DisplayParameters extends ExperimentObject {
      * shown
      */
     public void setIntensityIonTable(boolean intensityIonTable) {
-        
         this.intensityIonTable = intensityIonTable;
     }
+
+    // @TODO: re-add when breaking backwards compatibility
+//    /**
+//     * Returns true if the charts are to be shown in low resolution.
+//     *
+//     * @return true if the charts are to be shown in low resolution
+//     */
+//    public Boolean getLowResolutionCharts() {
+//
+//        if (lowResolutionCharts == null) {
+//            lowResolutionCharts = false;
+//        }
+//
+//        return lowResolutionCharts;
+//    }
+//
+//    /**
+//     * Set whether the charts are to be shown in low resolution.
+//     *
+//     * @param lowResolutionCharts the lowResolutionCharts to set
+//     */
+//    public void setLowResolutionCharts(Boolean lowResolutionCharts) {
+//        this.lowResolutionCharts = lowResolutionCharts;
+//    }
+//
+//    /**
+//     * Method indicating whether another DisplayParameters object is the same as
+//     * the one considered.
+//     *
+//     * @param anotherDisplayParameters another DisplayParameters object
+//     *
+//     * @return boolean indicating whether another DisplayParameters object is
+//     * the same as the one considered
+//     */
+//    public boolean isSameAs(DisplayParameters anotherDisplayParameters) {
+//
+//        return !(anotherDisplayParameters.getnAASurroundingPeptides() != getnAASurroundingPeptides()
+//                || anotherDisplayParameters.getLowResolutionCharts().booleanValue() != getLowResolutionCharts().booleanValue());
+//
+//    }
 }

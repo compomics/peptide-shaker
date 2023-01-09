@@ -303,7 +303,7 @@ public class NewDialog extends javax.swing.JDialog {
                     .addComponent(projectNameIdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(projectReferenceLabel)
                     .addComponent(typeCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         processingParametersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Settings"));
@@ -398,12 +398,12 @@ public class NewDialog extends javax.swing.JDialog {
                     .addComponent(editSettingsButton)
                     .addComponent(addSettingsButton)
                     .addComponent(settingsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(projectSettingsLabel)
                     .addComponent(projectSettingsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(projectSettingsButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(processingLbl)
                     .addComponent(processingTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -533,13 +533,13 @@ public class NewDialog extends javax.swing.JDialog {
                     .addComponent(idFilesLabel)
                     .addComponent(clearId)
                     .addComponent(browseId))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addGroup(inputFilesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(spectrumFilesLabel)
                     .addComponent(clearSpectra)
                     .addComponent(browseSpectra)
                     .addComponent(spectrumFilesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addGroup(inputFilesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(clearDbButton)
                     .addComponent(browseDbButton)
@@ -1077,6 +1077,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || fileName.endsWith(".pnovo.txt")
                         || fileName.endsWith(".novor.csv")
                         || fileName.endsWith(".coss.tsv")
+                        || fileName.endsWith(".sage.tsv")
                         || fileName.endsWith(".psm")
                         || fileName.endsWith(".omx.gz")
                         || fileName.endsWith(".t.xml.gz")
@@ -1089,6 +1090,7 @@ public class NewDialog extends javax.swing.JDialog {
                         || fileName.endsWith(".pnovo.txt.gz")
                         || fileName.endsWith(".novor.csv.gz")
                         || fileName.endsWith(".coss.tsv.gz")
+                        || fileName.endsWith(".sage.tsv.gz")
                         || fileName.endsWith(".psm.gz")
                         || fileName.endsWith(".zip")
                         || myFile.isDirectory();
@@ -1314,6 +1316,24 @@ public class NewDialog extends javax.swing.JDialog {
                 return "COSS (.coss.tsv, .coss.tsv.gz)";
             }
         };
+        
+        // filter for sage only
+        FileFilter sageFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                String fileName = myFile.getName().toLowerCase();
+
+                return fileName.endsWith(".sage.tsv")
+                        || fileName.endsWith(".sage.tsv.gz")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Sage (.sage.tsv, .sage.tsv.gz)";
+            }
+        };
 
         // filter for Onyase only
         FileFilter onyaseFilter = new FileFilter() {
@@ -1364,6 +1384,7 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.addChoosableFileFilter(novorFilter);
         fileChooser.addChoosableFileFilter(pNovoFilter);
         fileChooser.addChoosableFileFilter(cossFilter);
+        fileChooser.addChoosableFileFilter(sageFilter);
 
         int returnVal = fileChooser.showDialog(this, "Add");
 
@@ -2741,6 +2762,7 @@ public class NewDialog extends javax.swing.JDialog {
                 || lowerCaseName.endsWith(".mzid")
                 || lowerCaseName.endsWith(".csv")
                 || lowerCaseName.endsWith(".tsv")
+                || lowerCaseName.endsWith(".sage")
                 || lowerCaseName.endsWith(".tags")
                 || lowerCaseName.endsWith(".pnovo.txt")
                 || lowerCaseName.endsWith(".tide-search.target.txt")
@@ -2751,6 +2773,7 @@ public class NewDialog extends javax.swing.JDialog {
                 || lowerCaseName.endsWith(".mzid.gz")
                 || lowerCaseName.endsWith(".csv.gz")
                 || lowerCaseName.endsWith(".tsv.gz")
+                || lowerCaseName.endsWith(".sage.tsv.gz")
                 || lowerCaseName.endsWith(".tags.gz")
                 || lowerCaseName.endsWith(".pnovo.txt.gz")
                 || lowerCaseName.endsWith(".tide-search.target.txt.gz")
