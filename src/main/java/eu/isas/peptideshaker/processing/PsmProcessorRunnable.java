@@ -99,7 +99,7 @@ public class PsmProcessorRunnable implements Runnable {
      * localization scorer.
      * @param sequenceProvider The protein sequences provider.
      * @param spectrumProvider The spectrum provider.
-         * @param modificationProvider The modification provider to use.
+     * @param modificationProvider The modification provider to use.
      * @param proteinCount The protein count.
      * @param waitingHandler The waiting handler.
      * @param exceptionHandler The exception handler.
@@ -185,7 +185,7 @@ public class PsmProcessorRunnable implements Runnable {
             return;
         }
 
-        SequenceMatchingParameters modificationSequenceMatchingParameters 
+        SequenceMatchingParameters modificationSequenceMatchingParameters
                 = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
@@ -200,7 +200,7 @@ public class PsmProcessorRunnable implements Runnable {
         );
 
         if (spectrumMatch.getBestPeptideAssumption() != null) {
-            
+
             // Score modification localization
             modificationLocalizationScorer.scorePTMs(
                     identification,
@@ -221,7 +221,13 @@ public class PsmProcessorRunnable implements Runnable {
                     identificationParameters
             );
 
-            // Update protein mapping based on modification profile
+            // Check that there is only one modification per site
+            spectrumMatch.getBestPeptideAssumption().getPeptide().getIndexedVariableModifications();
+            spectrumMatch.getAllPeptideAssumptions().forEach(
+                    peptideAssumption -> peptideAssumption.getPeptide().getIndexedVariableModifications()
+            );
+
+            // update protein mapping based on modification profile
             if (identificationParameters.getProteinInferenceParameters().isModificationRefinement()) {
 
                 spectrumMatch.getAllPeptideAssumptions().forEach(
@@ -229,7 +235,8 @@ public class PsmProcessorRunnable implements Runnable {
                                 peptideAssumption.getPeptide(),
                                 sequenceProvider,
                                 modificationSequenceMatchingParameters
-                        ));
+                        )
+                );
             }
         }
     }

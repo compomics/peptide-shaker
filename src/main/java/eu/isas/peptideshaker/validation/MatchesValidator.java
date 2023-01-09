@@ -1717,7 +1717,7 @@ public class MatchesValidator {
                         continue;
 
                     }
-
+                    
                     updateSpectrumMatchValidationLevel(
                             identification,
                             identificationFeaturesGenerator,
@@ -1730,7 +1730,7 @@ public class MatchesValidator {
                             spectrumKey,
                             applyQCFilters
                     );
-
+                    
                     // update assumption validation level
                     HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> assumptions = spectrumMatch.getPeptideAssumptionsMap();
 

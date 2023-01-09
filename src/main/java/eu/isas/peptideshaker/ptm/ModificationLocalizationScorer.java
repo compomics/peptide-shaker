@@ -1761,6 +1761,9 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                                     sequenceProvider,
                                     waitingHandler
                             );
+                            
+                            // Check that there is only one variable modification per residue
+                            peptideMatch.getPeptide().getIndexedVariableModifications();
 
                             waitingHandler.increaseSecondaryProgressCounter();
 

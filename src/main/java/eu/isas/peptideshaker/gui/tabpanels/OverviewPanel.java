@@ -4354,19 +4354,31 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             // create the coverage plot
             ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = ProteinSequencePanel.getSparkLineDataSeriesCoverage(coverageHeight, coverageColor, colors);
 
-            HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = peptideShakerGUI.getDisplayFeaturesGenerator()
-                    .getResidueAnnotation(
-                            proteinKey,
-                            peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters(),
-                            identificationFeaturesGenerator,
-                            peptideShakerGUI.getMetrics(),
-                            peptideShakerGUI.getIdentification(),
-                            coverageShowAllPeptidesJRadioButtonMenuItem.isSelected(),
-                            searchParameters,
-                            coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()
-                    );
+            HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips;
 
-            // Dirty fix for a bloc-level annotation
+            try {
+
+                proteinTooltips = peptideShakerGUI.getDisplayFeaturesGenerator()
+                        .getResidueAnnotation(
+                                proteinKey,
+                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingParameters(),
+                                identificationFeaturesGenerator,
+                                peptideShakerGUI.getMetrics(),
+                                peptideShakerGUI.getIdentification(),
+                                coverageShowAllPeptidesJRadioButtonMenuItem.isSelected(),
+                                searchParameters,
+                                coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()
+                        );
+
+            } catch (Exception e) {
+
+                // A problem occurred when getting residue annotation, disable tooltips
+                peptideShakerGUI.catchException(e);
+                proteinTooltips = new HashMap<>(0);
+
+            }
+
+            // Bloc-level annotation
             HashMap<Integer, ArrayList<ResidueAnnotation>> blocTooltips = new HashMap<>();
             int aaCpt = 0, blocCpt = 0;
             for (JSparklinesDataSeries jSparklinesDataSeries : sparkLineDataSeriesCoverage) {

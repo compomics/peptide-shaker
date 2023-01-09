@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
@@ -43,6 +39,8 @@ public class PeaksIntensitiesExport {
      * @param psmIDsFile The file with the PSM ids.
      * @param identification the identification
      * @param sequenceMatchingParameters The sequence matching parameters.
+     * @param annotationParameters The spectrum annotation parameters.
+     * @param modificationLocalizationParameters The modification localization parameters.
      * @param modificationParameters The modification parameters.
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
@@ -76,7 +74,7 @@ public class PeaksIntensitiesExport {
 
         if (psmIDsFile != null) {
 
-            waitingHandler.setWaitingText("Exporting mass spectra peaks intensities - Parsing ms2pip results");
+            waitingHandler.setWaitingText("Exporting mass spectra peaks intensities - Parsing PSM IDs");
 
             psmIDs = getPSMids(psmIDsFile);
 
@@ -128,6 +126,8 @@ public class PeaksIntensitiesExport {
      * @param modificationParameters The modification parameters.
      * @param sequenceProvider The sequence provider.
      * @param sequenceMatchingParameters The sequence matching parameters.
+     * @param annotationParameters The spectrum annotation parameters.
+     * @param modificationLocalizationParameters The modification localization parameters.
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The waiting handler.
      */
@@ -146,8 +146,12 @@ public class PeaksIntensitiesExport {
     ) {
 
         // reset the progress bar
+                if (waitingHandler != null) {
+                    
         waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
+                
+                }
 
         ModificationFactory modificationFactory = ModificationFactory.getInstance();
 
@@ -388,18 +392,13 @@ public class PeaksIntensitiesExport {
             //writer.writeLine(line);
             double[] measuredMz = measuredScaledSpectrum.mz;
             double[] measuredIntensities = measuredScaledSpectrum.intensity;
-            /*String annotation = annotationMap.get(measuredMz);
-            
-            if (annotation == null) {
-                annotation = "";
-                
-            }*/
 
             for (int i = 0; i < measuredMz.length; i++) {
 
                 String annotation = annotationMap.get(measuredMz[i]);
 
                 if (annotation == null) {
+                    
                     annotation = "";
 
                 }
@@ -419,8 +418,9 @@ public class PeaksIntensitiesExport {
                 String annotation = annotationMap.get(predMz[i]);
 
                 if (annotation == null) {
+                    
                     annotation = "";
-
+                    
                 }
 
                 String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
