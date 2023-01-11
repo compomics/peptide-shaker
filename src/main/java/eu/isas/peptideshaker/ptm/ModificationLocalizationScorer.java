@@ -535,71 +535,74 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                 Modification modification = modificationProvider.getModification(modName);
                 double modMass = modification.getMass();
 
-                HashMap<Integer, Double> siteToScore = modificationToSiteToScore.get(modMass);
-                HashMap<Integer, String> siteToName = modificationToSiteToName.get(modMass);
+                if (modificationOccurence.containsKey(modMass)) {
 
-                if (siteToScore == null) {
+                    HashMap<Integer, Double> siteToScore = modificationToSiteToScore.get(modMass);
+                    HashMap<Integer, String> siteToName = modificationToSiteToName.get(modMass);
 
-                    siteToScore = new HashMap<>(2);
-                    modificationToSiteToScore.put(modMass, siteToScore);
+                    if (siteToScore == null) {
 
-                    siteToName = new HashMap<>(2);
-                    modificationToSiteToName.put(modMass, siteToName);
+                        siteToScore = new HashMap<>(2);
+                        modificationToSiteToScore.put(modMass, siteToScore);
 
-                }
-
-                ModificationScoring psmScoring = psmScores.getModificationScoring(modName);
-                ModificationScoring peptideScoring = peptideScores.getModificationScoring(modName);
-
-                if (peptideScoring == null) {
-
-                    peptideScoring = new ModificationScoring(modName);
-                    peptideScores.addModificationScoring(modName, peptideScoring);
-
-                }
-
-                for (int site : psmScoring.getScoredSites()) {
-
-                    double psmDScore = psmScoring.getDeltaScore(site);
-                    double peptideDScore = peptideScoring.getDeltaScore(site);
-
-                    if (peptideDScore < psmDScore) {
-
-                        peptideScoring.setDeltaScore(site, psmDScore);
+                        siteToName = new HashMap<>(2);
+                        modificationToSiteToName.put(modMass, siteToName);
 
                     }
 
-                    double psmPScore = psmScoring.getProbabilisticScore(site);
-                    double peptidePScore = peptideScoring.getProbabilisticScore(site);
+                    ModificationScoring psmScoring = psmScores.getModificationScoring(modName);
+                    ModificationScoring peptideScoring = peptideScores.getModificationScoring(modName);
 
-                    if (peptidePScore < psmPScore) {
+                    if (peptideScoring == null) {
 
-                        peptideScoring.setProbabilisticScore(site, psmPScore);
-
-                    }
-
-                    int psmValidationLevel = psmScoring.getLocalizationConfidence(site);
-                    int peptideValidationLevel = peptideScoring.getLocalizationConfidence(site);
-
-                    if (peptideValidationLevel < psmValidationLevel) {
-
-                        peptideScoring.setSiteConfidence(site, psmValidationLevel);
+                        peptideScoring = new ModificationScoring(modName);
+                        peptideScores.addModificationScoring(modName, peptideScoring);
 
                     }
 
-                    double psmScore = ModificationLocalizationParameters.isProbabilisticScoreCalculation() ? psmPScore : psmDScore;
+                    for (int site : psmScoring.getScoredSites()) {
 
-                    Double currentScore = siteToScore.get(site);
+                        double psmDScore = psmScoring.getDeltaScore(site);
+                        double peptideDScore = peptideScoring.getDeltaScore(site);
 
-                    if (currentScore == null) {
+                        if (peptideDScore < psmDScore) {
 
-                        siteToScore.put(site, psmScore);
-                        siteToName.put(site, modName);
+                            peptideScoring.setDeltaScore(site, psmDScore);
 
-                    } else {
+                        }
 
-                        siteToScore.put(site, Math.max(currentScore, psmScore));
+                        double psmPScore = psmScoring.getProbabilisticScore(site);
+                        double peptidePScore = peptideScoring.getProbabilisticScore(site);
 
+                        if (peptidePScore < psmPScore) {
+
+                            peptideScoring.setProbabilisticScore(site, psmPScore);
+
+                        }
+
+                        int psmValidationLevel = psmScoring.getLocalizationConfidence(site);
+                        int peptideValidationLevel = peptideScoring.getLocalizationConfidence(site);
+
+                        if (peptideValidationLevel < psmValidationLevel) {
+
+                            peptideScoring.setSiteConfidence(site, psmValidationLevel);
+
+                        }
+
+                        double psmScore = ModificationLocalizationParameters.isProbabilisticScoreCalculation() ? psmPScore : psmDScore;
+
+                        Double currentScore = siteToScore.get(site);
+
+                        if (currentScore == null) {
+
+                            siteToScore.put(site, psmScore);
+                            siteToName.put(site, modName);
+
+                        } else {
+
+                            siteToScore.put(site, Math.max(currentScore, psmScore));
+
+                        }
                     }
                 }
             }
@@ -609,21 +612,29 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                 if (modificationMatch.getConfident()) {
 
                     double modMass = modificationProvider.getModification(modificationMatch.getModification()).getMass();
-                    int site = modificationMatch.getSite();
 
-                    HashMap<Integer, Double> siteToScore = modificationToSiteToScore.get(modMass);
-                    double currentScore = siteToScore.get(site);
-                    siteToScore.put(site, currentScore + CONFIDENT_OFFSET);
+                    if (modificationOccurence.containsKey(modMass)) {
 
+                        int site = modificationMatch.getSite();
+
+                        HashMap<Integer, Double> siteToScore = modificationToSiteToScore.get(modMass);
+                        double currentScore = siteToScore.get(site);
+                        siteToScore.put(site, currentScore + CONFIDENT_OFFSET);
+
+                    }
                 } else if (modificationMatch.getInferred()) {
 
                     double modMass = modificationProvider.getModification(modificationMatch.getModification()).getMass();
-                    int site = modificationMatch.getSite();
 
-                    HashMap<Integer, Double> siteToScore = modificationToSiteToScore.get(modMass);
-                    double currentScore = siteToScore.get(site);
-                    siteToScore.put(site, currentScore + INFERRED_OFFSET);
+                    if (modificationOccurence.containsKey(modMass)) {
 
+                        int site = modificationMatch.getSite();
+
+                        HashMap<Integer, Double> siteToScore = modificationToSiteToScore.get(modMass);
+                        double currentScore = siteToScore.get(site);
+                        siteToScore.put(site, currentScore + INFERRED_OFFSET);
+
+                    }
                 }
             }
         }
@@ -643,7 +654,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
         }
 
-        // Map the modifications to the best scoring sites
+            // Map the modifications to the best scoring sites
         HashMap<Double, TreeSet<Integer>> mapping = ModificationPeptideMapping.mapModifications(modificationToPossibleSiteMap, modificationOccurence, modificationToSiteToScore);
 
         // Update the modifications of the peptide accordingly
@@ -757,8 +768,6 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
             if (psParameter.getMatchValidationLevel().isValidated() && peptide.getNVariableModifications() > 0) {
 
-                PSModificationScores peptideScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
-
                 if (scorePeptides) {
 
                     scorePTMs(
@@ -769,7 +778,6 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                             sequenceProvider,
                             waitingHandler
                     );
-                    peptideScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
 
                 }
 
@@ -821,6 +829,12 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                     }
                 }
             }
+        }
+        
+        if (confidentSites.isEmpty() && ambiguousSites.isEmpty()) {
+            
+            return;
+            
         }
 
         // Create protein modification matches

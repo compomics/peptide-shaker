@@ -40,7 +40,8 @@ public class PeaksIntensitiesExport {
      * @param identification the identification
      * @param sequenceMatchingParameters The sequence matching parameters.
      * @param annotationParameters The spectrum annotation parameters.
-     * @param modificationLocalizationParameters The modification localization parameters.
+     * @param modificationLocalizationParameters The modification localization
+     * parameters.
      * @param modificationParameters The modification parameters.
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
@@ -127,7 +128,8 @@ public class PeaksIntensitiesExport {
      * @param sequenceProvider The sequence provider.
      * @param sequenceMatchingParameters The sequence matching parameters.
      * @param annotationParameters The spectrum annotation parameters.
-     * @param modificationLocalizationParameters The modification localization parameters.
+     * @param modificationLocalizationParameters The modification localization
+     * parameters.
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The waiting handler.
      */
@@ -146,12 +148,12 @@ public class PeaksIntensitiesExport {
     ) {
 
         // reset the progress bar
-                if (waitingHandler != null) {
-                    
-        waitingHandler.resetSecondaryProgressCounter();
-        waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
-                
-                }
+        if (waitingHandler != null) {
+
+            waitingHandler.resetSecondaryProgressCounter();
+            waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
+
+        }
 
         ModificationFactory modificationFactory = ModificationFactory.getInstance();
 
@@ -348,7 +350,8 @@ public class PeaksIntensitiesExport {
             annotationMap.put(mz, currentLabel);
 
         }
-        
+
+        peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
                 annotationParameters,
                 specificAnnotationParameters,
@@ -361,7 +364,7 @@ public class PeaksIntensitiesExport {
                 modificationSequenceMatchingParameters,
                 false
         );
-        
+
         for (IonMatch match : matches) {
 
             double mz = match.peakMz;
@@ -398,7 +401,7 @@ public class PeaksIntensitiesExport {
                 String annotation = annotationMap.get(measuredMz[i]);
 
                 if (annotation == null) {
-                    
+
                     annotation = "";
 
                 }
@@ -418,9 +421,9 @@ public class PeaksIntensitiesExport {
                 String annotation = annotationMap.get(predMz[i]);
 
                 if (annotation == null) {
-                    
+
                     annotation = "";
-                    
+
                 }
 
                 String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
