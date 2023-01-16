@@ -852,7 +852,7 @@ public class PsPsmSection {
                             result.append(site).append(": Very Confident");
                             break;
                         default:
-                            break;
+                            throw new IllegalArgumentException("Localizatoin confidence level not recognized: " + ptmConfidence + ".");
                     }
                 }
 

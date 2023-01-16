@@ -14,6 +14,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.modification.ModificationLocalizationScore;
 import com.compomics.util.experiment.identification.modification.peptide_mapping.ModificationPeptideMapping;
+import com.compomics.util.experiment.identification.modification.peptide_mapping.performance.HistoneExample;
 import com.compomics.util.experiment.identification.modification.scores.PhosphoRS;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
@@ -1127,6 +1128,8 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                         modificationOccurrenceMap,
                         modificationToSiteToScore
                 );
+                
+                HistoneExample.exportHistoneData(peptide.getSequence(), modificationToPossibleSiteMap, modificationOccurrenceMap, modificationToSiteToScore, matchedSiteByModification, spectrumMatch.getBestPeptideAssumption().getRawScore());
 
                 /*for (Double modID: matchedSiteByModification.keySet()) {
                     

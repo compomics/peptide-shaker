@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.processing;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.modifications.ModificationProvider;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.modification.peptide_mapping.performance.HistoneExample;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -127,6 +128,9 @@ public class PsmProcessor {
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+        
+        // Benchmark
+        HistoneExample.close();
 
     }
 }
