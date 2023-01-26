@@ -14,7 +14,6 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.modification.ModificationLocalizationScore;
 import com.compomics.util.experiment.identification.modification.peptide_mapping.ModificationPeptideMapping;
-import com.compomics.util.experiment.identification.modification.peptide_mapping.performance.HistoneExample;
 import com.compomics.util.experiment.identification.modification.scores.PhosphoRS;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
@@ -34,9 +33,7 @@ import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -619,8 +616,19 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                         int site = modificationMatch.getSite();
 
                         HashMap<Integer, Double> siteToScore = modificationToSiteToScore.get(modMass);
-                        double currentScore = siteToScore.get(site);
-                        siteToScore.put(site, currentScore + CONFIDENT_OFFSET);
+                        Double currentScore = siteToScore.get(site);
+
+                        if (currentScore == null) {
+
+                            siteToScore.put(site, (double) CONFIDENT_OFFSET);
+                            HashMap<Integer, String> siteToName = modificationToSiteToName.get(modMass);
+                            siteToName.put(site, modificationMatch.getModification());
+
+                        } else {
+
+                            siteToScore.put(site, currentScore + CONFIDENT_OFFSET);
+
+                        }
 
                     }
                 } else if (modificationMatch.getInferred()) {
@@ -632,9 +640,19 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                         int site = modificationMatch.getSite();
 
                         HashMap<Integer, Double> siteToScore = modificationToSiteToScore.get(modMass);
-                        double currentScore = siteToScore.get(site);
-                        siteToScore.put(site, currentScore + INFERRED_OFFSET);
+                        Double currentScore = siteToScore.get(site);
 
+                        if (currentScore == null) {
+
+                            siteToScore.put(site, (double) INFERRED_OFFSET);
+                            HashMap<Integer, String> siteToName = modificationToSiteToName.get(modMass);
+                            siteToName.put(site, modificationMatch.getModification());
+
+                        } else {
+
+                            siteToScore.put(site, currentScore + INFERRED_OFFSET);
+
+                        }
                     }
                 }
             }
@@ -655,7 +673,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
         }
 
-            // Map the modifications to the best scoring sites
+        // Map the modifications to the best scoring sites
         HashMap<Double, TreeSet<Integer>> mapping = ModificationPeptideMapping.mapModifications(modificationToPossibleSiteMap, modificationOccurence, modificationToSiteToScore);
 
         // Update the modifications of the peptide accordingly
@@ -670,6 +688,12 @@ public class ModificationLocalizationScorer extends ExperimentObject {
             for (int site : mappingEntry.getValue()) {
 
                 String modName = modificationToSiteToName.get(modMass).get(site);
+
+                if (modName == null) {
+
+                    throw new IllegalArgumentException("No modification found at site " + site + " for modification mass " + modMass + ".");
+
+                }
 
                 ModificationMatch modificationMatch = new ModificationMatch(modName, site);
 
@@ -831,11 +855,11 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                 }
             }
         }
-        
+
         if (confidentSites.isEmpty() && ambiguousSites.isEmpty()) {
-            
+
             return;
-            
+
         }
 
         // Create protein modification matches
@@ -847,7 +871,6 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
             for (Entry<Double, String> entry2 : entry1.getValue().entrySet()) {
 
-                double mass = entry2.getKey();
                 String modName = entry2.getValue();
 
                 ModificationMatch modificationMatch = new ModificationMatch(modName, site);
@@ -1030,37 +1053,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                 HashMap<Integer, String> modificationPossibleSites = possiblePositions.get(modMass);
                 int nPossibleSites = modificationPossibleSites.size();
 
-                if (nPossibleSites < nMods) {
-
-                    throw new IllegalArgumentException(
-                            "The occurence of modification of mass " + modMass + " (" + modificationMatches.size()
-                            + ") is higher than the number of possible sites (" + modificationPossibleSites.size() + ") on sequence " + peptide.getSequence()
-                            + " in spectrum " + spectrumMatch.getKey() + "."
-                    );
-
-                } else if (modificationPossibleSites.size() == modificationMatches.size()) {
-
-                    for (ModificationMatch modMatch : modificationMatches) {
-
-                        String modName = modMatch.getModification();
-                        int site = modMatch.getSite();
-                        ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
-
-                        if (modificationScoring == null) {
-
-                            modificationScoring = new ModificationScoring(modName);
-                            modificationScores.addModificationScoring(modName, modificationScoring);
-
-                        }
-
-                        modificationScoring.setSiteConfidence(site, ModificationScoring.VERY_CONFIDENT);
-                        modMatch.setConfident(true);
-
-                        assignedModifications.add(modMatch);
-
-                    }
-
-                } else {
+                if (nMods <= nPossibleSites) {
 
                     int[] sites = modificationPossibleSites.keySet().stream()
                             .mapToInt(a -> a)
@@ -1096,12 +1089,18 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                         siteToScoreMap.put(site, score);
 
                     }
+
+                } else {
+
+                    throw new IllegalArgumentException(
+                            "The occurence of modification of mass " + modMass + " (" + modificationMatches.size()
+                            + ") is higher than the number of possible sites (" + modificationPossibleSites.size() + ") on sequence " + peptide.getSequence()
+                            + " in spectrum " + spectrumMatch.getKey() + "."
+                    );
                 }
             }
 
-            if (!modificationToSiteToScore.isEmpty()) {
-
-                /*System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            /*System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 System.out.println("Peptide sequence: " + peptide.getSequence());
                 
                 for (Double modID: modificationToPossibleSiteMap.keySet()) {
@@ -1122,16 +1121,16 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                 }
                 
                 System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");*/
-                // Distribute modifications among acceptor sites based on their score
-                HashMap<Double, TreeSet<Integer>> matchedSiteByModification = ModificationPeptideMapping.mapModifications(
-                        modificationToPossibleSiteMap,
-                        modificationOccurrenceMap,
-                        modificationToSiteToScore
-                );
-                
-                HistoneExample.exportHistoneData(peptide.getSequence(), modificationToPossibleSiteMap, modificationOccurrenceMap, modificationToSiteToScore, matchedSiteByModification, spectrumMatch.getBestPeptideAssumption().getRawScore());
+            // Distribute modifications among acceptor sites based on their score
+            HashMap<Double, TreeSet<Integer>> matchedSiteByModification = ModificationPeptideMapping.mapModifications(
+                    modificationToPossibleSiteMap,
+                    modificationOccurrenceMap,
+                    modificationToSiteToScore
+            );
 
-                /*for (Double modID: matchedSiteByModification.keySet()) {
+//                HistoneExample.exportHistoneData(peptide.getSequence(), modificationToPossibleSiteMap, modificationOccurrenceMap, modificationToSiteToScore, matchedSiteByModification, spectrumMatch.getBestPeptideAssumption().getRawScore());
+
+            /*for (Double modID: matchedSiteByModification.keySet()) {
                     
                     TreeSet<Integer> sites = matchedSiteByModification.get(modID);
                 
@@ -1151,71 +1150,80 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                 }
                 
                 System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");*/
-                // Assign confidence levels to the sites mapped
-                for (Entry<Double, TreeSet<Integer>> entry : matchedSiteByModification.entrySet()) {
+            // Assign confidence levels to the sites mapped
+            for (Entry<Double, TreeSet<Integer>> entry : matchedSiteByModification.entrySet()) {
 
-                    double modificationMass = entry.getKey();
-                    int[] sortedSelectedSites = entry.getValue().stream().mapToInt(a -> a).toArray();
-                    int[] sortedPossibleSites = modificationToSiteToScore.get(modificationMass).keySet().stream().mapToInt(a -> a).toArray();
+                double modificationMass = entry.getKey();
+                int[] sortedSelectedSites = entry.getValue().stream().mapToInt(a -> a).toArray();
 
-                    ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modificationMass);
+                ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modificationMass);
 
-                    if (sortedSelectedSites.length > modificationMatches.size()) {
+                if (sortedSelectedSites.length > modificationMatches.size()) {
 
-                        throw new IllegalArgumentException("More sites than modifications found when assigning confidence levels at mass " + modificationMass + ".");
+                    throw new IllegalArgumentException("More sites than modifications found when assigning confidence levels at mass " + modificationMass + ".");
+
+                }
+
+                HashMap<Integer, String> modificationPossibleSites = possiblePositions.get(modificationMass);
+                int nMods = modificationMatches.size();
+                int nPossibleSites = modificationPossibleSites.size();
+
+                double randomScoreThreshold = modificationScoringParameters.getSelectedProbabilisticScore().getRandomThreshold(nMods, nPossibleSites);
+                double confidenceThreshold = modificationScoringParameters.getProbabilisticScoreThreshold();
+                double dThreshold = modificationScoringParameters.getDScoreThreshold();
+
+                for (int siteI = 0; siteI < sortedSelectedSites.length; siteI++) {
+
+                    int site = sortedSelectedSites[siteI];
+
+                    String modName = modificationPossibleSites.get(site);
+
+                    ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
+
+                    if (modificationScoring == null) {
+
+                        modificationScoring = new ModificationScoring(modName);
+                        modificationScores.addModificationScoring(modName, modificationScoring);
 
                     }
 
-                    HashMap<Integer, String> modificationPossibleSites = possiblePositions.get(modificationMass);
-                    int nMods = modificationMatches.size();
-                    int nPossibleSites = modificationPossibleSites.size();
+                    ModificationMatch modificationMatch = new ModificationMatch(modName, site);
+                    assignedModifications.add(modificationMatch);
 
-                    double randomScoreThreshold = modificationScoringParameters.getSelectedProbabilisticScore().getRandomThreshold(nMods, nPossibleSites);
-                    double confidenceThreshold = modificationScoringParameters.getProbabilisticScoreThreshold();
-                    double dThreshold = modificationScoringParameters.getDScoreThreshold();
+                    double score = modificationToSiteToScore.get(modificationMass).get(site);
 
-                    for (int siteI = 0; siteI < sortedSelectedSites.length; siteI++) {
+                    if (nMods == nPossibleSites) {
 
-                        int site = sortedSelectedSites[siteI];
+                        modificationScoring.setSiteConfidence(site, ModificationScoring.VERY_CONFIDENT);
+                        modificationMatch.setConfident(true);
 
-                        String modName = modificationPossibleSites.get(site);
+                    } else if (modificationScoringParameters.isProbabilisticScoreCalculation() && score >= confidenceThreshold
+                            || !modificationScoringParameters.isProbabilisticScoreCalculation() && score >= dThreshold) {
 
-                        ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
+                        modificationScoring.setSiteConfidence(site, ModificationScoring.CONFIDENT);
+                        modificationMatch.setConfident(true);
 
-                        if (modificationScoring == null) {
+                    } else if (modificationScoringParameters.isProbabilisticScoreCalculation() && score > randomScoreThreshold) {
 
-                            modificationScoring = new ModificationScoring(modName);
-                            modificationScores.addModificationScoring(modName, modificationScoring);
+                        modificationScoring.setSiteConfidence(site, ModificationScoring.DOUBTFUL);
+                        modificationMatch.setConfident(false);
 
-                        }
+                    } else {
 
-                        ModificationMatch modificationMatch = new ModificationMatch(modName, site);
-                        assignedModifications.add(modificationMatch);
+                        modificationScoring.setSiteConfidence(site, ModificationScoring.RANDOM);
+                        modificationMatch.setConfident(false);
 
-                        double score = modificationToSiteToScore.get(modificationMass).get(site);
-
-                        if (modificationScoringParameters.isProbabilisticScoreCalculation() && score >= confidenceThreshold
-                                || !modificationScoringParameters.isProbabilisticScoreCalculation() && score >= dThreshold) {
-
-                            modificationScoring.setSiteConfidence(site, ModificationScoring.CONFIDENT);
-                            modificationMatch.setConfident(true);
-
-                        } else if (modificationScoringParameters.isProbabilisticScoreCalculation() && score > randomScoreThreshold) {
-
-                            modificationScoring.setSiteConfidence(site, ModificationScoring.DOUBTFUL);
-                            modificationMatch.setConfident(false);
-
-                        } else {
-
-                            modificationScoring.setSiteConfidence(site, ModificationScoring.RANDOM);
-                            modificationMatch.setConfident(false);
-
-                        }
                     }
                 }
             }
 
             ModificationMatch[] modificationMatches = assignedModifications.stream().toArray(ModificationMatch[]::new);
+
+            if (modificationMatches.length < nVariableModifications) {
+
+                throw new IllegalArgumentException("Only " + modificationMatches.length + " modifications mapped where " + nVariableModifications + " required.");
+
+            }
 
             peptide.setVariableModifications(modificationMatches);
 
