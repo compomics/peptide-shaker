@@ -795,8 +795,8 @@ public class PercolatorUtils {
             scaledPredictedIntensity[i] = predictedIntensity[i] / scaleFactorPredicted;
         }
 
-        Spectrum scaledMeasuredSpectrum = new Spectrum(null, measuredSpectrum.mz, scaledMeasuredIntensity);
-        Spectrum scaledPredictedSpectrum = new Spectrum(null, predictedSpectrum.mz, scaledPredictedIntensity);
+        Spectrum scaledMeasuredSpectrum = new Spectrum(null, measuredSpectrum.mz, scaledMeasuredIntensity, 2);
+        Spectrum scaledPredictedSpectrum = new Spectrum(null, predictedSpectrum.mz, scaledPredictedIntensity, 2);
 
         ArrayList<Spectrum> scaledSpectra = new ArrayList<>(2);
         scaledSpectra.add(scaledMeasuredSpectrum);
@@ -848,8 +848,8 @@ public class PercolatorUtils {
             mzs[i] = predictedSpectrum.mz[alignedPeaks.get(i).get(1)];
         }
 
-        Spectrum normMeasuredSpectrum = new Spectrum(null, mzs, normMeasuredInts);
-        Spectrum normPredictedSpectrum = new Spectrum(null, mzs, normPredictedInts);
+        Spectrum normMeasuredSpectrum = new Spectrum(null, mzs, normMeasuredInts, 2);
+        Spectrum normPredictedSpectrum = new Spectrum(null, mzs, normPredictedInts, 2);
 
         ArrayList<Spectrum> normSpectra = new ArrayList<>();
         normSpectra.add(normMeasuredSpectrum);

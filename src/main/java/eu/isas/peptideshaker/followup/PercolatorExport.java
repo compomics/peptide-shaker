@@ -271,7 +271,7 @@ public class PercolatorExport {
                        predictionsArray[i] = predictions.get(index); 
                     }
                     
-                    Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray);
+                    Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray, 2);
                     
                     double[] mzsBArray = new double[mzsB.size()];
                     double[] predictionsBArray = new double[mzsB.size()];
@@ -280,7 +280,7 @@ public class PercolatorExport {
                         predictionsBArray[i] = predictionsB.get(i);
                     }
                     
-                    Spectrum predictedBionSpectrum = new Spectrum(null, mzsBArray, predictionsBArray);
+                    Spectrum predictedBionSpectrum = new Spectrum(null, mzsBArray, predictionsBArray, 2);
                     
                     double[] mzsYArray = new double[mzsY.size()];
                     double[] predictionsYArray = new double[mzsY.size()];
@@ -289,7 +289,7 @@ public class PercolatorExport {
                         predictionsYArray[i] = predictionsY.get(i);
                     }
                     
-                    Spectrum predictedYionSpectrum = new Spectrum(null, mzsYArray, predictionsYArray);
+                    Spectrum predictedYionSpectrum = new Spectrum(null, mzsYArray, predictionsYArray, 2);
                     
                     ArrayList<Spectrum> predictedSpectra = new ArrayList<>();
                     predictedSpectra.add(predictedSpectrum);
@@ -336,7 +336,7 @@ public class PercolatorExport {
                predictionsArray[i] = predictions.get(index); 
             }
 
-            Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray);
+            Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray, 2);
             
             double[] mzsBArray = new double[mzsB.size()];
             double[] predictionsBArray = new double[mzsB.size()];
@@ -345,7 +345,7 @@ public class PercolatorExport {
                 predictionsBArray[i] = predictionsB.get(i);
             }
 
-            Spectrum predictedBionSpectrum = new Spectrum(null, mzsBArray, predictionsBArray);
+            Spectrum predictedBionSpectrum = new Spectrum(null, mzsBArray, predictionsBArray, 2);
 
             double[] mzsYArray = new double[mzsY.size()];
             double[] predictionsYArray = new double[mzsY.size()];
@@ -354,7 +354,7 @@ public class PercolatorExport {
                 predictionsYArray[i] = predictionsY.get(i);
             }
 
-            Spectrum predictedYionSpectrum = new Spectrum(null, mzsYArray, predictionsYArray);
+            Spectrum predictedYionSpectrum = new Spectrum(null, mzsYArray, predictionsYArray, 2);
             
             ArrayList<Spectrum> predictedSpectra = new ArrayList<>();
             predictedSpectra.add(predictedSpectrum);
