@@ -110,8 +110,15 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ProteinDetailsProvider proteinDetailsProvider, SequenceProvider sequenceProvider, GeneMaps geneMaps,
-            DisplayFeaturesGenerator displayFeaturesGenerator, ExceptionHandler exceptionHandler, long[] proteinKeys) {
+    public ProteinTableModel(
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            ProteinDetailsProvider proteinDetailsProvider,
+            SequenceProvider sequenceProvider,
+            GeneMaps geneMaps,
+            DisplayFeaturesGenerator displayFeaturesGenerator,
+            ExceptionHandler exceptionHandler, long[] proteinKeys
+    ) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.proteinDetailsProvider = proteinDetailsProvider;
@@ -137,8 +144,15 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * the display elements
      * @param proteinKeys the keys of the protein matches to display
      */
-    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ProteinDetailsProvider proteinDetailsProvider, SequenceProvider sequenceProvider, GeneMaps geneMaps,
-            DisplayFeaturesGenerator displayFeaturesGenerator, long[] proteinKeys) {
+    public void updateDataModel(
+            Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            ProteinDetailsProvider proteinDetailsProvider,
+            SequenceProvider sequenceProvider,
+            GeneMaps geneMaps,
+            DisplayFeaturesGenerator displayFeaturesGenerator,
+            long[] proteinKeys
+    ) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.proteinDetailsProvider = proteinDetailsProvider;
@@ -179,6 +193,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 
     @Override
     public String getColumnName(int column) {
+
         switch (column) {
             case 0:
                 return " ";
@@ -209,6 +224,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             default:
                 return "";
         }
+
     }
 
     @Override
@@ -230,12 +246,12 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 //                dataMissingAtRow(row);
 //                return DisplayParameters.LOADING_MESSAGE;
 //            }
-
             long proteinKey = proteinKeys[viewIndex];
 
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
             switch (column) {
+
                 case 1:
 
                     PSParameter psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
@@ -303,6 +319,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     doubleValues.add((double) nConfidentPsms);
                     doubleValues.add((double) nDoubtfulPsms);
                     doubleValues.add((double) (nPsms - nConfidentPsms - nDoubtfulPsms));
+
                     return new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
 
                 case 9:
@@ -314,11 +331,13 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     return ProteinUtils.computeMolecularWeight(sequenceProvider.getSequence(proteinMatch.getLeadingAccession()));
 
                 case 11:
+
                     psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
                     return showScores ? psParameter.getTransformedScore() : psParameter.getConfidence();
 
                 case 12:
+
                     psParameter = (PSParameter) proteinMatch.getUrParam(PSParameter.dummy);
 
                     return psParameter.getMatchValidationLevel().getIndex();
@@ -343,11 +362,15 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 
     @Override
     public Class getColumnClass(int columnIndex) {
+
         for (int i = 0; i < getRowCount(); i++) {
+
             if (getValueAt(i, columnIndex) != null) {
                 return getValueAt(i, columnIndex).getClass();
             }
+
         }
+
         return String.class;
     }
 
@@ -396,8 +419,16 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * confidence
      * @param maxProteinKeyLength the longest protein key to display
      */
-    public static void setProteinTableProperties(JTable proteinTable, Color sparklineColor, Color sparklineColorNotValidated,
-            Color sparklineColorNotFound, Color sparklineColorDoubtful, DecimalFormat scoreAndConfidenceDecimalFormat, Class parentClass, Integer maxProteinKeyLength) {
+    public static void setProteinTableProperties(
+            JTable proteinTable,
+            Color sparklineColor,
+            Color sparklineColorNotValidated,
+            Color sparklineColorNotFound,
+            Color sparklineColorDoubtful,
+            DecimalFormat scoreAndConfidenceDecimalFormat,
+            Class parentClass,
+            Integer maxProteinKeyLength
+    ) {
 
         // @TODO: find a better location for this method?
         // the index column
@@ -441,8 +472,20 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         proteinInferenceTooltipMap.put(PSParameter.RELATED_AND_UNRELATED, "Related and Unrelated Proteins");
         proteinInferenceTooltipMap.put(PSParameter.UNRELATED, "Unrelated Proteins");
 
-        proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
-        proteinTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(sparklineColor, proteinInferenceColorMap, proteinInferenceTooltipMap));
+        proteinTable.getColumn("Accession").setCellRenderer(
+                new HtmlLinksRenderer(
+                        TableProperties.getSelectedRowHtmlTagFontColor(),
+                        TableProperties.getNotSelectedRowHtmlTagFontColor()
+                )
+        );
+
+        proteinTable.getColumn("PI").setCellRenderer(
+                new JSparklinesIntegerColorTableCellRenderer(
+                        sparklineColor,
+                        proteinInferenceColorMap,
+                        proteinInferenceTooltipMap
+                )
+        );
 
         // use a gray color for no decoy searches
         Color nonValidatedColor = sparklineColorNotValidated;
@@ -452,48 +495,132 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         sparklineColors.add(nonValidatedColor);
         sparklineColors.add(sparklineColorNotFound);
 
-        JSparklinesArrayListBarChartTableCellRenderer coverageCellRendered = new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumExceptLastNumber);
-        coverageCellRendered.showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0.00"));
+        JSparklinesArrayListBarChartTableCellRenderer coverageCellRendered
+                = new JSparklinesArrayListBarChartTableCellRenderer(
+                        PlotOrientation.HORIZONTAL,
+                        100.0, sparklineColors,
+                        JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumExceptLastNumber
+                );
+
+        coverageCellRendered.showNumberAndChart(
+                true,
+                TableProperties.getLabelWidth(),
+                new DecimalFormat("0.00")
+        );
+
         proteinTable.getColumn("Coverage").setCellRenderer(coverageCellRendered);
 
-        JSparklinesArrayListBarChartTableCellRenderer peptidesCellRenderer = new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
-        peptidesCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
+        JSparklinesArrayListBarChartTableCellRenderer peptidesCellRenderer
+                = new JSparklinesArrayListBarChartTableCellRenderer(
+                        PlotOrientation.HORIZONTAL,
+                        100.0, sparklineColors,
+                        JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers
+                );
+
+        peptidesCellRenderer.showNumberAndChart(
+                true,
+                TableProperties.getLabelWidth(),
+                new DecimalFormat("0")
+        );
+
         proteinTable.getColumn("#Peptides").setCellRenderer(peptidesCellRenderer);
 
-        JSparklinesArrayListBarChartTableCellRenderer spectraCellRenderer = new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
-        spectraCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
+        JSparklinesArrayListBarChartTableCellRenderer spectraCellRenderer
+                = new JSparklinesArrayListBarChartTableCellRenderer(
+                        PlotOrientation.HORIZONTAL,
+                        100.0, sparklineColors,
+                        JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers
+                );
+
+        spectraCellRenderer.showNumberAndChart(
+                true,
+                TableProperties.getLabelWidth(),
+                new DecimalFormat("0")
+        );
+
         proteinTable.getColumn("#Spectra").setCellRenderer(spectraCellRenderer);
 
-        JSparklinesBarChartTableCellRenderer spectrumCountingCellRenderer = new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor);
-        spectrumCountingCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth() + 20, new DecimalFormat("0.00E00"));
+        JSparklinesBarChartTableCellRenderer spectrumCountingCellRenderer
+                = new JSparklinesBarChartTableCellRenderer(
+                        PlotOrientation.HORIZONTAL,
+                        10.0, sparklineColor
+                );
+
+        spectrumCountingCellRenderer.showNumberAndChart(
+                true,
+                TableProperties.getLabelWidth() + 20,
+                new DecimalFormat("0.00E00")
+        );
+
         proteinTable.getColumn("MS2 Quant.").setCellRenderer(spectrumCountingCellRenderer);
 
-        JSparklinesBarChartTableCellRenderer mwCellRenderer = new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor);
+        JSparklinesBarChartTableCellRenderer mwCellRenderer
+                = new JSparklinesBarChartTableCellRenderer(
+                        PlotOrientation.HORIZONTAL,
+                        10.0,
+                        sparklineColor
+                );
+
         mwCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth());
         proteinTable.getColumn("MW").setCellRenderer(mwCellRenderer);
 
-        proteinTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer(Color.WHITE, Color.BLACK));
+        proteinTable.getColumn("Chr").setCellRenderer(
+                new ChromosomeTableCellRenderer(
+                        Color.WHITE,
+                        Color.BLACK
+                )
+        );
 
         try {
-            proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColor));
+            proteinTable.getColumn("Confidence").setCellRenderer(
+                    new JSparklinesBarChartTableCellRenderer(
+                            PlotOrientation.HORIZONTAL,
+                            100.0,
+                            sparklineColor
+                    )
+            );
+
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                     true, TableProperties.getLabelWidth() - 20, scoreAndConfidenceDecimalFormat);
+
         } catch (IllegalArgumentException e) {
-            proteinTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColor));
+
+            proteinTable.getColumn("Score").setCellRenderer(
+                    new JSparklinesBarChartTableCellRenderer(
+                            PlotOrientation.HORIZONTAL,
+                            100.0,
+                            sparklineColor
+                    )
+            );
+
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumberAndChart(
                     true, TableProperties.getLabelWidth() - 20, scoreAndConfidenceDecimalFormat);
         }
 
-        proteinTable.getColumn("").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(parentClass), MatchValidationLevel.getTooltipMap()));
-        proteinTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(parentClass.getResource("/icons/star_yellow.png")),
-                new ImageIcon(parentClass.getResource("/icons/star_grey.png")),
-                new ImageIcon(parentClass.getResource("/icons/star_grey.png")),
-                "Starred", null, null));
+        proteinTable.getColumn("").setCellRenderer(
+                new JSparklinesIntegerIconTableCellRenderer(
+                        MatchValidationLevel.getIconMap(parentClass),
+                        MatchValidationLevel.getTooltipMap()
+                )
+        );
+
+        proteinTable.getColumn("  ").setCellRenderer(
+                new TrueFalseIconRenderer(
+                        new ImageIcon(parentClass.getResource("/icons/star_yellow.png")),
+                        new ImageIcon(parentClass.getResource("/icons/star_grey.png")),
+                        new ImageIcon(parentClass.getResource("/icons/star_grey.png")),
+                        "Starred", null, null
+                )
+        );
 
         // set the preferred size of the accession column
         if (maxProteinKeyLength != null) {
-            Integer width = getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6, maxProteinKeyLength);
+            Integer width = getPreferredAccessionColumnWidth(
+                    proteinTable,
+                    proteinTable.getColumn("Accession").getModelIndex(),
+                    6,
+                    maxProteinKeyLength
+            );
 
             if (width != null) {
                 proteinTable.getColumn("Accession").setMinWidth(width);
@@ -513,13 +640,18 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * cannot be set.
      *
      * @param table the table
-     * @param colIndex the colum index
+     * @param colIndex the column index
      * @param margin the margin to add
      * @param maxProteinKeyLength the maximal protein key length
      *
      * @return the preferred width of the column
      */
-    public static Integer getPreferredAccessionColumnWidth(JTable table, int colIndex, int margin, Integer maxProteinKeyLength) {
+    public static Integer getPreferredAccessionColumnWidth(
+            JTable table,
+            int colIndex,
+            int margin,
+            Integer maxProteinKeyLength
+    ) {
 
         DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
         TableColumn col = colModel.getColumn(colIndex);

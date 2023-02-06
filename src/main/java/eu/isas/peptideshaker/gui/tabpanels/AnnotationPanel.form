@@ -104,7 +104,7 @@
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="picrLinkJLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="142" max="32767" attributes="0"/>
+              <EmptySpace pref="124" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -114,7 +114,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Basic Protein Annotation"/>
+            <TitledBorder title="Basic Protein Annotation">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -270,7 +272,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="UniProt - protein knowledgebase"/>
+            <TitledBorder title="UniProt - protein knowledgebase">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -335,7 +339,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="DASty - protein sequence features"/>
+            <TitledBorder title="DASty - protein sequence features">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -400,7 +406,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Reactome - pathway database"/>
+            <TitledBorder title="Reactome - pathway database">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -465,7 +473,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="STRING - protein interaction"/>
+            <TitledBorder title="STRING - protein interaction">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -530,7 +540,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="DAVID - functional annotation"/>
+            <TitledBorder title="DAVID - functional annotation">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -595,7 +607,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="IntAct - protein interaction"/>
+            <TitledBorder title="IntAct - protein interaction">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -660,7 +674,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="QuickGO - gene ontology terms and annotations"/>
+            <TitledBorder title="QuickGO - gene ontology terms and annotations">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -725,7 +741,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="InterPro - predictive protein signatures"/>
+            <TitledBorder title="InterPro - predictive protein signatures">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -790,7 +808,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Protein Annotation - Help"/>
+            <TitledBorder title="Protein Annotation - Help">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -860,7 +880,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="neXtProt - human protein knowledgebase"/>
+            <TitledBorder title="neXtProt - human protein knowledgebase">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -925,7 +947,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="PDB - protein data bank"/>
+            <TitledBorder title="PDB - protein data bank">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>

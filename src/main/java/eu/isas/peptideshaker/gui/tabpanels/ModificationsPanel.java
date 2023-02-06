@@ -685,7 +685,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
         modificationPanel.setOpaque(false);
 
-        modificationLayeredPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Variable Modifications"));
+        modificationLayeredPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Variable Modifications", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         modificationLayeredPanel.setOpaque(false);
 
         modificationJTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -746,11 +746,11 @@ public class ModificationsPanel extends javax.swing.JPanel {
         );
         modificationLayeredPanelLayout.setVerticalGroup(
             modificationLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 375, Short.MAX_VALUE)
+            .addGap(0, 355, Short.MAX_VALUE)
             .addGroup(modificationLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(modificationLayeredPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(modificationJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
+                    .addComponent(modificationJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -816,7 +816,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
         modifiedPeptidesPanel.setOpaque(false);
 
-        selectedPeptidesJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Modified Peptides"));
+        selectedPeptidesJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Modified Peptides", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         selectedPeptidesJPanel.setOpaque(false);
 
         selectedPeptidesJSplitPane.setBorder(null);
@@ -867,7 +867,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             selectedPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(selectedPeptidesJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(selectedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                .addComponent(selectedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -956,7 +956,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
         relatedPeptidesJPanel.setOpaque(false);
 
-        relatedPeptidesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Related Peptides"));
+        relatedPeptidesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Related Peptides", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         relatedPeptidesPanel.setOpaque(false);
 
         relatedPeptidesJSplitPane.setBorder(null);
@@ -1006,11 +1006,11 @@ public class ModificationsPanel extends javax.swing.JPanel {
         );
         relatedPeptidesPanelLayout.setVerticalGroup(
             relatedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 205, Short.MAX_VALUE)
+            .addGap(0, 185, Short.MAX_VALUE)
             .addGroup(relatedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(relatedPeptidesPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                    .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1120,7 +1120,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             }
         });
 
-        spectrumAndFragmentIonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum & Fragment Ions"));
+        spectrumAndFragmentIonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Spectrum & Fragment Ions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         spectrumAndFragmentIonPanel.setOpaque(false);
 
         slidersSplitPane.setBorder(null);
@@ -1181,7 +1181,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             psmAScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmAScoresJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmAScoresScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
+                .addComponent(psmAScoresScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(psmAScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(aScoreMinValueJLabel)
@@ -1238,7 +1238,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             psmDeltaScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmDeltaScoresJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
+                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(psmDeltaScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(deltaScoreMinValueJLabel)
@@ -1276,7 +1276,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
+                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1336,7 +1336,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             sliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sliderPanelLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addGap(27, 27, 27)
                 .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addGap(47, 47, 47))
@@ -1357,7 +1357,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
             spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(slidersSplitPane)
+                .addComponent(slidersSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1448,7 +1448,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
         modPsmsPanel.setOpaque(false);
 
-        modsPsmsLayeredPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Spectrum Matches - Modified Peptide"));
+        modsPsmsLayeredPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Peptide Spectrum Matches - Modified Peptide", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         modsPsmsLayeredPanel.setOpaque(false);
 
         selectedPsmsTable.setModel(new PsmsTable(false));
@@ -1484,11 +1484,11 @@ public class ModificationsPanel extends javax.swing.JPanel {
         );
         modsPsmsLayeredPanelLayout.setVerticalGroup(
             modsPsmsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 165, Short.MAX_VALUE)
+            .addGap(0, 145, Short.MAX_VALUE)
             .addGroup(modsPsmsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(modsPsmsLayeredPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                    .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1575,7 +1575,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
 
         relatedPsmsJPanel.setOpaque(false);
 
-        relatedPsmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Spectrum Matches - Releated Peptide"));
+        relatedPsmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Peptide Spectrum Matches - Releated Peptide", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         relatedPsmsPanel.setOpaque(false);
 
         relatedPsmsTable.setModel(new PsmsTable(true));
@@ -1611,11 +1611,11 @@ public class ModificationsPanel extends javax.swing.JPanel {
         );
         relatedPsmsPanelLayout.setVerticalGroup(
             relatedPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 225, Short.MAX_VALUE)
+            .addGap(0, 205, Short.MAX_VALUE)
             .addGroup(relatedPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(relatedPsmsPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+                    .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 

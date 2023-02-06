@@ -296,13 +296,13 @@
                                   <Component id="exportIdentifiedProteinAccessionNumbersAsCsvButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinExportCmb1" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="exportAllIdentifiedProteinsAsFastaLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportIdentifiedProteinsAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinExportCmb2" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="proteoformsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportProteformsAsTxtButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -555,7 +555,7 @@
                                   <Component id="spectrumValidationCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportMgfButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="recalibrateSpectraLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="spectrumRecalibrationCmb" alignment="3" min="-2" max="-2" attributes="0"/>

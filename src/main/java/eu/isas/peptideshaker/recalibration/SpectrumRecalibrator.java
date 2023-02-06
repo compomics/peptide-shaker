@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.recalibration;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
-import com.compomics.util.experiment.mass_spectrometry.spectra.Peak;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Precursor;
 import com.compomics.util.experiment.mass_spectrometry.spectra.RecalibrationUtils;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
@@ -142,7 +141,8 @@ public class SpectrumRecalibrator {
         return new Spectrum(
                 newPrecursor, 
                 newFragmentMz, 
-                originalSpectrum.intensity
+                originalSpectrum.intensity,
+                originalSpectrum.getSpectrumLevel()
         );
     }
 }

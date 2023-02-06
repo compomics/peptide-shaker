@@ -316,7 +316,7 @@ public class ValidationPanel extends javax.swing.JPanel {
             }
         });
 
-        groupListJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Group Selection"));
+        groupListJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Group Selection", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         groupListJPanel.setMinimumSize(new java.awt.Dimension(200, 0));
         groupListJPanel.setOpaque(false);
 
@@ -405,7 +405,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        idSummaryJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Identification Summary"));
+        idSummaryJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Identification Summary", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         idSummaryJPanel.setOpaque(false);
 
         totalTpLabel.setText("Total TP");
@@ -730,12 +730,12 @@ public class ValidationPanel extends javax.swing.JPanel {
                     .addComponent(fnrLabel)
                     .addComponent(fnrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fnrHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         idSummaryJPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {confidenceHelpJButton, confidenceTxt, falsePositivesHelpJButton, fdrHelpJButton, fdrTxt, fnrHelpJButton, fnrTxt, nFPTxt, nTPlTxt, nValidatedTxt, truePositivesHelpJButton, validatedHitsHelpJButton});
 
-        optimizationJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Validation Plots"));
+        optimizationJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Validation Plots", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         optimizationJPanel.setOpaque(false);
 
         thresholdOptimizationTab.setBackground(new java.awt.Color(255, 255, 255));
@@ -813,7 +813,7 @@ public class ValidationPanel extends javax.swing.JPanel {
             confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(confidencePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(confidencePlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                .addComponent(confidencePlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -892,7 +892,7 @@ public class ValidationPanel extends javax.swing.JPanel {
             fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fdrFnrPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -966,7 +966,7 @@ public class ValidationPanel extends javax.swing.JPanel {
             costBenefitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(costBenefitPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(costBenefitPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                .addComponent(costBenefitPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -982,7 +982,7 @@ public class ValidationPanel extends javax.swing.JPanel {
         );
         thresholdOptimizationTabLayout.setVerticalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPlotSplitPane)
+            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout optimizationJPanelLayout = new javax.swing.GroupLayout(optimizationJPanel);
@@ -1002,7 +1002,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        parametersJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Parameters"));
+        parametersJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Parameters", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         parametersJPanel.setOpaque(false);
 
         thresholdInput.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -1195,7 +1195,7 @@ public class ValidationPanel extends javax.swing.JPanel {
                         .addComponent(thresholdLabel))
                     .addComponent(validateButton)
                     .addComponent(thresholdHelpJButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addComponent(advancedSettingsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

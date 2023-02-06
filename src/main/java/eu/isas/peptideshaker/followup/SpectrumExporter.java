@@ -50,7 +50,7 @@ public class SpectrumExporter {
 
     /**
      * Exports the spectra from different categories of PSMs according to the
-     * export type. Export format is mgf.
+     * export type. Export format is mgf and only MS2 spectra are included.
      *
      * @param destinationFolder the folder where to write the spectra
      * @param waitingHandler waiting handler used to display progress and cancel
@@ -93,29 +93,33 @@ public class SpectrumExporter {
             }
 
             File destinationFile = getDestinationFile(destinationFolder, fileNameWithoutExtension + ".mgf", exportType);
-            
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(destinationFile))) {
+
+            try ( BufferedWriter bw = new BufferedWriter(new FileWriter(destinationFile))) {
 
                 for (String spectrumTitle : spectrumTitles) {
 
                     Spectrum spectrum = spectrumProvider.getSpectrum(fileNameWithoutExtension, spectrumTitle);
 
-                    boolean include = include(
-                            fileNameWithoutExtension,
-                            spectrumTitle,
-                            identification,
-                            sequenceMatchingPreferences,
-                            exportType
-                    );
+                    if (spectrum.getSpectrumLevel() == 2) {
 
-                    if (include) {
-
-                        bw.write(
-                                MgfFileWriter.asMgf(
-                                        spectrumTitle,
-                                        spectrum
-                                )
+                        boolean include = include(
+                                fileNameWithoutExtension,
+                                spectrumTitle,
+                                identification,
+                                sequenceMatchingPreferences,
+                                exportType
                         );
+
+                        if (include) {
+
+                            bw.write(
+                                    MgfFileWriter.asMgf(
+                                            spectrumTitle,
+                                            spectrum
+                                    )
+                            );
+                        }
+
                     }
 
                     if (waitingHandler != null) {

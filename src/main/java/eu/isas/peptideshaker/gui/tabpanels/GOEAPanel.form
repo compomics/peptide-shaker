@@ -103,7 +103,9 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Gene Ontology Mappings"/>
+                <TitledBorder title="Gene Ontology Mappings">
+                  <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                </TitledBorder>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -143,7 +145,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="proteinGoMappingsScrollPane" pref="288" max="32767" attributes="0"/>
+                      <Component id="proteinGoMappingsScrollPane" pref="285" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
                           <Component id="significanceJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -324,7 +326,9 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Gene Ontology Enrichment Analysis"/>
+                <TitledBorder title="Gene Ontology Enrichment Analysis">
+                  <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                </TitledBorder>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -349,7 +353,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="goPlotsTabbedPane" pref="319" max="32767" attributes="0"/>
+                      <Component id="goPlotsTabbedPane" pref="313" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -388,7 +392,7 @@
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="proteinsScrollPane" pref="276" max="32767" attributes="0"/>
+                              <Component id="proteinsScrollPane" pref="277" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>

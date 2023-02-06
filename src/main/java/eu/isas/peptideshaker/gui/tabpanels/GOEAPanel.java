@@ -888,10 +888,8 @@ public class GOEAPanel extends javax.swing.JPanel {
             }
         });
 
-        mappingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology Mappings"));
+        mappingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Gene Ontology Mappings", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         mappingsPanel.setOpaque(false);
-
-        proteinGoMappingsScrollPane.setOpaque(false);
 
         goMappingsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -943,7 +941,6 @@ public class GOEAPanel extends javax.swing.JPanel {
         significanceLevelButtonGroup.add(fivePercentRadioButton);
         fivePercentRadioButton.setSelected(true);
         fivePercentRadioButton.setText("0.05");
-        fivePercentRadioButton.setOpaque(false);
         fivePercentRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fivePercentRadioButtonActionPerformed(evt);
@@ -952,7 +949,6 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         significanceLevelButtonGroup.add(onePercentRadioButton);
         onePercentRadioButton.setText("0.01");
-        onePercentRadioButton.setOpaque(false);
         onePercentRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onePercentRadioButtonActionPerformed(evt);
@@ -987,7 +983,7 @@ public class GOEAPanel extends javax.swing.JPanel {
             mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mappingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+                .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
                 .addGap(12, 12, 12)
                 .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(significanceJLabel)
@@ -998,7 +994,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         );
 
         mappingsTableLayeredPane.add(mappingsPanel);
-        mappingsPanel.setBounds(0, 0, 1020, 364);
+        mappingsPanel.setBounds(0, 0, 1020, 372);
 
         mappingsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         mappingsHelpJButton.setToolTipText("Help");
@@ -1019,9 +1015,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                 mappingsHelpJButtonActionPerformed(evt);
             }
         });
+        mappingsTableLayeredPane.setLayer(mappingsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         mappingsTableLayeredPane.add(mappingsHelpJButton);
         mappingsHelpJButton.setBounds(990, 0, 10, 19);
-        mappingsTableLayeredPane.setLayer(mappingsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportMappingsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportMappingsJButton.setToolTipText("Copy to Clipboard");
@@ -1044,9 +1040,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                 exportMappingsJButtonActionPerformed(evt);
             }
         });
+        mappingsTableLayeredPane.setLayer(exportMappingsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         mappingsTableLayeredPane.add(exportMappingsJButton);
         exportMappingsJButton.setBounds(980, 0, 10, 19);
-        mappingsTableLayeredPane.setLayer(exportMappingsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuMappingsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1061,11 +1057,11 @@ public class GOEAPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        mappingsTableLayeredPane.setLayer(contextMenuMappingsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         mappingsTableLayeredPane.add(contextMenuMappingsBackgroundPanel);
         contextMenuMappingsBackgroundPanel.setBounds(980, 0, 30, 19);
-        mappingsTableLayeredPane.setLayer(contextMenuMappingsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        plotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology Enrichment Analysis"));
+        plotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Gene Ontology Enrichment Analysis", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         plotPanel.setOpaque(false);
 
         goPlotsTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
@@ -1076,8 +1072,6 @@ public class GOEAPanel extends javax.swing.JPanel {
         });
 
         proteinsPanel.setOpaque(false);
-
-        proteinsScrollPane.setOpaque(false);
 
         proteinTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1135,7 +1129,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         proteinsPanelLayout.setVerticalGroup(
             proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinsPanelLayout.createSequentialGroup()
-                .addComponent(proteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                .addComponent(proteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1164,12 +1158,12 @@ public class GOEAPanel extends javax.swing.JPanel {
             plotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, plotPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
+                .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         plotLayeredPane.add(plotPanel);
-        plotPanel.setBounds(0, 0, 1019, 370);
+        plotPanel.setBounds(0, 0, 1022, 370);
 
         plotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         plotHelpJButton.setToolTipText("Help");
@@ -1190,9 +1184,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                 plotHelpJButtonActionPerformed(evt);
             }
         });
+        plotLayeredPane.setLayer(plotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         plotLayeredPane.add(plotHelpJButton);
         plotHelpJButton.setBounds(990, 0, 10, 19);
-        plotLayeredPane.setLayer(plotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPlotsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPlotsJButton.setToolTipText("Export");
@@ -1215,9 +1209,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                 exportPlotsJButtonActionPerformed(evt);
             }
         });
+        plotLayeredPane.setLayer(exportPlotsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
         plotLayeredPane.add(exportPlotsJButton);
         exportPlotsJButton.setBounds(980, 0, 10, 19);
-        plotLayeredPane.setLayer(exportPlotsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPlotsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1232,9 +1226,9 @@ public class GOEAPanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        plotLayeredPane.setLayer(contextMenuPlotsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
         plotLayeredPane.add(contextMenuPlotsBackgroundPanel);
         contextMenuPlotsBackgroundPanel.setBounds(980, 0, 30, 19);
-        plotLayeredPane.setLayer(contextMenuPlotsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
