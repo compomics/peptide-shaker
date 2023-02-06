@@ -121,7 +121,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
         setBackground(new java.awt.Color(255, 255, 255));
 
-        basicAnnotationJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic Protein Annotation"));
+        basicAnnotationJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Basic Protein Annotation", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         basicAnnotationJPanel.setOpaque(false);
 
         accessionNumberLabel.setText("Accession");
@@ -214,7 +214,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        uniprotLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("UniProt - protein knowledgebase"));
+        uniprotLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "UniProt - protein knowledgebase", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         uniprotLinkJPanel.setOpaque(false);
 
         uniprotLabel.setText("High-quality protein sequence and functional information.");
@@ -264,7 +264,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        dastyLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("DASty - protein sequence features"));
+        dastyLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "DASty - protein sequence features", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         dastyLinkJPanel.setOpaque(false);
 
         dastyLabel.setText("Web client for visualizing protein sequence feature information.");
@@ -314,7 +314,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        reactomeLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Reactome - pathway database"));
+        reactomeLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Reactome - pathway database", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         reactomeLinkJPanel.setOpaque(false);
 
         reactomeLabel.setText("Manually curated and peer-reviewed pathway database.");
@@ -364,7 +364,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        stringLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("STRING - protein interaction"));
+        stringLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "STRING - protein interaction", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         stringLinkJPanel.setOpaque(false);
 
         stringLabel.setText("Known and Predicted Protein-Protein Interactions.");
@@ -414,7 +414,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        davidLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("DAVID - functional annotation"));
+        davidLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "DAVID - functional annotation", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         davidLinkJPanel.setOpaque(false);
 
         davidLabel.setText("Database for Annotation, Visualization and Integrated Discovery.");
@@ -464,7 +464,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        intActLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("IntAct - protein interaction"));
+        intActLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "IntAct - protein interaction", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         intActLinkJPanel.setOpaque(false);
 
         intactLabel.setText("Analysis tools for protein interaction data.");
@@ -514,7 +514,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        quickGOLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("QuickGO - gene ontology terms and annotations"));
+        quickGOLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "QuickGO - gene ontology terms and annotations", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         quickGOLinkJPanel.setOpaque(false);
 
         quickGoLabel.setText("Web-based browser for Gene Ontology terms.");
@@ -564,7 +564,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        interProLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("InterPro - predictive protein signatures"));
+        interProLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "InterPro - predictive protein signatures", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         interProLinkJPanel.setOpaque(false);
 
         interProLabel.setText("Integrated database of predictive protein signatures.");
@@ -614,7 +614,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        helpPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Annotation - Help"));
+        helpPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Protein Annotation - Help", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         helpPanel.setOpaque(false);
 
         helpScrollPane.setBorder(null);
@@ -662,7 +662,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        nextProtLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("neXtProt - human protein knowledgebase"));
+        nextProtLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "neXtProt - human protein knowledgebase", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         nextProtLinkJPanel.setOpaque(false);
 
         nextProtLabel.setText("High-quality human protein information and annotation.");
@@ -712,7 +712,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        pdbLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PDB - protein data bank"));
+        pdbLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PDB - protein data bank", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         pdbLinkJPanel.setOpaque(false);
 
         pdbLabel.setText("Biological macromolecular resource.");
@@ -830,7 +830,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                     .addComponent(pdbLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(picrLinkJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(142, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

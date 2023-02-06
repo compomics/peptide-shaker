@@ -51,7 +51,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Quality Control Plots"/>
+            <TitledBorder title="Quality Control Plots">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -71,7 +73,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="tabbedPane" max="32767" attributes="0"/>
+                  <Component id="tabbedPane" pref="564" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -123,14 +125,14 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="452" max="32767" attributes="0"/>
+                          <EmptySpace pref="446" max="32767" attributes="0"/>
                           <Component id="psmPlotTypePanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="psmPlotLayeredPane" pref="431" max="32767" attributes="0"/>
+                              <Component id="psmPlotLayeredPane" pref="435" max="32767" attributes="0"/>
                               <EmptySpace min="-2" pref="93" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -142,7 +144,9 @@
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                        <TitledBorder title="Plot Type"/>
+                        <TitledBorder title="Plot Type">
+                          <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                        </TitledBorder>
                       </Border>
                     </Property>
                     <Property name="opaque" type="boolean" value="false"/>
@@ -322,14 +326,14 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="452" max="32767" attributes="0"/>
+                          <EmptySpace pref="449" max="32767" attributes="0"/>
                           <Component id="peptidesPlotTypePanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="peptidesPlotLayeredPane" pref="431" max="32767" attributes="0"/>
+                              <Component id="peptidesPlotLayeredPane" pref="435" max="32767" attributes="0"/>
                               <EmptySpace min="-2" pref="93" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -595,7 +599,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="proteinsPlotLayeredPane" pref="435" max="32767" attributes="0"/>
+                          <Component id="proteinsPlotLayeredPane" pref="439" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                           <Component id="proteinPlotTypePanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>

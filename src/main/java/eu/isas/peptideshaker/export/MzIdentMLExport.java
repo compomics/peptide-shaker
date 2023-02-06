@@ -255,15 +255,24 @@ public class MzIdentMLExport {
     ) {
 
         this.mzIdentMLVersion = mzIdentMLVersion;
+
         switch (mzIdentMLVersion) {
+
             case v1_1:
                 maxNeutralLosses = 0;
                 break;
+
             case v1_2:
                 maxNeutralLosses = 1;
                 break;
+
             default:
-                throw new UnsupportedOperationException("mzIdentML version " + mzIdentMLVersion.name + " not supported.");
+                throw new UnsupportedOperationException(
+                        "mzIdentML version "
+                        + mzIdentMLVersion.name
+                        + " not supported."
+                );
+
         }
 
         waitingHandler.setPrimaryProgressCounterIndeterminate(true);
@@ -1967,6 +1976,7 @@ public class MzIdentMLExport {
                     spectrumMatch.getSpectrumTitle(),
                     ++psmCount
             );
+
             waitingHandler.increasePrimaryProgressCounter();
 
             if (waitingHandler.isRunCanceled()) {

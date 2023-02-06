@@ -634,8 +634,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             if (!PeptideShaker.getJarFilePath().equalsIgnoreCase(".")) {
 
                 utilitiesUserParameters.setPeptideShakerPath(
-                        new File(PeptideShaker.getJarFilePath(), "PeptideShaker-" + PeptideShaker.getVersion() + ".jar").getAbsolutePath()
+                        new File(
+                                PeptideShaker.getJarFilePath(),
+                                "PeptideShaker-" + PeptideShaker.getVersion() + ".jar"
+                        ).getAbsolutePath()
                 );
+
                 UtilitiesUserParameters.saveUserParameters(utilitiesUserParameters);
 
             }
@@ -658,15 +662,22 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 boolean fileDeleted = new File(PeptideShaker.getJarFilePath() + "/resources/conf/firstRun").delete();
 
                 if (!fileDeleted) {
-                    JOptionPane.showMessageDialog(this, "Failed to delete the file /resources/conf/firstRun.\n"
-                            + "Please delete it manually.", "File Error", JOptionPane.OK_OPTION);
+                    JOptionPane.showMessageDialog(
+                            this, 
+                            "Failed to delete the file /resources/conf/firstRun.\n"
+                            + "Please delete it manually.", 
+                            "File Error", 
+                            JOptionPane.OK_OPTION
+                    );
                 }
 
-                int value = JOptionPane.showConfirmDialog(this,
+                int value = JOptionPane.showConfirmDialog(
+                        this,
                         "Create a shortcut to PeptideShaker on the desktop?",
                         "Create Desktop Shortcut?",
                         JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
+                        JOptionPane.QUESTION_MESSAGE
+                );
 
                 if (value == JOptionPane.YES_OPTION) {
 
@@ -675,7 +686,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 }
             }
 
-            // Instantiate factories
+            // instantiate factories
             PeptideShaker.instantiateFacories(utilitiesUserParameters);
             modificationFactory = ModificationFactory.getInstance();
             EnzymeFactory.getInstance();
@@ -759,7 +770,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             } else if (showWelcomeDialog) {
 
                 // open the welcome dialog
-                new WelcomeDialog(this, !java64bit || !memoryOk, javaVersionWarning, true);
+                new WelcomeDialog(
+                        this, 
+                        !java64bit || !memoryOk, 
+                        javaVersionWarning, 
+                        true
+                );
 
             }
         }
@@ -7437,7 +7453,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             //ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart(), getDisplayParameters().getLowResolutionCharts());
             tempChartPanel.setBounds(
                     new Rectangle(
-                            chartPanel.getBounds().width * 5, 
+                            chartPanel.getBounds().width * 5,
                             chartPanel.getBounds().height * 5
                     )
             );
@@ -7476,7 +7492,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 //ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart(), getDisplayParameters().getLowResolutionCharts());
                 tempChartPanel.setBounds(
                         new Rectangle(
-                                chartPanel.getBounds().width * 5, 
+                                chartPanel.getBounds().width * 5,
                                 chartPanel.getBounds().height * 5
                         )
                 );
@@ -7491,14 +7507,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 );
 
             } else {
-                
+
                 JOptionPane.showMessageDialog(
-                        this, 
-                        "No m/z error plot to export!", 
-                        "Export Error", 
+                        this,
+                        "No m/z error plot to export!",
+                        "Export Error",
                         JOptionPane.INFORMATION_MESSAGE
                 );
-                
+
             }
         }
 //        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {

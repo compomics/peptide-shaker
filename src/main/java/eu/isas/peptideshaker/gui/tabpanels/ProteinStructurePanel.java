@@ -590,7 +590,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         pdbStructureJPanel.setOpaque(false);
 
-        pdbOuterPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PDB Structure"));
+        pdbOuterPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PDB Structure", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         pdbOuterPanel.setOpaque(false);
 
         pdbLayeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -600,8 +600,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         });
 
         pdbPanel.setLayout(new javax.swing.BoxLayout(pdbPanel, javax.swing.BoxLayout.LINE_AXIS));
+        pdbLayeredPane.add(pdbPanel);
         pdbPanel.setBounds(0, 0, 435, 440);
-        pdbLayeredPane.add(pdbPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         labelsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/labels_selected.png"))); // NOI18N
         labelsJButton.setToolTipText("Hide Modification Labels");
@@ -624,8 +624,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 labelsJButtonActionPerformed(evt);
             }
         });
-        labelsJButton.setBounds(0, 0, 25, 25);
-        pdbLayeredPane.add(labelsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbLayeredPane.setLayer(labelsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbLayeredPane.add(labelsJButton);
+        labelsJButton.setBounds(0, 0, 24, 25);
 
         ribbonJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/ribbon_selected.png"))); // NOI18N
         ribbonJButton.setToolTipText("Ribbon Model");
@@ -648,8 +649,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 ribbonJButtonActionPerformed(evt);
             }
         });
+        pdbLayeredPane.setLayer(ribbonJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbLayeredPane.add(ribbonJButton);
         ribbonJButton.setBounds(0, 0, 25, 25);
-        pdbLayeredPane.add(ribbonJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         backboneJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/backbone.png"))); // NOI18N
         backboneJButton.setToolTipText("Backbone Model");
@@ -672,8 +674,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 backboneJButtonActionPerformed(evt);
             }
         });
+        pdbLayeredPane.setLayer(backboneJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbLayeredPane.add(backboneJButton);
         backboneJButton.setBounds(0, 0, 25, 25);
-        pdbLayeredPane.add(backboneJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         playJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/pause.png"))); // NOI18N
         playJButton.setToolTipText("Stop Rotation");
@@ -696,8 +699,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 playJButtonActionPerformed(evt);
             }
         });
+        pdbLayeredPane.setLayer(playJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbLayeredPane.add(playJButton);
         playJButton.setBounds(0, 0, 21, 21);
-        pdbLayeredPane.add(playJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pdbOuterPanelLayout = new javax.swing.GroupLayout(pdbOuterPanel);
         pdbOuterPanel.setLayout(pdbOuterPanelLayout);
@@ -712,16 +716,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         );
         pdbOuterPanelLayout.setVerticalGroup(
             pdbOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 463, Short.MAX_VALUE)
+            .addGap(0, 445, Short.MAX_VALUE)
             .addGroup(pdbOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pdbOuterPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(pdbLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
+                    .addComponent(pdbLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
+        pdbStructureLayeredPane.add(pdbOuterPanel);
         pdbOuterPanel.setBounds(0, 0, 460, 490);
-        pdbStructureLayeredPane.add(pdbOuterPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         pdbStructureHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         pdbStructureHelpJButton.setToolTipText("Help");
@@ -742,8 +746,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 pdbStructureHelpJButtonActionPerformed(evt);
             }
         });
+        pdbStructureLayeredPane.setLayer(pdbStructureHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbStructureLayeredPane.add(pdbStructureHelpJButton);
         pdbStructureHelpJButton.setBounds(440, 0, 10, 19);
-        pdbStructureLayeredPane.add(pdbStructureHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPdbStructureJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPdbStructureJButton.setToolTipText("Export");
@@ -766,8 +771,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 exportPdbStructureJButtonActionPerformed(evt);
             }
         });
+        pdbStructureLayeredPane.setLayer(exportPdbStructureJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbStructureLayeredPane.add(exportPdbStructureJButton);
         exportPdbStructureJButton.setBounds(430, 0, 10, 19);
-        pdbStructureLayeredPane.add(exportPdbStructureJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPdbStructureBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -782,8 +788,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        pdbStructureLayeredPane.setLayer(contextMenuPdbStructureBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbStructureLayeredPane.add(contextMenuPdbStructureBackgroundPanel);
         contextMenuPdbStructureBackgroundPanel.setBounds(420, 0, 30, 19);
-        pdbStructureLayeredPane.add(contextMenuPdbStructureBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pdbStructureJPanelLayout = new javax.swing.GroupLayout(pdbStructureJPanel);
         pdbStructureJPanel.setLayout(pdbStructureJPanelLayout);
@@ -798,14 +805,17 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         proteinsJPanel.setOpaque(false);
 
-        proteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Proteins"));
+        proteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Proteins", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         proteinsPanel.setOpaque(false);
-
-        proteinScrollPane.setOpaque(false);
 
         proteinTable.setModel(new ProteinTableModel());
         proteinTable.setOpaque(false);
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        proteinTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                proteinTableMouseMoved(evt);
+            }
+        });
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 proteinTableMouseClicked(evt);
@@ -815,11 +825,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 proteinTableMouseReleased(evt);
-            }
-        });
-        proteinTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                proteinTableMouseMoved(evt);
             }
         });
         proteinTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -842,16 +847,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         );
         proteinsPanelLayout.setVerticalGroup(
             proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 243, Short.MAX_VALUE)
+            .addGap(0, 225, Short.MAX_VALUE)
             .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(proteinsPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
+                    .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
+        proteinsLayeredPane.add(proteinsPanel);
         proteinsPanel.setBounds(0, 0, 950, 270);
-        proteinsLayeredPane.add(proteinsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         proteinsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         proteinsHelpJButton.setToolTipText("Help");
@@ -872,8 +877,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 proteinsHelpJButtonActionPerformed(evt);
             }
         });
+        proteinsLayeredPane.setLayer(proteinsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        proteinsLayeredPane.add(proteinsHelpJButton);
         proteinsHelpJButton.setBounds(930, 0, 10, 19);
-        proteinsLayeredPane.add(proteinsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportProteinsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportProteinsJButton.setToolTipText("Copy to File");
@@ -896,8 +902,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 exportProteinsJButtonActionPerformed(evt);
             }
         });
+        proteinsLayeredPane.setLayer(exportProteinsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        proteinsLayeredPane.add(exportProteinsJButton);
         exportProteinsJButton.setBounds(920, 0, 10, 19);
-        proteinsLayeredPane.add(exportProteinsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuProteinsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -912,8 +919,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        proteinsLayeredPane.setLayer(contextMenuProteinsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+        proteinsLayeredPane.add(contextMenuProteinsBackgroundPanel);
         contextMenuProteinsBackgroundPanel.setBounds(920, 0, 30, 19);
-        proteinsLayeredPane.add(contextMenuProteinsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout proteinsJPanelLayout = new javax.swing.GroupLayout(proteinsJPanel);
         proteinsJPanel.setLayout(proteinsJPanelLayout);
@@ -928,10 +936,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         peptidesJPanel.setOpaque(false);
 
-        peptidesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptides"));
+        peptidesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Peptides", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         peptidesPanel.setOpaque(false);
-
-        peptideScrollPane.setOpaque(false);
 
         peptideTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -958,17 +964,17 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         });
         peptideTable.setOpaque(false);
         peptideTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        peptideTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                peptideTableMouseMoved(evt);
+            }
+        });
         peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 peptideTableMouseExited(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 peptideTableMouseReleased(evt);
-            }
-        });
-        peptideTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                peptideTableMouseMoved(evt);
             }
         });
         peptideTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -991,16 +997,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         );
         peptidesPanelLayout.setVerticalGroup(
             peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 133, Short.MAX_VALUE)
+            .addGap(0, 115, Short.MAX_VALUE)
             .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(peptidesPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                    .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
+        peptidesLayeredPane.add(peptidesPanel);
         peptidesPanel.setBounds(0, 0, 480, 160);
-        peptidesLayeredPane.add(peptidesPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         peptidesHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         peptidesHelpJButton.setToolTipText("Help");
@@ -1021,8 +1027,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 peptidesHelpJButtonActionPerformed(evt);
             }
         });
+        peptidesLayeredPane.setLayer(peptidesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        peptidesLayeredPane.add(peptidesHelpJButton);
         peptidesHelpJButton.setBounds(460, 0, 10, 19);
-        peptidesLayeredPane.add(peptidesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPeptidesJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPeptidesJButton.setToolTipText("Copy to File");
@@ -1045,8 +1052,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 exportPeptidesJButtonActionPerformed(evt);
             }
         });
+        peptidesLayeredPane.setLayer(exportPeptidesJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        peptidesLayeredPane.add(exportPeptidesJButton);
         exportPeptidesJButton.setBounds(450, 0, 10, 19);
-        peptidesLayeredPane.add(exportPeptidesJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1061,8 +1069,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        peptidesLayeredPane.setLayer(contextMenuPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+        peptidesLayeredPane.add(contextMenuPeptidesBackgroundPanel);
         contextMenuPeptidesBackgroundPanel.setBounds(440, 0, 30, 19);
-        peptidesLayeredPane.add(contextMenuPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout peptidesJPanelLayout = new javax.swing.GroupLayout(peptidesJPanel);
         peptidesJPanel.setLayout(peptidesJPanelLayout);
@@ -1077,10 +1086,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         pdbMatchesJPanel.setOpaque(false);
 
-        pdbMatchesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PDB Matches"));
+        pdbMatchesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PDB Matches", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         pdbMatchesPanel.setOpaque(false);
-
-        pdbJScrollPane.setOpaque(false);
 
         pdbMatchesJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1108,11 +1115,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         pdbMatchesJTable.setOpaque(false);
         pdbMatchesJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         pdbMatchesJTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                pdbMatchesJTableMouseExited(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 pdbMatchesJTableMouseReleased(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                pdbMatchesJTableMouseExited(evt);
             }
         });
         pdbMatchesJTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -1140,16 +1147,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         );
         pdbMatchesPanelLayout.setVerticalGroup(
             pdbMatchesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 123, Short.MAX_VALUE)
+            .addGap(0, 105, Short.MAX_VALUE)
             .addGroup(pdbMatchesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pdbMatchesPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(pdbJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                    .addComponent(pdbJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
+        pdbMatchesLayeredPane.add(pdbMatchesPanel);
         pdbMatchesPanel.setBounds(0, 0, 480, 150);
-        pdbMatchesLayeredPane.add(pdbMatchesPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         pdbMatchesHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         pdbMatchesHelpJButton.setToolTipText("Help");
@@ -1170,8 +1177,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 pdbMatchesHelpJButtonActionPerformed(evt);
             }
         });
+        pdbMatchesLayeredPane.setLayer(pdbMatchesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbMatchesLayeredPane.add(pdbMatchesHelpJButton);
         pdbMatchesHelpJButton.setBounds(460, 0, 10, 19);
-        pdbMatchesLayeredPane.add(pdbMatchesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPdbMatchesJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPdbMatchesJButton.setToolTipText("Copy to File");
@@ -1194,8 +1202,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 exportPdbMatchesJButtonActionPerformed(evt);
             }
         });
+        pdbMatchesLayeredPane.setLayer(exportPdbMatchesJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbMatchesLayeredPane.add(exportPdbMatchesJButton);
         exportPdbMatchesJButton.setBounds(450, 0, 10, 19);
-        pdbMatchesLayeredPane.add(exportPdbMatchesJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPdbMatchesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1210,8 +1219,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        pdbMatchesLayeredPane.setLayer(contextMenuPdbMatchesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbMatchesLayeredPane.add(contextMenuPdbMatchesBackgroundPanel);
         contextMenuPdbMatchesBackgroundPanel.setBounds(440, 0, 30, 19);
-        pdbMatchesLayeredPane.add(contextMenuPdbMatchesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pdbMatchesJPanelLayout = new javax.swing.GroupLayout(pdbMatchesJPanel);
         pdbMatchesJPanel.setLayout(pdbMatchesJPanelLayout);
@@ -1226,10 +1236,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         pdbChainsJPanel.setOpaque(false);
 
-        pdbChainsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PDB Chains"));
+        pdbChainsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PDB Chains", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         pdbChainsPanel.setOpaque(false);
-
-        pdbChainsJScrollPane.setOpaque(false);
 
         pdbChainsJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1281,16 +1289,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         );
         pdbChainsPanelLayout.setVerticalGroup(
             pdbChainsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 133, Short.MAX_VALUE)
+            .addGap(0, 115, Short.MAX_VALUE)
             .addGroup(pdbChainsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pdbChainsPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(pdbChainsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                    .addComponent(pdbChainsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
+        pdbChainsLayeredPane.add(pdbChainsPanel);
         pdbChainsPanel.setBounds(0, 0, 480, 160);
-        pdbChainsLayeredPane.add(pdbChainsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         pdbChainHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         pdbChainHelpJButton.setToolTipText("Help");
@@ -1311,8 +1319,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 pdbChainHelpJButtonActionPerformed(evt);
             }
         });
+        pdbChainsLayeredPane.setLayer(pdbChainHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbChainsLayeredPane.add(pdbChainHelpJButton);
         pdbChainHelpJButton.setBounds(460, 0, 10, 19);
-        pdbChainsLayeredPane.add(pdbChainHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPdbChainsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPdbChainsJButton.setToolTipText("Copy to File");
@@ -1335,8 +1344,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 exportPdbChainsJButtonActionPerformed(evt);
             }
         });
+        pdbChainsLayeredPane.setLayer(exportPdbChainsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbChainsLayeredPane.add(exportPdbChainsJButton);
         exportPdbChainsJButton.setBounds(450, 0, 10, 19);
-        pdbChainsLayeredPane.add(exportPdbChainsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPdbChainsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1351,8 +1361,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
+        pdbChainsLayeredPane.setLayer(contextMenuPdbChainsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbChainsLayeredPane.add(contextMenuPdbChainsBackgroundPanel);
         contextMenuPdbChainsBackgroundPanel.setBounds(440, 0, 30, 19);
-        pdbChainsLayeredPane.add(contextMenuPdbChainsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pdbChainsJPanelLayout = new javax.swing.GroupLayout(pdbChainsJPanel);
         pdbChainsJPanel.setLayout(pdbChainsJPanelLayout);
@@ -3441,6 +3452,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             Peptide peptide = peptideMatch.getPeptide();
             peptideSequence = peptide.getSequence();
 
+            // @TODO: terminal ptms are put too early/too late!!
             String[] variableModifications = peptide.getIndexedVariableModifications();
             String[] fixedModifications = peptide.getFixedModifications(
                     modificationParameters,

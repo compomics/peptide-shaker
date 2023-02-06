@@ -217,7 +217,9 @@
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                        <TitledBorder title="Spectrum Selection"/>
+                        <TitledBorder title="Spectrum Selection">
+                          <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                        </TitledBorder>
                       </Border>
                     </Property>
                     <Property name="opaque" type="boolean" value="false"/>
@@ -246,7 +248,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="spectrumTableJScrollPane" pref="275" max="32767" attributes="0"/>
+                              <Component id="spectrumTableJScrollPane" pref="263" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -473,7 +475,9 @@
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                            <TitledBorder title="Peptide Spectrum Matches"/>
+                            <TitledBorder title="Peptide Spectrum Matches">
+                              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                            </TitledBorder>
                           </Border>
                         </Property>
                         <Property name="opaque" type="boolean" value="false"/>
@@ -608,7 +612,7 @@
                                           <Component id="vallidatedPsmsCheckBox" min="-2" pref="18" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="idResultsTableJScrollPane" pref="257" max="32767" attributes="2"/>
+                                      <Component id="idResultsTableJScrollPane" pref="234" max="32767" attributes="2"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>
@@ -822,7 +826,9 @@
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                            <TitledBorder title="Spectrum &amp; Fragment Ions"/>
+                            <TitledBorder title="Spectrum &amp; Fragment Ions">
+                              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                            </TitledBorder>
                           </Border>
                         </Property>
                         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -894,9 +900,9 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
                                           <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                                          <Component id="accuracySlider" pref="154" max="32767" attributes="0"/>
+                                          <Component id="accuracySlider" pref="148" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                                          <Component id="intensitySlider" pref="155" max="32767" attributes="0"/>
+                                          <Component id="intensitySlider" pref="149" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -955,7 +961,7 @@
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="spectrumChartPanel" pref="386" max="32767" attributes="0"/>
+                                          <Component id="spectrumChartPanel" pref="369" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                                           <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -1125,7 +1131,9 @@
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                    <TitledBorder title="Spectrum Identification Overview"/>
+                    <TitledBorder title="Spectrum Identification Overview">
+                      <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                    </TitledBorder>
                   </Border>
                 </Property>
                 <Property name="opaque" type="boolean" value="false"/>
@@ -1150,7 +1158,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="overviewPlotsPanel" pref="105" max="32767" attributes="0"/>
+                          <Component id="overviewPlotsPanel" pref="93" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>

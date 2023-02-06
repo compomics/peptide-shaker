@@ -61,7 +61,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Group Selection"/>
+            <TitledBorder title="Group Selection">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -166,7 +168,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Identification Summary"/>
+            <TitledBorder title="Identification Summary">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -284,7 +288,7 @@
                       <Component id="fnrTxt" linkSize="21" alignment="2" min="-2" max="-2" attributes="1"/>
                       <Component id="fnrHelpJButton" linkSize="21" alignment="2" min="-2" pref="16" max="-2" attributes="1"/>
                   </Group>
-                  <EmptySpace pref="27" max="32767" attributes="0"/>
+                  <EmptySpace pref="30" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -606,7 +610,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Validation Plots"/>
+            <TitledBorder title="Validation Plots">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -648,7 +654,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="leftPlotSplitPane" alignment="0" max="32767" attributes="0"/>
+                  <Component id="leftPlotSplitPane" alignment="0" pref="470" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -691,7 +697,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="confidencePlotLayeredPane" pref="467" max="32767" attributes="0"/>
+                              <Component id="confidencePlotLayeredPane" pref="458" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -825,7 +831,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="fdrPlotLayeredPane" pref="467" max="32767" attributes="0"/>
+                                  <Component id="fdrPlotLayeredPane" pref="458" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -940,7 +946,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="costBenefitPlotLayeredPane" pref="467" max="32767" attributes="0"/>
+                                  <Component id="costBenefitPlotLayeredPane" pref="458" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1043,7 +1049,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Parameters"/>
+            <TitledBorder title="Parameters">
+              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -1121,7 +1129,7 @@
                       <Component id="validateButton" linkSize="22" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="thresholdHelpJButton" min="-2" max="-2" attributes="1"/>
                   </Group>
-                  <EmptySpace pref="16" max="32767" attributes="0"/>
+                  <EmptySpace pref="34" max="32767" attributes="0"/>
                   <Component id="advancedSettingsLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">

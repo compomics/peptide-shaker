@@ -98,7 +98,9 @@
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                        <TitledBorder title="Variable Modifications"/>
+                        <TitledBorder title="Variable Modifications">
+                          <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                        </TitledBorder>
                       </Border>
                     </Property>
                     <Property name="opaque" type="boolean" value="false"/>
@@ -124,11 +126,11 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="375" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="355" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="modificationJScrollPane" pref="349" max="32767" attributes="0"/>
+                                  <Component id="modificationJScrollPane" pref="343" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -301,7 +303,9 @@
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                            <TitledBorder title="Modified Peptides"/>
+                            <TitledBorder title="Modified Peptides">
+                              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                            </TitledBorder>
                           </Border>
                         </Property>
                         <Property name="opaque" type="boolean" value="false"/>
@@ -326,7 +330,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="selectedPeptidesJSplitPane" pref="119" max="32767" attributes="0"/>
+                                  <Component id="selectedPeptidesJSplitPane" pref="113" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -534,7 +538,9 @@
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                            <TitledBorder title="Related Peptides"/>
+                            <TitledBorder title="Related Peptides">
+                              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                            </TitledBorder>
                           </Border>
                         </Property>
                         <Property name="opaque" type="boolean" value="false"/>
@@ -560,11 +566,11 @@
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="205" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="185" max="32767" attributes="0"/>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="relatedPeptidesJSplitPane" pref="179" max="32767" attributes="0"/>
+                                      <Component id="relatedPeptidesJSplitPane" pref="173" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -794,7 +800,9 @@
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                        <TitledBorder title="Spectrum &amp; Fragment Ions"/>
+                        <TitledBorder title="Spectrum &amp; Fragment Ions">
+                          <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                        </TitledBorder>
                       </Border>
                     </Property>
                     <Property name="opaque" type="boolean" value="false"/>
@@ -819,7 +827,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="slidersSplitPane" max="32767" attributes="0"/>
+                              <Component id="slidersSplitPane" pref="383" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -891,7 +899,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="psmAScoresScrollPane" pref="277" max="32767" attributes="0"/>
+                                          <Component id="psmAScoresScrollPane" pref="318" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="2" attributes="0">
                                               <Component id="aScoreMinValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -983,7 +991,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="psmDeltaScrollPane" pref="277" max="32767" attributes="0"/>
+                                          <Component id="psmDeltaScrollPane" pref="318" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="2" attributes="0">
                                               <Component id="deltaScoreMinValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -1074,7 +1082,7 @@
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="spectrumChartJPanel" pref="312" max="32767" attributes="0"/>
+                                          <Component id="spectrumChartJPanel" pref="353" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                                           <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -1149,7 +1157,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                                      <Component id="accuracySlider" pref="143" max="32767" attributes="0"/>
+                                      <Component id="accuracySlider" pref="142" max="32767" attributes="0"/>
                                       <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                                       <Component id="intensitySlider" pref="142" max="32767" attributes="0"/>
                                       <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
@@ -1331,7 +1339,9 @@
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                            <TitledBorder title="Peptide Spectrum Matches - Modified Peptide"/>
+                            <TitledBorder title="Peptide Spectrum Matches - Modified Peptide">
+                              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                            </TitledBorder>
                           </Border>
                         </Property>
                         <Property name="opaque" type="boolean" value="false"/>
@@ -1357,11 +1367,11 @@
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="165" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="145" max="32767" attributes="0"/>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="psmsModifiedTableJScrollPane" pref="139" max="32767" attributes="0"/>
+                                      <Component id="psmsModifiedTableJScrollPane" pref="133" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -1532,7 +1542,9 @@
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                            <TitledBorder title="Peptide Spectrum Matches - Releated Peptide"/>
+                            <TitledBorder title="Peptide Spectrum Matches - Releated Peptide">
+                              <Font PropertyName="font" name="sansserif" size="14" style="1"/>
+                            </TitledBorder>
                           </Border>
                         </Property>
                         <Property name="opaque" type="boolean" value="false"/>
@@ -1558,11 +1570,11 @@
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="225" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="205" max="32767" attributes="0"/>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="psmsRelatedTableJScrollPane" pref="199" max="32767" attributes="0"/>
+                                      <Component id="psmsRelatedTableJScrollPane" pref="193" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>

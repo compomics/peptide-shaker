@@ -263,6 +263,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 proteinTableMouseClicked(e);
             }
         });
+
         peptideTable.getTableHeader().addMouseListener(new MouseAdapter() {
 
             @Override
@@ -270,6 +271,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 peptideTableMouseClicked(e);
             }
         });
+
         psmTable.getTableHeader().addMouseListener(new MouseAdapter() {
 
             @Override
@@ -3523,20 +3525,36 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * @param evt
      */
     private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
+
         if (evt.getButton() == MouseEvent.BUTTON3 && proteinTable.getRowCount() > 0) {
+
             final MouseEvent event = evt;
             JPopupMenu popupMenu = new JPopupMenu();
             JMenuItem menuItem = new JMenuItem("Statistics (beta)");
+
             menuItem.addActionListener(new java.awt.event.ActionListener() {
+
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTable.getColumnName(proteinTable.columnAtPoint(event.getPoint())), XYPlottingDialog.PlottingDialogPlotType.densityPlot, proteinTableToolTips,
+
+                    new XYPlottingDialog(
+                            peptideShakerGUI,
+                            proteinTable,
+                            proteinTable.getColumnName(proteinTable.columnAtPoint(event.getPoint())),
+                            XYPlottingDialog.PlottingDialogPlotType.densityPlot,
+                            proteinTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                            true
+                    );
+
                 }
+
             });
+
             popupMenu.add(menuItem);
             popupMenu.show(proteinTable, evt.getX(), evt.getY());
         }
+
     }//GEN-LAST:event_proteinTableMouseClicked
 
     /**
