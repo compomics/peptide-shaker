@@ -1019,7 +1019,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     dataFolders.add(dataFolder);
                 }
                 for (File unzippedFile : destinationFolder.listFiles()) {
+
                     String nameLowerCase = unzippedFile.getName().toLowerCase();
+
                     if (nameLowerCase.endsWith(".omx")
                             || nameLowerCase.endsWith(".t.xml")
                             || nameLowerCase.endsWith(".pep.xml")
@@ -1031,6 +1033,8 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                             || nameLowerCase.endsWith(".tags")
                             || nameLowerCase.endsWith(".pnovo.txt")
                             || nameLowerCase.endsWith(".novor.csv")
+                            || nameLowerCase.endsWith(".coss.tsv")
+                            || nameLowerCase.endsWith(".sage.tsv")
                             || nameLowerCase.endsWith(".psm")
                             || nameLowerCase.endsWith(".omx.gz")
                             || nameLowerCase.endsWith(".t.xml.gz")
@@ -1042,12 +1046,19 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                             || nameLowerCase.endsWith(".tags.gz")
                             || nameLowerCase.endsWith(".pnovo.txt.gz")
                             || nameLowerCase.endsWith(".novor.csv.gz")
+                            || nameLowerCase.endsWith(".coss.tsv.gz")
+                            || nameLowerCase.endsWith(".sage.tsv.gz")
                             || nameLowerCase.endsWith(".psm.gz")) {
+
                         identificationFiles.add(unzippedFile);
+
                     } else if (nameLowerCase.endsWith(".par")) {
+
                         try {
+
                             tempIdentificationParameters = IdentificationParameters.getIdentificationParameters(unzippedFile);
                             ValidationQcParameters validationQCParameters = tempIdentificationParameters.getIdValidationParameters().getValidationQCParameters();
+
                             if (validationQCParameters == null
                                     || validationQCParameters.getPsmFilters() == null
                                     || validationQCParameters.getPeptideFilters() == null
@@ -1057,10 +1068,21 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                     && validationQCParameters.getProteinFilters().isEmpty()) {
                                 MatchesValidator.setDefaultMatchesQCFilters(validationQCParameters);
                             }
+
                         } catch (Exception e) {
+
                             e.printStackTrace();
-                            waitingHandler.appendReport("An error occurred while parsing the parameters file " + unzippedFile.getName() + ". " + getLogFileMessage(), true, true);
+
+                            waitingHandler.appendReport(
+                                    "An error occurred while parsing the parameters file "
+                                    + unzippedFile.getName()
+                                    + ". " + getLogFileMessage(),
+                                    true,
+                                    true
+                            );
+
                             waitingHandler.setRunCanceled();
+
                         }
                     }
                 }
