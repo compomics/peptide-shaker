@@ -324,6 +324,7 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_DECOY_TAG.id) + " " + IdentificationParametersCLIParams.SAGE_DECOY_TAG.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_GENERATE_DECOYS.id) + " " + IdentificationParametersCLIParams.SAGE_GENERATE_DECOYS.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_TMT.id) + " " + IdentificationParametersCLIParams.SAGE_TMT.description + "\n";
+        //output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_TMT_LEVEL.id) + " " + IdentificationParametersCLIParams.SAGE_TMT_LEVEL.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_LFQ.id) + " " + IdentificationParametersCLIParams.SAGE_LFQ.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_DEISOTOPE.id) + " " + IdentificationParametersCLIParams.SAGE_DEISOTOPE.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.SAGE_CHIMERA.id) + " " + IdentificationParametersCLIParams.SAGE_CHIMERA.description + "\n";
