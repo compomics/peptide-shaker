@@ -461,7 +461,7 @@ public class PercolatorExport {
                 }
 
                 // Make sure that there is no duplicate in the export
-                HashSet<Long> processedPeptideKeys = new HashSet<>();
+                HashSet<Long> processedPsmKeys = new HashSet<>();
 
                 // Display progress
                 if (waitingHandler != null) {
@@ -481,9 +481,7 @@ public class PercolatorExport {
                 SpectrumMatch tempSpectrumMatch = spectrumMatch;
                 tempSpectrumMatch.getAllPeptideAssumptions()
                         //.parallel()
-                        .forEach(
-                                peptideAssumption -> writePeptideCandidate(
-                                        tempSpectrumMatch,
+                        .forEach(peptideAssumption -> writePeptideCandidate(tempSpectrumMatch,
                                         peptideAssumption,
                                         allRTs,
                                         rtFileWriterFlag,
@@ -496,7 +494,7 @@ public class PercolatorExport {
                                         modificationFactory,
                                         modificationParameters,
                                         spectrumProvider,
-                                        processedPeptideKeys,
+                                        processedPsmKeys,
                                         writingSemaphore,
                                         writer
                                 )
@@ -649,7 +647,7 @@ public class PercolatorExport {
             while ((spectrumMatch = spectrumMatchesIterator.next()) != null) {
 
                 // Make sure that there is no duplicate in the export
-                HashSet<Long> processedPeptideKeys = new HashSet<>();
+                HashSet<Long> processedPsmKeys = new HashSet<>();
 
                 // Display progress
                 if (waitingHandler != null) {
@@ -670,9 +668,7 @@ public class PercolatorExport {
                 SpectrumMatch tempSpectrumMatch = spectrumMatch;
                 tempSpectrumMatch.getAllPeptideAssumptions()
                         .parallel()
-                        .forEach(
-                                peptideAssumption -> writePeptideCandidate(
-                                        tempSpectrumMatch,
+                        .forEach(peptideAssumption -> writePeptideCandidate(tempSpectrumMatch,
                                         peptideAssumption,
                                         //rtPreds,
                                         allRTs,
@@ -686,7 +682,7 @@ public class PercolatorExport {
                                         modificationFactory,
                                         modificationParameters,
                                         spectrumProvider,
-                                        processedPeptideKeys,
+                                        processedPsmKeys,
                                         writingSemaphore,
                                         writer
                                 )
@@ -898,7 +894,7 @@ public class PercolatorExport {
      * @param modificationFactory The factory containing the modification
      * details.
      * @param spectrumProvider The spectrum provider.
-     * @param processedPeptides The keys of the peptides already processed.
+     * @param processedPsms The keys of the PSMs already processed.
      * @param writingSemaphore A semaphore to synchronize the writing to the set
      * of already processed peptides.
      * @param writer The writer to use.
@@ -917,7 +913,7 @@ public class PercolatorExport {
             ModificationFactory modificationFactory,
             ModificationParameters modificationParameters,
             SpectrumProvider spectrumProvider,
-            HashSet<Long> processedPeptides,
+            HashSet<Long> processedPsms,
             SimpleSemaphore writingSemaphore,
             SimpleFileWriter writer
     ) {
@@ -999,16 +995,16 @@ public class PercolatorExport {
         }
 
         // Get identifiers
-        long peptideKey = DeepLcUtils.getPeptideKey(peptideData);
+        long psmKey = PercolatorUtils.getPsmKey(peptideData);
 
         // Export if not done already
         writingSemaphore.acquire();
 
-        if (!processedPeptides.contains(peptideKey)) {
+        if (!processedPsms.contains(psmKey)) {
 
             writer.writeLine(peptideData);
 
-            processedPeptides.add(peptideKey);
+            processedPsms.add(psmKey);
 
         }
         

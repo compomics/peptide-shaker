@@ -1,4 +1,3 @@
-
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.experiment.biology.enzymes.Enzyme;
@@ -275,7 +274,7 @@ public class PercolatorUtils {
 
         line.append("\t").append(intensityCoverage);
 
-// Peptide length
+        // Peptide length
         line.append("\t").append(peptide.getSequence().length());
 
         // Charge
@@ -629,7 +628,7 @@ public class PercolatorUtils {
         results.append("\t").append(spectraCosineSimilarity);
 
         double angularSimilarity = 1.0 - (Math.acos(spectraCosineSimilarity) / Math.PI);
-            
+
         results.append("\t").append(angularSimilarity);
 
         ArrayList<Spectrum> normalizedIntensities = normalizeIntensities(measuredSpectrum, predictedSpectrum, aligned_peaks);
@@ -728,7 +727,7 @@ public class PercolatorUtils {
 
         double scaleFactorMeasured = 0.0;
         double scaleFactorPredicted = 0.0;
-        
+
         if (alignedPeaks.size() <= 1) {
 
             double[] sortedMeasuredIntensity = Arrays.copyOf(measuredIntensity, measuredIntensity.length);
@@ -753,7 +752,7 @@ public class PercolatorUtils {
 
             scaleFactorMeasured = avgIntensityMeasured;
             scaleFactorPredicted = avgIntensityPredicted;
-            
+
         } else {
 
             double[] measuredAlignedIntensities = new double[alignedPeaks.size()];
@@ -885,7 +884,7 @@ public class PercolatorUtils {
 
         double[] measuredIntensities = measuredSpectrum.intensity;
         double[] predictedIntensities = predictedSpectrum.intensity;
-        
+
         /*
         //Replace 0 measured intensity when peak is not matched
         // with the entropy of the bionomial distribution for the 
@@ -894,15 +893,13 @@ public class PercolatorUtils {
         entropy = entropy * matchedPeaksRatio * (1.0 - matchedPeaksRatio);
         entropy = Math.log(entropy);
         entropy = 0.5 * entropy;
-        */
-        
-        for (int i=0; i < measuredIntensities.length; i++){
-            if (measuredIntensities[i] == 0.0){
+         */
+        for (int i = 0; i < measuredIntensities.length; i++) {
+            if (measuredIntensities[i] == 0.0) {
                 //measuredIntensities[i] = entropy;
                 measuredIntensities[i] = 0.000001;
             }
         }
-        
 
         double crossEntropy = 0.0;
         for (int i = 0; i < measuredIntensities.length; i++) {
@@ -1222,12 +1219,11 @@ public class PercolatorUtils {
         }
         double bestRTprediction = predictedRts.get(bestRTindex);
         line.append("\t").append(bestRTprediction);*/
-        
         line.append("\t").append(peptideRTs.get(0));
         line.append("\t").append(peptideRTs.get(1));
         line.append("\t").append(peptideRTs.get(2));
         line.append("\t").append(peptideRTs.get(3));
-        
+
         double searchEngineScore = peptideAssumption.getScore();
         line.append("\t").append(searchEngineScore);
 
@@ -1354,6 +1350,21 @@ public class PercolatorUtils {
         double intensityCoverage = coveredIntensity / spectrum.getTotalIntensity();
 
         return intensityCoverage;
+
+    }
+
+    /**
+     * Returns a unique key corresponding to the given PSM.
+     *
+     * @param psmData The psm data as string.
+     *
+     * @return The unique key corresponding to the PSM data.
+     */
+    public static long getPsmKey(
+            String psmData
+    ) {
+
+        return ExperimentObject.asLong(psmData);
 
     }
 
