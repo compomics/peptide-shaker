@@ -185,7 +185,7 @@ public class PercolatorExport {
     /**
      * Parses the peaks intensities prediction from MS2PIP.
      *
-     * Expected format: spec_id,charge,ion,ionnumber,mz,prediction
+     * Expected format: predicted_spectrum_key,charge,ion,ionnumber,mz,prediction
      * 2238942014911164193,3,B,1,138.066,0
      *
      * @param ms2pipFile File with spectra fragmentation predictions from MS2PIP.
@@ -196,7 +196,6 @@ public class PercolatorExport {
             File ms2pipFile
     ) {
 
-        //HashMap<String, ArrayList<Spectrum>> result = new HashMap<>();
         HashMap<String, ArrayList<Spectrum>> result = new HashMap<>();
 
         try (SimpleFileReader reader = SimpleFileReader.getFileReader(ms2pipFile)) {
@@ -207,7 +206,7 @@ public class PercolatorExport {
             String firstDataLine = reader.readLine();
             String[] firstDataLineSplit = firstDataLine.split(",");
 
-            String spectrumKey = firstDataLineSplit[0];
+            String predictedSpectrumKey = firstDataLineSplit[0];
             
             String firstIon = firstDataLineSplit[2];
 
@@ -244,7 +243,7 @@ public class PercolatorExport {
                 double mz = Double.parseDouble(lineSplit[4]);
                 double prediction = Double.parseDouble(lineSplit[5]);
 
-                if (key.equals(spectrumKey)){
+                if (key.equals(predictedSpectrumKey)){
                     mzs.add(mz);
                     predictions.add(prediction);
                     
@@ -296,7 +295,7 @@ public class PercolatorExport {
                     predictedSpectra.add(predictedBionSpectrum);
                     predictedSpectra.add(predictedYionSpectrum);
                     
-                    result.put(spectrumKey, predictedSpectra);
+                    result.put(predictedSpectrumKey, predictedSpectra);
                     
                     mzs = new ArrayList<>();
                     predictions = new ArrayList<>();
@@ -318,7 +317,7 @@ public class PercolatorExport {
                         predictionsY.add(prediction);
                     }
                     
-                    spectrumKey = key;
+                    predictedSpectrumKey = key;
                 }
 
             }
@@ -329,8 +328,6 @@ public class PercolatorExport {
             double[] mzsArray = new double[mzs.size()];
             double[] predictionsArray = new double[mzs.size()];
             for (int i = 0; i < predictionsArray.length; i++) {
-               //mzsArray[i] = mzs.get(i).doubleValue();  // java 1.4 style
-               // or:
                mzsArray[i] = mzs.get(i);
                int index = mzsUnsorted.indexOf(mzs.get(i));
                predictionsArray[i] = predictions.get(index); 
@@ -361,7 +358,7 @@ public class PercolatorExport {
             predictedSpectra.add(predictedBionSpectrum);
             predictedSpectra.add(predictedYionSpectrum);
             
-            result.put(spectrumKey, predictedSpectra);
+            result.put(predictedSpectrumKey, predictedSpectra);
             
         }
         
@@ -385,6 +382,9 @@ public class PercolatorExport {
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The waiting handler.
+     * 
+     * @throws java.lang.InterruptedException Exception thrown if the execution is interrupted.
+     * @throws java.util.concurrent.ExecutionException Exception thrown if an error occurred during concurrent execution.
      */
     public static void percolatorExport(
             File destinationFile,

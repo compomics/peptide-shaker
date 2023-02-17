@@ -120,8 +120,8 @@ public class PeaksIntensitiesExport {
 
     /**
      * @param peaksIntensitiesFile The file to write the export.
-     * @param fragmentationPrediction the map of spectrumKey to fragmentation
-     * predictions.
+     * @param fragmentationPrediction the map of predicted spectrum key to
+     * fragmentation predictions.
      * @param psmIDs the list of PSM ids to be used for the export.
      * @param identification the identification
      * @param modificationParameters The modification parameters.
@@ -166,8 +166,6 @@ public class PeaksIntensitiesExport {
 
             SpectrumMatchesIterator spectrumMatchesIterator = identification.getSpectrumMatchesIterator(waitingHandler);
 
-            HashSet<Long> processedPeptideKeys = new HashSet<>();
-
             SpectrumMatch spectrumMatch;
 
             while ((spectrumMatch = spectrumMatchesIterator.next()) != null) {
@@ -200,7 +198,6 @@ public class PeaksIntensitiesExport {
                                         annotationParameters,
                                         modificationLocalizationParameters,
                                         modificationFactory,
-                                        processedPeptideKeys,
                                         spectrumProvider,
                                         spectrumMatchFinal,
                                         writingSemaphore,
@@ -216,8 +213,8 @@ public class PeaksIntensitiesExport {
     /**
      * Writes a peptide candidate to the export if not done already.
      *
-     * @param fragmentationPrediction the map of spectrumKey to fragmentation
-     * predictions.
+     * @param fragmentationPrediction the map of predicted spectrum key to
+     * fragmentation predictions.
      * @param peptideAssumption The peptide assumption to write.
      * @param modificationParameters The modification parameters.
      * @param annotationParameters The annotation parameters.
@@ -225,7 +222,7 @@ public class PeaksIntensitiesExport {
      * @param sequenceProvider The sequence provider.
      * @param modificationFactory The factory containing the modification
      * details.
-     * @param processedPeptides The keys of the peptides already processed.
+     * @param processedPsms The keys of the peptides already processed.
      * @param spectrumProvider The spectrum provider.
      * @param spectrumMatch The spectrum match.
      * @param writingSemaphore A semaphore to synchronize the writing to the set
@@ -242,7 +239,6 @@ public class PeaksIntensitiesExport {
             AnnotationParameters annotationParameters,
             ModificationLocalizationParameters modificationLocalizationParameters,
             ModificationFactory modificationFactory,
-            HashSet<Long> processedPeptides,
             SpectrumProvider spectrumProvider,
             SpectrumMatch spectrumMatch,
             SimpleSemaphore writingSemaphore,
@@ -270,7 +266,7 @@ public class PeaksIntensitiesExport {
             return;
         }
 
-        ArrayList<Spectrum> predictedSpectra = fragmentationPrediction.get(String.valueOf(peptideKey));
+        ArrayList<Spectrum> predictedSpectra = fragmentationPrediction.get(peptideID);
 
         if (predictedSpectra == null) {
             System.out.println("No MS2PIP prediction for PSM with ID: " + psmID);
@@ -389,51 +385,45 @@ public class PeaksIntensitiesExport {
         // Export if not done already
         writingSemaphore.acquire();
 
-        if (!processedPeptides.contains(peptideKey)) {
+        //String line = String.join(" ", Long.toString(peptideKey), peptideData);
+        //writer.writeLine(line);
+        double[] measuredMz = measuredScaledSpectrum.mz;
+        double[] measuredIntensities = measuredScaledSpectrum.intensity;
 
-            //String line = String.join(" ", Long.toString(peptideKey), peptideData);
-            //writer.writeLine(line);
-            double[] measuredMz = measuredScaledSpectrum.mz;
-            double[] measuredIntensities = measuredScaledSpectrum.intensity;
+        for (int i = 0; i < measuredMz.length; i++) {
 
-            for (int i = 0; i < measuredMz.length; i++) {
+            String annotation = annotationMap.get(measuredMz[i]);
 
-                String annotation = annotationMap.get(measuredMz[i]);
+            if (annotation == null) {
 
-                if (annotation == null) {
-
-                    annotation = "";
-
-                }
-
-                String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
-
-                String line = String.join(",", psmID, "1", matchedLabel, String.valueOf(measuredMz[i]), String.valueOf(measuredIntensities[i]), annotation);
-                writer.writeLine(line);
+                annotation = "";
 
             }
 
-            double[] predMz = predictedScaledSpectrum.mz;
-            double[] predIntensities = predictedScaledSpectrum.intensity;
+            String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
 
-            for (int i = 0; i < predMz.length; i++) {
+            String line = String.join(",", psmID, "1", matchedLabel, String.valueOf(measuredMz[i]), String.valueOf(measuredIntensities[i]), annotation);
+            writer.writeLine(line);
 
-                String annotation = annotationMap.get(predMz[i]);
+        }
 
-                if (annotation == null) {
+        double[] predMz = predictedScaledSpectrum.mz;
+        double[] predIntensities = predictedScaledSpectrum.intensity;
 
-                    annotation = "";
+        for (int i = 0; i < predMz.length; i++) {
 
-                }
+            String annotation = annotationMap.get(predMz[i]);
 
-                String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
+            if (annotation == null) {
 
-                String line = String.join(",", psmID, "-1", matchedLabel, String.valueOf(predMz[i]), String.valueOf(predIntensities[i]), annotation);
-                writer.writeLine(line);
+                annotation = "";
 
             }
 
-            processedPeptides.add(peptideKey);
+            String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
+
+            String line = String.join(",", psmID, "-1", matchedLabel, String.valueOf(predMz[i]), String.valueOf(predIntensities[i]), annotation);
+            writer.writeLine(line);
 
         }
 
