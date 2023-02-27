@@ -5,6 +5,7 @@ import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.matches.IonMatch;
+import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
@@ -210,6 +211,7 @@ public class PercolatorUtils {
                 sequenceMatchingParameters,
                 modificationFactory
         );
+
         // Get corresponding key
         long peptideMs2PipKey = Ms2PipUtils.getPeptideKey(peptideData);
         String peptideID = Long.toString(peptideMs2PipKey);
@@ -360,9 +362,7 @@ public class PercolatorUtils {
         }
 
         // Retention time
-        // Retention time
-        Boolean rtPredictionsAvailable = peptideRTs != null;
-        if (rtPredictionsAvailable) {
+        if (peptideRTs != null) {
 
             /*double measuredRt = spectrumProvider.getPrecursorRt(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
 
@@ -407,8 +407,7 @@ public class PercolatorUtils {
         }
 
         // Distance of observed and predicted mass spectrum
-        Boolean spectraPredictionsAvailable = predictedSpectra != null;
-        if (spectraPredictionsAvailable) {
+        if (predictedSpectra != null) {
 
             // Get measured spectrum
             Spectrum measuredSpectrum = spectrumProvider.getSpectrum(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
@@ -1091,18 +1090,22 @@ public class PercolatorUtils {
     ) {
 
         String peptideSequence = peptide.getSequence();
-        String sequenceWithMods = "";
+        int nMods = 0;
 
         // Fixed modifications
         String[] fixedModifications = peptide.getFixedModifications(modificationParameters, sequenceProvider, sequenceMatchingParameters);
 
-        ArrayList<String> fixedModificationsInfo = new ArrayList<String>();
+        String[] modificationsUnimodIds = new String[peptideSequence.length()];
+        Arrays.fill(modificationsUnimodIds, "");
 
         for (int i = 0; i < fixedModifications.length; i++) {
 
             if (fixedModifications[i] != null) {
 
-                //int site = i < peptideSequence.length() + 1 ? i : -1;
+            int indexOnSequence = PeptideUtils.getModifiedAaIndex(i, peptideSequence.length());
+
+                nMods++;
+
                 String modName = fixedModifications[i];
                 Modification modification = modificationFactory.getModification(modName);
                 CvTerm cvTerm = modification.getUnimodCvTerm();
@@ -1114,57 +1117,48 @@ public class PercolatorUtils {
 
                 }
 
-                //String seqBegin = sequenceWithMods.substring(0,site);
-                //String seqEnd = sequenceWithMods.substring(site);
-                //sequenceWithMods = seqBegin + "[" + accession + "]" + seqEnd;
-                fixedModificationsInfo.add("[" + accession.substring(accession.indexOf(":") + 1) + "]");
+                modificationsUnimodIds[indexOnSequence] = String.join("", modificationsUnimodIds[indexOnSequence], "[", accession.substring(accession.indexOf(":") + 1), "]");
 
-            } else {
-                fixedModificationsInfo.add("");
             }
-
         }
 
         // Variable modifications
-        String[] variableModifications = peptide.getIndexedVariableModifications();
+        nMods += peptide.getVariableModifications().length;
 
-        ArrayList<String> variableModificationsInfo = new ArrayList<>();
+        for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
 
-        for (int i = 0; i < variableModifications.length; i++) {
+            int indexOnSequence = PeptideUtils.getModifiedAaIndex(modificationMatch.getSite(), peptideSequence.length());
 
-            if (variableModifications[i] != null) {
+            String modName = modificationMatch.getModification();
+            Modification modification = modificationFactory.getModification(modName);
+            CvTerm cvTerm = modification.getUnimodCvTerm();
+            String accession = cvTerm.getAccession();
 
-                //int site = i < peptideSequence.length() + 1 ? i : -1;
-                String modName = variableModifications[i];
-                Modification modification = modificationFactory.getModification(modName);
-                CvTerm cvTerm = modification.getUnimodCvTerm();
-                String accession = cvTerm.getAccession();
+            if (cvTerm == null) {
 
-                if (cvTerm == null) {
+                throw new IllegalArgumentException("No Unimod id found for modification " + modName + ".");
 
-                    throw new IllegalArgumentException("No Unimod id found for modification " + modName + ".");
-
-                }
-
-                //String seqBegin = sequenceWithMods.substring(0,site);
-                //String seqEnd = sequenceWithMods.substring(site);
-                //sequenceWithMods = seqBegin + "[" + accession + "]" + seqEnd;
-                variableModificationsInfo.add("[" + accession.substring(accession.indexOf(":") + 1) + "]");
-
-            } else {
-                variableModificationsInfo.add("");
             }
 
+            modificationsUnimodIds[indexOnSequence] = String.join("", modificationsUnimodIds[indexOnSequence], modificationsUnimodIds[indexOnSequence], "[", accession.substring(accession.indexOf(":") + 1), "]");
+
         }
+
+        if (nMods == 0) {
+
+            return peptideSequence;
+
+        }
+
+        StringBuilder sequenceWithMods = new StringBuilder(peptideSequence.length() + 4 * nMods);
 
         for (int i = 0; i < peptideSequence.length(); i++) {
 
-            String modificationsInfo = fixedModificationsInfo.get(i) + variableModificationsInfo.get(i);
-            sequenceWithMods = sequenceWithMods + modificationsInfo + peptideSequence.charAt(i);
+            sequenceWithMods.append(modificationsUnimodIds[i]).append(peptideSequence.charAt(i));
 
         }
 
-        return sequenceWithMods;
+        return sequenceWithMods.toString();
 
     }
 
@@ -1184,10 +1178,6 @@ public class PercolatorUtils {
         // PSM id
         long spectrumKey = spectrumMatch.getKey();
 
-        Peptide peptide = peptideAssumption.getPeptide();
-        //long peptideKey = peptide.getMatchingKey();
-        //line.append(spectrumKey).append("_").append(peptideKey);
-
         // Get peptide data
         String peptideData = Ms2PipUtils.getPeptideData(
                 peptideAssumption,
@@ -1205,20 +1195,8 @@ public class PercolatorUtils {
 
         // Label
         String decoyFlag = PeptideUtils.isDecoy(peptideAssumption.getPeptide(), sequenceProvider) ? "-1" : "1";
-        line.append("\t").append(decoyFlag);
 
-        /*double measuredRt = spectrumProvider.getPrecursorRt(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
-        line.append("\t").append(measuredRt);
-        
-        int bestRTindex = 0;
-        double minRTdistance = Math.abs(predictedRts.get(0) - measuredRt);
-        for (int i=1; i<predictedRts.size(); i++){
-            if (Math.abs(predictedRts.get(i) - measuredRt) < minRTdistance){
-                bestRTindex = i;
-            }
-        }
-        double bestRTprediction = predictedRts.get(bestRTindex);
-        line.append("\t").append(bestRTprediction);*/
+        line.append("\t").append(decoyFlag);
         line.append("\t").append(peptideRTs.get(0));
         line.append("\t").append(peptideRTs.get(1));
         line.append("\t").append(peptideRTs.get(2));
