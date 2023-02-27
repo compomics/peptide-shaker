@@ -119,7 +119,12 @@ public class PeptideShakerCLIInputBean {
 
             } catch (Exception e) {
 
-                throw new IllegalArgumentException("Input for " + PeptideShakerCLIParams.PROJECT_TYPE.id + " (" + optionValue + ") could not be parsed as an integer.");
+                throw new IllegalArgumentException(
+                        "Input for "
+                        + PeptideShakerCLIParams.PROJECT_TYPE.id
+                        + " (" + optionValue
+                        + ") could not be parsed as an integer."
+                );
 
             }
 
@@ -193,7 +198,7 @@ public class PeptideShakerCLIInputBean {
 
     /**
      * Returns the project type.
-     * 
+     *
      * @return the project type
      */
     public ProjectType getProjectType() {
@@ -367,6 +372,7 @@ public class PeptideShakerCLIInputBean {
         extensions.add(".pep.xml");
         extensions.add(".mzid");
         extensions.add(".csv");
+        extensions.add(".tsv");
         extensions.add(".res");
         extensions.add(".txt");
         extensions.add(".tags");
@@ -452,8 +458,9 @@ public class PeptideShakerCLIInputBean {
 
     /**
      * Returns wether the user enabled the caching of Percolator features.
-     * 
-     * @return A boolean indicating wether the user enabled the caching of Percolator features.
+     *
+     * @return A boolean indicating wether the user enabled the caching of
+     * Percolator features.
      */
     public Boolean getCachePercolatorFeatures() {
         return cachePercolatorFeatures;
@@ -531,7 +538,7 @@ public class PeptideShakerCLIInputBean {
             String option = aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT_MGF.id);
             if (!option.trim().equals("1") && !option.trim().equals("0")) {
                 System.out.println("\nThe value for the \'" + PeptideShakerCLIParams.OUTPUT_MGF.id + "\' option should be \'0\' or \'1\', \'" + option + "\' found.\n");
-                    return false;
+                return false;
             }
         }
 
@@ -540,7 +547,7 @@ public class PeptideShakerCLIInputBean {
             String option = aLine.getOptionValue(PeptideShakerCLIParams.PERCOLATOR_CACHE.id);
             if (!option.trim().equals("1") && !option.trim().equals("0")) {
                 System.out.println("\nThe value for the \'" + PeptideShakerCLIParams.PERCOLATOR_CACHE.id + "\' option should be \'0\' or \'1\', \'" + option + "\' found.\n");
-                    return false;
+                return false;
             }
         }
 

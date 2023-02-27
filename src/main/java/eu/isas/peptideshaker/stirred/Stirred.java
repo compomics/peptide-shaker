@@ -324,9 +324,11 @@ public class Stirred {
                         || fileNameLowerCase.endsWith(".ms-amanda.csv")
                         || fileNameLowerCase.endsWith(".res")
                         || fileNameLowerCase.endsWith(".tide-search.target.txt")
-                        || fileNameLowerCase.endsWith(".tags")
-                        || fileNameLowerCase.endsWith(".pnovo.txt")
-                        || fileNameLowerCase.endsWith(".novor.csv")
+//                        || fileNameLowerCase.endsWith(".tags")
+//                        || fileNameLowerCase.endsWith(".pnovo.txt")
+//                        || fileNameLowerCase.endsWith(".novor.csv")
+                        || fileNameLowerCase.endsWith(".coss.tsv")
+                        || fileNameLowerCase.endsWith(".sage.tsv")
                         || fileNameLowerCase.endsWith(".psm")
                         || fileNameLowerCase.endsWith(".omx.gz")
                         || fileNameLowerCase.endsWith(".t.xml.gz")
@@ -338,6 +340,7 @@ public class Stirred {
                         //                            || fileNameLowerCase.endsWith(".tags.gz")
                         //                            || fileNameLowerCase.endsWith(".pnovo.txt.gz")
                         //                            || fileNameLowerCase.endsWith(".novor.csv.gz")
+                        || fileNameLowerCase.endsWith(".sage.tsv.gz")
                         || fileNameLowerCase.endsWith(".psm.gz")) {
 
                     searchEngineResultsFiles.add(file);
