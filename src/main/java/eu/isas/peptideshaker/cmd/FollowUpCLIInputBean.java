@@ -138,7 +138,8 @@ public class FollowUpCLIInputBean {
     /**
      * The models to export ms2pip config files for.
      */
-    private String[] ms2pipModels = new String[]{"CID", "HCD"};
+    private String[] ms2pipModels = new String[]{"CID", "HCD", "HCDch2", "CIDch2"};
+    
     /**
      * The path settings.
      */

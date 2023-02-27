@@ -217,11 +217,11 @@ public class PercolatorExport {
             ArrayList<Double> predictionsB = new ArrayList<>();
             ArrayList<Double> mzsY = new ArrayList<>();
             ArrayList<Double> predictionsY = new ArrayList<>();
-
-            if (firstIon.equals("B")) {
+            
+            if ((firstIon.equals("B")) || (firstIon.equals("B2"))) {
                 mzsB.add(firstMz);
                 predictionsB.add(firstPrediction);
-            } else {
+            } else if ((firstIon.equals("Y")) || (firstIon.equals("Y2"))) {
                 mzsY.add(firstMz);
                 predictionsY.add(firstPrediction);
             }
@@ -240,17 +240,19 @@ public class PercolatorExport {
                 if (key.equals(predictedSpectrumKey)) {
                     mzs.add(mz);
                     predictions.add(prediction);
-
-                    if (ion.equals("B")) {
+                    
+                    if ((ion.equals("B")) || (ion.equals("B2"))) {
                         mzsB.add(mz);
                         predictionsB.add(prediction);
-                    } else {
+                    } else if ((ion.equals("Y")) || (ion.equals("Y2"))) {
                         mzsY.add(mz);
                         predictionsY.add(prediction);
                     }
-
-                } else {
-
+                    
+                }
+                else{
+                    
+                    //Create Spectrum object with all predicted peaks
                     ArrayList<Double> mzsUnsorted = new ArrayList<>(mzs);
                     Collections.sort(mzs);
 
@@ -263,25 +265,35 @@ public class PercolatorExport {
                     }
 
                     Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray, 2);
-
+                    
+                    //Create Spectrum object with all B predicted peaks
+                    ArrayList<Double> mzsBUnsorted = new ArrayList<>(mzsB);
+                    Collections.sort(mzsB);
+                    
                     double[] mzsBArray = new double[mzsB.size()];
                     double[] predictionsBArray = new double[mzsB.size()];
                     for (int i = 0; i < predictionsBArray.length; i++) {
                         mzsBArray[i] = mzsB.get(i);
-                        predictionsBArray[i] = predictionsB.get(i);
+                        int index = mzsBUnsorted.indexOf(mzsB.get(i));
+                        predictionsBArray[i] = predictionsB.get(index);
                     }
 
                     Spectrum predictedBionSpectrum = new Spectrum(null, mzsBArray, predictionsBArray, 2);
-
+                    
+                    //Create Spectrum object with all Y predicted peaks
+                    ArrayList<Double> mzsYUnsorted = new ArrayList<>(mzsY);
+                    Collections.sort(mzsY);
+                    
                     double[] mzsYArray = new double[mzsY.size()];
                     double[] predictionsYArray = new double[mzsY.size()];
                     for (int i = 0; i < predictionsYArray.length; i++) {
                         mzsYArray[i] = mzsY.get(i);
-                        predictionsYArray[i] = predictionsY.get(i);
+                        int index = mzsYUnsorted.indexOf(mzsY.get(i));
+                        predictionsYArray[i] = predictionsY.get(index);
                     }
 
                     Spectrum predictedYionSpectrum = new Spectrum(null, mzsYArray, predictionsYArray, 2);
-
+                                        
                     ArrayList<Spectrum> predictedSpectra = new ArrayList<>();
                     predictedSpectra.add(predictedSpectrum);
                     predictedSpectra.add(predictedBionSpectrum);
@@ -299,11 +311,11 @@ public class PercolatorExport {
                     predictionsB = new ArrayList<>();
                     mzsY = new ArrayList<>();
                     predictionsY = new ArrayList<>();
-
-                    if (ion.equals("B")) {
+                    
+                    if ((ion.equals("B")) || (ion.equals("B2"))) {
                         mzsB.add(mz);
                         predictionsB.add(prediction);
-                    } else {
+                    } else if ((ion.equals("Y")) || (ion.equals("Y2"))) {
                         mzsY.add(mz);
                         predictionsY.add(prediction);
                     }
@@ -312,7 +324,8 @@ public class PercolatorExport {
                 }
 
             }
-
+            
+            //Create Spectrum object with all predicted peaks
             ArrayList<Double> mzsUnsorted = new ArrayList<Double>(mzs);
             Collections.sort(mzs);
 
@@ -325,21 +338,31 @@ public class PercolatorExport {
             }
 
             Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray, 2);
-
+            
+            //Create Spectrum object with all B predicted peaks
+            ArrayList<Double> mzsBUnsorted = new ArrayList<Double>(mzsB);
+            Collections.sort(mzsB);
+            
             double[] mzsBArray = new double[mzsB.size()];
             double[] predictionsBArray = new double[mzsB.size()];
             for (int i = 0; i < predictionsBArray.length; i++) {
                 mzsBArray[i] = mzsB.get(i);
-                predictionsBArray[i] = predictionsB.get(i);
+                int index = mzsBUnsorted.indexOf(mzsB.get(i));
+                predictionsBArray[i] = predictionsB.get(index);
             }
 
             Spectrum predictedBionSpectrum = new Spectrum(null, mzsBArray, predictionsBArray, 2);
 
+            //Create Spectrum object with all Y predicted peaks
+            ArrayList<Double> mzsYUnsorted = new ArrayList<Double>(mzsY);
+            Collections.sort(mzsY);
+            
             double[] mzsYArray = new double[mzsY.size()];
             double[] predictionsYArray = new double[mzsY.size()];
             for (int i = 0; i < predictionsYArray.length; i++) {
                 mzsYArray[i] = mzsY.get(i);
-                predictionsYArray[i] = predictionsY.get(i);
+                int index = mzsYUnsorted.indexOf(mzsY.get(i));
+                predictionsYArray[i] = predictionsY.get(index);
             }
 
             Spectrum predictedYionSpectrum = new Spectrum(null, mzsYArray, predictionsYArray, 2);
