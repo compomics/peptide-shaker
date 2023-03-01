@@ -1154,7 +1154,7 @@ public class PercolatorUtils {
 
         for (int i = 0; i < peptideSequence.length(); i++) {
 
-            sequenceWithMods.append(modificationsUnimodIds[i]).append(peptideSequence.charAt(i));
+            sequenceWithMods.append(peptideSequence.charAt(i)).append(modificationsUnimodIds[i]);
 
         }
 

@@ -31,7 +31,7 @@ public class PercolatorExportTest extends TestCase {
         modificationParameters.addFixedModification(modificationFactory.getModification("Carbamidomethylation of C"));
 
         String sequence = "KTESTMYCPEPTIDEC";
-        String expectedResult = "[1]KTEST[35]MY[4]CPEPTIDE[4]C";
+        String expectedResult = "K[1]TESTM[35]YC[4]PEPTIDEC[4]";
 
         ModificationMatch[] variableModifications = new ModificationMatch[2];
 
@@ -47,7 +47,7 @@ public class PercolatorExportTest extends TestCase {
         // Variable mods and fixed at N and C termini and within the sequence
 
         sequence = "CTESTMYCPEPTIDEK";
-        expectedResult = "[4]CTEST[35]MY[4]CPEPTIDE[1]K";
+        expectedResult = "C[4]TESTM[35]YC[4]PEPTIDEK[1]";
 
         variableModifications = new ModificationMatch[2];
 
@@ -63,7 +63,7 @@ public class PercolatorExportTest extends TestCase {
         // Variable within the sequence
 
         sequence = "TESTMYCPEPKTIDE";
-        expectedResult = "TEST[35]MY[4]CPEP[1]KTIDE";
+        expectedResult = "TESTM[35]YC[4]PEPK[1]TIDE";
 
         variableModifications = new ModificationMatch[2];
 
