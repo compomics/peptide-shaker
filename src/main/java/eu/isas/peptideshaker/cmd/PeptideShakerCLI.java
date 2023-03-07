@@ -738,7 +738,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     );
 
                     // export mgf file(s) out of the zip file
-                    boolean mgfExport = cliInputBean.getMgfExport();
+                    boolean mgfExport = cliInputBean.getMgfExport(); // @TODO: what about non-mgf spectrum files..?
 
                     if (mgfExport) {
 
@@ -769,6 +769,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                             MsFileExporter.writeMgfFile(
                                     msFileHandler,
+                                    false, // only include ms2 spectra
                                     spectrumFileName,
                                     mgfFile,
                                     waitingHandler);
@@ -782,7 +783,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                         }
 
                         waitingHandler.appendReport(
-                                "Written mgf file(s) to output folder.",
+                                "MGF file(s) written to output folder.",
                                 true,
                                 true
                         );
