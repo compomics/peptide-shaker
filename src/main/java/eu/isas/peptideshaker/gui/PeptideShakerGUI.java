@@ -663,10 +663,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                 if (!fileDeleted) {
                     JOptionPane.showMessageDialog(
-                            this, 
+                            this,
                             "Failed to delete the file /resources/conf/firstRun.\n"
-                            + "Please delete it manually.", 
-                            "File Error", 
+                            + "Please delete it manually.",
+                            "File Error",
                             JOptionPane.OK_OPTION
                     );
                 }
@@ -771,9 +771,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                 // open the welcome dialog
                 new WelcomeDialog(
-                        this, 
-                        !java64bit || !memoryOk, 
-                        javaVersionWarning, 
+                        this,
+                        !java64bit || !memoryOk,
+                        javaVersionWarning,
                         true
                 );
 
@@ -2790,7 +2790,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void preferencesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_preferencesMenuItemActionPerformed
 
-        ProjectParametersDialog projectParametersDialog = new ProjectParametersDialog(this, getSpectrumCountingParameters(), getDisplayParameters());
+        ProjectParametersDialog projectParametersDialog = new ProjectParametersDialog(
+                this, 
+                getSpectrumCountingParameters(), 
+                getDisplayParameters()
+        );
 
         if (!projectParametersDialog.isCanceled()) {
 
@@ -2812,10 +2816,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             // check if the display preferences need to be updated
             DisplayParameters newDisplayParameters = projectParametersDialog.getDisplayParameters();
+            
             if (newDisplayParameters.getnAASurroundingPeptides() != getDisplayParameters().getnAASurroundingPeptides()) {
                 getDisplayParameters().setnAASurroundingPeptides(newDisplayParameters.getnAASurroundingPeptides());
                 updateSurroundingAminoAcids();
             }
+            
         }
 
         // @TODO: replace the code above when backwards compatibility can be broken
@@ -2968,46 +2974,84 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+        switch (selectedTabIndex) {
 
-            int spectrumTabIndex = overviewPanel.getSelectedSpectrumTabIndex();
+            case OVER_VIEW_TAB_INDEX:
 
-            if (spectrumTabIndex == 0) {
+                int spectrumTabIndex = overviewPanel.getSelectedSpectrumTabIndex();
 
-                new HelpDialog(this, getClass().getResource("/helpFiles/IonTable.html"),
+                switch (spectrumTabIndex) {
+
+                    case 0:
+
+                        new HelpDialog(
+                                this,
+                                getClass().getResource("/helpFiles/IonTable.html"),
+                                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                                "Ion Table - Help"
+                        );
+
+                        break;
+
+                    case 1:
+
+                        new HelpDialog(
+                                this,
+                                getClass().getResource("/helpFiles/BubblePlot.html"),
+                                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                                "Bubble Plot - Help"
+                        );
+
+                        break;
+
+                    case 2:
+
+                        new HelpDialog(
+                                this,
+                                getClass().getResource("/helpFiles/SpectrumPanel.html"),
+                                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                                "Spetrum Panel - Help"
+                        );
+
+                        break;
+
+                    default:
+                        break;
+
+                }
+
+                break;
+
+            case SPECTRUM_ID_TAB_INDEX:
+
+                new HelpDialog(
+                        this,
+                        getClass().getResource("/helpFiles/SpectrumPanel.html"),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                        "Ion Table - Help");
+                        "Spectrum Panel - Help"
+                );
 
-            } else if (spectrumTabIndex == 1) {
+                break;
 
-                new HelpDialog(this, getClass().getResource("/helpFiles/BubblePlot.html"),
+            case MODIFICATIONS_TAB_INDEX:
+
+                new HelpDialog(
+                        this,
+                        getClass().getResource("/helpFiles/PTMPanel.html"),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                        "Bubble Plot - Help");
+                        "Modification Analysis - Help"
+                );
 
-            } else if (spectrumTabIndex == 2) {
+                break;
 
-                new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"),
-                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                        "Spetrum Panel - Help");
+            default:
+                break;
 
-            }
-
-        } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-
-            new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    "Spectrum Panel - Help");
-
-        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-
-            new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    "Modification Analysis - Help");
         }
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

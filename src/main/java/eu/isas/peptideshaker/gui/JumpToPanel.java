@@ -526,7 +526,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                     TreeSet<Long> proteinKeysFound = new TreeSet<>();
                                     TreeSet<Long> peptideKeysFound = new TreeSet<>();
 
-                                    for (long proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters())) {
+                                    for (long proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters(), false)) {
 
                                         if (newInput) {
 

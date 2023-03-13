@@ -65,13 +65,15 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
     private void populateGUI(SpectrumCountingParameters spectrumCountingPreferences) {
 
         // the spectrum couting method
-        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingMethod.NSAF) {
+        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingMethod.NSAF
+                || spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingMethod.LFQ) {
             validationLevelLbl.setText("Spectra Considered:");
         } else {
             validationLevelLbl.setText("Peptides Considered:");
         }
+
         methodCmb.setSelectedItem(spectrumCountingPreferences.getSelectedMethod());
-        
+
         validationLevelCmb.setSelectedIndex(spectrumCountingPreferences.getMatchValidationLevel());
 
         // the normalization
@@ -250,7 +252,7 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        quantificationOptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("MS2 Quantification Options"));
+        quantificationOptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Quantification Options"));
         quantificationOptionsPanel.setOpaque(false);
 
         jLabel1.setText("Quantification Method");
@@ -290,7 +292,7 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
                 .addGroup(quantificationOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(methodCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addGroup(quantificationOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(validationLevelLbl)
                     .addComponent(validationLevelCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -343,11 +345,11 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
                 .addGroup(normalizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(normalizationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addGroup(normalizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(unitLbl)
                     .addComponent(unitCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addGroup(normalizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(referenceLbl)
                     .addComponent(referenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -436,8 +438,8 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
 
     /**
      * Enable/disable the unit options.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void normalizationCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_normalizationCmbActionPerformed
         switch (normalizationCmb.getSelectedIndex()) {
@@ -462,8 +464,8 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
 
     /**
      * Cancel the dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         canceled = true;
@@ -472,8 +474,8 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
 
     /**
      * Change the method.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void methodCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_methodCmbActionPerformed
         if (methodCmb.getSelectedIndex() == 1) {
@@ -485,8 +487,8 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
 
     /**
      * Close the dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
@@ -496,8 +498,8 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
 
     /**
      * Cancel the dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         canceled = true;
@@ -529,9 +531,9 @@ public class SpectrumCountingSettingsDialog extends javax.swing.JDialog {
     private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpDialog(parentFrame, getClass().getResource("/helpFiles/SpectrumCounting.html"),
-            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-            "Preferences - Help");
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "Preferences - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
 

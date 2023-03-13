@@ -16,6 +16,7 @@ import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumptionParameter;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
@@ -381,6 +382,15 @@ public class BestMatchSelection {
                     bestP,
                     bestP
             );
+
+            if (bestPeptideAssumption.getUrParam(PeptideAssumptionParameter.dummy) != null) {
+
+                PeptideAssumptionParameter peptideAssumptionParameter
+                        = (PeptideAssumptionParameter) bestPeptideAssumption.getUrParam(PeptideAssumptionParameter.dummy);
+
+                psAssumption.addUrParam(peptideAssumptionParameter);
+
+            }
 
             spectrumMatch.setBestPeptideAssumption(psAssumption);
             identification.updateObject(spectrumMatch.getKey(), spectrumMatch);

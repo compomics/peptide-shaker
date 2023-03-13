@@ -121,8 +121,8 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
         backgroundPanel = new javax.swing.JPanel();
         helpJButton = new javax.swing.JButton();
         preferencesPanel = new javax.swing.JPanel();
-        spectrumCountingLbl = new javax.swing.JLabel();
-        editSpectrumCountingButton = new javax.swing.JButton();
+        spectrumQuantificationLbl = new javax.swing.JLabel();
+        editSpectrumQuantificationButton = new javax.swing.JButton();
         editDisplayPreferencesButton = new javax.swing.JButton();
         displayLbl = new javax.swing.JLabel();
         okButton = new javax.swing.JButton();
@@ -156,12 +156,12 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
         preferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Preferences"));
         preferencesPanel.setOpaque(false);
 
-        spectrumCountingLbl.setText("Spectrum Counting");
+        spectrumQuantificationLbl.setText("Spectrum Quantification");
 
-        editSpectrumCountingButton.setText("Edit");
-        editSpectrumCountingButton.addActionListener(new java.awt.event.ActionListener() {
+        editSpectrumQuantificationButton.setText("Edit");
+        editSpectrumQuantificationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editSpectrumCountingButtonActionPerformed(evt);
+                editSpectrumQuantificationButtonActionPerformed(evt);
             }
         });
 
@@ -181,11 +181,11 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
             .addGroup(preferencesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spectrumCountingLbl)
+                    .addComponent(spectrumQuantificationLbl)
                     .addComponent(displayLbl))
                 .addGap(18, 18, 18)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(editSpectrumCountingButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(editSpectrumQuantificationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
                     .addComponent(editDisplayPreferencesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -194,8 +194,8 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
             .addGroup(preferencesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(spectrumCountingLbl)
-                    .addComponent(editSpectrumCountingButton))
+                    .addComponent(spectrumQuantificationLbl)
+                    .addComponent(editSpectrumQuantificationButton))
                 .addGap(0, 0, 0)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editDisplayPreferencesButton)
@@ -320,11 +320,11 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_helpJButtonActionPerformed
 
     /**
-     * Edit the spectrum counting settings.
+     * Edit the spectrum quantification settings.
      * 
      * @param evt 
      */
-    private void editSpectrumCountingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSpectrumCountingButtonActionPerformed
+    private void editSpectrumQuantificationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSpectrumQuantificationButtonActionPerformed
         
         SpectrumCountingSettingsDialog spectrumCountingPreferencesDialog 
                 = new SpectrumCountingSettingsDialog(parentFrame, spectrumCountingPreferences);
@@ -333,7 +333,7 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
             spectrumCountingPreferences = spectrumCountingPreferencesDialog.getSpectrumCountingPreferences();
         }
         
-    }//GEN-LAST:event_editSpectrumCountingButtonActionPerformed
+    }//GEN-LAST:event_editSpectrumQuantificationButtonActionPerformed
 
     /**
      * Edit the display preferences.
@@ -356,10 +356,10 @@ public class ProjectParametersDialog extends javax.swing.JDialog {
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel displayLbl;
     private javax.swing.JButton editDisplayPreferencesButton;
-    private javax.swing.JButton editSpectrumCountingButton;
+    private javax.swing.JButton editSpectrumQuantificationButton;
     private javax.swing.JButton helpJButton;
     private javax.swing.JButton okButton;
     private javax.swing.JPanel preferencesPanel;
-    private javax.swing.JLabel spectrumCountingLbl;
+    private javax.swing.JLabel spectrumQuantificationLbl;
     // End of variables declaration//GEN-END:variables
 }

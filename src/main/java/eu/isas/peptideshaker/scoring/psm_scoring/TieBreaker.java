@@ -123,7 +123,15 @@ public class TieBreaker {
 
             } else {
 
-                throw new IllegalArgumentException("Tie during best match selection in spectrum " + spectrumTitle + " of file " + spectrumFile + "(" + peptideAssumption1.getPeptide().getSequence() + " provided twice.");
+                throw new IllegalArgumentException(
+                        "Tie during best match selection in spectrum "
+                        + spectrumTitle
+                        + " of file "
+                        + spectrumFile
+                        + "("
+                        + peptideAssumption1.getPeptide().getSequence()
+                        + ") provided twice."
+                );
 
             }
         }
@@ -179,6 +187,7 @@ public class TieBreaker {
                 spectrum,
                 true
         );
+        
         int nCoveredAminoAcids2 = nCoveredAminoAcids(
                 spectrumFile,
                 spectrumTitle,

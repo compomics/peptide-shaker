@@ -34,7 +34,6 @@ import com.compomics.util.experiment.identification.utils.ModificationUtils;
 import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.spectra.Spectrum;
-import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
 import eu.isas.peptideshaker.gui.MatchValidationDialog;
@@ -3829,7 +3828,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * displayed or hidden
      */
     public void showSparkLines(boolean showSparkLines) {
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Quant").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
@@ -5285,7 +5284,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 try {
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterParameters());
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterParameters(), true);
 
                     progressDialog.setPrimaryProgressCounterIndeterminate(true);
                     progressDialog.setTitle("Preparing Overview. Please Wait...");
@@ -5313,13 +5312,24 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     showSparkLines(peptideShakerGUI.showSparklines());
                     ((DefaultTableModel) proteinTable.getModel()).fireTableDataChanged();
 
-                    // update spectrum counting column header tooltip
-                    if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectrumCountingMethod.NSAF) {
-                        proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification - NSAF");
-                    } else if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectrumCountingMethod.EMPAI) {
-                        proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification - emPAI");
-                    } else {
-                        proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification");
+                    // update spectrum quantification column header tooltip
+                    switch (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod()) {
+                        
+                        case NSAF:
+                            proteinTableToolTips.set(proteinTable.getColumn("Quant").getModelIndex(), "Protein MS2 Quantification - NSAF");
+                            break;
+                            
+                        case EMPAI:
+                            proteinTableToolTips.set(proteinTable.getColumn("Quant").getModelIndex(), "Protein MS2 Quantification - emPAI");
+                            break;
+                            
+                        case LFQ:
+                            proteinTableToolTips.set(proteinTable.getColumn("Quant").getModelIndex(), "Label-free MS1 Quantification - LFQ");
+                            break;
+                            
+                        default:
+                            break;
+                            
                     }
 
                     if (peptideShakerGUI.getDisplayParameters().showScores()) {
@@ -6325,12 +6335,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     sectionContent.add(PsProteinFeature.psms);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_nsaf);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_empai);
+                                    sectionContent.add(PsProteinFeature.label_free_quantification);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_percent);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_empai_percent);
+                                    sectionContent.add(PsProteinFeature.label_free_quantification_percent);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_ppm);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_empai_ppm);
+                                    sectionContent.add(PsProteinFeature.label_free_quantification_ppm);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_fmol);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_empai_fmol);
+                                    sectionContent.add(PsProteinFeature.label_free_quantification_fmol);
                                     sectionContent.add(PsProteinFeature.mw);
                                     sectionContent.add(PsProteinFeature.confidence);
                                     sectionContent.add(PsProteinFeature.validated);
@@ -7047,7 +7061,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             peptideShakerGUI.getMetrics().getMaxNPsms()
                     );
 
-            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer())
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Quant").getCellRenderer())
                     .setMaxValue(
                             peptideShakerGUI.getMetrics().getMaxSpectrumCounting()
                     );

@@ -214,7 +214,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             case 8:
                 return "#Spectra";
             case 9:
-                return "MS2 Quant.";
+                return "Quant";
             case 10:
                 return "MW";
             case 11:
@@ -552,7 +552,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 new DecimalFormat("0.00E00")
         );
 
-        proteinTable.getColumn("MS2 Quant.").setCellRenderer(spectrumCountingCellRenderer);
+        proteinTable.getColumn("Quant").setCellRenderer(spectrumCountingCellRenderer);
 
         JSparklinesBarChartTableCellRenderer mwCellRenderer
                 = new JSparklinesBarChartTableCellRenderer(

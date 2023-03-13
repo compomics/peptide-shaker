@@ -266,7 +266,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             @Override
             public void run() {
 
-                proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterParameters());
+                proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterParameters(), true);
 
                 // update the table model
                 if (proteinTable.getModel() instanceof ProteinTableModel && ((ProteinTableModel) proteinTable.getModel()).isInstantiated()) {
@@ -522,7 +522,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         for (int i = 0; i < spectrumFiles.size(); i++) {
 
             try {
-                
+
                 if (peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().containsKey(spectrumFiles.get(i))) {
 
                     mwPlotDataset.add(peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().get(spectrumFiles.get(i)), "Observed MW (kDa)", "" + (i + 1));
@@ -722,18 +722,17 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         long peptideKey = peptideShakerGUI.getSelectedPeptideKey();
         String spectrumFile = peptideShakerGUI.getSelectedSpectrumFile();
         String spectrumTitle = peptideShakerGUI.getSelectedSpectrumTitle();
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
 
         if (proteinKey == NO_KEY
                 && peptideKey == NO_KEY
                 && spectrumFile != null
-                && spectrumTitle != null
-                ) {
-            
+                && spectrumTitle != null) {
+
             long psmKey = SpectrumMatch.getKey(spectrumFile, spectrumTitle);
             SpectrumMatch spectrumMatch = (SpectrumMatch) peptideShakerGUI.getIdentification().retrieveObject(psmKey);
-            
+
             if (spectrumMatch != null && spectrumMatch.getBestPeptideAssumption() != null) {
 
                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
@@ -742,7 +741,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             }
         }
 
-        if (proteinKey == NO_KEY 
+        if (proteinKey == NO_KEY
                 && peptideKey != NO_KEY) {
 
             final long peptideKeyFinal = peptideKey;
@@ -767,22 +766,22 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         }
 
         if (proteinKeys.length == 0) {
-            
+
             clearData();
             return;
-        
+
         }
 
         if (proteinRow == -1) {
-            
+
             peptideShakerGUI.resetSelectedItems();
-        
+
         } else if (proteinTable.getSelectedRow() != proteinRow) {
-        
+
             proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
             proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
             proteinTableKeyReleased(null);
-        
+
         }
     }
 
@@ -1761,7 +1760,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * displayed or hidden
      */
     public void showSparkLines(boolean showSparkLines) {
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Quant").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
@@ -1801,7 +1800,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             if (peptideKey != NO_KEY) {
 
                 long psmKey = peptideShakerGUI.getDefaultPsmSelection(peptideKey);
-                
+
                 SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                 spectrumFile = spectrumMatch.getSpectrumFile();
                 spectrumTitle = spectrumMatch.getSpectrumTitle();
@@ -1850,15 +1849,15 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
 
             FileAndFileFilter selectedFileAndFilter = FileChooserUtil.getUserSelectedFile(
-                    this, 
+                    this,
                     new String[]{".xls", ".txt", ".gz"},
-                    new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription}, 
-                    "Export Report", 
-                    lastSelectedFolderPath, 
-                    "Protein table", 
-                    false, 
-                    true, 
-                    false, 
+                    new String[]{excelFileFilterDescription, textFileFilterDescription, gzipFileFilterDescription},
+                    "Export Report",
+                    lastSelectedFolderPath,
+                    "Protein table",
+                    false,
+                    true,
+                    false,
                     1
             );
 
@@ -1924,49 +1923,53 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                             sectionContent.add(PsProteinFeature.psms);
                             sectionContent.add(PsProteinFeature.spectrum_counting_nsaf);
                             sectionContent.add(PsProteinFeature.spectrum_counting_empai);
+                            sectionContent.add(PsProteinFeature.label_free_quantification);
                             sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_percent);
                             sectionContent.add(PsProteinFeature.spectrum_counting_empai_percent);
+                            sectionContent.add(PsProteinFeature.label_free_quantification_percent);
                             sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_ppm);
                             sectionContent.add(PsProteinFeature.spectrum_counting_empai_ppm);
+                            sectionContent.add(PsProteinFeature.label_free_quantification_ppm);
                             sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_fmol);
                             sectionContent.add(PsProteinFeature.spectrum_counting_empai_fmol);
+                            sectionContent.add(PsProteinFeature.label_free_quantification_fmol);
                             sectionContent.add(PsProteinFeature.mw);
                             sectionContent.add(PsProteinFeature.confidence);
                             sectionContent.add(PsProteinFeature.validated);
                             exportFeatures.put(PsProteinFeature.type, sectionContent);
 
                             ExportScheme validatedProteinReport = new ExportScheme(
-                                    "Protein Table", 
-                                    false, 
-                                    exportFeatures, 
-                                    "\t", 
-                                    true, 
-                                    true, 
-                                    0, 
-                                    false, 
-                                    false, 
+                                    "Protein Table",
+                                    false,
+                                    exportFeatures,
+                                    "\t",
+                                    true,
+                                    true,
+                                    0,
+                                    false,
+                                    false,
                                     false
                             );
 
                             PSExportFactory.writeExport(
-                                    validatedProteinReport, 
-                                    selectedFile, 
-                                    exportFormat, 
-                                    gzip, 
+                                    validatedProteinReport,
+                                    selectedFile,
+                                    exportFormat,
+                                    gzip,
                                     peptideShakerGUI.getProjectParameters().getProjectUniqueName(),
-                                    peptideShakerGUI.getProjectDetails(), 
+                                    peptideShakerGUI.getProjectDetails(),
                                     peptideShakerGUI.getIdentification(),
-                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), 
-                                    peptideShakerGUI.getGeneMaps(), 
-                                    getDisplayedProteins(), 
-                                    null, 
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                                    peptideShakerGUI.getGeneMaps(),
+                                    getDisplayedProteins(),
                                     null,
-                                    peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(), 
+                                    null,
+                                    peptideShakerGUI.getDisplayParameters().getnAASurroundingPeptides(),
                                     peptideShakerGUI.getIdentificationParameters(),
-                                    peptideShakerGUI.getSequenceProvider(), 
-                                    peptideShakerGUI.getProteinDetailsProvider(), 
+                                    peptideShakerGUI.getSequenceProvider(),
+                                    peptideShakerGUI.getProteinDetailsProvider(),
                                     peptideShakerGUI.getSpectrumProvider(),
-                                    peptideShakerGUI.getSpectrumCountingParameters(), 
+                                    peptideShakerGUI.getSpectrumCountingParameters(),
                                     progressDialog
                             );
 
@@ -1975,9 +1978,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                             if (!processCancelled) {
                                 JOptionPane.showMessageDialog(
-                                        peptideShakerGUI, 
-                                        "Data copied to file:\n" + filePath, 
-                                        "Data Exported", 
+                                        peptideShakerGUI,
+                                        "Data copied to file:\n" + filePath,
+                                        "Data Exported",
                                         JOptionPane.INFORMATION_MESSAGE
                                 );
                             }
@@ -1987,17 +1990,17 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                 JOptionPane.showMessageDialog(
                                         peptideShakerGUI,
                                         "An error occurred while generating the output. This format can contain only 65,535 lines.\n" // @TODO: update the excel export library?
-                                        + "Please use a text export instead.", 
-                                        "Output Error", 
+                                        + "Please use a text export instead.",
+                                        "Output Error",
                                         JOptionPane.ERROR_MESSAGE
                                 );
                                 e.printStackTrace();
                             } else {
                                 progressDialog.setRunFinished();
                                 JOptionPane.showMessageDialog(
-                                        peptideShakerGUI, 
-                                        "An error occurred while generating the output.", 
-                                        "Output Error", 
+                                        peptideShakerGUI,
+                                        "An error occurred while generating the output.",
+                                        "Output Error",
                                         JOptionPane.ERROR_MESSAGE
                                 );
                                 e.printStackTrace();
@@ -2005,9 +2008,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         } catch (Exception e) {
                             progressDialog.setRunFinished();
                             JOptionPane.showMessageDialog(
-                                    peptideShakerGUI, 
-                                    "An error occurred while generating the output.", 
-                                    "Output Error", 
+                                    peptideShakerGUI,
+                                    "An error occurred while generating the output.",
+                                    "Output Error",
                                     JOptionPane.ERROR_MESSAGE
                             );
                             e.printStackTrace();
@@ -2032,7 +2035,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
             ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPeptides());
             ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPsms());
-            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxSpectrumCounting());
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Quant").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxSpectrumCounting());
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
 
             if (!peptideShakerGUI.getDisplayParameters().showScores()) {

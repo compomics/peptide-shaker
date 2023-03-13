@@ -2999,7 +2999,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                 try {
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterParameters());
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterParameters(), true);
 
                     setTableProperties();
 
@@ -3038,12 +3038,23 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     ((DefaultTableModel) proteinTable.getModel()).fireTableDataChanged();
 
                     // update spectrum counting column header tooltip
-                    if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectrumCountingMethod.EMPAI) {
-                        proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification - emPAI");
-                    } else if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectrumCountingMethod.NSAF) {
-                        proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification - NSAF");
-                    } else {
-                        proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification");
+                    switch (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod()) {
+                        
+                        case EMPAI:
+                            proteinTableToolTips.set(proteinTable.getColumn("Quant").getModelIndex(), "Protein MS2 Quantification - emPAI");
+                            break;
+                            
+                        case NSAF:
+                            proteinTableToolTips.set(proteinTable.getColumn("Quant").getModelIndex(), "Protein MS2 Quantification - NSAF");
+                            break;
+                            
+                        case LFQ:
+                            proteinTableToolTips.set(proteinTable.getColumn("Quant").getModelIndex(), "Protein LFQ Quantification - LFQ");
+                            break;
+                            
+                        default:
+                            break;
+                            
                     }
 
                     if (peptideShakerGUI.getDisplayParameters().showScores()) {
@@ -3312,7 +3323,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     public void showSparkLines(boolean showSparkLines) {
 
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Quant").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
@@ -3749,12 +3760,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                                     sectionContent.add(PsProteinFeature.psms);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_nsaf);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_empai);
+                                    sectionContent.add(PsProteinFeature.label_free_quantification);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_percent);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_empai_percent);
+                                    sectionContent.add(PsProteinFeature.label_free_quantification_percent);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_ppm);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_empai_ppm);
+                                    sectionContent.add(PsProteinFeature.label_free_quantification_ppm);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_nsaf_fmol);
                                     sectionContent.add(PsProteinFeature.spectrum_counting_empai_fmol);
+                                    sectionContent.add(PsProteinFeature.label_free_quantification_fmol);
                                     sectionContent.add(PsProteinFeature.mw);
                                     sectionContent.add(PsProteinFeature.confidence);
                                     sectionContent.add(PsProteinFeature.validated);
@@ -4305,7 +4320,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
             ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPeptides());
             ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPsms());
-            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxSpectrumCounting());
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Quant").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxSpectrumCounting());
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
 
             String scoreColumnName = proteinTable.getColumnName(11);
