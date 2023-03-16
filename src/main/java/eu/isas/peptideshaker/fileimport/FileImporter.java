@@ -289,6 +289,7 @@ public class FileImporter {
                             true,
                             true
                     );
+
                     waitingHandler.setRunCanceled();
 
                     return 1;
@@ -297,6 +298,7 @@ public class FileImporter {
 
                 // get the total number of spectra
                 int nSpectra = 0;
+
                 for (String spectrumFileName : identification.getFractions()) {
                     nSpectra += spectrumProvider.getSpectrumTitles(spectrumFileName).length;
                 }
@@ -307,12 +309,15 @@ public class FileImporter {
                         true,
                         true
                 );
+
                 waitingHandler.appendReport(
                         "[" + nRetained + " first hits passed the initial filtering]",
                         true,
                         true
                 );
+
             }
+
         } catch (OutOfMemoryError error) {
 
             System.out.println("<CompomicsError>PeptideShaker ran out of memory! See the PeptideShaker log for details.</CompomicsError>");
@@ -430,6 +435,7 @@ public class FileImporter {
         );
 
         IdfileReader fileReader = null;
+
         try {
 
             fileReader = readerFactory.getFileReader(idFile);
@@ -441,6 +447,7 @@ public class FileImporter {
                     true,
                     true
             );
+
             throw new OutOfMemoryError("Ran out of memory when parsing \'" + IoUtil.getFileName(idFile) + "\'.");
 
         }
@@ -452,6 +459,7 @@ public class FileImporter {
                     true,
                     true
             );
+
             waitingHandler.setRunCanceled();
             return;
 
@@ -481,6 +489,7 @@ public class FileImporter {
                     true,
                     true
             );
+
             e.printStackTrace();
 
         }
@@ -505,6 +514,7 @@ public class FileImporter {
                             true,
                             true
                     );
+
                     return;
 
                 }
@@ -550,14 +560,15 @@ public class FileImporter {
                                 true,
                                 true
                         );
+
                         waitingHandler.setRunCanceled();
                         return;
 
                     }
 
                     importedFileNames.add(spectrumMatch.getSpectrumFile());
-
                     String spectrumTitle = spectrumMatch.getSpectrumTitle();
+
                     if (!titles.contains(spectrumTitle)) {
 
                         waitingHandler.appendReport(
@@ -571,6 +582,7 @@ public class FileImporter {
                                 true,
                                 true
                         );
+
                         waitingHandler.setRunCanceled();
                         return;
 
@@ -603,6 +615,7 @@ public class FileImporter {
                             fastaMapper,
                             waitingHandler
                     );
+
                 }
 
                 waitingHandler.setMaxSecondaryProgressCounter(2 * nMatches);
@@ -613,6 +626,7 @@ public class FileImporter {
                 );
 
                 PsmImporter psmImporter = new PsmImporter();
+
                 psmImporter.importPsms(
                         idFileSpectrumMatches,
                         identification,
@@ -649,6 +663,7 @@ public class FileImporter {
                         proteinCount.put(accession, fileCount);
 
                     }
+
                 }
 
                 nPSMs += psmImporter.getnPSMs();
@@ -700,6 +715,7 @@ public class FileImporter {
                             true,
                             true
                     );
+
                     waitingHandler.appendReport(
                             totalAssumptionsRejected + " of the best scoring peptides were excluded by the import filters:",
                             true,
@@ -719,6 +735,7 @@ public class FileImporter {
                                 true,
                                 true
                         );
+
                     }
 
                     share = 100 * ((double) proteinIssue) / totalAssumptionsRejected;
@@ -731,6 +748,7 @@ public class FileImporter {
                                 true,
                                 true
                         );
+
                     }
 
                     share = 100 * ((double) peptideIssue) / totalAssumptionsRejected;
@@ -757,6 +775,7 @@ public class FileImporter {
                                         true,
                                         true
                                 );
+
                                 waitingHandler.appendReport(
                                         padding + "    or number of missed cleavage sites outside of the range [" + minMissedCleavages + "-" + maxMissedCleavages + "].",
                                         true,
@@ -771,6 +790,7 @@ public class FileImporter {
                                         true,
                                         true
                                 );
+
                                 waitingHandler.appendReport(
                                         padding + "    or number of missed cleavage sites lower than " + minMissedCleavages + ".",
                                         true,
@@ -786,7 +806,9 @@ public class FileImporter {
                                     true,
                                     true
                             );
+
                         }
+
                     }
 
                     share = 100 * ((double) precursorIssue) / totalAssumptionsRejected;
@@ -799,6 +821,7 @@ public class FileImporter {
                                 true,
                                 true
                         );
+
                     }
 
                     share = 100 * ((double) ptmIssue) / totalAssumptionsRejected;
@@ -810,7 +833,9 @@ public class FileImporter {
                                 true,
                                 true
                         );
+
                     }
+
                 }
 
                 // inform the user in case search engine results could not be mapped to the database
@@ -826,6 +851,7 @@ public class FileImporter {
                         break;
 
                     }
+
                 }
 
                 if (allSearchEngines && noProteins > 0) {
@@ -905,6 +931,7 @@ public class FileImporter {
                             true,
                             true
                     );
+
                 }
             }
         }
