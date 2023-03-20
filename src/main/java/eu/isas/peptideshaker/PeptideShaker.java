@@ -216,9 +216,8 @@ public class PeptideShaker {
                 waitingHandler,
                 exceptionHandler
         );
-        int outcome = fileImporter.importFiles(
-                idFiles
-        );
+
+        int outcome = fileImporter.importFiles(idFiles);
 
         if (outcome == 0) {
 
@@ -279,6 +278,7 @@ public class PeptideShaker {
                 metrics,
                 spectrumCountingParameters
         );
+
         matchesValidator = new MatchesValidator(
                 new TargetDecoyMap(),
                 new TargetDecoyMap(),
@@ -291,6 +291,7 @@ public class PeptideShaker {
 
         PsmScoringParameters psmScoringPreferences = identificationParameters.getPsmScoringParameters();
         FastaParameters fastaParameters = identificationParameters.getFastaParameters();
+
         FastaSummary fastaSummary = FastaSummary.getSummary(
                 projectDetails.getFastaFile(),
                 fastaParameters,
@@ -299,6 +300,10 @@ public class PeptideShaker {
 
         // set the background species
         identificationParameters.getGeneParameters().setBackgroundSpeciesFromFastaSummary(fastaSummary);
+
+        // use PepQuery to look for alternative PSMs?
+        //waitingHandler.appendReport("Validating PSMs.", true, true); // @TODO: update the waiting handler progress counter
+        // @TODO: implement me!
 
         ArrayList<Integer> usedAlgorithms = projectDetails.getIdentificationAlgorithms();
 
@@ -311,6 +316,7 @@ public class PeptideShaker {
                     sequenceProvider,
                     spectrumProvider
             );
+
             psmScorer.estimateIntermediateScores(
                     identification,
                     inputMap,
