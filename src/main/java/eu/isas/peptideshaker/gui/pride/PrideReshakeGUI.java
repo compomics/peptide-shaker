@@ -513,7 +513,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                 while (line != null) {
                     String[] elements = line.split("\\t");
-                    projectClusterAnnotation.put(elements[1], Integer.parseInt(elements[10]));
+                    projectClusterAnnotation.put(elements[1], Integer.valueOf(elements[10]));
                     line = br.readLine();
                 }
 

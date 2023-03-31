@@ -1010,15 +1010,18 @@ public class FileImporter {
         } catch (Exception e) {
 
             e.printStackTrace();
+
             JOptionPane.showMessageDialog(
                     null,
                     "An error occurred while loading the gene mappings.",
                     "Gene Mapping File Error",
                     JOptionPane.ERROR_MESSAGE
             );
+
         }
 
         GeneParameters geneParameters = identificationParameters.getGeneParameters();
+
         geneMaps = geneFactory.getGeneMaps(
                 geneParameters,
                 fastaSummary,
@@ -1026,6 +1029,7 @@ public class FileImporter {
                 proteinDetailsProvider,
                 waitingHandler
         );
+
     }
 
     /**
