@@ -69,7 +69,7 @@ public class PathSettingsCLI {
             if (pathSettingsCLIInputBean.getLogFolder() != null) {
                 PeptideShakerCLI.redirectErrorStream(pathSettingsCLIInputBean.getLogFolder());
             } else {
-                PeptideShakerCLI.redirectErrorStream(new File(PeptideShaker.getJarFilePath() + File.separator + "resources"));
+                PeptideShakerCLI.redirectErrorStream(new File(PeptideShaker.getConfigFolder() + File.separator + "resources"));
             }
 
         } else {
@@ -131,7 +131,7 @@ public class PathSettingsCLI {
             }
 
             // Write path file preference
-            File destinationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
+            File destinationFile = new File(PeptideShaker.getConfigFolder(), UtilitiesPathParameters.configurationFileName);
 
             try {
 
@@ -153,7 +153,7 @@ public class PathSettingsCLI {
 
             try {
 
-                File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
+                File pathConfigurationFile = new File(PeptideShaker.getConfigFolder(), UtilitiesPathParameters.configurationFileName);
 
                 if (pathConfigurationFile.exists()) {
                     PeptideShakerPathParameters.loadPathParametersFromFile(pathConfigurationFile);

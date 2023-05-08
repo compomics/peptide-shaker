@@ -44,6 +44,10 @@ public class PeptideShakerCLIInputBean {
      */
     private File output = null;
     /**
+     * The config folder.
+     */
+    private File config_folder = null;
+    /**
      * PeptideShaker pride output file.
      */
     private File prideFile = null;
@@ -146,6 +150,10 @@ public class PeptideShakerCLIInputBean {
 
         if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id)) {
             output = new File(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id));
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.CONFIG_FOLDER.id)) {
+            config_folder = new File(aLine.getOptionValue(PeptideShakerCLIParams.CONFIG_FOLDER.id));
         }
 
         if (aLine.hasOption(PeptideShakerCLIParams.GUI.id)) {
@@ -259,6 +267,24 @@ public class PeptideShakerCLIInputBean {
      */
     public void setOutput(File output) {
         this.output = output;
+    }
+
+    /**
+     * Returns the config folder. Null if not set.
+     *
+     * @return the config folder
+     */
+    public File getConfigFolder() {
+        return config_folder;
+    }
+
+    /**
+     * Sets the config folder.
+     *
+     * @param config_folder the config folder
+     */
+    public void setConfigFoler(File config_folder) {
+        this.config_folder = config_folder;
     }
 
     /**
@@ -521,6 +547,24 @@ public class PeptideShakerCLIInputBean {
                     return false;
                 } else if (!parentFolder.exists() && !parentFolder.mkdirs()) {
                     System.out.println("\nDestination folder \'" + parentFolder.getPath() + "\' not found and cannot be created. Make sure that PeptideShaker has the right to write in the destination folder.\n");
+                    return false;
+                }
+            }
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.CONFIG_FOLDER.id)) {
+            if (((String) aLine.getOptionValue(PeptideShakerCLIParams.CONFIG_FOLDER.id)).equals("")) {
+                System.out.println("\nConfig folder cannot be empty.\n");
+                return false;
+            } else {
+                String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.CONFIG_FOLDER.id);
+                File testFile = new File(filesTxt.trim());
+                File parentFolder = testFile.getParentFile();
+                if (parentFolder == null) {
+                    System.out.println("\nConfig folder not found. Please provide the complete path to the config.\n");
+                    return false;
+                } else if (!parentFolder.exists() && !parentFolder.mkdirs()) {
+                    System.out.println("\nConfig folder \'" + parentFolder.getPath() + "\' not found and cannot be created. Make sure that PeptideShaker has the right to write in the folder.\n");
                     return false;
                 }
             }

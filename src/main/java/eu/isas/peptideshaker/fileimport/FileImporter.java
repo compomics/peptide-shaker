@@ -1005,7 +1005,7 @@ public class FileImporter {
 
         try {
 
-            geneFactory.initialize(PeptideShaker.getJarFilePath());
+            geneFactory.initialize(PeptideShaker.getConfigFolder());
 
         } catch (Exception e) {
 

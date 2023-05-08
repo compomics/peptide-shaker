@@ -663,6 +663,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                             null,
                             null,
                             null,
+                            null,
                             null
                     );
                     peptideShakerGUI.close();
@@ -890,6 +891,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void bugReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bugReportMenuItemActionPerformed
+        
         new BugReport(
                 this,
                 peptideShakerGUI.getLastSelectedFolder(),
@@ -898,8 +900,9 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 PeptideShaker.getVersion(),
                 "peptide-shaker",
                 "PeptideShaker",
-                new File(PeptideShaker.getJarFilePath() + "/resources/PeptideShaker.log")
+                new File(PeptideShaker.getConfigFolder() + "/resources/PeptideShaker.log")
         );
+        
     }//GEN-LAST:event_bugReportMenuItemActionPerformed
 
     /**
@@ -908,6 +911,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        
         new HelpDialog(
                 peptideShakerGUI,
                 getClass().getResource("/helpFiles/AboutPeptideShaker.html"),
@@ -915,6 +919,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 "About PeptideShaker"
         );
+        
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     /**
