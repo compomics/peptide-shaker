@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>2.2.24</version>
+    <version>2.2.25</version>
     <name>PeptideShaker</name>
     <url>https://github.com/compomics/peptide-shaker</url>
     <description>Interpretation of proteomics identification results</description>
@@ -340,7 +340,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>5.0.69</version>
+            <version>5.0.70</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
