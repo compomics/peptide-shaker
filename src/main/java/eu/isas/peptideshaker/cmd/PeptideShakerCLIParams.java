@@ -28,7 +28,8 @@ public enum PeptideShakerCLIParams {
     ZIP("zip", "Exports the entire project as a zip file in the file specified.", false),
     OUTPUT_MGF("output_mgf", "When using zipped output, exports mgf file(s) out of the zip file into the same folder in addition (0: no, 1: yes, default is '0').", false),
     THREADS("threads", "The number of threads to use. Defaults to the number of available CPUs.", false),
-    PERCOLATOR_CACHE("percolator_cache", "Enable the caching of Percolator features (1: true, 0: false, default is '0').", false);
+    PERCOLATOR_CACHE("percolator_cache", "Enable the caching of Percolator features (1: true, 0: false, default is '0').", false),
+    CONFIG_FOLDER("config_folder", "The complete path to the config folder. Default resources\\conf.", false);
 
     /**
      * Short Id for the CLI parameter.
@@ -121,8 +122,9 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, LOG_FOLDER.id) + " " + LOG_FOLDER.description + "\n";
         output += "-" + String.format(formatter, USE_LOG_FOLDER.id) + " " + USE_LOG_FOLDER.description + "\n";
 
-        output += "\n\nOptional Temporary Folder:\n\n";
+        output += "\n\nOptional Temporary Folders:\n\n";
         output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + " " + PathSettingsCLIParams.ALL.description + "\n";
+        output += "-" + String.format(formatter, CONFIG_FOLDER.id) + " " + CONFIG_FOLDER.description + "\n";
 
         output += "\n\nFor identification parameters options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.IdentificationParametersCLI\n\n";
         output += "\nFor follow up export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.FollowUpCLI\n\n";

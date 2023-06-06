@@ -481,7 +481,7 @@ public class PsProteinSection {
                 }
 
                 return "";
-                
+
             case organism_identifier:
 
                 if (!proteinMatch.isDecoy()) {
@@ -806,6 +806,15 @@ public class PsProteinSection {
                         )
                 );
 
+            case label_free_quantification:
+
+                return Double.toString(
+                        identificationFeaturesGenerator.getSpectrumCounting(
+                                proteinKey,
+                                SpectrumCountingMethod.LFQ
+                        )
+                );
+
             case spectrum_counting_empai_percent:
 
                 return Double.toString(
@@ -823,6 +832,16 @@ public class PsProteinSection {
                                 proteinKey,
                                 Units.percent,
                                 SpectrumCountingMethod.NSAF
+                        )
+                );
+
+            case label_free_quantification_percent:
+
+                return Double.toString(
+                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(
+                                proteinKey,
+                                Units.percent,
+                                SpectrumCountingMethod.LFQ
                         )
                 );
 
@@ -846,6 +865,16 @@ public class PsProteinSection {
                         )
                 );
 
+            case label_free_quantification_ppm:
+
+                return Double.toString(
+                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(
+                                proteinKey,
+                                Units.ppm,
+                                SpectrumCountingMethod.LFQ
+                        )
+                );
+
             case spectrum_counting_empai_fmol:
 
                 return Double.toString(
@@ -863,6 +892,16 @@ public class PsProteinSection {
                                 proteinKey,
                                 Units.fmol,
                                 SpectrumCountingMethod.NSAF
+                        )
+                );
+
+            case label_free_quantification_fmol:
+
+                return Double.toString(
+                        identificationFeaturesGenerator.getNormalizedSpectrumCounting(
+                                proteinKey,
+                                Units.fmol,
+                                SpectrumCountingMethod.LFQ
                         )
                 );
 

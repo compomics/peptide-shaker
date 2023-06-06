@@ -8,7 +8,6 @@ import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.experiment.identification.modification.ModificationLocalizationScore;
 import com.compomics.util.experiment.io.biology.protein.FastaParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
-import com.compomics.util.experiment.quantification.spectrumcounting.SpectrumCountingMethod;
 import com.compomics.util.parameters.identification.search.DigestionParameters;
 import com.compomics.util.parameters.identification.advanced.IdMatchValidationParameters;
 import com.compomics.util.parameters.identification.advanced.ModificationLocalizationParameters;
@@ -151,7 +150,7 @@ public class PeptideShakerMethods {
      * @return the database usage details
      */
     public static String getDatabaseText(
-            FastaParameters fastaParameters, 
+            FastaParameters fastaParameters,
             FastaSummary fastaSummary
     ) {
 
@@ -575,14 +574,24 @@ public class PeptideShakerMethods {
 
         String text = "Spectrum counting abundance indexes were estimated using the ";
 
-        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingMethod.EMPAI) {
+        switch (spectrumCountingPreferences.getSelectedMethod()) {
 
-            text += "emPAI index [PMID 15958392].";
+            case EMPAI:
+                text += "emPAI index [PMID 15958392].";
+                break;
 
-        } else {
+            case NSAF:
+                text += "Normalized Spectrum Abundance Factor [PMID 15282323] "
+                        + "adapted for better handling of protein inference "
+                        + "issues and peptide detectability.";
+                break;
 
-            text += "Normalized Spectrum Abundance Factor [PMID 15282323] adapted for better handling of protein inference issues and peptide detectability.";
+            case LFQ:
+                text += "Label-free quantification.";
+                break;
 
+            default:
+                break;
         }
 
         return text;

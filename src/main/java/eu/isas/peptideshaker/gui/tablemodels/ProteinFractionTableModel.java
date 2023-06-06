@@ -70,6 +70,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
      * @param peptideShakerGUI the PeptideShakerGUI parent
      */
     private void setUpTableModel(PeptideShakerGUI peptideShakerGUI) {
+        
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
         fileNames = new ArrayList<>();
@@ -79,7 +80,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             if (peptideShakerGUI.getDisplayParameters().showValidatedProteinsOnly()) {
                 proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(peptideShakerGUI.getFilterParameters()); // show validated proteins only
             } else {
-                proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters()); // show all proteins
+                proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterParameters(), false); // show all proteins
             }
 
             for (String spectrumFileName : identification.getFractions()) {

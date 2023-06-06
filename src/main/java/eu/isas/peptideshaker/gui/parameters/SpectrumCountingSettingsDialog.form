@@ -92,7 +92,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="MS2 Quantification Options"/>
+                <TitledBorder title="Quantification Options"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -115,7 +115,7 @@
                               <Component id="methodCmb" max="32767" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -127,7 +127,7 @@
                           <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="methodCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="validationLevelLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="validationLevelCmb" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -215,12 +215,12 @@
                           <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="normalizationCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="unitLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="unitCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="referenceLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="referenceTxt" alignment="3" min="-2" max="-2" attributes="0"/>

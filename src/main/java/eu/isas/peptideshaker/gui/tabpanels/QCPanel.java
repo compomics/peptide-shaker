@@ -1490,7 +1490,7 @@ public class QCPanel extends javax.swing.JPanel {
                         proteinChart.getCategoryPlot().setRenderer(0, renderer);
 
                         ChartPanel chartPanel = new ChartPanel(
-                                proteinChart, 
+                                proteinChart,
                                 false //peptideShakerGUI.getDisplayParameters().getLowResolutionCharts()
                         );
 
@@ -1498,12 +1498,26 @@ public class QCPanel extends javax.swing.JPanel {
                             proteinChart.getCategoryPlot().getDomainAxis().setLabel("Number of Validated Peptides");
                             proteinChart.setTitle("Protein QC Plot - Number of Validated Peptides");
                         } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+
                             proteinChart.setTitle("Protein QC Plot - MS2 Quantification Scores");
 
-                            if (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod() == SpectrumCountingMethod.EMPAI) {
-                                proteinChart.getCategoryPlot().getDomainAxis().setLabel("MS2 Quantification (emPAI)");
-                            } else {
-                                proteinChart.getCategoryPlot().getDomainAxis().setLabel("MS2 Quantification (NSAF)");
+                            switch (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod()) {
+
+                                case EMPAI:
+                                    proteinChart.getCategoryPlot().getDomainAxis().setLabel("MS2 Quantification (emPAI)");
+                                    break;
+
+                                case NSAF:
+                                    proteinChart.getCategoryPlot().getDomainAxis().setLabel("MS2 Quantification (NSAF)");
+                                    break;
+
+                                case LFQ:
+                                    proteinChart.getCategoryPlot().getDomainAxis().setLabel("Label-free MS1 Quantification (LFQ)");
+                                    break;
+
+                                default:
+                                    break;
+
                             }
 
                         } else if (proteinSequenceCoverageJRadioButton.isSelected()) {

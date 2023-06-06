@@ -899,7 +899,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         idResultsPanel.setOpaque(false);
 
-        spectrumIdResultsLabel.setFont(spectrumIdResultsLabel.getFont().deriveFont((spectrumIdResultsLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        spectrumIdResultsLabel.setFont(spectrumIdResultsLabel.getFont().deriveFont((spectrumIdResultsLabel.getFont().getStyle() & ~java.awt.Font.ITALIC)));
         spectrumIdResultsLabel.setText("Spectrum Identification Results");
 
         idResultsTableJScrollPane.setMinimumSize(new java.awt.Dimension(23, 87));
@@ -2745,7 +2745,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 progressDialog.setPrimaryProgressCounterIndeterminate(true);
                 if (!progressDialog.isRunCanceled()) {
                     Integer nValidated = inputMap.getPeptideShakerHits(fileSelected);
-                    ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle(
+                    ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle( // @TODO: only count ms2?
                             "<html>" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING_HTML + "Spectrum Selection ("
                             + nValidated + "/" + nSpectra + " - "
                             + "<a href=\"dummy\">" + fileSelected + "</a>)"
@@ -3181,7 +3181,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             // add spectrum annotations
-            if (spectrumMatch != null) {
+            if (spectrumMatch != null) { // @TODO: always include TMT reporters for TMT datasets? (to show them for all MS3 spectra)
 
                 SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
                 IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
@@ -3220,11 +3220,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     Peptide peptide = currentPeptideAssumption.getPeptide();
 
                                     PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+                                    
                                     specificAnnotationParameters = peptideShakerGUI.getSpecificAnnotationParameters(
                                             fileSelected,
                                             spectrumTitle,
                                             currentPeptideAssumption
                                     );
+                                    
                                     IonMatch[] annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(
                                             annotationParameters,
                                             specificAnnotationParameters,

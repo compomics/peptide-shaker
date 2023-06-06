@@ -719,7 +719,7 @@ public class NewDialog extends javax.swing.JDialog {
             boolean needDialog = false;
 
             // load the identification files
-            if (idFiles.size() > 0) {
+            if (!idFiles.isEmpty()) {
 
                 needDialog = true;
 
@@ -762,6 +762,7 @@ public class NewDialog extends javax.swing.JDialog {
                                 waitingDialog.setRunCanceled();
 
                             }
+
                         } catch (Exception e) {
 
                             exceptionHandler.catchException(e);
@@ -770,17 +771,22 @@ public class NewDialog extends javax.swing.JDialog {
                             waitingDialog.setWaitingText("Failed to import data or create the project!");
 
                         }
+
                     }
+
                 }, "Import data and create project").start();
             }
 
             if (needDialog) {
+
                 try {
                     waitingDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
                     // ignore
                 }
+
                 this.dispose();
+
             }
 
             if (!needDialog || !waitingDialog.isRunCanceled()) {
@@ -808,6 +814,7 @@ public class NewDialog extends javax.swing.JDialog {
                     System.out.println("Failed to close the database!");
                     e.printStackTrace();
                 }
+
             }
         }
 }//GEN-LAST:event_loadButtonActionPerformed
@@ -1316,7 +1323,7 @@ public class NewDialog extends javax.swing.JDialog {
                 return "COSS (.coss.tsv, .coss.tsv.gz)";
             }
         };
-        
+
         // filter for sage only
         FileFilter sageFilter = new FileFilter() {
             @Override

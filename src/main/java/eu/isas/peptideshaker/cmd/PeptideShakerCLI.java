@@ -151,13 +151,17 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 ((WaitingDialog) waitingHandler).setLocation((int) tempLocation.getX() + 30, (int) tempLocation.getY() + 30);
 
                 new Thread(new Runnable() {
+
                     public void run() {
+
                         try {
                             ((WaitingDialog) waitingHandler).setVisible(true);
                         } catch (IndexOutOfBoundsException e) {
                             // ignore
                         }
+
                     }
+
                 }, "ProgressDialog").start();
 
             } else {
@@ -191,6 +195,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
             // turn off illegal access log messages
             try {
+
                 Class loggerClass = Class.forName("jdk.internal.module.IllegalAccessLogger");
                 Field loggerField = loggerClass.getDeclaredField("logger");
                 Class unsafeClass = Class.forName("sun.misc.Unsafe");
@@ -200,6 +205,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 Long offset = (Long) unsafeClass.getMethod("staticFieldOffset", Field.class).invoke(unsafe, loggerField);
                 unsafeClass.getMethod("putObjectVolatile", Object.class, long.class, Object.class) //
                         .invoke(unsafe, loggerClass, offset, null);
+
             } catch (Throwable ex) {
                 // ignore, i.e. simply show the warnings...
                 //ex.printStackTrace();
@@ -209,6 +215,10 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
             ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.zoodb");
             logger.setLevel(Level.toLevel("ERROR"));
+            
+            if (cliInputBean.getConfigFolder() != null) {
+                PeptideShaker.setConfigFolder(cliInputBean.getConfigFolder());
+            }
 
             setDbFolder(PeptideShaker.getMatchesFolder());
 
@@ -225,66 +235,99 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
             // Set the gene mappings
             ProteinGeneDetailsProvider geneFactory = new ProteinGeneDetailsProvider();
-            geneFactory.initialize(PeptideShaker.getJarFilePath());
+            geneFactory.initialize(PeptideShaker.getConfigFolder());
 
             // Load the species mapping
             try {
+
                 SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
-                speciesFactory.initiate(PeptideShaker.getJarFilePath());
+                speciesFactory.initiate(PeptideShaker.getConfigFolder());
+
             } catch (Exception e) {
+
                 waitingHandler.appendReport("An error occurred while loading the "
                         + "species mapping. Gene annotation might be impaired. "
                         + getLogFileMessage(), true, true);
+
                 e.printStackTrace();
+
             }
 
             // create project
             try {
+
                 createProject();
+
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while creating the "
-                        + "PeptideShaker project. " + getLogFileMessage(), true, true);
+
+                waitingHandler.appendReport(
+                        "An error occurred while creating the "
+                        + "PeptideShaker project. "
+                        + getLogFileMessage(),
+                        true,
+                        true
+                );
+
                 e.printStackTrace();
+
                 waitingHandler.setRunCanceled();
+
             }
 
             // see if the project was created or canceled
             if (waitingHandler.isRunCanceled()) {
+
                 try {
+
                     closePeptideShaker(identification);
+
                 } catch (Exception e) {
+
                     waitingHandler.appendReport(
                             "An error occurred while closing PeptideShaker. "
                             + getLogFileMessage(),
                             true,
                             true
                     );
+
                     e.printStackTrace();
+
                 }
+
                 System.exit(1);
+
                 return 1;
+
             } else {
+
                 waitingHandler.appendReport("Project successfully created.", true, true);
+
                 waitingHandler.increasePrimaryProgressCounter();
             }
 
             // save project
             if (cliInputBean.getOutput() != null) {
+
                 try {
+
                     psdbFile = cliInputBean.getOutput();
                     waitingHandler.appendReport("Saving results.", true, true);
                     saveProject(waitingHandler, true);
                     waitingHandler.appendReport("Results saved to " + psdbFile.getAbsolutePath() + ".", true, true);
                     waitingHandler.appendReportEndLine();
+
                 } catch (Exception e) {
+
                     waitingHandler.appendReport(
                             "An exception occurred while saving the project. "
                             + getLogFileMessage(),
                             true,
                             true
                     );
+
                     e.printStackTrace();
                     waitingHandler.setRunCanceled();
+
                 }
 
                 waitingHandler.increasePrimaryProgressCounter();
@@ -296,10 +339,12 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
             // follow up tasks if needed
             FollowUpCLIInputBean followUpCLIInputBean = cliInputBean.getFollowUpCLIInputBean();
+
             // array to be filled with all exported follow-up reports
             ArrayList<File> followupAnalysisFiles = new ArrayList<File>();
 
             if (followUpCLIInputBean.followUpNeeded()) {
+
                 waitingHandler.appendReport("Starting follow up tasks.", true, true);
 
                 // recalibrate spectra
@@ -308,6 +353,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     waitingHandler.appendReport("Spectrum recalibration.", true, true);
 
                     try {
+
                         followupAnalysisFiles.addAll(
                                 CLIExportMethods.recalibrateSpectra(
                                         followUpCLIInputBean,
@@ -318,14 +364,18 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                         waitingHandler
                                 )
                         );
+
                     } catch (Exception e) {
+
                         waitingHandler.appendReport(
                                 "An error occurred while recalibrating the spectra. " + getLogFileMessage(),
                                 true,
                                 true
                         );
+
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
+
                     }
                 }
 
@@ -335,6 +385,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     waitingHandler.appendReport("Spectrum export.", true, true);
 
                     try {
+
                         followupAnalysisFiles.addAll(
                                 CLIExportMethods.exportSpectra(
                                         followUpCLIInputBean,
@@ -344,14 +395,18 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                         identificationParameters.getSequenceMatchingParameters()
                                 )
                         );
+
                     } catch (Exception e) {
+
                         waitingHandler.appendReport(
                                 "An error occurred while exporting the spectra. " + getLogFileMessage(),
                                 true,
                                 true
                         );
+
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
+
                     }
                 }
 
@@ -361,6 +416,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     waitingHandler.appendReport("Protein accession export.", true, true);
 
                     try {
+
                         followupAnalysisFiles.add(
                                 CLIExportMethods.exportAccessions(
                                         followUpCLIInputBean,
@@ -370,14 +426,18 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                         filterParameters
                                 )
                         );
+
                     } catch (Exception e) {
+
                         waitingHandler.appendReport(
                                 "An error occurred while exporting the protein accessions. " + getLogFileMessage(),
                                 true,
                                 true
                         );
+
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
+
                     }
                 }
 
@@ -387,6 +447,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     waitingHandler.appendReport("Protein sequences export.", true, true);
 
                     try {
+
                         followupAnalysisFiles.add(
                                 CLIExportMethods.exportProteinSequences(
                                         followUpCLIInputBean,
@@ -396,14 +457,18 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                         filterParameters
                                 )
                         );
+
                     } catch (Exception e) {
+
                         waitingHandler.appendReport(
                                 "An error occurred while exporting the protein details. " + getLogFileMessage(),
                                 true,
                                 true
                         );
+
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
+
                     }
                 }
 
@@ -413,6 +478,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     waitingHandler.appendReport("Progenesis export.", true, true);
 
                     try {
+
                         followupAnalysisFiles.add(
                                 CLIExportMethods.exportProgenesis(
                                         followUpCLIInputBean,
@@ -423,19 +489,24 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                         identificationParameters.getSequenceMatchingParameters()
                                 )
                         );
+
                         waitingHandler.appendReport(
                                 "Progenesis export completed.",
                                 true,
                                 true
                         );
+
                     } catch (Exception e) {
+
                         waitingHandler.appendReport(
                                 "An error occurred while exporting the Progenesis file. " + getLogFileMessage(),
                                 true,
                                 true
                         );
+
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
+
                     }
                 }
 
@@ -445,6 +516,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     waitingHandler.appendReport("Inclusion list export.", true, true);
 
                     try {
+
                         followupAnalysisFiles.add(
                                 CLIExportMethods.exportInclusionList(
                                         followUpCLIInputBean,
@@ -456,14 +528,18 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                         filterParameters
                                 )
                         );
+
                     } catch (Exception e) {
+
                         waitingHandler.appendReport(
                                 "An error occurred while generating the inclusion list.",
                                 true,
                                 true
                         );
+
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
+
                     }
                 }
 
@@ -473,6 +549,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     waitingHandler.appendReport("Proteoform export.", true, true);
 
                     try {
+
                         followupAnalysisFiles.add(
                                 CLIExportMethods.exportProteoforms(
                                         followUpCLIInputBean,
@@ -480,14 +557,18 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                         waitingHandler
                                 )
                         );
+
                     } catch (Exception e) {
+
                         waitingHandler.appendReport(
                                 "An error occurred while generating the proteoforms list.",
                                 true,
                                 true
                         );
+
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
+
                     }
                 }
 
@@ -497,6 +578,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     waitingHandler.appendReport("DeepLC export.", true, true);
 
                     try {
+
                         followupAnalysisFiles.addAll(
                                 CLIExportMethods.exportDeepLC(
                                         followUpCLIInputBean,
@@ -508,14 +590,18 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                         waitingHandler
                                 )
                         );
+
                     } catch (Exception e) {
+
                         waitingHandler.appendReport(
                                 "An error occurred while generating the proteoforms list.",
                                 true,
                                 true
                         );
+
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
+
                     }
                 }
 
@@ -525,6 +611,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     waitingHandler.appendReport("ms2pip export.", true, true);
 
                     try {
+
                         followupAnalysisFiles.addAll(
                                 CLIExportMethods.exportMs2pip(
                                         followUpCLIInputBean,
@@ -536,14 +623,18 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                         waitingHandler
                                 )
                         );
+
                     } catch (Exception e) {
+
                         waitingHandler.appendReport(
                                 "An error occurred while generating the proteoforms list.",
                                 true,
                                 true
                         );
+
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
+
                     }
                 }
             }
@@ -568,11 +659,15 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                 true,
                                 true
                         );
+
                         System.err.println("Report output folder not set. Please use -out_reports (or the more general -out option). Processing canceled.");
                         waitingHandler.setRunCanceled();
+
                     } else {
+
                         reportCLIInputBean.setReportOutputFolder(cliInputBean.getOutput().getParentFile());
                         reportOutputFolderSet = true;
+
                     }
                 }
 
@@ -590,6 +685,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                             waitingHandler.appendReport("Exporting " + reportType + ".", true, true);
 
                             try {
+
                                 reportFiles.add(
                                         CLIExportMethods.exportReport(
                                                 reportCLIInputBean,
@@ -608,14 +704,18 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                                 waitingHandler
                                         )
                                 );
+
                             } catch (Exception e) {
+
                                 waitingHandler.appendReport(
                                         "An error occurred while exporting the " + reportType + ". " + getLogFileMessage(),
                                         true,
                                         true
                                 );
+
                                 e.printStackTrace();
                                 waitingHandler.setRunCanceled();
+
                             }
                         }
                     }
@@ -626,13 +726,17 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                         waitingHandler.appendReport("Exporting report documentation.", true, true);
 
                         for (String reportType : reportCLIInputBean.getReportTypes()) {
+
                             try {
+
                                 CLIExportMethods.exportDocumentation(
                                         reportCLIInputBean,
                                         reportType,
                                         waitingHandler
                                 );
+
                             } catch (Exception e) {
+
                                 waitingHandler.appendReport(
                                         "An error occurred while exporting the documentation for "
                                         + reportType
@@ -641,8 +745,10 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                         true,
                                         true
                                 );
+
                                 e.printStackTrace();
                                 waitingHandler.setRunCanceled();
+
                             }
                         }
                     }
@@ -668,26 +774,35 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 this.getIdentificationParameters().getAnnotationParameters().setIntensityLimit(0.0);
 
                 try {
+
                     CLIExportMethods.exportMzId(mzidCLIInputBean, this, waitingHandler);
+
                 } catch (Exception e) {
+
                     waitingHandler.appendReport(
                             "An error occurred while generating the mzid file. " + getLogFileMessage(),
                             true,
                             true
                     );
+
                     e.printStackTrace();
                     waitingHandler.setRunCanceled();
+
                 } finally {
+
                     // reset the annotation level
                     this.getIdentificationParameters().getAnnotationParameters().setIntensityLimit(currentIntensityLimit);
+
                 }
             }
 
             // export project as zip
             File zipFile = cliInputBean.getZipExport();
+
             if (zipFile != null) {
 
                 waitingHandler.appendReportEndLine();
+
                 waitingHandler.appendReport(
                         "Zipping project.",
                         true,
@@ -695,18 +810,25 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 );
 
                 File parent = zipFile.getParentFile();
+
                 try {
+
                     parent.mkdirs();
+
                 } catch (Exception e) {
+
                     waitingHandler.appendReport(
                             "An error occurred while creating folder " + parent.getAbsolutePath() + ". " + getLogFileMessage(),
                             true,
                             true
                     );
+
                     waitingHandler.setRunCanceled();
+
                 }
 
                 ArrayList<File> spectrumFiles = new ArrayList<>();
+
                 for (String spectrumFileName : getIdentification().getFractions()) {
 
                     File spectrumFile = new File(msFileHandler.getFilePaths().get(spectrumFileName));
@@ -715,6 +837,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 }
 
                 File fastaFile = new File(projectDetails.getFastaFile());
+
                 try {
 
                     ProjectExport.exportProjectAsZip(
@@ -728,6 +851,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                             true,
                             waitingHandler
                     );
+
                     final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
                     double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
 
@@ -738,7 +862,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     );
 
                     // export mgf file(s) out of the zip file
-                    boolean mgfExport = cliInputBean.getMgfExport();
+                    boolean mgfExport = cliInputBean.getMgfExport(); // @TODO: what about non-mgf spectrum files..?
 
                     if (mgfExport) {
 
@@ -769,6 +893,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                             MsFileExporter.writeMgfFile(
                                     msFileHandler,
+                                    false, // only include ms2 spectra
                                     spectrumFileName,
                                     mgfFile,
                                     waitingHandler);
@@ -782,7 +907,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                         }
 
                         waitingHandler.appendReport(
-                                "Written mgf file(s) to output folder.",
+                                "MGF file(s) written to output folder.",
                                 true,
                                 true
                         );
@@ -794,11 +919,13 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 } catch (IOException e) {
 
                     e.printStackTrace();
+
                     waitingHandler.appendReport(
                             "An error occurred while attempting to zip project in " + zipFile.getAbsolutePath() + ". " + getLogFileMessage(),
                             true,
                             true
                     );
+
                     waitingHandler.setRunCanceled();
 
                 }
@@ -817,10 +944,12 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                         true,
                         true
                 );
+
                 e.printStackTrace();
             }
 
             saveReport();
+
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -832,8 +961,10 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                         true,
                         true
                 );
+
                 saveReport();
                 waitingHandler.setRunCanceled();
+
             }
         }
 
@@ -844,9 +975,11 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                     true,
                     true
             );
+
             waitingHandler.setSecondaryProgressText("Processing Completed.");
             System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
             // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+
             return 0;
 
         } else {
@@ -854,7 +987,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             System.out.println("PeptideShaker process failed! " + getLogFileMessage());
             System.exit(1); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
             // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+
             return 1;
+
         }
     }
 
@@ -881,6 +1016,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             }
 
             try {
+
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
                 File psReportFile = null;
                 PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
@@ -897,22 +1033,28 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 }
 
                 if (psReportFile != null) {
+
                     FileWriter fw = new FileWriter(psReportFile);
+
                     try {
                         fw.write(report);
                     } finally {
                         fw.close();
                     }
+
                 }
 
             } catch (Exception ex) {
+
                 waitingHandler.appendReport(
                         "An error occurred while saving the PeptideShaker report. "
                         + getLogFileMessage(),
                         true,
                         true
                 );
+
                 ex.printStackTrace();
+
             }
         }
     }
@@ -954,26 +1096,37 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         for (File inputFile : identificationFilesInput) {
 
             File parentFile = inputFile.getParentFile();
+
             if (!dataFolders.contains(parentFile)) {
                 dataFolders.add(parentFile);
             }
+
             File dataFolder = new File(parentFile, "mgf");
+
             if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                 dataFolders.add(dataFolder);
             }
+
             dataFolder = new File(parentFile, "mzml");
+
             if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                 dataFolders.add(dataFolder);
             }
+
             dataFolder = new File(parentFile, "cms");
+
             if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                 dataFolders.add(dataFolder);
             }
+
             dataFolder = new File(parentFile, "fasta");
+
             if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                 dataFolders.add(dataFolder);
             }
+
             dataFolder = new File(parentFile, PeptideShaker.DATA_DIRECTORY);
+
             if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                 dataFolders.add(dataFolder);
             }
@@ -985,9 +1138,11 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 waitingHandler.appendReport("Unzipping " + fileName + ".", true, true);
                 String newName = PsZipUtils.getTempFolderName(fileName);
                 String parentFolder = PsZipUtils.getUnzipParentFolder();
+
                 if (parentFolder == null) {
                     parentFolder = parentFile.getAbsolutePath();
                 }
+
                 File parentFolderFile = new File(parentFolder, PsZipUtils.getUnzipSubFolder());
                 File destinationFolder = new File(parentFolderFile, newName);
                 destinationFolder.mkdir();
@@ -999,25 +1154,35 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 }
 
                 dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
+
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
+
                 dataFolder = new File(destinationFolder, ".mgf");
+
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
+
                 dataFolder = new File(parentFile, "mzml");
+
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
+
                 dataFolder = new File(destinationFolder, ".cms");
+
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
+
                 dataFolder = new File(destinationFolder, ".fasta");
+
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
+
                 for (File unzippedFile : destinationFolder.listFiles()) {
 
                     String nameLowerCase = unzippedFile.getName().toLowerCase();
@@ -1066,7 +1231,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                                     || validationQCParameters.getPsmFilters().isEmpty()
                                     && validationQCParameters.getPeptideFilters().isEmpty()
                                     && validationQCParameters.getProteinFilters().isEmpty()) {
+
                                 MatchesValidator.setDefaultMatchesQCFilters(validationQCParameters);
+
                             }
 
                         } catch (Exception e) {
@@ -1158,16 +1325,21 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 || validationQCParameters.getPsmFilters().isEmpty()
                 && validationQCParameters.getPeptideFilters().isEmpty()
                 && validationQCParameters.getProteinFilters().isEmpty()) {
+
             MatchesValidator.setDefaultMatchesQCFilters(validationQCParameters);
+
         }
 
         if (identificationParameters == null) {
+
             waitingHandler.appendReport(
                     "Identification parameters not found!",
                     true,
                     true
             );
+
             waitingHandler.setRunCanceled();
+
         }
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
@@ -1179,42 +1351,60 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
         // try to locate the fasta file
         if (fastaFile == null) {
+
             waitingHandler.appendReport(
                     "FASTA file not set (or not in zip file)!",
                     true,
                     true
             );
+
             waitingHandler.setRunCanceled();
+
         } else if (!fastaFile.exists()) {
+
             boolean found = false;
+
             // look in the database folder
             try {
+
                 File tempDbFolder = utilitiesUserParameters.getDbFolder();
                 File newFile = new File(tempDbFolder, fastaFile.getName());
+
                 if (newFile.exists()) {
                     fastaFile = newFile;
                     projectDetails.setFastaFile(fastaFile);
                     found = true;
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             if (!found) {
+
                 // look in the data folders
                 for (File dataFolder : dataFolders) {
+
                     File newFile = new File(dataFolder, fastaFile.getName());
+
                     if (newFile.exists()) {
+
                         fastaFile = newFile;
                         projectDetails.setFastaFile(fastaFile);
                         found = true;
                         break;
+
                     }
+
                 }
+
                 if (!found) {
                     waitingHandler.appendReport("FASTA file \'" + fastaFile.getName() + "\' not found.", true, true);
                     waitingHandler.setRunCanceled();
                 }
+
             }
+
         } else {
             projectDetails.setFastaFile(fastaFile);
         }
@@ -1239,10 +1429,13 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         // set the processing settings
         ProcessingParameters processingParameters = new ProcessingParameters();
         Integer nThreads = cliInputBean.getnThreads();
+
         if (nThreads != null) {
             processingParameters.setnThreads(nThreads);
         }
+
         Boolean cachePercolatorFeatures = cliInputBean.getCachePercolatorFeatures();
+
         if (cachePercolatorFeatures != null) {
             processingParameters.setCachePercolatorFeatures(cachePercolatorFeatures);
         }
@@ -1255,10 +1448,12 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
         // check the project reference
         for (String forbiddenChar : Util.FORBIDDEN_CHARACTERS) {
+
             if (cliInputBean.getExperimentID().contains(forbiddenChar)) {
                 waitingHandler.appendReport("The project name cannot not contain " + forbiddenChar + ".", true, true);
                 waitingHandler.setRunCanceled();
             }
+
         }
 
         // incrementing the counter for a new PeptideShaker start run via CLI
@@ -1323,13 +1518,17 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             }
 
         } else {
+
             if (waitingHandler instanceof WaitingDialog) {
                 saveReport();
             }
+
             TempFilesManager.deleteTempFolders();
             waitingHandler.setWaitingText("PeptideShaker Processing Canceled.");
             System.out.println("<CompomicsError>PeptideShaker processing canceled. " + getLogFileMessage() + "</CompomicsError>");
+
         }
+
     }
 
     /**
@@ -1346,9 +1545,11 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
     public static void closePeptideShaker(Identification identification) throws IOException, SQLException {
 
         try {
+
             if (identification != null) {
                 identification.close(false);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1369,8 +1570,11 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                         System.out.println(currentFile.getAbsolutePath() + " could not be deleted!"); // @TODO: better handling of this error?
 
                     }
+
                 }
+
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1386,6 +1590,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
      * PeptideShaker CLI header message when printing the usage.
      */
     private static String getHeader() {
+
         return System.getProperty("line.separator")
                 + "The PeptideShaker command line takes identification files from search engines and creates a PeptideShaker project saved as psdb file. Various exports can be generated from the project." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
@@ -1399,19 +1604,22 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 + System.getProperty("line.separator")
                 + "----------------------" + System.getProperty("line.separator")
                 + System.getProperty("line.separator");
+
     }
 
     /**
      * Loads the species from the species file into the species factory.
      */
     private void loadSpecies() {
+
         try {
             SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
-            speciesFactory.initiate(PeptideShaker.getJarFilePath());
+            speciesFactory.initiate(PeptideShaker.getConfigFolder());
         } catch (Exception e) {
             System.out.println("An error occurred while loading the species. " + getLogFileMessage());
             e.printStackTrace();
         }
+
     }
 
     /**
@@ -1424,6 +1632,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         logFolder = aLogFolder;
 
         try {
+
             logFolder.mkdirs();
             File file = new File(logFolder, "PeptideShaker.log");
             System.setErr(new java.io.PrintStream(new FileOutputStream(file, true)));
@@ -1434,6 +1643,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             System.err.println("Total amount of memory in the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
             System.err.println("Free memory: " + Runtime.getRuntime().freeMemory() + ".");
             System.err.println("Java version: " + System.getProperty("java.version") + ".");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1446,11 +1656,13 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
      * @return the "see the log file" message
      */
     public static String getLogFileMessage() {
+
         if (logFolder == null) {
             return "Please see the PeptideShaker log file.";
         } else {
             return "Please see the PeptideShaker log file: " + logFolder.getAbsolutePath() + File.separator + "PeptideShaker.log";
         }
+
     }
 
     /**
@@ -1472,6 +1684,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             CommandLine line = parser.parse(nonPathOptions, nonPathSettingArgsAsList);
 
             if (!PeptideShakerCLIInputBean.isValidStartup(line)) {
+
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
                 lPrintWriter.print(System.getProperty("line.separator") + "==============================" + System.getProperty("line.separator"));
                 lPrintWriter.print("PeptideShaker - Command Line" + System.getProperty("line.separator"));
@@ -1482,32 +1695,41 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
                 lPrintWriter.close();
 
                 System.exit(0);
+
             } else {
+
                 PeptideShakerCLI lPeptideShakerCLI = new PeptideShakerCLI();
                 PeptideShakerCLIInputBean lCLIBean = new PeptideShakerCLIInputBean(line);
                 lPeptideShakerCLI.setPeptideShakerCLIInputBean(lCLIBean);
                 lPeptideShakerCLI.call();
+
             }
         } catch (OutOfMemoryError e) {
+
             System.out.println("<CompomicsError>PeptideShaker used up all the memory and had to be stopped. " + getLogFileMessage() + "</CompomicsError>");
             System.err.println("Ran out of memory!");
             System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory() + ".");
             System.err.println("Memory used by the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
             System.err.println("Free memory in the Java virtual machine: " + Runtime.getRuntime().freeMemory() + ".");
             e.printStackTrace();
+
         } catch (Exception e) {
+
             System.out.println("<CompomicsError>PeptideShaker processing failed. " + getLogFileMessage() + "</CompomicsError>");
             e.printStackTrace();
+
         }
     }
 
     @Override
     public String toString() {
+
         return "PeptideShakerCLI{"
                 + ", waitingHandler=" + waitingHandler
                 + ", cliInputBean=" + cliInputBean
                 + ", ptmFactory=" + modificationFactory
                 + ", enzymeFactory=" + enzymeFactory
                 + '}';
+
     }
 }

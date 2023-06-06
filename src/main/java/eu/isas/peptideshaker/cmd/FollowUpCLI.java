@@ -756,7 +756,7 @@ public class FollowUpCLI extends PsdbParent {
     private void loadSpecies() {
         try {
             SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
-            speciesFactory.initiate(PeptideShaker.getJarFilePath());
+            speciesFactory.initiate(PeptideShaker.getConfigFolder());
         } catch (Exception e) {
             System.out.println("An error occurred while loading the species.");
             e.printStackTrace();
