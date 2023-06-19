@@ -306,16 +306,16 @@
 
         <!-- EBI repository -->
         <repository>
-            <id>pst-release</id>
+            <id>nexus-ebi-release-repo</id>
             <name>EBI Nexus Repository</name>
-            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-release</url>
+            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/</url>
         </repository>
         
         <!-- EBI SNAPSHOT repo -->
         <repository>
-            <id>pst-snapshots</id>
+            <id>nexus-ebi-snapshot-repo</id>
             <name>EBI Nexus Snapshots Repository</name>
-            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-snapshots</url>
+            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-snapshots/</url>
         </repository>
 
         <!-- UGent snapshot repository -->
