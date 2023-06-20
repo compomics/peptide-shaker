@@ -100,6 +100,10 @@ public class FollowUpCLIInputBean {
      */
     private String deepLcStem = null;
     /**
+     * The file where to write the RT observed and predicted values.
+     */
+    private File percBenchResultsFile = null;
+    /**
      * The file to use for the path to ms2pip peptides.
      */
     private File ms2pipFile = null;
@@ -116,9 +120,26 @@ public class FollowUpCLIInputBean {
      */
     private File percolatorFile = null;
     /**
+     * The file where to write the RT observed and predicted values.
+     */
+    private File rtPredsObsFile = null;
+    /**
+     * The file where to write the peaks intensities observed and predicted values.
+     */
+    private File peaksIntensitiesFile = null;
+    /**
+     * The file containing the IDs of the PSMs for spectra peaks export.
+     */
+    private File psmIDsPeaksExportFile = null;
+    /**
+     * The file where to write the RT observed and predicted values.
+     */
+    private File psmIdentifiersFile = null;
+    /**
      * The models to export ms2pip config files for.
      */
-    private String[] ms2pipModels = new String[]{"CID", "HCD"};
+    private String[] ms2pipModels = new String[]{"CID", "HCD", "HCDch2", "CIDch2"};
+    
     /**
      * The path settings.
      */
@@ -252,6 +273,60 @@ public class FollowUpCLIInputBean {
                 throw new IllegalArgumentException("Folder where to write the percolator RT file '" + percolatorFile + "' not found.");
                 
             }
+        }
+        
+        if (aLine.hasOption(FollowUpCLIParams.RT_OBS_PRED.id)){
+            
+            rtPredsObsFile = new File(aLine.getOptionValue(FollowUpCLIParams.RT_OBS_PRED.id));
+            
+            if (!rtPredsObsFile.getParentFile().exists()) {
+                
+                throw new IllegalArgumentException("Folder where to write the RT observed and predicted values file '" + rtPredsObsFile + "' not found.");
+                
+            }
+            
+        }
+        
+        if (aLine.hasOption(FollowUpCLIParams.PEAK_INTS_OBS_PRED.id)){
+            
+            peaksIntensitiesFile = new File(aLine.getOptionValue(FollowUpCLIParams.PEAK_INTS_OBS_PRED.id));
+            psmIDsPeaksExportFile = new File(aLine.getOptionValue(FollowUpCLIParams.PSM_IDS_FOR_PEAKS_EXPORT.id));
+            
+            if (!peaksIntensitiesFile.getParentFile().exists()) {
+                
+                throw new IllegalArgumentException("Folder where to write the peaks intensities observed values file '" + peaksIntensitiesFile + "' not found.");
+                
+            }
+            if (!psmIDsPeaksExportFile.exists()) {
+                
+                throw new IllegalArgumentException("PSM identifiers file '" + psmIDsPeaksExportFile + "' not found.");
+                
+            }
+            
+        }
+        
+        if (aLine.hasOption(FollowUpCLIParams.PERCOLATOR_BENCHMARK_RESULTS.id)){
+            
+            percBenchResultsFile = new File(aLine.getOptionValue(FollowUpCLIParams.PERCOLATOR_BENCHMARK_RESULTS.id));
+            
+            if (!percBenchResultsFile.getParentFile().exists()) {
+                
+                throw new IllegalArgumentException("Percolator results file '" + percBenchResultsFile + "' not found.");
+                
+            }
+            
+        }
+        
+        if (aLine.hasOption(FollowUpCLIParams.PSM_IDENTIFIERS_EXPORT.id)){
+            
+            psmIdentifiersFile = new File(aLine.getOptionValue(FollowUpCLIParams.PSM_IDENTIFIERS_EXPORT.id));
+            
+            if (!psmIdentifiersFile.getParentFile().exists()) {
+                
+                throw new IllegalArgumentException("Percolator results file '" + psmIdentifiersFile + "' not found.");
+                
+            }
+            
         }
         
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
@@ -438,6 +513,51 @@ public class FollowUpCLIInputBean {
     public File getPercolatorFile() {
         return percolatorFile;
     }
+    
+    /**
+     * Returns the file where to write the RT observed and predicted values.
+     * 
+     * @return The file where to write the RT observed and predicted values.
+     */
+    public File getRTObsPredsFile() {
+        return rtPredsObsFile;
+    }
+    
+    /**
+     * Returns the file where to write the peaks intensities observed values.
+     * 
+     * @return The file where to write the RT observed and predicted values.
+     */
+    public File getPeaksIntensitiesObsFile() {
+        return peaksIntensitiesFile;
+    }
+    
+    /**
+     * Returns the file where to read the PSM ids for the peaks export.
+     * 
+     * @return The file where to read the PSM ids for the peaks export.
+     */
+    public File getPSMIDsPeaksExportFile() {
+        return psmIDsPeaksExportFile;
+    }
+    
+    /**
+     * Returns the file containing Percolator results for all PSMs to get confidence levels.
+     * 
+     * @return The file containing Percolator results for all PSMs to get confidence levels.
+     */
+    public File getPercolatorBenchmarkResultsFile() {
+        return percBenchResultsFile;
+    }
+    
+    /**
+     * Returns the file containing Percolator results for all PSMs to get confidence levels.
+     * 
+     * @return The file containing Percolator results for all PSMs to get confidence levels.
+     */
+    public File getPSMIdentifiersFile() {
+        return psmIdentifiersFile;
+    }
 
     /**
      * Returns the type of export needed for the Progenesis export. 0 by
@@ -606,21 +726,48 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * Indicates whether DeepLC export is needed.
+     * Indicates whether MS2PIP export is needed.
      *
-     * @return whether DeepLC export is needed
+     * @return whether MS2PIP export is needed
      */
     public boolean ms2pipExportNeeded() {
         return ms2pipFile != null;
     }
 
     /**
-     * Indicates whether DeepLC export is needed.
+     * Indicates whether Percolator export is needed.
      *
-     * @return whether DeepLC export is needed
+     * @return whether Percolator export is needed
      */
     public boolean percolatorExportNeeded() {
         return percolatorFile != null;
+    }
+    
+    /**
+     * Indicates whether RT observed/predicted values export is needed.
+     *
+     * @return whether RT observed/predicted values export is needed
+     */
+    public boolean RTValuesExportNeeded() {
+        return rtPredsObsFile != null;
+    }
+    
+    /**
+     * Indicates whether peaks intensities observed/predicted values export is needed.
+     *
+     * @return whether peaks intensities observed/predicted values export is needed
+     */
+    public boolean peaksIntensitiesObsExportNeeded() {
+        return peaksIntensitiesFile != null;
+    }
+    
+    /**
+     * Indicates whether PSM identifiers export is needed.
+     *
+     * @return whether PSM identifiers export is needed
+     */
+    public boolean PSMIdentifiersExportNeeded() {
+        return psmIdentifiersFile != null;
     }
 
     /**

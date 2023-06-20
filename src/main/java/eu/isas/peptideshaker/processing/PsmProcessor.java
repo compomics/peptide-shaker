@@ -127,6 +127,9 @@ public class PsmProcessor {
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+        
+        // Benchmark
+//        HistoneExample.close();
 
     }
 }

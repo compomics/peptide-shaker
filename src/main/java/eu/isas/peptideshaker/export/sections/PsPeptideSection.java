@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export.sections;
 
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
@@ -23,10 +24,12 @@ import com.compomics.util.experiment.identification.validation.MatchValidationLe
 import com.compomics.util.experiment.identification.peptide_shaker.ModificationScoring;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
+import eu.isas.peptideshaker.export.ExportUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -621,81 +624,59 @@ public class PsPeptideSection {
 
             case confident_modification_sites:
 
-                String sequence = peptideMatch.getPeptide().getSequence();
-                return identificationFeaturesGenerator.getConfidentModificationSites(peptideMatch, sequence);
+                Peptide peptide = peptideMatch.getPeptide();
+
+                return identificationFeaturesGenerator.getModificationSites(peptide.getSequence(), peptide.getVariableModifications(), true);
 
             case confident_modification_sites_number:
 
-                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(peptideMatch);
+                peptide = peptideMatch.getPeptide();
+
+                return identificationFeaturesGenerator.getModificationSitesNumber(peptide.getVariableModifications(), true);
 
             case ambiguous_modification_sites:
 
-                sequence = peptideMatch.getPeptide().getSequence();
-                return identificationFeaturesGenerator.getAmbiguousModificationSites(peptideMatch, sequence);
+                peptide = peptideMatch.getPeptide();
+
+                return identificationFeaturesGenerator.getModificationSites(peptide.getSequence(), peptide.getVariableModifications(), false);
 
             case ambiguous_modification_sites_number:
 
-                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(peptideMatch);
+                peptide = peptideMatch.getPeptide();
+
+                return identificationFeaturesGenerator.getModificationSitesNumber(peptide.getVariableModifications(), false);
 
             case confident_phosphosites:
 
-                ArrayList<String> modifications = new ArrayList<>(3);
+                peptide = peptideMatch.getPeptide();
 
-                for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
+                HashSet<String> modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
 
-                    if (ptm.contains("Phospho")) {
-
-                        modifications.add(ptm);
-
-                    }
-                }
-
-                return identificationFeaturesGenerator.getConfidentModificationSites(peptideMatch, peptideMatch.getPeptide().getSequence(), modifications);
+                return identificationFeaturesGenerator.getModificationSites(peptide.getSequence(), peptide.getVariableModifications(), true, modifications);
 
             case confident_phosphosites_number:
 
-                modifications = new ArrayList<>(3);
+                peptide = peptideMatch.getPeptide();
 
-                for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
+                modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
 
-                    if (ptm.contains("Phospho")) {
-
-                        modifications.add(ptm);
-
-                    }
-                }
-
-                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(peptideMatch, modifications);
+                return Integer.toString(identificationFeaturesGenerator.getModificationSitesNumber(peptide.getVariableModifications(), true, modifications));
 
             case ambiguous_phosphosites:
 
-                modifications = new ArrayList<>(3);
+                peptide = peptideMatch.getPeptide();
 
-                for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
+                modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
 
-                    if (ptm.contains("Phospho")) {
-
-                        modifications.add(ptm);
-
-                    }
-                }
-
-                return identificationFeaturesGenerator.getAmbiguousModificationSites(peptideMatch, peptideMatch.getPeptide().getSequence(), modifications);
+                return identificationFeaturesGenerator.getModificationSites(peptide.getSequence(), peptide.getVariableModifications(), false, modifications);
 
             case ambiguous_phosphosites_number:
 
-                modifications = new ArrayList<>(3);
+                peptide = peptideMatch.getPeptide();
 
-                for (String ptm : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
+                modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
 
-                    if (ptm.contains("Phospho")) {
-
-                        modifications.add(ptm);
-
-                    }
-                }
-
-                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(peptideMatch, modifications);
+                return Integer.toString(identificationFeaturesGenerator.getModificationSitesNumber(peptide.getVariableModifications(), false, modifications));
 
             default:
 

@@ -128,7 +128,6 @@ public class PsmImporter {
      * @param identificationParameters The identification parameters.
      * @param inputMap The input map.
      * @param fileReader The file reader.
-     * @param idFile The identification file.
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param fastaMapper The sequence mapper.
@@ -148,7 +147,6 @@ public class PsmImporter {
             IdentificationParameters identificationParameters,
             InputMap inputMap,
             IdfileReader fileReader,
-            File idFile,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
             FastaMapper fastaMapper,
@@ -174,7 +172,6 @@ public class PsmImporter {
                             identificationParameters,
                             processingParameters,
                             fileReader,
-                            idFile,
                             identification,
                             sequenceProvider,
                             fastaMapper,

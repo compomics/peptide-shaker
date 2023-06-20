@@ -754,6 +754,7 @@ public class PeptideShaker {
             modificationLocalizationScorer.scorePeptidePtms(
                     identification,
                     modificationFactory,
+                    sequenceProvider,
                     waitingHandler,
                     identificationParameters
             );
