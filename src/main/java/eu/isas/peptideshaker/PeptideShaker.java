@@ -44,6 +44,10 @@ import eu.isas.peptideshaker.processing.ProteinProcessor;
 import eu.isas.peptideshaker.processing.PsmProcessor;
 import eu.isas.peptideshaker.protein_inference.GroupSimplification;
 import com.compomics.util.experiment.identification.peptide_inference.PeptideInference;
+import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
+import com.compomics.util.io.flat.SimpleFileWriter;
+import com.compomics.util.parameters.identification.tool_specific.Ms2RescoreParameters;
+import eu.isas.peptideshaker.utils.MS2RescoreUtils;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 
 import java.io.File;
@@ -363,10 +367,50 @@ public class PeptideShaker {
         identification.getObjectsDB().commit();
         System.gc();
 
+        // Run rescore
+        Ms2RescoreParameters ms2RescoreParameters = identificationParameters.getMs2RescoreParameters();
+
+        if (ms2RescoreParameters.runMs2Rescore()) {
+
+            File ms2RescoreFile = new File(ms2RescoreParameters.getRescoreFeaturesFilePath());
+
+            try (SimpleFileWriter writer = new SimpleFileWriter(ms2RescoreFile, true)) {
+
+                writer.writeLine(
+                        MS2RescoreUtils.getHeader(
+                                identificationParameters.getSearchParameters()
+                        )
+                );
+
+                for (long spectrumMatchKey : identification.getSpectrumIdentificationKeys()) {
+
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
+
+                    spectrumMatch.getAllPeptideAssumptions()
+                            .forEach(
+                                    peptideAssumption -> writer.writeLine(
+                                            MS2RescoreUtils.getPeptideData(
+                                                    spectrumMatch,
+                                                    peptideAssumption,
+                                                    identificationParameters.getSearchParameters(),
+                                                    sequenceProvider,
+                                                    identificationParameters.getSequenceMatchingParameters(),
+                                                    identificationParameters.getAnnotationParameters(),
+                                                    identificationParameters.getModificationLocalizationParameters(),
+                                                    modificationFactory,
+                                                    spectrumProvider
+                                            )
+                                    )
+                            );
+                }
+            }
+        }
+
+        // Compute PEPs
         if (fastaParameters.isTargetDecoy()) {
 
             waitingHandler.appendReport(
-                    "Computing assumptions probabilities.",
+                    "Computing probabilities for all hits.",
                     true,
                     true
             );
@@ -374,7 +418,7 @@ public class PeptideShaker {
         } else {
 
             waitingHandler.appendReport(
-                    "Importing assumptions scores.",
+                    "Importing scores for all hits.",
                     true,
                     true
             );
@@ -1370,7 +1414,7 @@ public class PeptideShaker {
         return CompomicsWrapper.getJarFilePath((new PeptideShaker()).getClass().getResource("PeptideShaker.class").getPath(), "PeptideShaker");
 
     }
-    
+
     /**
      * Returns the folder where the configuration files are stored.
      *
@@ -1385,10 +1429,10 @@ public class PeptideShaker {
         }
 
     }
-    
+
     /**
      * Set the config folder.
-     * 
+     *
      * @param aConfigFolder the config folder
      */
     public static void setConfigFolder(File aConfigFolder) {
