@@ -380,7 +380,7 @@ public class PercolatorUtils {
                     if (locationN && locationC) {
 
                         nc = true;
-
+                        break;
                     }
 
                     if (locationN) {
@@ -394,6 +394,11 @@ public class PercolatorUtils {
                         c = true;
 
                     }
+                }
+                
+                // if the peptide is enzymatic for one protein, don't check the rest of the matching proteins
+                if (nc) {
+                    break;
                 }
             }
 
