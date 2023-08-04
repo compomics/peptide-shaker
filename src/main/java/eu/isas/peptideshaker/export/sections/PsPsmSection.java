@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -25,10 +26,12 @@ import com.compomics.util.experiment.identification.validation.MatchValidationLe
 import com.compomics.util.experiment.identification.peptide_shaker.ModificationScoring;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
+import eu.isas.peptideshaker.export.ExportUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
@@ -202,7 +205,7 @@ public class PsPsmSection {
 
                 if (peptideAssumption != null || tagAssumption != null) {
 
-                    if (decoys 
+                    if (decoys
                             || (peptideAssumption != null && !PeptideUtils.isDecoy(peptideAssumption.getPeptide(), sequenceProvider))
                             || (tagAssumption != null) // @TODO: check whether the tag is a decoy..?
                             ) {
@@ -650,8 +653,9 @@ public class PsPsmSection {
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                    String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                    return identificationFeaturesGenerator.getConfidentModificationSites(spectrumMatch, sequence);
+                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+
+                    return identificationFeaturesGenerator.getModificationSites(peptide.getSequence(), peptide.getVariableModifications(), true);
 
                 }
 
@@ -659,14 +663,23 @@ public class PsPsmSection {
 
             case confident_modification_sites_number:
 
-                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(spectrumMatch);
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+
+                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+
+                    return identificationFeaturesGenerator.getModificationSitesNumber(peptide.getVariableModifications(), true);
+
+                }
+
+                return "";
 
             case ambiguous_modification_sites:
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                    String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                    return identificationFeaturesGenerator.getAmbiguousModificationSites(spectrumMatch, sequence);
+                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+
+                    return identificationFeaturesGenerator.getModificationSites(peptide.getSequence(), peptide.getVariableModifications(), false);
 
                 }
 
@@ -674,25 +687,25 @@ public class PsPsmSection {
 
             case ambiguous_modification_sites_number:
 
-                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(spectrumMatch);
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+
+                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+
+                    return identificationFeaturesGenerator.getModificationSitesNumber(peptide.getVariableModifications(), false);
+
+                }
+
+                return "";
 
             case confident_phosphosites:
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                    String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                    ArrayList<String> modifications = new ArrayList<>(3);
+                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
-                    for (String modName : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
+                    HashSet<String> modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
 
-                        if (modName.toLowerCase().contains("phospho")) {
-
-                            modifications.add(modName);
-
-                        }
-                    }
-
-                    return identificationFeaturesGenerator.getConfidentModificationSites(spectrumMatch, sequence, modifications);
+                    return identificationFeaturesGenerator.getModificationSites(peptide.getSequence(), peptide.getVariableModifications(), true, modifications);
 
                 }
 
@@ -700,36 +713,27 @@ public class PsPsmSection {
 
             case confident_phosphosites_number:
 
-                ArrayList<String> modifications = new ArrayList<>(3);
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                for (String modName : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
+                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
-                    if (modName.toLowerCase().contains("phospho")) {
+                    HashSet<String> modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
 
-                        modifications.add(modName);
+                    return Integer.toString(identificationFeaturesGenerator.getModificationSitesNumber(peptide.getVariableModifications(), true, modifications));
 
-                    }
                 }
 
-                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(spectrumMatch, modifications);
+                return "";
 
             case ambiguous_phosphosites:
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                    String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                    modifications = new ArrayList<>(3);
+                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
-                    for (String modName : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
+                    HashSet<String> modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
 
-                        if (modName.toLowerCase().contains("phospho")) {
-
-                            modifications.add(modName);
-
-                        }
-                    }
-
-                    return identificationFeaturesGenerator.getAmbiguousModificationSites(spectrumMatch, sequence, modifications);
+                    return identificationFeaturesGenerator.getModificationSites(peptide.getSequence(), peptide.getVariableModifications(), false, modifications);
 
                 }
 
@@ -737,18 +741,17 @@ public class PsPsmSection {
 
             case ambiguous_phosphosites_number:
 
-                modifications = new ArrayList<>(3);
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
 
-                for (String modName : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
+                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
-                    if (modName.toLowerCase().contains("phospho")) {
+                    HashSet<String> modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
 
-                        modifications.add(modName);
+                    return Integer.toString(identificationFeaturesGenerator.getModificationSitesNumber(peptide.getVariableModifications(), false, modifications));
 
-                    }
                 }
 
-                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(spectrumMatch, modifications);
+                return "";
 
             default:
                 return "Not implemented";
@@ -849,7 +852,7 @@ public class PsPsmSection {
                             result.append(site).append(": Very Confident");
                             break;
                         default:
-                            break;
+                            throw new IllegalArgumentException("Localizatoin confidence level not recognized: " + ptmConfidence + ".");
                     }
                 }
 

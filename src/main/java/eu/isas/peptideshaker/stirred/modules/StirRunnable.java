@@ -8,8 +8,8 @@ import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideVariantMatches;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.modification.mapping.ModificationLocalizationMapper;
-import com.compomics.util.experiment.identification.modification.mapping.ModificationNameMapper;
+import com.compomics.util.experiment.identification.modification.search_engine_mapping.ModificationLocalizationMapper;
+import com.compomics.util.experiment.identification.modification.search_engine_mapping.ModificationNameMapper;
 import com.compomics.util.experiment.identification.modification.scores.PhosphoRS;
 import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
 import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
@@ -284,11 +284,10 @@ public class StirRunnable implements Runnable {
 
             ModificationLocalizationMapper.modificationLocalization(
                     peptide,
-                    expectedNames,
-                    modNames,
                     identificationParameters,
                     idfileReader,
-                    modificationFactory
+                    modificationFactory,
+                    sequenceProvider
             );
 
         }
@@ -476,7 +475,8 @@ public class StirRunnable implements Runnable {
                                         modificationLocalizationParameters.isProbabilisticScoreNeutralLosses(),
                                         sequenceMatchingParameters,
                                         modificationSequenceMatchingParameters,
-                                        peptideSpectrumAnnotator
+                                        peptideSpectrumAnnotator,
+                                        modificationFactory
                                 ),
                                 (a, b) -> a,
                                 TreeMap::new

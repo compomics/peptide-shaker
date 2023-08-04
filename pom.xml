@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>2.2.23</version>
+    <version>3.0.0-beta</version>
     <name>PeptideShaker</name>
     <url>https://github.com/compomics/peptide-shaker</url>
     <description>Interpretation of proteomics identification results</description>
@@ -306,16 +306,16 @@
 
         <!-- EBI repository -->
         <repository>
-            <id>pst-release</id>
+            <id>nexus-ebi-release-repo</id>
             <name>EBI Nexus Repository</name>
-            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-release</url>
+            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/</url>
         </repository>
         
         <!-- EBI SNAPSHOT repo -->
         <repository>
-            <id>pst-snapshots</id>
+            <id>nexus-ebi-snapshot-repo</id>
             <name>EBI Nexus Snapshots Repository</name>
-            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-snapshots</url>
+            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-snapshots/</url>
         </repository>
 
         <!-- UGent snapshot repository -->
@@ -340,7 +340,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>5.0.68</version>
+            <version>5.1.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>

@@ -454,7 +454,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         // load gene mappings
         ProteinGeneDetailsProvider geneFactory = new ProteinGeneDetailsProvider();
         try {
-            geneFactory.initialize(PeptideShaker.getJarFilePath());
+            geneFactory.initialize(PeptideShaker.getConfigFolder());
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred while loading the gene mappings.", "Gene Mapping File Error", JOptionPane.ERROR_MESSAGE);
@@ -463,7 +463,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         // load the species mapping
         try {
             SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
-            speciesFactory.initiate(PeptideShaker.getJarFilePath());
+            speciesFactory.initiate(PeptideShaker.getConfigFolder());
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occurred while loading the species mapping.", "File Error", JOptionPane.OK_OPTION);
@@ -553,7 +553,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     private void setPathConfiguration() throws IOException {
 
-        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
+        File pathConfigurationFile = new File(PeptideShaker.getConfigFolder(), UtilitiesPathParameters.configurationFileName);
 
         if (pathConfigurationFile.exists()) {
 
@@ -3195,7 +3195,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 PeptideShaker.getVersion(),
                 "peptide-shaker",
                 "PeptideShaker",
-                new File(PeptideShaker.getJarFilePath() + "/resources/PeptideShaker.log")
+                new File(PeptideShaker.getConfigFolder() + "/resources/PeptideShaker.log")
         );
 
     }//GEN-LAST:event_logReportMenuActionPerformed
@@ -4044,7 +4044,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 }
 
                 // write path file preference
-                File destinationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathParameters.configurationFileName);
+                File destinationFile = new File(PeptideShaker.getConfigFolder(), UtilitiesPathParameters.configurationFileName);
 
                 PeptideShakerPathParameters.writeConfigurationToFile(destinationFile);
 
@@ -4387,11 +4387,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void setUpLogFile(boolean redirectOutputStream) {
 
-        if (useLogFile && !PeptideShaker.getJarFilePath().equalsIgnoreCase(".")) {
+        if (useLogFile && !PeptideShaker.getConfigFolder().toString().equalsIgnoreCase(".")) {
 
             try {
 
-                String path = PeptideShaker.getJarFilePath() + "/resources/PeptideShaker.log";
+                String path = PeptideShaker.getConfigFolder() + "/resources/PeptideShaker.log";
 
                 File file = new File(path);
                 System.setErr(new java.io.PrintStream(new FileOutputStream(file, true)));
@@ -5441,6 +5441,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             ModificationLocalizationScorer ptmScorer = new ModificationLocalizationScorer();
             Identification identification = getIdentification();
+        SequenceProvider sequenceProvider = getSequenceProvider();
             ProteinMatch proteinMatch = identification.getProteinMatch(selectedProteinKey);
             ptmScorer.scorePTMs(
                     identification,
@@ -5448,6 +5449,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     getIdentificationParameters(),
                     false,
                     modificationFactory,
+                    sequenceProvider,
                     null
             );
 
@@ -6070,7 +6072,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     ) {
 
         SequenceProvider sequenceProvider = getSequenceProvider();
-        SpectrumProvider spectrumProvider = getSpectrumProvider();
         IdentificationParameters identificationParameters = getIdentificationParameters();
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();

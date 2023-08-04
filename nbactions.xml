@@ -8,8 +8,11 @@
             </goals>
             <properties>
                 <exec.classpathScope>runtime</exec.classpathScope>
-                <exec.args>-Xmx4g -splash:resources/conf/peptide-shaker-splash.png -classpath %classpath eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.args>
+                <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.executable>java</exec.executable>
+                <exec.vmArgs>-Xmx50g -splash:resources/conf/peptide-shaker-splash.png</exec.vmArgs>
+                <exec.appArgs></exec.appArgs>
+                <exec.mainClass>eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.mainClass>
             </properties>
         </action>
         <action>
@@ -20,9 +23,12 @@
             </goals>
             <properties>
                 <exec.classpathScope>runtime</exec.classpathScope>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Xmx4g -splash:resources/conf/peptide-shaker-splash.png -classpath %classpath eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.args>
+                <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <jpda.listen>true</jpda.listen>
                 <exec.executable>java</exec.executable>
+                <exec.vmArgs>-Xmx50g -splash:resources/conf/peptide-shaker-splash.png -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
+                <exec.appArgs></exec.appArgs>
+                <exec.mainClass>eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.mainClass>
             </properties>
         </action>
         <action>
@@ -32,9 +38,12 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.6.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xmx4g -splash:resources/conf/peptide-shaker-splash.png -classpath %classpath eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.args>
+                <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <profiler.action>profile</profiler.action>
                 <exec.executable>${profiler.java}</exec.executable>
+                <exec.vmArgs>-Xmx50g -splash:resources/conf/peptide-shaker-splash.png</exec.vmArgs>
+                <exec.appArgs></exec.appArgs>
+                <exec.mainClass>eu.isas.peptideshaker.gui.PeptideShakerGUI</exec.mainClass>
             </properties>
         </action>
         

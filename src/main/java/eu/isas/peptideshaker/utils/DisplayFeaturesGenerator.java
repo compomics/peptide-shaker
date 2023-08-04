@@ -5,6 +5,7 @@ import com.compomics.util.experiment.identification.features.IdentificationFeatu
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidPattern;
 import com.compomics.util.experiment.biology.aminoacids.sequence.AminoAcidSequence;
+import com.compomics.util.experiment.biology.modifications.ModificationProvider;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.parameters.identification.search.SearchParameters;
@@ -71,7 +72,12 @@ public class DisplayFeaturesGenerator {
      * @param sequenceProvider the sequence provider
      * @param proteinDetailsProvider the protein details provider
      */
-    public DisplayFeaturesGenerator(IdentificationParameters identificationParameters, DisplayParameters displayParameters, SequenceProvider sequenceProvider, ProteinDetailsProvider proteinDetailsProvider) {
+    public DisplayFeaturesGenerator(
+            IdentificationParameters identificationParameters, 
+            DisplayParameters displayParameters, 
+            SequenceProvider sequenceProvider, 
+            ProteinDetailsProvider proteinDetailsProvider
+    ) {
 
         this.identificationParameters = identificationParameters;
         this.displayParameters = displayParameters;
@@ -89,7 +95,9 @@ public class DisplayFeaturesGenerator {
      *
      * @return the transformed accession number
      */
-    public String getDatabaseLink(String proteinAccession) {
+    public String getDatabaseLink(
+            String proteinAccession
+    ) {
         return getDatabaseLink(proteinAccession, true, false);
     }
 
@@ -104,7 +112,11 @@ public class DisplayFeaturesGenerator {
      *
      * @return the transformed accession number
      */
-    public String getDatabaseLink(String proteinAccession, boolean includeHtmlTags, boolean underlineLink) {
+    public String getDatabaseLink(
+            String proteinAccession, 
+            boolean includeHtmlTags, 
+            boolean underlineLink
+    ) {
 
         // no link for decoy proteins
         if (ProteinUtils.isDecoy(proteinAccession, sequenceProvider)) {
@@ -195,7 +207,9 @@ public class DisplayFeaturesGenerator {
      *
      * @return the transformed accession number
      */
-    public String getDatabaseLinks(String[] proteinAccessions) {
+    public String getDatabaseLinks(
+            String[] proteinAccessions
+    ) {
         return getDatabaseLinks(proteinAccessions, false);
     }
 
@@ -210,13 +224,20 @@ public class DisplayFeaturesGenerator {
      *
      * @return the transformed accession number
      */
-    public String getDatabaseLinks(String[] proteinAccessions, boolean underlineLink) {
+    public String getDatabaseLinks(
+            String[] proteinAccessions, 
+            boolean underlineLink
+    ) {
 
         String result = proteinAccessions.length == 0 ? ""
                 : Arrays.stream(proteinAccessions)
                         .sorted()
-                        .map(accession -> getDatabaseLink(accession, false, underlineLink))
-                        .collect(Collectors.joining(", "));
+                        .map(
+                                accession -> getDatabaseLink(accession, false, underlineLink)
+                        )
+                        .collect(
+                                Collectors.joining(", ")
+                        );
 
         result = "<html>" + result + "</html>";
 
@@ -231,14 +252,18 @@ public class DisplayFeaturesGenerator {
      * @param database the protein database
      * @return the protein accession web link
      */
-    public String getSrsAccessionLink(String proteinAccession, String database) {
+    public String getSrsAccessionLink(
+            String proteinAccession, 
+            String database
+    ) {
 
         return String.join("",
                 "https://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b",
                 database,
                 "-AccNumber:",
                 proteinAccession,
-                "%5d");
+                "%5d"
+        );
 
     }
 
@@ -316,13 +341,17 @@ public class DisplayFeaturesGenerator {
      * @param assayAccession the assay accession number
      * @return the project accession web link
      */
-    public static String getPrideAssayArchiveLink(String projectAccession, String assayAccession) {
+    public static String getPrideAssayArchiveLink(
+            String projectAccession, 
+            String assayAccession
+    ) {
 
         return String.join("",
                 "https://www.ebi.ac.uk/pride/archive/projects/",
                 projectAccession,
                 "/assays/",
-                assayAccession);
+                assayAccession
+        );
 
     }
 
@@ -364,21 +393,22 @@ public class DisplayFeaturesGenerator {
      * @param modificationScores the modification scores
      * @return a string with the HTML tooltip for the peptide
      */
-    public String getPeptideModificationTooltipAsHtml(Peptide peptide, PSModificationScores modificationScores) {
+    public String getPeptideModificationTooltipAsHtml(
+            Peptide peptide, 
+            PSModificationScores modificationScores
+    ) {
 
         String peptideSequence = peptide.getSequence();
 
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
+        HashSet<String> displayedModifications = displayParameters.getDisplayedModifications();
 
-        String[] fixedModifications = getDisplayedModifications(
-                peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayParameters.getDisplayedModifications());
-        String[] confidentVariableModifications = modificationScores == null ? new String[peptideSequence.length() + 2]
-                : getFilteredConfidentModificationsSites(modificationScores, displayParameters.getDisplayedModifications(), peptideSequence.length());
-        String[] ambiguousVariableModificationsRepresentative = modificationScores == null ? new String[peptideSequence.length() + 2]
-                : getFilteredAmbiguousModificationsRepresentativeSites(modificationScores, displayParameters.getDisplayedModifications(), peptideSequence.length());
+        String[] fixedModifications = getDisplayedModifications(peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayedModifications);
+        String[] confidentVariableModifications = getFilteredConfidentModificationsSites(peptide, displayedModifications);
+        String[] ambiguousVariableModifications = getFilteredAmbiguousModifications(peptide, displayedModifications);
 
-        return getModificationToolTip(peptideSequence, fixedModifications, confidentVariableModifications, ambiguousVariableModificationsRepresentative);
+        return getModificationToolTip(peptideSequence, fixedModifications, confidentVariableModifications, ambiguousVariableModifications);
     }
 
     /**
@@ -389,7 +419,10 @@ public class DisplayFeaturesGenerator {
      *
      * @return an array containing only the modifications to display
      */
-    public static String[] getDisplayedModifications(String[] modificationArray, HashSet<String> displayedModifications) {
+    public static String[] getDisplayedModifications(
+            String[] modificationArray, 
+            HashSet<String> displayedModifications
+    ) {
 
         String[] result = new String[modificationArray.length];
 
@@ -419,34 +452,18 @@ public class DisplayFeaturesGenerator {
 
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
+        HashSet<String> displayedModifications = displayParameters.getDisplayedModifications();
 
-        String[] fixedModifications = getDisplayedModifications(
-                peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayParameters.getDisplayedModifications());
+        String[] fixedModifications = getDisplayedModifications(peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayedModifications);
+        String[] confidentVariableModifications = getFilteredConfidentModificationsSites(peptide, displayedModifications);
+        String[] ambiguousVariableModifications = getFilteredAmbiguousModifications(peptide, displayedModifications);
 
-        String[] confidentModifications = new String[peptide.getSequence().length() + 2];
-        String[] ambigousModifications = new String[peptide.getSequence().length() + 2];
-
-        for (ModificationMatch modMatch : peptide.getVariableModifications()) {
-
-            String modName = modMatch.getModification();
-
-            if (displayParameters.getDisplayedModifications().contains(modName)) {
-
-                int site = modMatch.getSite();
-
-                if (modMatch.getConfident()) {
-
-                    confidentModifications[site] = modName;
-
-                } else {
-
-                    ambigousModifications[site] = modName;
-
-                }
-            }
-        }
-
-        return getModificationToolTip(peptide.getSequence(), fixedModifications, confidentModifications, ambigousModifications);
+        return getModificationToolTip(
+                peptide.getSequence(), 
+                fixedModifications, 
+                confidentVariableModifications, 
+                ambiguousVariableModifications
+        );
 
     }
 
@@ -460,17 +477,17 @@ public class DisplayFeaturesGenerator {
      *
      * @return the modification tooltip as HTML
      */
-    private String getModificationToolTip(String peptideSequence,
+    private String getModificationToolTip(
+            String peptideSequence,
             String[] fixedModifications,
             String[] confidentLocations,
-            String[] representativeAmbiguousLocations) {
+            String[] representativeAmbiguousLocations
+    ) {
 
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
 
         StringBuilder tooltip = new StringBuilder();
         tooltip.append("<html>");
-
-        ArrayList<String> alreadyAnnotated = new ArrayList<>();
 
         for (int aa = 1; aa <= peptideSequence.length(); aa++) {
 
@@ -483,28 +500,29 @@ public class DisplayFeaturesGenerator {
 
             if (fixedMod != null || confidentMod != null || ambiguousMod != null) {
 
-                StringBuilder tempTooltip = new StringBuilder(); // @TODO: should be a way of doing this without needing this second string builder..?
-                ModificationUtils.appendTaggedResidue(tempTooltip, aminoAcid, confidentMod, ambiguousMod, null, fixedMod, modificationParameters, true, true);
+                ModificationUtils.appendTaggedResidue(
+                        tooltip, 
+                        aminoAcid, 
+                        confidentMod, 
+                        ambiguousMod, 
+                        null, 
+                        fixedMod, 
+                        modificationParameters, 
+                        true, 
+                        true
+                );
 
-                tempTooltip.append(": ");
+                tooltip.append(": ");
 
                 if (fixedMod != null) {
-                    tempTooltip.append(fixedMod).append(" (fixed)<br>");
+                    tooltip.append(fixedMod).append(" (fixed)<br>");
                 }
                 if (confidentMod != null) {
-                    tempTooltip.append(confidentMod).append(" (confident)<br>");
+                    tooltip.append(confidentMod).append(" (confident)<br>");
                 }
                 if (ambiguousMod != null) {
-                    tempTooltip.append(ambiguousMod).append(" (not confident)<br>");
+                    tooltip.append(ambiguousMod).append(" (not confident)<br>");
                 }
-
-                String currentResidueAnnotation = tempTooltip.toString();
-
-                if (!alreadyAnnotated.contains(currentResidueAnnotation)) {
-                    tooltip.append(currentResidueAnnotation);
-                    alreadyAnnotated.add(currentResidueAnnotation);
-                }
-
             }
         }
 
@@ -606,12 +624,23 @@ public class DisplayFeaturesGenerator {
      *
      * @return the tagged peptide sequence
      */
-    public String getTaggedPeptideSequence(PeptideMatch peptideMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
+    public String getTaggedPeptideSequence(
+            PeptideMatch peptideMatch, 
+            boolean useHtmlColorCoding, 
+            boolean includeHtmlStartEndTags, 
+            boolean useShortName
+    ) {
 
         Peptide peptide = peptideMatch.getPeptide();
         PSModificationScores modificationScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
-        return getTaggedPeptideSequence(peptide, modificationScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
-
+        
+        return getTaggedPeptideSequence(
+                peptide, 
+                modificationScores, 
+                useHtmlColorCoding, 
+                includeHtmlStartEndTags, 
+                useShortName
+        );
     }
 
     /**
@@ -628,12 +657,23 @@ public class DisplayFeaturesGenerator {
      *
      * @return the tagged peptide sequence
      */
-    public String getTaggedPeptideSequence(SpectrumMatch spectrumMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
+    public String getTaggedPeptideSequence(
+            SpectrumMatch spectrumMatch, 
+            boolean useHtmlColorCoding, 
+            boolean includeHtmlStartEndTags, 
+            boolean useShortName
+    ) {
 
         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
         PSModificationScores modificationScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
-        return getTaggedPeptideSequence(peptide, modificationScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
-
+        
+        return getTaggedPeptideSequence(
+                peptide, 
+                modificationScores, 
+                useHtmlColorCoding, 
+                includeHtmlStartEndTags, 
+                useShortName
+        );
     }
 
     /**
@@ -660,51 +700,54 @@ public class DisplayFeaturesGenerator {
 
         ModificationParameters modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
-
-        String peptideSequence = peptide.getSequence();
+        HashSet<String> dislpayedModifications = displayParameters.getDisplayedModifications();
 
         String[] allFixedModifications = peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
         String[] allVariableModifications = peptide.getIndexedVariableModifications();
-        String[] fixedModifications = getDisplayedModifications(
-                peptide.getFixedModifications(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters), displayParameters.getDisplayedModifications());
-        String[] confidentVariableModifications = modificationScores == null ? new String[peptideSequence.length() + 2]
-                : getFilteredConfidentModificationsSites(modificationScores, displayParameters.getDisplayedModifications(), peptideSequence.length());
-        String[] ambiguousVariableModificationsRepresentative = modificationScores == null ? new String[peptideSequence.length() + 2]
-                : getFilteredAmbiguousModificationsRepresentativeSites(modificationScores, displayParameters.getDisplayedModifications(), peptideSequence.length());
+        String[] fixedModifications = getDisplayedModifications(allFixedModifications, dislpayedModifications);
+        String[] confidentVariableModifications = getFilteredConfidentModificationsSites(peptide, dislpayedModifications);
+        String[] ambiguousVariableModificationsRepresentative = getFilteredAmbiguousModifications(peptide, dislpayedModifications);
 
-        // @TODO: also add the variants
-        //peptide.getVariantMatches();
-        return PeptideUtils.getTaggedModifiedSequence(peptide, modificationParameters,
-                allFixedModifications, allVariableModifications,
-                confidentVariableModifications, ambiguousVariableModificationsRepresentative, null,
-                fixedModifications, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
+        return PeptideUtils.getTaggedModifiedSequence(
+                peptide, 
+                modificationParameters,
+                allFixedModifications, 
+                allVariableModifications,
+                confidentVariableModifications, 
+                ambiguousVariableModificationsRepresentative, 
+                null,
+                fixedModifications, 
+                useHtmlColorCoding, 
+                includeHtmlStartEndTags, 
+                useShortName
+        );
     }
 
     /**
      * Exports the confidently localized modification sites in a map: site &gt;
      * mapped modifications.
      *
-     * @param modificationScores the PeptideShaker modification scores
-     * @param displayedModifications list of modifications to display
-     * @param peptideLength the length of the peptide
+     * @param peptide the peptide to display
+     * @param displayedModifications the names of the modifications to display
      *
      * @return a map of filtered modifications based on the user display
      * preferences
      */
     public static String[] getFilteredConfidentModificationsSites(
-            PSModificationScores modificationScores,
-            HashSet<String> displayedModifications,
-            int peptideLength
+            Peptide peptide,
+            HashSet<String> displayedModifications
     ) {
 
-        String[] result = new String[peptideLength + 2];
-
-        for (String modName : displayedModifications) {
-
-            for (int confidentSite : modificationScores.getConfidentSitesForModification(modName)) {
-
-                result[confidentSite] = modName;
-
+        String[] result = new String[peptide.getSequence().length() + 2];
+        
+        for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
+            
+            String modName = modificationMatch.getModification();
+            
+            if (modificationMatch.getConfident() && displayedModifications.contains(modName)) {
+                
+                result[modificationMatch.getSite()] = modName;
+                
             }
         }
 
@@ -713,80 +756,34 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
-     * Exports the ambiguously localized modification representative sites in a
-     * map: site &gt; mapped modifications.
+     * Exports the modifications that are not confidently localized.
      *
-     * @param modificationScores the PeptideShaker modification scores
-     * @param displayedModifications list of modifications to display
-     * @param peptideLength the length of the peptide
+     * @param peptide the peptide to display
+     * @param displayedModifications the names of the modifications to display
      *
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static String[] getFilteredAmbiguousModificationsRepresentativeSites(
-            PSModificationScores modificationScores,
-            HashSet<String> displayedModifications,
-            int peptideLength
+    public static String[] getFilteredAmbiguousModifications(
+            Peptide peptide,
+            HashSet<String> displayedModifications
     ) {
 
-        String[] result = new String[peptideLength + 2];
-
-        for (int representativeSite : modificationScores.getRepresentativeSites()) {
-
-            for (String modName : modificationScores.getModificationsAtRepresentativeSite(representativeSite)) {
-
-                if (displayedModifications.contains(modName)) {
-
-                    result[representativeSite] = modName;
-
-                }
+        String[] result = new String[peptide.getSequence().length() + 2];
+        
+        for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
+            
+            String modName = modificationMatch.getModification();
+            
+            if (!modificationMatch.getConfident() && displayedModifications.contains(modName)) {
+                
+                result[modificationMatch.getSite()] = modName;
+                
             }
         }
 
         return result;
-    }
-
-    /**
-     * Exports the ambiguously localized modification secondary sites in a map:
-     * site &gt; mapped modifications.
-     *
-     * @param modificationScores the PeptideShaker modification scores
-     * @param displayedModifications list of modifications to display
-     * @param peptideLength the length of the peptide
-     *
-     * @return a map of filtered modifications based on the user display
-     * preferences
-     */
-    public static String[] getFilteredAmbiguousModificationsSecondarySites(
-            PSModificationScores modificationScores,
-            HashSet<String> displayedModifications,
-            int peptideLength
-    ) {
-
-        String[] result = new String[peptideLength + 2];
-
-        for (int representativeSite : modificationScores.getRepresentativeSites()) {
-
-            HashMap<Integer, HashSet<String>> modificationsAtSite = modificationScores.getAmbiguousModificationsAtRepresentativeSite(representativeSite);
-
-            for (int secondarySite : modificationsAtSite.keySet()) {
-
-                if (secondarySite != representativeSite) {
-
-                    for (String modName : modificationsAtSite.get(secondarySite)) {
-
-                        if (displayedModifications.contains(modName)) {
-
-                            result[secondarySite] = modName;
-
-                        }
-                    }
-                }
-            }
-        }
-
-        return result;
-
+        
     }
 
     /**
@@ -807,8 +804,8 @@ public class DisplayFeaturesGenerator {
                 notSelectedRowHtmlTagFontColor,
                 "\">",
                 goAccession,
-                "</font></a></html>");
-
+                "</font></a></html>"
+        );
     }
 
     /**

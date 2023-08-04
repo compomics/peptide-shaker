@@ -622,7 +622,7 @@
                               <Properties>
                                 <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                                   <FontInfo relative="true">
-                                    <Font component="spectrumIdResultsLabel" italic="true" property="font" relativeSize="true" size="0"/>
+                                    <Font component="spectrumIdResultsLabel" italic="false" property="font" relativeSize="true" size="0"/>
                                   </FontInfo>
                                 </Property>
                                 <Property name="text" type="java.lang.String" value="Spectrum Identification Results"/>

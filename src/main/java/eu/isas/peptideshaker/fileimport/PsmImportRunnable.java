@@ -6,11 +6,9 @@ import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.filtering.PeptideAssumptionFilter;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideVariantMatches;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.modification.mapping.ModificationLocalizationMapper;
-import com.compomics.util.experiment.identification.modification.mapping.ModificationNameMapper;
+import com.compomics.util.experiment.identification.modification.search_engine_mapping.ModificationLocalizationMapper;
 import com.compomics.util.experiment.identification.protein_inference.FastaMapper;
 import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -19,7 +17,6 @@ import com.compomics.util.experiment.identification.validation.percolator.Percol
 import com.compomics.util.experiment.identification.validation.percolator.PercolatorFeaturesCache;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.io.identification.IdfileReader;
-import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.identification.advanced.SequenceMatchingParameters;
 import com.compomics.util.parameters.identification.search.ModificationParameters;
@@ -27,16 +24,13 @@ import com.compomics.util.parameters.identification.search.SearchParameters;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.utils.PercolatorUtils;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -84,14 +78,6 @@ public class PsmImportRunnable implements Runnable {
      */
     private final IdfileReader fileReader;
     /**
-     * The identification file where the PSMs are from.
-     */
-    private final File idFile;
-    /**
-     * List of ignored modifications.
-     */
-    private final HashSet<Integer> ignoredModifications = new HashSet<>(2);
-    /**
      * Map of the number of times proteins appeared as first hit.
      */
     private final HashMap<String, Integer> proteinCount = new HashMap<>(10000);
@@ -132,7 +118,6 @@ public class PsmImportRunnable implements Runnable {
      * @param processingParameters the processing parameters
      * @param fileReader the reader of the file which the matches are imported
      * from
-     * @param idFile the file which the matches are imported from
      * @param identification the identification object where to store the
      * matches
      * @param sequenceProvider the protein sequence provider
@@ -146,7 +131,6 @@ public class PsmImportRunnable implements Runnable {
             IdentificationParameters identificationParameters,
             ProcessingParameters processingParameters,
             IdfileReader fileReader,
-            File idFile,
             Identification identification,
             SequenceProvider sequenceProvider,
             FastaMapper fastaMapper,
@@ -158,7 +142,6 @@ public class PsmImportRunnable implements Runnable {
         this.identificationParameters = identificationParameters;
         this.processingParameters = processingParameters;
         this.fileReader = fileReader;
-        this.idFile = idFile;
         this.identification = identification;
         this.sequenceProvider = sequenceProvider;
         this.fastaMapper = fastaMapper;
@@ -346,11 +329,6 @@ public class PsmImportRunnable implements Runnable {
      * match for the spectrum according to the search engine score.
      *
      * @param spectrumMatch the spectrum match to import
-     * @param assumptions the assumptions to import
-     * @param peptideSpectrumAnnotator the spectrum annotator to use to annotate
-     * spectra
-     * @param waitingHandler waiting handler to display progress and allow
-     * canceling the import
      */
     private void importAssumptions(
             SpectrumMatch spectrumMatch
@@ -360,7 +338,6 @@ public class PsmImportRunnable implements Runnable {
         SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
         SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-
         HashMap<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> peptideAssumptions = spectrumMatch.getPeptideAssumptionsMap();
 
         for (Map.Entry<Integer, TreeMap<Double, ArrayList<PeptideAssumption>>> entry : peptideAssumptions.entrySet()) {
@@ -394,70 +371,30 @@ public class PsmImportRunnable implements Runnable {
                         proteinMapping(peptide);
 
                         // map the algorithm-specific modifications to utilities modifications
-                        // If there are not enough sites to put them all on the sequence, add an unknown modification
-                        // Note: this needs to be done for tag based assumptions as well since the protein mapping can 
-                        // return erroneous modifications for some pattern based modifications
-                        ModificationParameters modificationParameters = searchParameters.getModificationParameters();
-
-                        ModificationMatch[] modificationMatches = peptide.getVariableModifications();
-
-                        HashMap<Integer, ArrayList<String>> expectedNames = new HashMap<>(modificationMatches.length);
-                        HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<>(modificationMatches.length);
-
-                        for (ModificationMatch modMatch : modificationMatches) {
-
-                            HashMap<Integer, HashSet<String>> tempNames = ModificationNameMapper.getPossibleModificationNames(
-                                    peptide,
-                                    modMatch,
-                                    fileReader,
-                                    searchParameters,
-                                    modificationSequenceMatchingParameters,
-                                    sequenceProvider,
-                                    modificationFactory
-                            );
-
-                            HashSet<String> allNames = tempNames.values()
-                                    .stream()
-                                    .flatMap(
-                                            nameList -> nameList.stream()
-                                    )
-                                    .collect(
-                                            Collectors.toCollection(HashSet::new)
-                                    );
-
-                            modNames.put(modMatch, new ArrayList<>(allNames));
-
-                            for (int pos : tempNames.keySet()) {
-
-                                ArrayList<String> namesAtPosition = expectedNames.get(pos);
-
-                                if (namesAtPosition == null) {
-                                    namesAtPosition = new ArrayList<>(2);
-                                    expectedNames.put(pos, namesAtPosition);
-                                }
-
-                                for (String modName : tempNames.get(pos)) {
-                                    if (!namesAtPosition.contains(modName)) {
-                                        namesAtPosition.add(modName);
-                                    }
-                                }
-                            }
-                        }
-
+                        // Note1: this needs to be done for tag based assumptions as well due to terminal modifications and since the protein mapping can 
+                        // return erroneous modifications for some pattern-based modifications
                         if (peptide.getVariableModifications().length > 0) {
 
-                            ModificationLocalizationMapper.modificationLocalization(
-                                    peptide,
-                                    expectedNames,
-                                    modNames,
-                                    identificationParameters,
-                                    fileReader,
-                                    modificationFactory
-                            );
+                            try {
+
+                                ModificationLocalizationMapper.modificationLocalization(
+                                        peptide,
+                                        identificationParameters,
+                                        fileReader,
+                                        modificationFactory,
+                                        sequenceProvider
+                                );
+
+                            } catch (Exception e) {
+
+                                //@TODO: log the error?
+
+                            }
 
                         }
 
-                        if (peptideAssumptionFilter.validateModifications(peptide,
+                        if (peptideAssumptionFilter.validateModifications(
+                                peptide,
                                 sequenceMatchingParameters,
                                 modificationSequenceMatchingParameters,
                                 searchParameters.getModificationParameters()
@@ -465,13 +402,16 @@ public class PsmImportRunnable implements Runnable {
 
                             // Set peptide key
                             peptide.setKey(
-                                    Peptide.getKey(peptide.getSequence(),
+                                    Peptide.getKey(
+                                            peptide.getSequence(),
                                             peptide.getVariableModifications()
                                     )
                             );
 
                             // Estimate mass
-                            peptide.getMass(modificationParameters,
+                            ModificationParameters modificationParameters = searchParameters.getModificationParameters();
+                            peptide.getMass(
+                                    modificationParameters,
                                     sequenceProvider,
                                     modificationSequenceMatchingParameters
                             );

@@ -798,7 +798,10 @@ public class PsIdentificationAlgorithmMatchesSection {
 
             case theoretical_mass:
 
-                return Double.toString(peptideAssumption.getPeptide().getMass());
+                modificationParameters = identificationParameters.getSearchParameters().getModificationParameters();
+                modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
+                double mass = peptideAssumption.getPeptide().getMass(modificationParameters, sequenceProvider, modificationSequenceMatchingParameters);
+                return Double.toString(mass);
 
             case validated:
 

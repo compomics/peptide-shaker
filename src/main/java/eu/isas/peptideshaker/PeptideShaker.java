@@ -1,9 +1,9 @@
 package eu.isas.peptideshaker;
 
+import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.parameters.identification.search.SearchParameters;
-import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.db.object.ObjectsDB;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ProjectParameters;
@@ -105,6 +105,10 @@ public class PeptideShaker {
      * not set.
      */
     private static String SERIALIZATION_PARENT_DIRECTORY = "resources";
+    /**
+     * The config folder.
+     */
+    private static File configFolder = null;
     /**
      * The compomics PTM factory.
      */
@@ -300,10 +304,6 @@ public class PeptideShaker {
 
         // set the background species
         identificationParameters.getGeneParameters().setBackgroundSpeciesFromFastaSummary(fastaSummary);
-
-        // use PepQuery to look for alternative PSMs?
-        //waitingHandler.appendReport("Validating PSMs.", true, true); // @TODO: update the waiting handler progress counter
-        // @TODO: implement me!
 
         ArrayList<Integer> usedAlgorithms = projectDetails.getIdentificationAlgorithms();
 
@@ -754,6 +754,7 @@ public class PeptideShaker {
             modificationLocalizationScorer.scorePeptidePtms(
                     identification,
                     modificationFactory,
+                    sequenceProvider,
                     waitingHandler,
                     identificationParameters
             );
@@ -1281,7 +1282,7 @@ public class PeptideShaker {
         String matchesParentDirectory = PeptideShaker.getMatchesDirectoryParent();
 
         return matchesParentDirectory.equals("resources")
-                ? new File(getJarFilePath(), matchesParentDirectory) : new File(matchesParentDirectory);
+                ? new File(getConfigFolder(), matchesParentDirectory) : new File(matchesParentDirectory);
 
     }
 
@@ -1369,4 +1370,29 @@ public class PeptideShaker {
         return CompomicsWrapper.getJarFilePath((new PeptideShaker()).getClass().getResource("PeptideShaker.class").getPath(), "PeptideShaker");
 
     }
+    
+    /**
+     * Returns the folder where the configuration files are stored.
+     *
+     * @return the folder where the configuration files are stored
+     */
+    public static File getConfigFolder() {
+
+        if (configFolder != null) {
+            return configFolder;
+        } else {
+            return new File(getJarFilePath());
+        }
+
+    }
+    
+    /**
+     * Set the config folder.
+     * 
+     * @param aConfigFolder the config folder
+     */
+    public static void setConfigFolder(File aConfigFolder) {
+        configFolder = aConfigFolder;
+    }
+
 }

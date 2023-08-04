@@ -4592,47 +4592,56 @@ public class ModificationsPanel extends javax.swing.JPanel {
         @Override
         public Object getValueAt(int row, int column) {
 
-            if (row >= displayedPeptides.size()) {
-                return "";
-            }
+            try {
 
-            if (column == 0) {
-                return row + 1;
-            }
-
-            PSParameter psParameter;
-            long key = displayedPeptides.get(row);
-            PeptideMatch peptideMatch = identification.getPeptideMatch(key);
-            psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
-
-            switch (column) {
-                case 1:
-                    return psParameter.getStarred();
-
-                case 2:
-                    return psParameter.getProteinInferenceGroupClass();
-
-                case 3:
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
-
-                case 4:
-
-                    PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
-                    if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
-                        ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
-                        return ptmScoring.getMinimalLocalizationConfidence();
-                    } else {
-                        return ModificationScoring.NOT_FOUND;
-                    }
-
-                case 5:
-                    return psParameter.getConfidence();
-
-                case 6:
-                    return psParameter.getMatchValidationLevel().getIndex();
-
-                default:
+                if (row >= displayedPeptides.size()) {
                     return "";
+                }
+
+                if (column == 0) {
+                    return row + 1;
+                }
+
+                PSParameter psParameter;
+                long key = displayedPeptides.get(row);
+                PeptideMatch peptideMatch = identification.getPeptideMatch(key);
+                psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
+
+                switch (column) {
+                    case 1:
+                        return psParameter.getStarred();
+
+                    case 2:
+                        return psParameter.getProteinInferenceGroupClass();
+
+                    case 3:
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
+
+                    case 4:
+
+                        PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
+                        if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
+                            ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
+                            return ptmScoring.getMinimalLocalizationConfidence();
+                        } else {
+                            return ModificationScoring.NOT_FOUND;
+                        }
+
+                    case 5:
+                        return psParameter.getConfidence();
+
+                    case 6:
+                        return psParameter.getMatchValidationLevel().getIndex();
+
+                    default:
+                        return "";
+                }
+            } catch (Exception e) {
+
+                peptideShakerGUI.catchException(e);
+
+                return "";
+
             }
         }
 
@@ -4692,53 +4701,62 @@ public class ModificationsPanel extends javax.swing.JPanel {
         @Override
         public Object getValueAt(int row, int column) {
 
-            if (row >= displayedPeptides.size()) {
-                return "";
-            }
+            try {
 
-            if (column == 0) {
-                return row + 1;
-            }
-
-            PSParameter psParameter;
-            long key = relatedPeptides.get(row);
-            PeptideMatch peptideMatch = identification.getPeptideMatch(key);
-            psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
-
-            switch (column) {
-                case 1:
-                    return psParameter.getStarred();
-
-                case 2:
-                    return psParameter.getProteinInferenceGroupClass();
-
-                case 3:
-                    return peptideShakerGUI.getDisplayFeaturesGenerator()
-                            .getTaggedPeptideSequence(
-                                    peptideMatch,
-                                    true,
-                                    true,
-                                    true
-                            );
-
-                case 4:
-
-                    PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
-                    if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
-                        ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
-                        return ptmScoring.getMinimalLocalizationConfidence();
-                    } else {
-                        return ModificationScoring.NOT_FOUND;
-                    }
-
-                case 5:
-                    return psParameter.getConfidence();
-
-                case 6:
-                    return psParameter.getMatchValidationLevel().getIndex();
-
-                default:
+                if (row >= displayedPeptides.size()) {
                     return "";
+                }
+
+                if (column == 0) {
+                    return row + 1;
+                }
+
+                PSParameter psParameter;
+                long key = relatedPeptides.get(row);
+                PeptideMatch peptideMatch = identification.getPeptideMatch(key);
+                psParameter = (PSParameter) peptideMatch.getUrParam(PSParameter.dummy);
+
+                switch (column) {
+                    case 1:
+                        return psParameter.getStarred();
+
+                    case 2:
+                        return psParameter.getProteinInferenceGroupClass();
+
+                    case 3:
+                        return peptideShakerGUI.getDisplayFeaturesGenerator()
+                                .getTaggedPeptideSequence(
+                                        peptideMatch,
+                                        true,
+                                        true,
+                                        true
+                                );
+
+                    case 4:
+
+                        PSModificationScores ptmScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
+                        if (ptmScores != null && ptmScores.getModificationScoring(getSelectedModification()) != null) {
+                            ModificationScoring ptmScoring = ptmScores.getModificationScoring(getSelectedModification());
+                            return ptmScoring.getMinimalLocalizationConfidence();
+                        } else {
+                            return ModificationScoring.NOT_FOUND;
+                        }
+
+                    case 5:
+                        return psParameter.getConfidence();
+
+                    case 6:
+                        return psParameter.getMatchValidationLevel().getIndex();
+
+                    default:
+                        return "";
+                }
+            } catch (Exception e) {
+
+                peptideShakerGUI.catchException(e);
+
+                return "";
+
             }
         }
 

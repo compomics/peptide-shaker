@@ -41,8 +41,16 @@ public enum FollowUpCLIParams {
     MS2PIP_MODELS("ms2pip_models", "Comma separated list of models to write a config file for. Default: CID,HCD.", true, false),
     PERCOLATOR_RT("precolator_rt_file", "Path to the file containing the RT predictions to include in the percolator training file.", true, false),
     PERCOLATOR_FRAGMENTATION("precolator_fragmentation_file", "Path to the file containing the fragmentation predictions to include in the percolator training file.", true, false),
-    PERCOLATOR_FILE("precolator_file", "Path to the file where to write the percolator training file. DeepLC and ms2pip files can be provided using the respective options. (Should end with .gz. Existing file will be overwritten.)", true, false);
+    PERCOLATOR_FILE("precolator_file", "Path to the file where to write the percolator training file. DeepLC and ms2pip files can be provided using the respective options. (Should end with .gz. Existing file will be overwritten.)", true, false),
 
+    RT_OBS_PRED("rt_obs_pred_file", "Path to the file where to write the observed and predicted RT values for each PSM. (Existing file will be overwritten.)", true, false),
+    PEAK_INTS_OBS_PRED("peaks_intensities_file", "Path to the file where to write the observed and predicted peaks intensities for each PSM. (Existing file will be overwritten.)", true, false),
+    PSM_IDS_FOR_PEAKS_EXPORT("psm_ids_for_peaks_export", "Path to the file which includes the IDs of the PSMs for which the peaks of the predicted and observed spectra will be exported.", true, false),
+    
+    PERCOLATOR_BENCHMARK_RESULTS("percolator_benchmark_results", "Path to the file containing Percolator results for each PSM. (Existing file will be overwritten.)", true, false),
+
+    PSM_IDENTIFIERS_EXPORT("psm_identifiers_file", "Path to the file where to write the existing identifiers for each PSM. (Existing file will be overwritten.)", true, false);
+    
     /**
      * Short Id for the CLI parameter.
      */
@@ -165,6 +173,14 @@ public enum FollowUpCLIParams {
         output += "-" + String.format(formatter, PERCOLATOR_RT.id) + " " + PERCOLATOR_RT.description + "\n";
         output += "-" + String.format(formatter, PERCOLATOR_FRAGMENTATION.id) + " " + PERCOLATOR_FRAGMENTATION.description + "\n";
         output += "-" + String.format(formatter, PERCOLATOR_FILE.id) + " " + PERCOLATOR_FILE.description + "\n";
+        
+        output += "-" + String.format(formatter, RT_OBS_PRED.id) + " " + RT_OBS_PRED.description + "\n";
+        output += "-" + String.format(formatter, PEAK_INTS_OBS_PRED.id) + " " + PEAK_INTS_OBS_PRED.description + "\n";
+        output += "-" + String.format(formatter, PSM_IDS_FOR_PEAKS_EXPORT.id) + " " + PSM_IDS_FOR_PEAKS_EXPORT.description + "\n";
+        
+        output += "-" + String.format(formatter, PERCOLATOR_BENCHMARK_RESULTS.id) + " " + PERCOLATOR_BENCHMARK_RESULTS.description + "\n";
+        
+        output += "-" + String.format(formatter, PSM_IDENTIFIERS_EXPORT.id) + " " + PSM_IDENTIFIERS_EXPORT.description + "\n";
         
         return output;
     }

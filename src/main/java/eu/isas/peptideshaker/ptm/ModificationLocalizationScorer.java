@@ -4,7 +4,6 @@ import com.compomics.util.experiment.personalization.ExperimentObject;
 import com.compomics.util.experiment.biology.modifications.Modification;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationProvider;
-import com.compomics.util.experiment.biology.modifications.ModificationType;
 import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
@@ -14,6 +13,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.modification.ModificationLocalizationScore;
+import com.compomics.util.experiment.identification.modification.peptide_mapping.ModificationPeptideMapping;
 import com.compomics.util.experiment.identification.modification.scores.PhosphoRS;
 import com.compomics.util.experiment.identification.spectrum_annotation.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
@@ -29,19 +29,17 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.peptide_shaker.PSModificationScores;
 import com.compomics.util.experiment.identification.peptide_shaker.ModificationScoring;
+import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This class scores the PSM PTMs using the scores implemented in compomics
@@ -55,7 +53,16 @@ public class ModificationLocalizationScorer extends ExperimentObject {
     /**
      * The compomics modification factory.
      */
-    private ModificationFactory modificationFactory = ModificationFactory.getInstance();
+    private final ModificationFactory modificationFactory = ModificationFactory.getInstance();
+    /**
+     * Localization score offset for modification that are confidently
+     * localized.
+     */
+    public final int CONFIDENT_OFFSET = 200;
+    /**
+     * Localization score offset for modification that are inferred.
+     */
+    public final int INFERRED_OFFSET = 100;
 
     /**
      * Constructor.
@@ -288,7 +295,8 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                             scoringParameters.isProbabilisticScoreNeutralLosses(),
                             sequenceMatchingParameters,
                             modificationSequenceMatchingParameters,
-                            peptideSpectrumAnnotator
+                            peptideSpectrumAnnotator,
+                            modificationProvider
                     );
 
                     if (scores == null) {
@@ -462,6 +470,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
      * @param peptideMatch The peptide match to score.
      * @param identificationParameters The identification parameters.
      * @param modificationProvider The modification provider to use.
+     * @param sequenceProvider The sequence matching parameters.
      * @param waitingHandler The waiting handler to use, ignored if null.
      */
     public void scorePTMs(
@@ -469,166 +478,50 @@ public class ModificationLocalizationScorer extends ExperimentObject {
             PeptideMatch peptideMatch,
             IdentificationParameters identificationParameters,
             ModificationProvider modificationProvider,
+            SequenceProvider sequenceProvider,
             WaitingHandler waitingHandler
     ) {
 
+        SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        ModificationParameters modificationParameters = searchParameters.getModificationParameters();
+        ModificationLocalizationParameters ModificationLocalizationParameters = identificationParameters.getModificationLocalizationParameters();
+
         Peptide peptide = peptideMatch.getPeptide();
-        String peptideSequence = peptide.getSequence();
         ModificationMatch[] originalMatches = peptide.getVariableModifications();
 
         if (originalMatches.length == 0) {
             return;
         }
 
-        SequenceMatchingParameters sequenceMatchingParameters = identificationParameters.getSequenceMatchingParameters();
-        ModificationParameters modificationSettings = identificationParameters.getSearchParameters().getModificationParameters();
-
-        PSModificationScores peptideScores = new PSModificationScores();
-
-        HashMap<Double, Integer> variableModifications = new HashMap<>(peptide.getNVariableModifications());
-        HashMap<Double, HashMap<Integer, HashSet<String>>> inferredSites = new HashMap<>(peptide.getNVariableModifications());
-        Modification nTermModConfident = null;
-        Modification cTermModConfident = null;
-
         long originalKey = peptide.getMatchingKey(sequenceMatchingParameters);
-        ArrayList<ModificationMatch> newModificationMatches = new ArrayList<>(originalMatches.length);
 
-        for (ModificationMatch modificationMatch : originalMatches) {
+        HashMap<Double, Integer> modificationOccurence = new HashMap<>(originalMatches.length);
 
-            String modName = modificationMatch.getModification();
+        for (ModificationMatch modMatch : originalMatches) {
+
+            String modName = modMatch.getModification();
             Modification modification = modificationProvider.getModification(modName);
             double modMass = modification.getMass();
-            boolean maybeNotTerminal = modification.getModificationType() == ModificationType.modaa;
 
-            if (!maybeNotTerminal) {
+            Integer occurrence = modificationOccurence.get(modMass);
 
-                for (String otherPtmName : modificationSettings.getAllNotFixedModifications()) {
+            if (occurrence == null) {
 
-                    if (!otherPtmName.equals(modName)) {
-
-                        Modification tempMod = modificationProvider.getModification(otherPtmName);
-
-                        if (tempMod.getMass() == modMass && modification.getModificationType() != tempMod.getModificationType()) {
-
-                            maybeNotTerminal = true;
-                            break;
-
-                        }
-                    }
-                }
-            }
-
-            if (maybeNotTerminal) {
-
-                Integer nMod = variableModifications.get(modMass);
-
-                if (nMod == null) {
-
-                    variableModifications.put(modMass, 1);
-
-                } else {
-
-                    variableModifications.put(modMass, nMod + 1);
-
-                }
-
-                if (modificationMatch.getInferred()) {
-
-                    Integer modificationSite;
-
-                    if (modification.getModificationType().isCTerm()) {
-
-                        modificationSite = peptideSequence.length() + 1;
-
-                    } else if (modification.getModificationType().isNTerm()) {
-
-                        modificationSite = 0;
-
-                    } else {
-
-                        modificationSite = modificationMatch.getSite();
-
-                    }
-
-                    HashMap<Integer, HashSet<String>> modificationInferredSites = inferredSites.get(modMass);
-
-                    if (modificationInferredSites == null) {
-
-                        modificationInferredSites = new HashMap<>(1);
-                        inferredSites.put(modMass, modificationInferredSites);
-
-                    }
-
-                    HashSet<String> modificationsAtSite = modificationInferredSites.get(modificationSite);
-
-                    if (modificationsAtSite == null) {
-
-                        modificationsAtSite = new HashSet<>(1);
-                        modificationInferredSites.put(modificationSite, modificationsAtSite);
-
-                    }
-
-                    modificationsAtSite.add(modName);
-
-                }
+                modificationOccurence.put(modMass, 1);
 
             } else {
 
-                newModificationMatches.add(modificationMatch);
+                modificationOccurence.put(modMass, occurrence + 1);
 
-                if (modification.getModificationType().isCTerm()) {
-
-                    if (cTermModConfident != null) {
-
-                        throw new IllegalArgumentException("Multiple PTMs on termini not supported.");
-
-                    }
-
-                    cTermModConfident = modificationProvider.getModification(modName);
-
-                } else if (modification.getModificationType().isNTerm()) {
-
-                    if (nTermModConfident != null) {
-
-                        throw new IllegalArgumentException("Multiple PTMs on termini not supported.");
-
-                    }
-
-                    nTermModConfident = modificationProvider.getModification(modName);
-
-                } else {
-
-                    throw new IllegalArgumentException("Non-terminal PTM should be of type PTM.MODAA.");
-
-                }
             }
         }
 
-        if (variableModifications.isEmpty()) {
+        // Gather the scores from the different PSMs
+        PSModificationScores peptideScores = new PSModificationScores();
 
-            if (cTermModConfident != null || nTermModConfident != null) {
-
-                if (cTermModConfident != null) {
-
-                    peptideScores.addConfidentModificationSite(cTermModConfident.getName(), peptideSequence.length() + 1);
-
-                }
-                if (nTermModConfident != null) {
-
-                    peptideScores.addConfidentModificationSite(nTermModConfident.getName(), 0);
-
-                }
-
-                peptideMatch.addUrParam(peptideScores);
-
-            }
-
-            return;
-        }
-
-        // Map confident sites
-        HashMap<Double, ArrayList<ModificationMatch>> newMatches = new HashMap<>(variableModifications.size());
-        HashMap<Double, ArrayList<Integer>> confidentSites = new HashMap<>(variableModifications.size());
+        HashMap<Double, HashMap<Integer, Double>> modificationToSiteToScore = new HashMap<>(originalMatches.length);
+        HashMap<Double, HashMap<Integer, String>> modificationToSiteToName = new HashMap<>(originalMatches.length);
 
         for (long spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
 
@@ -637,409 +530,206 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
             for (String modName : psmScores.getScoredModifications()) {
 
-                ModificationScoring psmScoring = psmScores.getModificationScoring(modName);
-                ModificationScoring peptideScoring = peptideScores.getModificationScoring(modName);
+                Modification modification = modificationProvider.getModification(modName);
+                double modMass = modification.getMass();
 
-                if (peptideScoring == null) {
+                if (modificationOccurence.containsKey(modMass)) {
 
-                    peptideScoring = new ModificationScoring(modName);
-                    peptideScores.addModificationScoring(modName, peptideScoring);
+                    HashMap<Integer, Double> siteToScore = modificationToSiteToScore.get(modMass);
+                    HashMap<Integer, String> siteToName = modificationToSiteToName.get(modMass);
 
-                }
+                    if (siteToScore == null) {
 
-                for (int site : psmScoring.getScoredSites()) {
+                        siteToScore = new HashMap<>(2);
+                        modificationToSiteToScore.put(modMass, siteToScore);
 
-                    double psmDScore = psmScoring.getDeltaScore(site);
-                    double peptideDScore = peptideScoring.getDeltaScore(site);
-
-                    if (peptideDScore < psmDScore) {
-
-                        peptideScoring.setDeltaScore(site, psmDScore);
+                        siteToName = new HashMap<>(2);
+                        modificationToSiteToName.put(modMass, siteToName);
 
                     }
 
-                    double psmPScore = psmScoring.getProbabilisticScore(site);
-                    double peptidePScore = peptideScoring.getProbabilisticScore(site);
+                    ModificationScoring psmScoring = psmScores.getModificationScoring(modName);
+                    ModificationScoring peptideScoring = peptideScores.getModificationScoring(modName);
 
-                    if (peptidePScore < psmPScore) {
+                    if (peptideScoring == null) {
 
-                        peptideScoring.setProbabilisticScore(site, psmPScore);
+                        peptideScoring = new ModificationScoring(modName);
+                        peptideScores.addModificationScoring(modName, peptideScoring);
 
                     }
 
-                    int psmValidationLevel = psmScoring.getLocalizationConfidence(site);
-                    int peptideValidationLevel = peptideScoring.getLocalizationConfidence(site);
+                    for (int site : psmScoring.getScoredSites()) {
 
-                    if (peptideValidationLevel < psmValidationLevel) {
+                        double psmDScore = psmScoring.getDeltaScore(site);
+                        double peptideDScore = peptideScoring.getDeltaScore(site);
 
-                        peptideScoring.setSiteConfidence(site, psmValidationLevel);
+                        if (peptideDScore < psmDScore) {
 
+                            peptideScoring.setDeltaScore(site, psmDScore);
+
+                        }
+
+                        double psmPScore = psmScoring.getProbabilisticScore(site);
+                        double peptidePScore = peptideScoring.getProbabilisticScore(site);
+
+                        if (peptidePScore < psmPScore) {
+
+                            peptideScoring.setProbabilisticScore(site, psmPScore);
+
+                        }
+
+                        int psmValidationLevel = psmScoring.getLocalizationConfidence(site);
+                        int peptideValidationLevel = peptideScoring.getLocalizationConfidence(site);
+
+                        if (peptideValidationLevel < psmValidationLevel) {
+
+                            peptideScoring.setSiteConfidence(site, psmValidationLevel);
+
+                        }
+
+                        double psmScore = ModificationLocalizationParameters.isProbabilisticScoreCalculation() ? psmPScore : psmDScore;
+
+                        Double currentScore = siteToScore.get(site);
+
+                        if (currentScore == null) {
+
+                            siteToScore.put(site, psmScore);
+                            siteToName.put(site, modName);
+
+                        } else {
+
+                            siteToScore.put(site, Math.max(currentScore, psmScore));
+
+                        }
                     }
                 }
             }
 
-            for (int refSite : psmScores.getConfidentSites()) {
+            for (ModificationMatch modificationMatch : spectrumMatch.getBestPeptideAssumption().getPeptide().getVariableModifications()) {
 
-                for (String modName : psmScores.getConfidentModificationsAt(refSite)) {
+                if (modificationMatch.getConfident()) {
 
-                    int site = refSite;
-                    Modification modification = modificationProvider.getModification(modName);
-                    Double modMass = modification.getMass();
-                    Integer occurrence = variableModifications.get(modMass);
+                    double modMass = modificationProvider.getModification(modificationMatch.getModification()).getMass();
 
-                    if (occurrence != null) {
+                    if (modificationOccurence.containsKey(modMass)) {
 
-                        ArrayList<Integer> modificationConfidentSites = confidentSites.get(modMass);
+                        int site = modificationMatch.getSite();
 
-                        if (modificationConfidentSites == null) {
+                        HashMap<Integer, Double> siteToScore = modificationToSiteToScore.get(modMass);
+                        Double currentScore = siteToScore.get(site);
 
-                            modificationConfidentSites = new ArrayList<>(1);
-                            confidentSites.put(modMass, modificationConfidentSites);
+                        if (currentScore == null) {
 
-                        }
+                            siteToScore.put(site, (double) CONFIDENT_OFFSET);
+                            HashMap<Integer, String> siteToName = modificationToSiteToName.get(modMass);
+                            siteToName.put(site, modificationMatch.getModification());
 
-                        int nSitesOccupied = modificationConfidentSites.size();
+                        } else {
 
-                        if (nTermModConfident != null && modification.getMass() == nTermModConfident.getMass()) {
-
-                            nSitesOccupied++;
+                            siteToScore.put(site, currentScore + CONFIDENT_OFFSET);
 
                         }
 
-                        if (cTermModConfident != null && modification.getMass() == cTermModConfident.getMass()) {
+                    }
+                } else if (modificationMatch.getInferred()) {
 
-                            nSitesOccupied++;
+                    double modMass = modificationProvider.getModification(modificationMatch.getModification()).getMass();
 
-                        }
+                    if (modificationOccurence.containsKey(modMass)) {
 
-                        if (nSitesOccupied < occurrence
-                                && (modification.getModificationType() == ModificationType.modaa && !modificationConfidentSites.contains(site)
-                                || site == 0 && nTermModConfident == null && modification.getModificationType().isNTerm()
-                                || site == peptideSequence.length() + 1 && cTermModConfident == null && modification.getModificationType().isCTerm())) {
+                        int site = modificationMatch.getSite();
 
-                            if (modification.getModificationType().isCTerm()) {
+                        HashMap<Integer, Double> siteToScore = modificationToSiteToScore.get(modMass);
+                        Double currentScore = siteToScore.get(site);
 
-                                cTermModConfident = modification;
+                        if (currentScore == null) {
 
-                            } else if (modification.getModificationType().isNTerm()) {
+                            siteToScore.put(site, (double) INFERRED_OFFSET);
+                            HashMap<Integer, String> siteToName = modificationToSiteToName.get(modMass);
+                            siteToName.put(site, modificationMatch.getModification());
 
-                                nTermModConfident = modification;
+                        } else {
 
-                            } else {
+                            siteToScore.put(site, currentScore + INFERRED_OFFSET);
 
-                                modificationConfidentSites.add(site);
-
-                            }
-
-                            peptideScores.addConfidentModificationSite(modName, refSite);
-                            ModificationMatch newMatch = new ModificationMatch(modName, refSite);
-                            newMatch.setConfident(true);
-                            ArrayList<ModificationMatch> newModMatches = newMatches.get(modMass);
-
-                            if (newModMatches == null) {
-
-                                newModMatches = new ArrayList<>(occurrence);
-                                newMatches.put(modMass, newModMatches);
-
-                            }
-
-                            newModMatches.add(newMatch);
-
-                            if (newModMatches.size() > occurrence) {
-
-                                throw new IllegalArgumentException("More sites than modifications on peptide " + peptideMatch.getKey() + " for PTM of mass " + modMass + ".");
-
-                            }
-
-                            HashMap<Integer, HashSet<String>> modificationInferredSites = inferredSites.get(modMass);
-
-                            if (modificationInferredSites != null) {
-
-                                HashSet<String> modificationsAtSite = modificationInferredSites.get(site);
-
-                                if (modificationsAtSite != null) {
-
-                                    modificationsAtSite.remove(modName);
-
-                                    if (modificationsAtSite.isEmpty()) {
-
-                                        modificationInferredSites.remove(site);
-
-                                        if (modificationInferredSites.isEmpty()) {
-
-                                            inferredSites.remove(modMass);
-
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                 }
             }
         }
 
-        boolean enoughSites = true;
+        HashMap<Double, int[]> modificationToPossibleSiteMap = new HashMap<>(modificationToSiteToScore.size());
 
-        for (double modMass : variableModifications.keySet()) {
+        for (Entry<Double, HashMap<Integer, Double>> entry : modificationToSiteToScore.entrySet()) {
 
-            int nMods = variableModifications.get(modMass);
-            int nConfident = 0;
-            ArrayList<Integer> modConfidentSites = confidentSites.get(modMass);
+            double modMass = entry.getKey();
+            int[] possibleSites = entry.getValue().keySet().stream()
+                    .mapToInt(
+                            a -> a
+                    )
+                    .toArray();
 
-            if (modConfidentSites != null) {
-
-                nConfident = modConfidentSites.size();
-
-            }
-
-            if (nConfident < nMods) {
-
-                enoughSites = false;
-                break;
-
-            }
-        }
-
-        if (!enoughSites) {
-
-            TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousSites = new TreeMap<>();
-
-            // Map ambiguous sites
-            for (long spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
-
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                PSModificationScores psmScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
-
-                for (int representativeSite : psmScores.getRepresentativeSites()) {
-
-                    HashMap<Integer, HashSet<String>> ambiguousMappingAtSite = psmScores.getAmbiguousModificationsAtRepresentativeSite(representativeSite);
-
-                    for (Entry<Integer, HashSet<String>> entry : ambiguousMappingAtSite.entrySet()) {
-
-                        int refSite = entry.getKey();
-
-                        for (String modName : entry.getValue()) {
-
-                            int site = refSite;
-                            Modification modification = modificationProvider.getModification(modName);
-                            Double modMass = modification.getMass();
-                            Integer occurrence = variableModifications.get(modMass);
-
-                            if (occurrence != null) {
-
-                                ArrayList<Integer> modificationConfidentSites = confidentSites.get(modMass);
-                                int nSitesOccupied = 0;
-
-                                if (modificationConfidentSites != null) {
-
-                                    nSitesOccupied = modificationConfidentSites.size();
-
-                                }
-
-                                if (nTermModConfident != null && modification.getMass() == nTermModConfident.getMass()) {
-
-                                    nSitesOccupied++;
-
-                                }
-
-                                if (cTermModConfident != null && modification.getMass() == cTermModConfident.getMass()) {
-
-                                    nSitesOccupied++;
-
-                                }
-
-                                if (nSitesOccupied < occurrence
-                                        && (modification.getModificationType() == ModificationType.modaa && modificationConfidentSites == null
-                                        || modification.getModificationType() == ModificationType.modaa && !modificationConfidentSites.contains(site)
-                                        || site == 0 && nTermModConfident == null && modification.getModificationType().isNTerm()
-                                        || site == peptideSequence.length() + 1 && cTermModConfident == null && modification.getModificationType().isNTerm())) {
-
-                                    double probabilisticScore = 0.0;
-                                    double dScore = 0.0;
-                                    ModificationScoring modificationScoring = psmScores.getModificationScoring(modName);
-
-                                    if (modificationScoring != null) {
-
-                                        probabilisticScore = modificationScoring.getProbabilisticScore(refSite);
-                                        dScore = modificationScoring.getDeltaScore(refSite);
-
-                                    }
-
-                                    TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>> pScoreMap = ambiguousSites.get(probabilisticScore);
-
-                                    if (pScoreMap == null) {
-
-                                        pScoreMap = new TreeMap<>();
-                                        ambiguousSites.put(probabilisticScore, pScoreMap);
-
-                                    }
-
-                                    TreeMap<Double, HashMap<Integer, HashSet<String>>> dScoreMap = pScoreMap.get(dScore);
-
-                                    if (dScoreMap == null) {
-
-                                        dScoreMap = new TreeMap<>();
-                                        pScoreMap.put(dScore, dScoreMap);
-
-                                    }
-
-                                    HashMap<Integer, HashSet<String>> modificationMap = dScoreMap.get(modMass);
-
-                                    if (modificationMap == null) {
-
-                                        modificationMap = new HashMap<>(1);
-                                        dScoreMap.put(modMass, modificationMap);
-
-                                    }
-
-                                    HashSet<String> modifications = modificationMap.get(site);
-
-                                    if (modifications == null) {
-
-                                        modifications = new HashSet<>(1);
-                                        modificationMap.put(site, modifications);
-
-                                    }
-
-                                    if (!modifications.contains(modName)) {
-
-                                        modifications.add(modName);
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            HashMap<Double, Integer> nRepresentativesMap = new HashMap<>();
-
-            for (double modMass : variableModifications.keySet()) {
-
-                int nMod = variableModifications.get(modMass);
-                int nConfident = 0;
-                ArrayList<Integer> modificationConfidentSites = confidentSites.get(modMass);
-
-                if (modificationConfidentSites != null) {
-
-                    nConfident = modificationConfidentSites.size();
-
-                }
-
-                if (nTermModConfident != null) {
-
-                    double nTermMass = nTermModConfident.getMass();
-
-                    if (nTermMass == modMass) {
-
-                        nConfident++;
-
-                    }
-                }
-
-                if (cTermModConfident != null) {
-
-                    double nTermMass = cTermModConfident.getMass();
-
-                    if (nTermMass == modMass) {
-
-                        nConfident++;
-
-                    }
-                }
-
-                if (nConfident < nMod) {
-
-                    int nRepresentatives = nMod - nConfident;
-
-                    if (nRepresentatives > 0) {
-
-                        nRepresentativesMap.put(modMass, nRepresentatives);
-
-                    }
-                }
-            }
-
-            HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap;
-
-            representativeToSecondaryMap = getRepresentativeToSecondaryMap(
-                    ambiguousSites,
-                    nRepresentativesMap,
-                    inferredSites
-            );
-
-            for (Double modMass : representativeToSecondaryMap.keySet()) {
-
-                HashMap<Integer, HashMap<Integer, HashSet<String>>> representativesAtMass = representativeToSecondaryMap.get(modMass);
-                HashMap<Integer, HashSet<String>> modificationInferredSites = inferredSites.get(modMass);
-
-                for (int representativeSite : representativesAtMass.keySet()) {
-
-                    HashMap<Integer, HashSet<String>> siteToModMap = representativesAtMass.get(representativeSite);
-
-                    for (String modName : siteToModMap.get(representativeSite)) {
-
-                        ModificationMatch newMatch = new ModificationMatch(modName, representativeSite);
-                        newMatch.setConfident(false);
-
-                        if (modificationInferredSites != null && modificationInferredSites.containsKey(representativeSite)) {
-
-                            newMatch.setInferred(true);
-
-                        }
-
-                        ArrayList<ModificationMatch> modificatoinMatchesTemp = newMatches.get(modMass);
-
-                        if (modificatoinMatchesTemp == null) {
-
-                            modificatoinMatchesTemp = new ArrayList<>(1);
-                            newMatches.put(modMass, modificatoinMatchesTemp);
-
-                        }
-
-                        modificatoinMatchesTemp.add(newMatch);
-
-                        if (modificatoinMatchesTemp.size() > variableModifications.get(modMass)) {
-
-                            throw new IllegalArgumentException(
-                                    "More sites than modifications on peptide "
-                                    + peptideMatch.getKey()
-                                    + " for modification of mass "
-                                    + modMass + "."
-                            );
-                        }
-                    }
-
-                    if (representativeSite != 0 && representativeSite != peptideSequence.length() + 1) {
-
-                        peptideScores.addAmbiguousModificationSites(representativeSite, siteToModMap);
-
-                    }
-                }
-            }
-        }
-
-        for (ArrayList<ModificationMatch> modificationMatches : newMatches.values()) {
-
-            newModificationMatches.addAll(modificationMatches);
+            modificationToPossibleSiteMap.put(modMass, possibleSites);
 
         }
 
-        if (cTermModConfident != null) {
+        // Map the modifications to the best scoring sites
+        HashMap<Double, TreeSet<Integer>> mapping = ModificationPeptideMapping.mapModifications(modificationToPossibleSiteMap, modificationOccurence, modificationToSiteToScore);
 
-            peptideScores.addConfidentModificationSite(cTermModConfident.getName(), peptideSequence.length() + 1);
+        // Update the modifications of the peptide accordingly
+        ModificationMatch[] newModificationMatches = new ModificationMatch[originalMatches.length];
+
+        int modI = 0;
+
+        for (Entry<Double, TreeSet<Integer>> mappingEntry : mapping.entrySet()) {
+
+            double modMass = mappingEntry.getKey();
+
+            for (int site : mappingEntry.getValue()) {
+
+                String modName = modificationToSiteToName.get(modMass).get(site);
+
+                if (modName == null) {
+
+                    throw new IllegalArgumentException("No modification found at site " + site + " for modification mass " + modMass + ".");
+
+                }
+
+                ModificationMatch modificationMatch = new ModificationMatch(modName, site);
+
+                double score = modificationToSiteToScore.get(modMass).get(site);
+
+                if (score > CONFIDENT_OFFSET) {
+
+                    modificationMatch.setConfident(true);
+
+                } else if (score > INFERRED_OFFSET) {
+
+                    modificationMatch.setInferred(true);
+
+                }
+
+                newModificationMatches[modI] = modificationMatch;
+                modI++;
+
+            }
+        }
+
+        if (modI < originalMatches.length) {
+
+            throw new IllegalArgumentException(modI + " modifications found where " + originalMatches.length + " needed.");
 
         }
-        if (nTermModConfident != null) {
 
-            peptideScores.addConfidentModificationSite(nTermModConfident.getName(), 0);
+        peptide.setVariableModifications(newModificationMatches);
 
-        }
+        SequenceMatchingParameters modificationSequenceMatchingParameters = identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters();
 
-        double mass = peptide.getMass();
-        peptide.setVariableModifications(newModificationMatches.toArray(new ModificationMatch[newModificationMatches.size()]));
+        double mass = peptide.getMass(
+                modificationParameters,
+                sequenceProvider,
+                modificationSequenceMatchingParameters
+        );
         peptide.setMass(mass);
 
         peptideMatch.addUrParam(peptideScores);
@@ -1059,446 +749,15 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                 );
 
             }
+
             identification.removeObject(originalKey);
             identification.addObject(newKey, peptideMatch);
+
         } else {
+
             identification.updateObject(originalKey, peptideMatch);
-        }
-    }
-
-    /**
-     * Returns a representative to secondary sites map (representative site &gt;
-     * secondary site &gt; list of PTM names) based on an ambiguous sites scores
-     * map (probabilistic score &gt; delta score &gt; site &gt; list of PTM
-     * names).
-     *
-     * @param ambiguousSitesScores a map of the ambiguous sites scores
-     * @param nRepresentatives the number of representative sites allowed
-     *
-     * @return a representative to secondary sites map
-     */
-    private HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> getRepresentativeToSecondaryMap(
-            TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousScoreToSiteMap,
-            HashMap<Double, Integer> nRepresentatives
-    ) {
-
-        return getRepresentativeToSecondaryMap(
-                ambiguousScoreToSiteMap,
-                nRepresentatives,
-                null
-        );
-
-    }
-
-    /**
-     * Returns a representative to secondary sites map (representative site &gt;
-     * secondary site &gt; list of PTM names) based on an ambiguous sites scores
-     * map (probabilistic score &gt; delta score &gt; site &gt; list of PTM
-     * names).
-     *
-     * @param ambiguousSitesScores a map of the ambiguous sites scores
-     * @param nRepresentatives the number of representative sites allowed
-     * @param preferentialSites preferential sites to be selected as
-     * representative
-     *
-     * @return a representative to secondary sites map
-     */
-    private HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> getRepresentativeToSecondaryMap(
-            TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousScoreToSiteMap,
-            HashMap<Double, Integer> nRepresentativesMap,
-            HashMap<Double, HashMap<Integer, HashSet<String>>> preferentialSites
-    ) {
-
-        int nMasses = nRepresentativesMap.size();
-        HashMap<Double, Integer> nToSelectMap = new HashMap<>(nMasses);
-        HashMap<Double, Integer> nSelectedMap = new HashMap<>(nMasses);
-
-        for (double modMass : nRepresentativesMap.keySet()) {
-
-            int nRepresentatives = nRepresentativesMap.get(modMass);
-            int nPreferential = 0;
-
-            if (preferentialSites != null) {
-
-                HashMap<Integer, HashSet<String>> sites = preferentialSites.get(modMass);
-
-                if (sites != null) {
-
-                    nPreferential = sites.size();
-
-                }
-            }
-
-            int toSelect = Math.max(nRepresentatives - nPreferential, 0);
-            nToSelectMap.put(modMass, toSelect);
-            nSelectedMap.put(modMass, 0);
 
         }
-
-        HashMap<Double, HashSet<Integer>> possibleSites = new HashMap<>(nMasses);
-
-        for (TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>> mapAtPscore : ambiguousScoreToSiteMap.values()) {
-
-            for (TreeMap<Double, HashMap<Integer, HashSet<String>>> mapAtDScore : mapAtPscore.values()) {
-
-                for (double modMass : mapAtDScore.keySet()) {
-
-                    HashSet<Integer> modificationSites = possibleSites.get(modMass);
-
-                    if (modificationSites == null) {
-
-                        modificationSites = new HashSet<>(2);
-                        possibleSites.put(modMass, modificationSites);
-
-                    }
-
-                    Set<Integer> sitesAtScore = mapAtDScore.get(modMass).keySet();
-                    modificationSites.addAll(sitesAtScore);
-
-                }
-            }
-        }
-
-        HashMap<Double, HashMap<Integer, HashSet<String>>> representativeSites = new HashMap<>(nMasses);
-        HashMap<Double, HashMap<Integer, HashSet<String>>> secondarySites = new HashMap<>(nMasses);
-
-        for (TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>> dScoresMap : ambiguousScoreToSiteMap.descendingMap().values()) {
-
-            for (TreeMap<Double, HashMap<Integer, HashSet<String>>> modMap : dScoresMap.descendingMap().values()) {
-
-                for (Entry<Double, HashMap<Integer, HashSet<String>>> entry : modMap.entrySet()) {
-
-                    double modMass = entry.getKey();
-                    HashMap<Integer, HashSet<String>> modPreferentialSites = null;
-
-                    if (preferentialSites != null) {
-
-                        modPreferentialSites = preferentialSites.get(modMass);
-
-                    }
-
-                    int toSelect = nToSelectMap.containsKey(modMass) ? nToSelectMap.get(modMass) : 0;
-                    int nSelected = nSelectedMap.containsKey(modMass) ? nSelectedMap.get(modMass) : 0;
-                    int nNeeded = toSelect - nSelected;
-
-                    if (nNeeded > 0) {
-
-                        HashSet<Integer> modSites = possibleSites.get(modMass);
-
-                        if (modSites == null || modSites.size() < nNeeded) {
-
-                            throw new IllegalArgumentException("Not enough sites (" + possibleSites.size() + " where " + nNeeded + " needed) found for modification mass " + modMass + ".");
-
-                        }
-                    }
-
-                    HashMap<Integer, HashSet<String>> siteMap = entry.getValue();
-                    HashSet<Integer> prioritizedSites = new HashSet<>(0);
-
-                    if (modPreferentialSites != null) {
-
-                        for (Entry<Integer, HashSet<String>> entry2 : modPreferentialSites.entrySet()) {
-
-                            int preferentialSite = entry2.getKey();
-
-                            if (!prioritizedSites.contains(preferentialSite)) {
-
-                                prioritizedSites.add(preferentialSite);
-
-                            }
-
-                            HashSet<String> preferentialModsAtSite = entry2.getValue();
-                            HashSet<String> modificationsAtSite = siteMap.get(preferentialSite);
-
-                            if (modificationsAtSite == null) {
-
-                                siteMap.put(preferentialSite, preferentialModsAtSite);
-
-                            } else {
-
-                                for (String modName : preferentialModsAtSite) {
-
-                                    if (!modificationsAtSite.contains(modName)) {
-
-                                        modificationsAtSite.add(modName);
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    int[] sites = Stream.concat(prioritizedSites.stream()
-                            .sorted(),
-                            siteMap.keySet().stream()
-                                    .filter(site -> !prioritizedSites.contains(site)))
-                            .mapToInt(a -> a)
-                            .toArray();
-
-                    for (int site : sites) {
-
-                        boolean referenceOtherMod = false;
-
-                        for (double tempMass : representativeSites.keySet()) {
-
-                            if (representativeSites.get(tempMass).keySet().contains(site)) {
-
-                                referenceOtherMod = true;
-                                break;
-
-                            }
-                        }
-
-                        boolean preferentialForMod;
-                        boolean preferentialSiteOtherMod = false;
-                        preferentialForMod = modPreferentialSites != null && modPreferentialSites.containsKey(site);
-
-                        if (!preferentialSiteOtherMod && preferentialSites != null) {
-
-                            for (Entry<Double, HashMap<Integer, HashSet<String>>> entry2 : preferentialSites.entrySet()) {
-
-                                double tempMass = entry2.getKey();
-
-                                if (tempMass != modMass) {
-
-                                    HashMap<Integer, HashSet<String>> preferentialSitesOtherPtm = entry2.getValue();
-
-                                    if (preferentialSitesOtherPtm.containsKey(site)) {
-
-                                        preferentialSiteOtherMod = true;
-                                        break;
-
-                                    }
-                                }
-                            }
-                        }
-
-                        boolean blockingOtherMod = false;
-                        HashSet<Double> tempMasses = new HashSet<>(possibleSites.keySet());
-
-                        for (Double tempMass : tempMasses) {
-
-                            if (tempMass != modMass) {
-
-                                Integer tempToSelect = nToSelectMap.get(tempMass);
-                                Integer tempSelected = nSelectedMap.get(tempMass);
-
-                                if (tempToSelect != null && tempSelected != null) {
-
-                                    int toMapForPtm = tempToSelect - tempSelected;
-
-                                    if (toMapForPtm > 0) {
-
-                                        HashSet<Integer> tempSites = possibleSites.get(tempMass);
-
-                                        if (tempSites == null) {
-
-                                            throw new IllegalArgumentException("No sites found for PTM of mass " + modMass + ".");
-
-                                        }
-
-                                        if (tempSites.size() == toMapForPtm && tempSites.contains(site)) {
-
-                                            blockingOtherMod = true;
-                                            break;
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (!referenceOtherMod && !blockingOtherMod
-                                && (preferentialForMod || !preferentialSiteOtherMod && nSelected < toSelect)) {
-
-                            HashMap<Integer, HashSet<String>> representativeSitesForModMass = representativeSites.get(modMass);
-
-                            if (representativeSitesForModMass == null) {
-
-                                representativeSitesForModMass = new HashMap<>(nRepresentativesMap.get(modMass));
-                                representativeSites.put(modMass, representativeSitesForModMass);
-
-                            }
-
-                            HashSet<String> modificationsAtSite = siteMap.get(site);
-
-                            if (modificationsAtSite == null) {
-
-                                throw new IllegalArgumentException("No modification found at site " + site + ".");
-
-                            }
-
-                            for (String modName : modificationsAtSite) {
-
-                                HashSet<String> modifications = representativeSitesForModMass.get(site);
-
-                                if (modifications == null) {
-
-                                    modifications = new HashSet<>(1);
-                                    representativeSitesForModMass.put(site, modifications);
-
-                                    if (!preferentialForMod) {
-
-                                        nSelected++;
-
-                                    }
-                                }
-
-                                if (!modifications.contains(modName)) {
-
-                                    modifications.add(modName);
-
-                                }
-                            }
-
-                            for (double tempMass : tempMasses) {
-
-                                HashSet<Integer> tempSites = possibleSites.get(tempMass);
-                                tempSites.remove(site);
-
-                                if (tempSites.isEmpty()) {
-
-                                    possibleSites.remove(tempMass);
-
-                                }
-                            }
-
-                        } else {
-
-                            HashMap<Integer, HashSet<String>> secondarySitesForPtmMass = secondarySites.get(modMass);
-
-                            if (secondarySitesForPtmMass == null) {
-
-                                int size = 1;
-                                HashSet<Integer> modificationSites = possibleSites.get(modMass);
-
-                                if (modificationSites != null) {
-
-                                    size = modificationSites.size() - toSelect + nSelected;
-
-                                }
-
-                                secondarySitesForPtmMass = new HashMap<>(size);
-                                secondarySites.put(modMass, siteMap);
-
-                            }
-
-                            HashSet<String> modificationsAtSite = siteMap.get(site);
-
-                            if (modificationsAtSite == null) {
-
-                                throw new IllegalArgumentException("No PTM found at site " + site + ".");
-
-                            }
-
-                            for (String modName : modificationsAtSite) {
-
-                                HashSet<String> modifications = secondarySitesForPtmMass.get(site);
-
-                                if (modifications == null) {
-
-                                    modifications = new HashSet<>(1);
-                                    secondarySitesForPtmMass.put(site, modifications);
-
-                                }
-
-                                if (!modifications.contains(modName)) {
-
-                                    modifications.add(modName);
-
-                                }
-                            }
-                        }
-                    }
-
-                    nSelectedMap.put(modMass, nSelected);
-
-                }
-            }
-        }
-
-        for (double modMass : nToSelectMap.keySet()) {
-
-            Integer nSelected = nSelectedMap.get(modMass);
-            int nToSelect = nToSelectMap.get(modMass);
-
-            if (nSelected == null || nSelected < nToSelect) {
-
-                System.out.println("nToSelectMap: " + nToSelect);
-
-                for (double modMasss : nToSelectMap.keySet()) {
-
-                    System.out.println(modMasss + " -> " + nToSelectMap.get(modMass));
-
-                }
-
-                System.out.println("nSelectedMap: " + nSelected);
-
-                for (double modMasss : nSelectedMap.keySet()) {
-
-                    System.out.println(modMasss + " -> " + nSelectedMap.get(modMass));
-
-                }
-
-                double p1 = nToSelectMap.keySet().iterator().next();
-                double p2 = nSelectedMap.keySet().iterator().next();
-                System.out.println(p1 + " / " + p2 + " / " + (p1 == p2));
-
-                throw new IllegalArgumentException("Not enough representative modification sites found.");
-
-            } else if (nSelected > nToSelect) {
-
-                throw new IllegalArgumentException("Selected more representative sites than necessary.");
-
-            }
-        }
-
-        HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap = new HashMap<>(representativeSites.size());
-
-        for (double modMass : representativeSites.keySet()) {
-
-            HashMap<Integer, HashMap<Integer, HashSet<String>>> mapAtMass = new HashMap<>(1);
-            representativeToSecondaryMap.put(modMass, mapAtMass);
-            HashMap<Integer, HashSet<String>> representativeSitesAtMass = representativeSites.get(modMass);
-
-            for (int representativeSite : representativeSitesAtMass.keySet()) {
-
-                HashMap<Integer, HashSet<String>> siteMap = new HashMap<>(1);
-                siteMap.put(representativeSite, representativeSitesAtMass.get(representativeSite));
-                mapAtMass.put(representativeSite, siteMap);
-
-            }
-
-            HashMap<Integer, HashSet<String>> secondarySitesAtMass = secondarySites.get(modMass);
-
-            if (secondarySitesAtMass != null) {
-
-                for (int secondarySite : secondarySitesAtMass.keySet()) {
-
-                    Integer distance = null;
-                    Integer representativeSite = null;
-
-                    for (int tempRepresentativeSite : representativeSitesAtMass.keySet()) {
-
-                        int tempDistance = Math.abs(secondarySite - tempRepresentativeSite);
-
-                        if (representativeSite == null || tempDistance < distance || tempDistance == distance && tempRepresentativeSite < representativeSite) {
-
-                            representativeSite = tempRepresentativeSite;
-                            distance = tempDistance;
-
-                        }
-                    }
-
-                    HashMap<Integer, HashSet<String>> representativeSiteMap = mapAtMass.get(representativeSite);
-                    representativeSiteMap.put(secondarySite, secondarySitesAtMass.get(secondarySite));
-
-                }
-            }
-        }
-
-        return representativeToSecondaryMap;
-
     }
 
     /**
@@ -1509,6 +768,7 @@ public class ModificationLocalizationScorer extends ExperimentObject {
      * @param identificationParameters The identification parameters.
      * @param scorePeptides If true, peptides will be scored as well.
      * @param modificationProvider The modification provider to use.
+     * @param sequenceProvider The sequence provider to use.
      * @param waitingHandler The waiting handler to sue, ignored if null.
      */
     public void scorePTMs(
@@ -1517,11 +777,13 @@ public class ModificationLocalizationScorer extends ExperimentObject {
             IdentificationParameters identificationParameters,
             boolean scorePeptides,
             ModificationProvider modificationProvider,
+            SequenceProvider sequenceProvider,
             WaitingHandler waitingHandler
     ) {
 
-        HashMap<Integer, ArrayList<String>> confidentSites = new HashMap<>();
-        HashMap<Integer, HashMap<Integer, HashSet<String>>> ambiguousSites = new HashMap<>();
+        // Gather the modifications from the peptides
+        HashMap<Integer, HashMap<Double, String>> confidentSites = new HashMap<>();
+        HashMap<Integer, HashMap<Double, String>> ambiguousSites = new HashMap<>();
 
         for (long peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
@@ -1531,167 +793,115 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
             if (psParameter.getMatchValidationLevel().isValidated() && peptide.getNVariableModifications() > 0) {
 
-                PSModificationScores peptideScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
-
-                if (peptideScores == null || scorePeptides) {
+                if (scorePeptides) {
 
                     scorePTMs(
                             identification,
                             peptideMatch,
                             identificationParameters,
                             modificationProvider,
+                            sequenceProvider,
                             waitingHandler
                     );
-                    peptideScores = (PSModificationScores) peptideMatch.getUrParam(PSModificationScores.dummy);
 
                 }
 
-                if (peptideScores != null) {
+                int[] peptideStart = peptide.getProteinMapping().get(proteinMatch.getLeadingAccession());
 
-                    int[] peptideStart = peptide.getProteinMapping().get(proteinMatch.getLeadingAccession());
+                for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
 
-                    for (int confidentSite : peptideScores.getConfidentSites()) {
+                    String modName = modificationMatch.getModification();
+                    double modMass = modificationProvider.getModification(modName).getMass();
+
+                    int siteOnPeptide = PeptideUtils.getModifiedAaIndex(modificationMatch.getSite(), peptide.getSequence().length());
+
+                    if (modificationMatch.getConfident()) {
 
                         for (int peptideTempStart : peptideStart) {
 
-                            int siteOnProtein = peptideTempStart + confidentSite - 1;
-                            ArrayList<String> modificationsAtSite = confidentSites.get(siteOnProtein);
+                            int siteOnProtein = peptideTempStart + siteOnPeptide - 1;
+
+                            HashMap<Double, String> modificationsAtSite = confidentSites.get(siteOnProtein);
 
                             if (modificationsAtSite == null) {
 
-                                modificationsAtSite = new ArrayList<>();
+                                modificationsAtSite = new HashMap<>(1);
                                 confidentSites.put(siteOnProtein, modificationsAtSite);
 
                             }
 
-                            for (String modName : peptideScores.getConfidentModificationsAt(confidentSite)) {
+                            modificationsAtSite.put(modMass, modName);
 
-                                if (!modificationsAtSite.contains(modName)) {
-
-                                    modificationsAtSite.add(modName);
-
-                                }
-                            }
                         }
-                    }
-
-                    for (int representativeSite : peptideScores.getRepresentativeSites()) {
-
-                        HashMap<Integer, HashSet<String>> peptideAmbiguousSites = peptideScores.getAmbiguousModificationsAtRepresentativeSite(representativeSite);
+                    } else {
 
                         for (int peptideTempStart : peptideStart) {
 
-                            int proteinRepresentativeSite = peptideTempStart + representativeSite - 1;
-                            HashMap<Integer, HashSet<String>> proteinAmbiguousSites = ambiguousSites.get(proteinRepresentativeSite);
+                            int siteOnProtein = peptideTempStart + siteOnPeptide - 1;
 
-                            if (proteinAmbiguousSites == null) {
+                            HashMap<Double, String> modificationsAtSite = ambiguousSites.get(siteOnProtein);
 
-                                proteinAmbiguousSites = new HashMap<>(peptideAmbiguousSites.size());
-                                ambiguousSites.put(proteinRepresentativeSite, proteinAmbiguousSites);
+                            if (modificationsAtSite == null) {
 
-                            }
-
-                            for (int peptideSite : peptideAmbiguousSites.keySet()) {
-
-                                int siteOnProtein = peptideTempStart + peptideSite - 1;
-                                proteinAmbiguousSites.put(siteOnProtein, peptideAmbiguousSites.get(peptideSite));
+                                modificationsAtSite = new HashMap<>(1);
+                                ambiguousSites.put(siteOnProtein, modificationsAtSite);
 
                             }
+
+                            modificationsAtSite.put(modMass, modName);
+
                         }
                     }
                 }
             }
         }
 
-        // remove ambiguous sites where a confident was found and merge overlapping groups
-        PSModificationScores proteinScores = new PSModificationScores();
-        ArrayList<Integer> representativeSites = new ArrayList<>(ambiguousSites.keySet());
-        Collections.sort(representativeSites);
+        if (confidentSites.isEmpty() && ambiguousSites.isEmpty()) {
 
-        for (Integer representativeSite : representativeSites) {
+            return;
 
-            HashMap<Integer, HashSet<String>> secondarySitesMap = ambiguousSites.get(representativeSite);
-            ArrayList<Integer> secondarySites = new ArrayList<>(secondarySitesMap.keySet());
-
-            for (int secondarySite : secondarySites) {
-
-                ArrayList<String> confidentModifications = confidentSites.get(secondarySite);
-
-                if (confidentModifications != null) {
-
-                    boolean sameModification = confidentModifications.stream()
-                            .map(modName -> modificationProvider.getModification(modName))
-                            .anyMatch(confidentModification -> secondarySitesMap.get(secondarySite).stream()
-                            .map(modName -> modificationProvider.getModification(modName))
-                            .anyMatch(secondaryModification -> secondaryModification.getMass() == confidentModification.getMass()));
-
-                    if (sameModification) {
-
-                        ambiguousSites.remove(representativeSite);
-                        break;
-
-                    }
-                }
-
-                if (secondarySite != representativeSite) {
-
-                    ArrayList<Integer> tempRepresentativeSites = new ArrayList<>(ambiguousSites.keySet());
-                    Collections.sort(tempRepresentativeSites);
-
-                    for (Integer previousSite : tempRepresentativeSites) {
-
-                        if (previousSite >= representativeSite) {
-
-                            break;
-
-                        }
-
-                        if (previousSite == secondarySite) {
-
-                            HashMap<Integer, HashSet<String>> previousSites = ambiguousSites.get(previousSite);
-                            HashSet<String> previousModifications = previousSites.get(previousSite);
-                            boolean sameModification = previousModifications.stream()
-                                    .map(modName -> modificationProvider.getModification(modName))
-                                    .anyMatch(previousModification -> secondarySitesMap.get(secondarySite).stream()
-                                    .map(modName -> modificationProvider.getModification(modName))
-                                    .anyMatch(secondaryModification -> secondaryModification.getMass() == previousModification.getMass()));
-
-                            if (sameModification) {
-
-                                for (int tempSecondarySite : secondarySitesMap.keySet()) {
-
-                                    if (!previousSites.containsKey(secondarySite)) {
-
-                                        previousSites.put(tempSecondarySite, secondarySitesMap.get(tempSecondarySite));
-
-                                    }
-                                }
-
-                                ambiguousSites.remove(representativeSite);
-
-                            }
-                        }
-                    }
-                }
-            }
         }
 
-        for (int confidentSite : confidentSites.keySet()) {
+        // Create protein modification matches
+        ArrayList<ModificationMatch> modificationsList = new ArrayList<>(confidentSites.size());
 
-            for (String modName : confidentSites.get(confidentSite)) {
+        for (Entry<Integer, HashMap<Double, String>> entry1 : confidentSites.entrySet()) {
 
-                proteinScores.addConfidentModificationSite(modName, confidentSite);
+            int site = entry1.getKey();
+
+            for (Entry<Double, String> entry2 : entry1.getValue().entrySet()) {
+
+                String modName = entry2.getValue();
+
+                ModificationMatch modificationMatch = new ModificationMatch(modName, site);
+                modificationMatch.setConfident(true);
+                modificationsList.add(modificationMatch);
 
             }
         }
 
-        for (int representativeSite : ambiguousSites.keySet()) {
+        for (Entry<Integer, HashMap<Double, String>> entry1 : ambiguousSites.entrySet()) {
 
-            proteinScores.addAmbiguousModificationSites(representativeSite, ambiguousSites.get(representativeSite));
+            int site = entry1.getKey();
+            HashMap<Double, String> confidentModificationsAtSite = confidentSites.get(site);
 
+            for (Entry<Double, String> entry2 : entry1.getValue().entrySet()) {
+
+                double mass = entry2.getKey();
+                String modName = entry2.getValue();
+
+                if (confidentModificationsAtSite == null || !confidentModificationsAtSite.containsKey(mass)) {
+
+                    ModificationMatch modificationMatch = new ModificationMatch(modName, site);
+                    modificationMatch.setConfident(false);
+                    modificationsList.add(modificationMatch);
+
+                }
+            }
         }
 
-        proteinMatch.addUrParam(proteinScores);
+        ModificationMatch[] modificationMatches = modificationsList.stream().toArray(ModificationMatch[]::new);
+        proteinMatch.setVariableModifications(modificationMatches);
 
     }
 
@@ -1702,12 +912,14 @@ public class ModificationLocalizationScorer extends ExperimentObject {
      * @param identification identification object containing the identification
      * matches
      * @param modificationProvider The modification provider to use.
+     * @param sequenceProvider The sequence provider to use.
      * @param waitingHandler the handler displaying feedback to the user
      * @param identificationParameters the identification parameters
      */
     public void scorePeptidePtms(
             Identification identification,
             ModificationProvider modificationProvider,
+            SequenceProvider sequenceProvider,
             WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters
     ) {
@@ -1719,23 +931,32 @@ public class ModificationLocalizationScorer extends ExperimentObject {
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
         identification.getPeptideIdentification().stream()
-                .map(key -> identification.getPeptideMatch(key))
-                .forEach(peptideMatch -> {
+                .map(
+                        key -> identification.getPeptideMatch(key)
+                )
+                .forEach(
+                        peptideMatch -> {
 
-                    scorePTMs(
-                            identification,
-                            peptideMatch,
-                            identificationParameters,
-                            modificationProvider,
-                            waitingHandler
-                    );
+                            // Aggregate PSM scores into peptide scores
+                            scorePTMs(
+                                    identification,
+                                    peptideMatch,
+                                    identificationParameters,
+                                    modificationProvider,
+                                    sequenceProvider,
+                                    waitingHandler
+                            );
 
-                    waitingHandler.increaseSecondaryProgressCounter();
+                            // Check that there is only one variable modification per residue
+                            peptideMatch.getPeptide().getIndexedVariableModifications();
 
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
-                    }
-                });
+                            waitingHandler.increaseSecondaryProgressCounter();
+
+                            if (waitingHandler.isRunCanceled()) {
+                                return;
+                            }
+                        }
+                );
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
@@ -1765,21 +986,22 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
             SearchParameters searchParameters = identificationParameters.getSearchParameters();
             PSModificationScores modificationScores = (PSModificationScores) spectrumMatch.getUrParam(PSModificationScores.dummy);
+
             HashMap<Double, ArrayList<ModificationMatch>> modMatchesMap = new HashMap<>(nVariableModifications);
             HashMap<Double, HashMap<Integer, String>> possiblePositions = new HashMap<>(nVariableModifications);
-            HashMap<Double, HashMap<Integer, ArrayList<String>>> confidentSites = new HashMap<>(nVariableModifications);
 
             for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
 
                 String modName = modificationMatch.getModification();
                 Modification modification = modificationProvider.getModification(modName);
                 double modMass = modification.getMass();
-                ArrayList<ModificationMatch> modOccurence = modMatchesMap.get(modMass);
 
-                if (modOccurence == null) {
+                ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modMass);
 
-                    modOccurence = new ArrayList<>(1);
-                    modMatchesMap.put(modMass, modOccurence);
+                if (modificationMatches == null) {
+
+                    modificationMatches = new ArrayList<>(1);
+                    modMatchesMap.put(modMass, modificationMatches);
 
                 }
 
@@ -1792,55 +1014,169 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
                 }
 
-                boolean maybeNotTerminal = modification.getModificationType() == ModificationType.modaa;
+                modificationMatches.add(modificationMatch);
 
-                if (!maybeNotTerminal) {
+                for (String similarModName : modificationFactory.getSameMassNotFixedModifications(modMass, searchParameters)) {
 
-                    ArrayList<String> expectedModifications
-                            = modificationFactory.getExpectedVariableModifications(searchParameters);
+                    Modification similarModification = modificationProvider.getModification(similarModName);
 
-                    for (String otherModName : expectedModifications) {
+                    if (modification.getMass() == modMass) {
 
-                        if (!otherModName.equals(modName)) {
+                        int[] possibleSites = ModificationUtils.getPossibleModificationSites(
+                                peptide,
+                                similarModification,
+                                sequenceProvider,
+                                identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters()
+                        );
 
-                            Modification otherModification = modificationProvider.getModification(otherModName);
+                        for (int pos : possibleSites) {
 
-                            if (otherModification.getMass() == modMass && modification.getModificationType() != otherModification.getModificationType()) {
+                            modPossibleSites.put(pos, similarModName);
 
-                                maybeNotTerminal = true;
-                                break;
-
-                            }
                         }
                     }
                 }
+            }
 
-                if (maybeNotTerminal) {
+            // Gather the modifications that need to be distributed according to their score, assign the sites to the others
+            ModificationLocalizationParameters modificationScoringParameters = identificationParameters.getModificationLocalizationParameters();
+            Set<Double> modMasses = modMatchesMap.keySet();
+            ArrayList<ModificationMatch> assignedModifications = new ArrayList<>(peptide.getNVariableModifications());
+            HashMap<Double, int[]> modificationToPossibleSiteMap = new HashMap<>(nVariableModifications);
+            HashMap<Double, Integer> modificationOccurrenceMap = new HashMap<>(nVariableModifications);
+            HashMap<Double, HashMap<Integer, Double>> modificationToSiteToScore = new HashMap<>(nVariableModifications);
 
-                    modOccurence.add(modificationMatch);
+            for (double modMass : modMasses) {
 
-                    for (String similarModName : modificationFactory.getSameMassNotFixedModifications(modMass, searchParameters)) {
+                ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modMass);
+                int nMods = modificationMatches.size();
+                HashMap<Integer, String> modificationPossibleSites = possiblePositions.get(modMass);
+                int nPossibleSites = modificationPossibleSites.size();
 
-                        Modification similarModification = modificationProvider.getModification(similarModName);
+                if (nMods <= nPossibleSites) {
 
-                        if (modification.getMass() == modMass) {
+                    int[] sites = modificationPossibleSites.keySet().stream()
+                            .mapToInt(a -> a)
+                            .toArray();
 
-                            int[] possibleSites = ModificationUtils.getPossibleModificationSites(
-                                    peptide,
-                                    similarModification,
-                                    sequenceProvider,
-                                    identificationParameters.getModificationLocalizationParameters().getSequenceMatchingParameters()
-                            );
+                    modificationToPossibleSiteMap.put(modMass, sites);
 
-                            for (int pos : possibleSites) {
+                    modificationOccurrenceMap.put(modMass, nMods);
 
-                                modPossibleSites.put(pos, similarModName);
+                    HashMap<Integer, Double> siteToScoreMap = modificationToSiteToScore.get(modMass);
 
-                            }
+                    if (siteToScoreMap == null) {
+
+                        siteToScoreMap = new HashMap<>(sites.length);
+                        modificationToSiteToScore.put(modMass, siteToScoreMap);
+
+                    }
+
+                    for (int site : sites) {
+
+                        String modName = modificationPossibleSites.get(site);
+                        ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
+
+                        double score = 0;
+
+                        if (modificationScoring != null) {
+
+                            score = modificationScoringParameters.isProbabilisticScoreCalculation()
+                                    ? modificationScoring.getProbabilisticScore(site) : modificationScoring.getDeltaScore(site);
+
                         }
+
+                        siteToScoreMap.put(site, score);
+
                     }
 
                 } else {
+
+                    throw new IllegalArgumentException(
+                            "The occurence of modification of mass " + modMass + " (" + modificationMatches.size()
+                            + ") is higher than the number of possible sites (" + modificationPossibleSites.size() + ") on sequence " + peptide.getSequence()
+                            + " in spectrum " + spectrumMatch.getKey() + "."
+                    );
+                }
+            }
+
+            /*System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("Peptide sequence: " + peptide.getSequence());
+                
+                for (Double modID: modificationToPossibleSiteMap.keySet()) {
+                    
+                    int[] sites = modificationToPossibleSiteMap.get(modID);
+                    
+                    ArrayList<ModificationMatch> modificationMatches_toprint = modMatchesMap.get(modID);
+                    ArrayList<String> modNames_toprint = new ArrayList<>();
+                    for (int i = 0; i < modificationMatches_toprint.size(); i++){
+                        String modName_toprint = modificationMatches_toprint.get(i).getModification();
+                        modNames_toprint.add(modName_toprint);
+                    }
+                    
+                    //display array
+                    System.out.println(modNames_toprint);
+                    System.out.println( Arrays.toString(sites));
+                
+                }
+                
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");*/
+            // Distribute modifications among acceptor sites based on their score
+            HashMap<Double, TreeSet<Integer>> matchedSiteByModification = ModificationPeptideMapping.mapModifications(
+                    modificationToPossibleSiteMap,
+                    modificationOccurrenceMap,
+                    modificationToSiteToScore
+            );
+
+//                HistoneExample.exportHistoneData(peptide.getSequence(), modificationToPossibleSiteMap, modificationOccurrenceMap, modificationToSiteToScore, matchedSiteByModification, spectrumMatch.getBestPeptideAssumption().getRawScore());
+
+            /*for (Double modID: matchedSiteByModification.keySet()) {
+                    
+                    TreeSet<Integer> sites = matchedSiteByModification.get(modID);
+                
+                    //convert TreeSet to an array
+                    Integer[] array = sites.toArray( new Integer[sites.size()] );
+                    ArrayList<ModificationMatch> modificationMatches_toprint = modMatchesMap.get(modID);
+                    ArrayList<String> modNames_toprint = new ArrayList<>();
+                    for (int i = 0; i < modificationMatches_toprint.size(); i++){
+                        String modName_toprint = modificationMatches_toprint.get(i).getModification();
+                        modNames_toprint.add(modName_toprint);
+                    }
+                    
+                    //display array
+                    System.out.println(modNames_toprint);
+                    System.out.println( Arrays.toString(array) );
+                
+                }
+                
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");*/
+            // Assign confidence levels to the sites mapped
+            for (Entry<Double, TreeSet<Integer>> entry : matchedSiteByModification.entrySet()) {
+
+                double modificationMass = entry.getKey();
+                int[] sortedSelectedSites = entry.getValue().stream().mapToInt(a -> a).toArray();
+
+                ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modificationMass);
+
+                if (sortedSelectedSites.length > modificationMatches.size()) {
+
+                    throw new IllegalArgumentException("More sites than modifications found when assigning confidence levels at mass " + modificationMass + ".");
+
+                }
+
+                HashMap<Integer, String> modificationPossibleSites = possiblePositions.get(modificationMass);
+                int nMods = modificationMatches.size();
+                int nPossibleSites = modificationPossibleSites.size();
+
+                double randomScoreThreshold = modificationScoringParameters.getSelectedProbabilisticScore().getRandomThreshold(nMods, nPossibleSites);
+                double confidenceThreshold = modificationScoringParameters.getProbabilisticScoreThreshold();
+                double dThreshold = modificationScoringParameters.getDScoreThreshold();
+
+                for (int siteI = 0; siteI < sortedSelectedSites.length; siteI++) {
+
+                    int site = sortedSelectedSites[siteI];
+
+                    String modName = modificationPossibleSites.get(site);
 
                     ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
 
@@ -1851,479 +1187,46 @@ public class ModificationLocalizationScorer extends ExperimentObject {
 
                     }
 
-                    modificationScoring.setSiteConfidence(modificationMatch.getSite(), ModificationScoring.VERY_CONFIDENT);
-                    modificationMatch.setConfident(true);
-                    HashMap<Integer, ArrayList<String>> modificationSites = confidentSites.get(modification.getMass());
+                    ModificationMatch modificationMatch = new ModificationMatch(modName, site);
+                    assignedModifications.add(modificationMatch);
 
-                    if (modificationSites == null) {
+                    double score = modificationToSiteToScore.get(modificationMass).get(site);
 
-                        modificationSites = new HashMap<>(1);
-                        confidentSites.put(modMass, modificationSites);
-
-                    }
-
-                    int site = modificationMatch.getSite();
-                    ArrayList<String> modNames = modificationSites.get(site);
-
-                    if (modNames == null) {
-
-                        modNames = new ArrayList<>(1);
-                        modificationSites.put(site, modNames);
-
-                    }
-
-                    modNames.add(modName);
-
-                }
-            }
-
-            ModificationLocalizationParameters modificationScoringParameters = identificationParameters.getModificationLocalizationParameters();
-            Set<Double> modMasses = modMatchesMap.keySet();
-            TreeMap<Double, TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>>> ambiguousScoreToSiteMap = new TreeMap<>(); // p score -> d-score -> Map mod mass -> site -> list of modifications
-            HashMap<Double, Integer> nRepresentativesMap = new HashMap<>(modMasses.size());
-            ArrayList<ModificationMatch> assignedModifications = new ArrayList<>(peptide.getNVariableModifications());
-            TreeMap<Double, TreeMap<Double, TreeMap<Double, TreeSet<Integer>>>> scoreToSiteMap = new TreeMap<>(); // p-score -> d-score -> mod mass -> list of posssible sites
-
-            for (double modMass : modMasses) {
-
-                ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modMass);
-                int nMods = modificationMatches.size();
-                HashMap<Integer, String> modificationPossibleSites = possiblePositions.get(modMass);
-                int nPossibleSites = modificationPossibleSites.size();
-                HashMap<Integer, ArrayList<String>> modificationConfidentSites = confidentSites.get(modMass);
-
-                if (modificationConfidentSites == null) {
-
-                    modificationConfidentSites = new HashMap<>(1);
-                    confidentSites.put(modMass, modificationConfidentSites);
-
-                }
-
-                if (nPossibleSites < nMods) {
-
-                    throw new IllegalArgumentException(
-                            "The occurence of modification of mass " + modMass + " (" + modificationMatches.size()
-                            + ") is higher than the number of possible sites (" + modificationPossibleSites.size() + ") on sequence " + peptide.getSequence()
-                            + " in spectrum " + spectrumMatch.getKey() + "."
-                    );
-
-                } else if (modificationPossibleSites.size() == modificationMatches.size()) {
-
-                    for (ModificationMatch modMatch : modificationMatches) {
-
-                        String modName = modMatch.getModification();
-                        int site = modMatch.getSite();
-                        ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
-
-                        if (modificationScoring == null) {
-
-                            modificationScoring = new ModificationScoring(modName);
-                            modificationScores.addModificationScoring(modName, modificationScoring);
-
-                        }
+                    if (nMods == nPossibleSites) {
 
                         modificationScoring.setSiteConfidence(site, ModificationScoring.VERY_CONFIDENT);
-                        modMatch.setConfident(true);
-                        ArrayList<String> modificationsAtAA = modificationConfidentSites.get(site);
+                        modificationMatch.setConfident(true);
 
-                        if (modificationsAtAA == null) {
+                    } else if (modificationScoringParameters.isProbabilisticScoreCalculation() && score >= confidenceThreshold
+                            || !modificationScoringParameters.isProbabilisticScoreCalculation() && score >= dThreshold) {
 
-                            modificationsAtAA = new ArrayList<>(1);
-                            modificationConfidentSites.put(site, modificationsAtAA);
+                        modificationScoring.setSiteConfidence(site, ModificationScoring.CONFIDENT);
+                        modificationMatch.setConfident(true);
 
-                        }
+                    } else if (modificationScoringParameters.isProbabilisticScoreCalculation() && score > randomScoreThreshold) {
 
-                        modificationsAtAA.add(modName);
-                        assignedModifications.add(modMatch);
-
-                    }
-
-                } else if (!modificationScoringParameters.isProbabilisticScoreCalculation()) {
-
-                    double pScore = 0; // no probabilistic score in that case
-
-                    for (ModificationMatch modificationMatch : modificationMatches) {
-
-                        String modName = modificationMatch.getModification();
-                        ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
-
-                        int site = modificationMatch.getSite();
-
-                        Double dScore = modificationScoring.getDeltaScore(site);
-
-                        if (dScore == 0.0) {
-
-                            modificationScoring.setSiteConfidence(site, ModificationScoring.RANDOM);
-                            modificationMatch.setConfident(false);
-
-                        } else if (dScore <= 95) {
-
-                            modificationScoring.setSiteConfidence(site, ModificationScoring.DOUBTFUL);
-                            modificationMatch.setConfident(false);
-
-                        } else {
-
-                            modificationScoring.setSiteConfidence(site, ModificationScoring.CONFIDENT);
-                            modificationMatch.setConfident(true);
-                            ArrayList<String> modificationsAtAA = modificationConfidentSites.get(site);
-
-                            if (modificationsAtAA == null) {
-
-                                modificationsAtAA = new ArrayList<>(1);
-                                modificationConfidentSites.put(site, modificationsAtAA);
-
-                            }
-
-                            modificationsAtAA.add(modName);
-
-                        }
-
-                        if (!modificationMatch.getConfident()) {
-
-                            TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>> pScoreAmbiguousMap = ambiguousScoreToSiteMap.get(pScore);
-
-                            if (pScoreAmbiguousMap == null) {
-
-                                pScoreAmbiguousMap = new TreeMap<>();
-                                ambiguousScoreToSiteMap.put(pScore, pScoreAmbiguousMap);
-
-                            }
-
-                            TreeMap<Double, HashMap<Integer, HashSet<String>>> dScoreAmbiguousMap = pScoreAmbiguousMap.get(dScore);
-
-                            if (dScoreAmbiguousMap == null) {
-
-                                dScoreAmbiguousMap = new TreeMap<>();
-                                pScoreAmbiguousMap.put(dScore, dScoreAmbiguousMap);
-
-                            }
-
-                            HashMap<Integer, HashSet<String>> massAmbiguousMap = dScoreAmbiguousMap.get(modMass);
-
-                            if (massAmbiguousMap == null) {
-
-                                massAmbiguousMap = new HashMap<>(nPossibleSites);
-                                dScoreAmbiguousMap.put(modMass, massAmbiguousMap);
-
-                            }
-
-                            HashSet<String> modifications = massAmbiguousMap.get(site);
-
-                            if (modifications == null) {
-
-                                modifications = new HashSet<>(1);
-                                massAmbiguousMap.put(site, modifications);
-
-                            }
-
-                            modifications.add(modName);
-
-                        }
-
-                        assignedModifications.add(modificationMatch);
-
-                    }
-
-                } else {
-
-                    for (int site : modificationPossibleSites.keySet()) {
-
-                        String modName = modificationPossibleSites.get(site);
-                        ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
-                        double pScore = 0;
-                        double dScore = 0;
-
-                        if (modificationScoring != null) {
-
-                            pScore = modificationScoring.getProbabilisticScore(site);
-                            dScore = modificationScoring.getDeltaScore(site);
-
-                        }
-
-                        TreeMap<Double, TreeMap<Double, TreeSet<Integer>>> pScoreMap = scoreToSiteMap.get(pScore);
-
-                        if (pScoreMap == null) {
-
-                            pScoreMap = new TreeMap<>();
-                            scoreToSiteMap.put(pScore, pScoreMap);
-
-                        }
-
-                        TreeMap<Double, TreeSet<Integer>> dScoreMap = pScoreMap.get(dScore);
-
-                        if (dScoreMap == null) {
-
-                            dScoreMap = new TreeMap<>();
-                            pScoreMap.put(dScore, dScoreMap);
-
-                        }
-
-                        TreeSet<Integer> dScoreSites = dScoreMap.get(modMass);
-
-                        if (dScoreSites == null) {
-
-                            dScoreSites = new TreeSet<>();
-                            dScoreMap.put(modMass, dScoreSites);
-
-                        }
-
-                        dScoreSites.add(site);
-
-                    }
-                }
-            }
-            
-            // Assign modifications to the sites passing the threshold.
-            if (!scoreToSiteMap.isEmpty()) {
-
-                HashMap<Double, Integer> processedSitesMap = new HashMap<>(modMasses.size());
-
-                for (Entry<Double, TreeMap<Double, TreeMap<Double, TreeSet<Integer>>>> entry1 : scoreToSiteMap.descendingMap().entrySet()) {
-
-                    double pScore = entry1.getKey();
-                    TreeMap<Double, TreeMap<Double, TreeSet<Integer>>> pScoreMap = entry1.getValue();
-
-                    for (Entry<Double, TreeMap<Double, TreeSet<Integer>>> entry2 : pScoreMap.descendingMap().entrySet()) {
-
-                        double dScore = entry2.getKey();
-                        TreeMap<Double, TreeSet<Integer>> dScoreMap = entry2.getValue();
-
-                        for (Entry<Double, TreeSet<Integer>> entry : dScoreMap.entrySet()) {
-
-                            double modificationMass = entry.getKey();
-
-                            ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modificationMass);
-                            HashMap<Integer, String> modificationPossibleSites = possiblePositions.get(modificationMass);
-                            HashMap<Integer, ArrayList<String>> modificationConfidentSites = confidentSites.get(modificationMass);
-                            int nMods = modificationMatches.size();
-                            int nPossibleSites = modificationPossibleSites.size();
-
-                            double randomScoreThreshold = modificationScoringParameters.getSelectedProbabilisticScore().getRandomThreshold(nMods, nPossibleSites);
-                            double confidenceThreshold = modificationScoringParameters.getProbabilisticScoreThreshold();
-
-                            TreeSet<Integer> sites = dScoreMap.get(modificationMass);
-
-                            Integer nAssignedSites = processedSitesMap.get(modificationMass);
-
-                            if (nAssignedSites == null) {
-
-                                nAssignedSites = 0;
-
-                            }
-
-                            for (int site : sites) {
-
-                                String modName = modificationPossibleSites.get(site);
-                                ModificationScoring modificationScoring = modificationScores.getModificationScoring(modName);
-
-                                if (modificationScoring == null) {
-
-                                    modificationScoring = new ModificationScoring(modName);
-                                    modificationScores.addModificationScoring(modName, modificationScoring);
-
-                                }
-
-                                ModificationMatch modificationMatch = null;
-
-                                if (nAssignedSites < nMods) {
-
-                                    boolean alreadyOccupied = false;
-
-                                    for (ModificationMatch assignedMatch : assignedModifications) {
-
-                                        if (assignedMatch.getSite() == site) {
-
-                                            alreadyOccupied = true;
-                                            break;
-
-                                        }
-                                    }
-
-                                    if (!alreadyOccupied) {
-
-                                        if (pScore >= confidenceThreshold) {
-
-                                            modificationMatch = modificationMatches.get(nAssignedSites);
-                                            modificationMatch.setSite(site);
-                                            modificationMatch.setModification(modName);
-                                            assignedModifications.add(modificationMatch);
-
-                                            modificationScoring.setSiteConfidence(site, ModificationScoring.VERY_CONFIDENT);
-                                            modificationMatch.setConfident(true);
-
-                                            ArrayList<String> modificationsAtAA = modificationConfidentSites.get(site);
-
-                                            if (modificationsAtAA == null) {
-
-                                                modificationsAtAA = new ArrayList<>(1);
-                                                modificationConfidentSites.put(site, modificationsAtAA);
-
-                                            }
-
-                                            modificationsAtAA.add(modName);
-
-                                            nAssignedSites++;
-                                            processedSitesMap.put(modificationMass, nAssignedSites);
-
-                                        } else if (pScore > randomScoreThreshold) {
-
-                                            modificationScoring.setSiteConfidence(site, ModificationScoring.DOUBTFUL);
-
-                                        } else {
-
-                                            modificationScoring.setSiteConfidence(site, ModificationScoring.RANDOM);
-
-                                        }
-                                    }
-                                }
-
-                                if (modificationMatch == null) {
-
-                                    TreeMap<Double, TreeMap<Double, HashMap<Integer, HashSet<String>>>> pScoreAmbiguousMap = ambiguousScoreToSiteMap.get(pScore);
-
-                                    if (pScoreAmbiguousMap == null) {
-
-                                        pScoreAmbiguousMap = new TreeMap<>();
-                                        ambiguousScoreToSiteMap.put(pScore, pScoreAmbiguousMap);
-
-                                    }
-
-                                    TreeMap<Double, HashMap<Integer, HashSet<String>>> dScoreAmbiguousMap = pScoreAmbiguousMap.get(dScore);
-
-                                    if (dScoreAmbiguousMap == null) {
-
-                                        dScoreAmbiguousMap = new TreeMap<>();
-                                        pScoreAmbiguousMap.put(dScore, dScoreAmbiguousMap);
-
-                                    }
-
-                                    HashMap<Integer, HashSet<String>> massAmbiguousMap = dScoreAmbiguousMap.get(modificationMass);
-
-                                    if (massAmbiguousMap == null) {
-
-                                        massAmbiguousMap = new HashMap<>(nPossibleSites);
-                                        dScoreAmbiguousMap.put(modificationMass, massAmbiguousMap);
-
-                                    }
-
-                                    HashSet<String> modifications = massAmbiguousMap.get(site);
-
-                                    if (modifications == null) {
-
-                                        modifications = new HashSet<>(1);
-                                        massAmbiguousMap.put(site, modifications);
-
-                                    }
-
-                                    modifications.add(modName);
-
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // See whether there are sites that are not confidently assigned.
-            for (double modMass : confidentSites.keySet()) {
-
-                HashMap<Integer, ArrayList<String>> modConfidentSitesMap = confidentSites.get(modMass);
-                ArrayList<Integer> modConfidentSites = new ArrayList<>(modConfidentSitesMap.keySet());
-                int nConfident = 0;
-
-                for (int site : modConfidentSites) {
-
-                    ArrayList<String> modifications = modConfidentSitesMap.get(site);
-
-                    for (String modName : modifications) {
-
-                        modificationScores.addConfidentModificationSite(modName, site);
-
-                    }
-
-                    nConfident += modifications.size();
-
-                }
-
-                modConfidentSites.size();
-                ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modMass);
-
-                int nMods = modificationMatches.size();
-
-                if (nConfident < nMods) {
-
-                    int nRepresentatives = nMods - nConfident;
-
-                    if (nRepresentatives > 0) {
-
-                        nRepresentativesMap.put(modMass, nRepresentatives);
-
-                    }
-                }
-            }
-
-            // Create ambiguous site groups and assign the remaining modifications to the best scoring sites.
-            if (!nRepresentativesMap.isEmpty()) {
-
-                HashMap<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousScoreToSiteMap, nRepresentativesMap);
-
-                for (Entry<Double, HashMap<Integer, HashMap<Integer, HashSet<String>>>> entry1 : representativeToSecondaryMap.entrySet()) {
-
-                    double modMass = entry1.getKey();
-                    HashMap<Integer, HashMap<Integer, HashSet<String>>> massMap = entry1.getValue();
-
-                    ArrayList<ModificationMatch> modificationMatches = modMatchesMap.get(modMass);
-                    int nMods = modificationMatches.size();
-
-                    int nRepresentativeSites = nRepresentativesMap.get(modMass);
-
-                    if (nRepresentativeSites != massMap.size()) {
-
-                        throw new IllegalArgumentException("Unexpected number of representative sites.");
-
-                    }
-
-                    int nConfident = nMods - nRepresentativeSites;
-
-                    int modMatchIndex = nConfident;
-
-                    for (Entry<Integer, HashMap<Integer, HashSet<String>>> entry : massMap.entrySet()) {
-
-                        int representativeSite = entry.getKey();
-                        HashMap<Integer, HashSet<String>> sites = entry.getValue();
-                        modificationScores.addAmbiguousModificationSites(representativeSite, sites);
-
-                        ModificationMatch modificationMatch = modificationMatches.get(modMatchIndex);
-
-                        String modName = null;
-
-                        for (String possibleModName : sites.get(representativeSite)) {
-
-                            Modification possibleModification = modificationProvider.getModification(possibleModName);
-
-                            if (possibleModification.getMass() == modMass) {
-
-                                modName = possibleModName;
-                                break;
-
-                            }
-                        }
-
-                        if (modName == null) {
-
-                            throw new IllegalArgumentException("No candidate modification of mass " + modMass + " found at site " + representativeSite + " on peptide " + peptide.getSequence() + ".");
-
-                        }
-
-                        modificationMatch.setModification(modName);
-                        modificationMatch.setSite(representativeSite);
+                        modificationScoring.setSiteConfidence(site, ModificationScoring.DOUBTFUL);
                         modificationMatch.setConfident(false);
 
-                        modMatchIndex++;
+                    } else {
+
+                        modificationScoring.setSiteConfidence(site, ModificationScoring.RANDOM);
+                        modificationMatch.setConfident(false);
 
                     }
                 }
             }
+
+            ModificationMatch[] modificationMatches = assignedModifications.stream().toArray(ModificationMatch[]::new);
+
+            if (modificationMatches.length < nVariableModifications) {
+
+                throw new IllegalArgumentException("Only " + modificationMatches.length + " modifications mapped where " + nVariableModifications + " required.");
+
+            }
+
+            peptide.setVariableModifications(modificationMatches);
+
         }
     }
 }

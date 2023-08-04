@@ -21,7 +21,9 @@ import com.compomics.util.io.export.features.peptideshaker.PsPsmFeature;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.validation.MatchValidationLevel;
 import com.compomics.util.experiment.identification.features.IdentificationFeaturesGenerator;
+import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
+import eu.isas.peptideshaker.export.ExportUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -575,89 +577,63 @@ public class PsProteinSection {
 
                 mainAccession = proteinMatch.getLeadingAccession();
                 String sequence = sequenceProvider.getSequence(mainAccession);
-                return identificationFeaturesGenerator.getConfidentModificationSites(proteinMatch, sequence);
+                ModificationMatch[] modificationMatches = proteinMatch.getVariableModifications();
+
+                return identificationFeaturesGenerator.getModificationSites(sequence, modificationMatches, true);
 
             case confident_modification_sites_number:
+                
+                modificationMatches = proteinMatch.getVariableModifications();
 
-                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(proteinMatch);
+                return identificationFeaturesGenerator.getModificationSitesNumber(modificationMatches, true);
 
             case ambiguous_modification_sites:
 
                 mainAccession = proteinMatch.getLeadingAccession();
                 sequence = sequenceProvider.getSequence(mainAccession);
-                return identificationFeaturesGenerator.getAmbiguousModificationSites(proteinMatch, sequence);
+                modificationMatches = proteinMatch.getVariableModifications();
+
+                return identificationFeaturesGenerator.getModificationSites(sequence, modificationMatches, false);
 
             case ambiguous_modification_sites_number:
+                
+                modificationMatches = proteinMatch.getVariableModifications();
 
-                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(proteinMatch);
+                return identificationFeaturesGenerator.getModificationSitesNumber(modificationMatches, false);
 
             case confident_phosphosites:
 
-                ArrayList<String> modifications = new ArrayList<>(3);
-
-                for (String modName : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
-
-                    if (modName.toLowerCase().contains("phospho")) {
-
-                        modifications.add(modName);
-
-                    }
-                }
-
                 mainAccession = proteinMatch.getLeadingAccession();
                 sequence = sequenceProvider.getSequence(mainAccession);
-                return identificationFeaturesGenerator.getConfidentModificationSites(
-                        proteinMatch,
-                        sequence,
-                        modifications
-                );
+                modificationMatches = proteinMatch.getVariableModifications();
+
+                HashSet<String> modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
+
+                return identificationFeaturesGenerator.getModificationSites(sequence, modificationMatches, true, modifications);
 
             case confident_phosphosites_number:
+                
+                modificationMatches = proteinMatch.getVariableModifications();
+                modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
 
-                modifications = new ArrayList<>(3);
-
-                for (String modName : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
-
-                    if (modName.toLowerCase().contains("phospho")) {
-
-                        modifications.add(modName);
-
-                    }
-                }
-
-                return identificationFeaturesGenerator.getConfidentModificationSitesNumber(proteinMatch, modifications);
+                return Integer.toString(identificationFeaturesGenerator.getModificationSitesNumber(modificationMatches, true, modifications));
 
             case ambiguous_phosphosites:
 
-                modifications = new ArrayList<>(3);
-
-                for (String modName : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
-
-                    if (modName.toLowerCase().contains("phospho")) {
-
-                        modifications.add(modName);
-
-                    }
-                }
-
                 mainAccession = proteinMatch.getLeadingAccession();
                 sequence = sequenceProvider.getSequence(mainAccession);
-                return identificationFeaturesGenerator.getAmbiguousModificationSites(proteinMatch, sequence, modifications);
+                modificationMatches = proteinMatch.getVariableModifications();
+
+                modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
+
+                return identificationFeaturesGenerator.getModificationSites(sequence, modificationMatches, false, modifications);
 
             case ambiguous_phosphosites_number:
+                
+                modificationMatches = proteinMatch.getVariableModifications();
+                modifications = ExportUtils.getPhosphorylations(identificationParameters.getSearchParameters().getModificationParameters());
 
-                modifications = new ArrayList<>(3);
-
-                for (String modName : identificationParameters.getSearchParameters().getModificationParameters().getAllNotFixedModifications()) {
-
-                    if (modName.toLowerCase().contains("phospho")) {
-
-                        modifications.add(modName);
-
-                    }
-                }
-
-                return identificationFeaturesGenerator.getAmbiguousModificationSiteNumber(proteinMatch, modifications);
+                return Integer.toString(identificationFeaturesGenerator.getModificationSitesNumber(modificationMatches, false, modifications));
 
             case coverage:
 

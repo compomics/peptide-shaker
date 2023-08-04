@@ -3,14 +3,14 @@ package eu.isas.peptideshaker.utils;
 import com.compomics.util.io.IoUtil;
 
 /**
- * This class contains information and methods to zip and unzip files from PeptideShaker.
- * Files will be unzipped to a folder constructed based on the static fields:
- * unzipParentFolder/unzipSubFolder/yourfolder_tempFolderName
+ * This class contains information and methods to zip and unzip files from
+ * PeptideShaker. Files will be unzipped to a folder constructed based on the
+ * static fields: unzipParentFolder/unzipSubFolder/yourfolder_tempFolderName
  *
  * @author Marc Vaudel
  */
 public class PsZipUtils {
-    
+
     /**
      * The folder to use when unzipping files.
      */
@@ -23,26 +23,28 @@ public class PsZipUtils {
      * Suffix for folders where the content of zip files should be extracted.
      */
     public final static String TEMP_FOLDER_NAME = "PeptideShaker_temp";
+
     /**
      * Returns the parent folder where to unzip files. Null if not set.
-     * 
+     *
      * @return the parent folder where to unzip files.
      */
     public static String getUnzipParentFolder() {
         return unzipParentFolder;
     }
+
     /**
      * Returns the sub-folder where to unzip files. Null if not set.
-     * 
+     *
      * @return the sub-folder where to unzip files
      */
     public static String getUnzipSubFolder() {
         return UNZIP_SUB_FOLDER;
     }
-    
+
     /**
      * Sets the parent folder where to unzip files to.
-     * 
+     *
      * @param newFolder the parent folder where to unzip files to
      */
     public static void setUnzipParentFolder(String newFolder) {

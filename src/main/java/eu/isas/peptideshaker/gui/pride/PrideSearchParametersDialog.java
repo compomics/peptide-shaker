@@ -23,9 +23,9 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      */
     private final File prideSearchParametersFile;
     /**
-     * The mgf files.
+     * The spectrum files.
      */
-    private final ArrayList<File> mgfFiles;
+    private final ArrayList<File> spectrumFiles;
     /**
      * The raw files.
      */
@@ -53,7 +53,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * @param prideReShakeGUI a reference to the main frame
      * @param prideSearchParametersFile the pride search parameters file
      * @param prideSearchParametersReport the pride search parameters report
-     * @param mgfFiles the converted mgf files
+     * @param spectrumFiles the converted spectrum files
      * @param rawFiles the raw files
      * @param fastaFile the FASTA file
      * @param species the species for the project, can be null and also a list
@@ -62,13 +62,23 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * @param psProjectName the PeptideShaker project name
      * @param modal if the dialog is to be modal or not
      */
-    public PrideSearchParametersDialog(PrideReshakeGUI prideReShakeGUI, File prideSearchParametersFile, String prideSearchParametersReport, 
-            ArrayList<File> mgfFiles, ArrayList<File> rawFiles, File fastaFile, String species, String speciesType, String psProjectName, boolean modal) {
+    public PrideSearchParametersDialog(
+            PrideReshakeGUI prideReShakeGUI,
+            File prideSearchParametersFile,
+            String prideSearchParametersReport,
+            ArrayList<File> spectrumFiles,
+            ArrayList<File> rawFiles,
+            File fastaFile,
+            String species,
+            String speciesType,
+            String psProjectName,
+            boolean modal
+    ) {
         super(prideReShakeGUI, modal);
         initComponents();
         this.prideReShakeGUI = prideReShakeGUI;
         this.prideSearchParametersFile = prideSearchParametersFile;
-        this.mgfFiles = mgfFiles;
+        this.spectrumFiles = spectrumFiles;
         this.rawFiles = rawFiles;
         this.fastaFile = fastaFile;
         this.species = species;
@@ -202,6 +212,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+
         prideReShakeGUI.setVisible(false);
         this.setVisible(false);
 
@@ -224,9 +235,9 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
                 public void run() {
                     try {
                         File outputFolder = null;
-                        if (!mgfFiles.isEmpty() || !rawFiles.isEmpty()) {
-                            if (!mgfFiles.isEmpty()) {
-                                outputFolder = new File(mgfFiles.get(0).getParentFile(), "search_results");
+                        if (!spectrumFiles.isEmpty() || !rawFiles.isEmpty()) {
+                            if (!spectrumFiles.isEmpty()) {
+                                outputFolder = new File(spectrumFiles.get(0).getParentFile(), "search_results");
                             } else {
                                 outputFolder = new File(rawFiles.get(0).getParentFile(), "search_results");
                             }
@@ -237,7 +248,19 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
                                 }
                             }
                         }
-                        ToolFactory.startSearchGUI(prideReShakeGUI, mgfFiles, rawFiles, fastaFile, prideSearchParametersFile, outputFolder, species, speciesType, psProjectName);
+                        ToolFactory.startSearchGUI(
+                                prideReShakeGUI,
+                                spectrumFiles,
+                                rawFiles,
+                                fastaFile,
+                                prideSearchParametersFile,
+                                outputFolder,
+                                null,
+                                species,
+                                speciesType,
+                                psProjectName
+                        );
+
                         prideReShakeGUI.getPeptideShakerGUI().close();
                     } catch (Exception e) {
                         prideReShakeGUI.getPeptideShakerGUI().catchException(e);

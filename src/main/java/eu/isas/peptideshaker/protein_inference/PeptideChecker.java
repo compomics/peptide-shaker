@@ -21,7 +21,8 @@ import java.util.TreeMap;
 public class PeptideChecker {
 
     /**
-     * Corrects the protein mapping based on the confident or inferred variable
+     * Checks that only one variable modification is assigned per site and
+     * corrects the protein mapping based on the confident or inferred variable
      * modifications when located at the protein termini or targeting amino acid
      * patterns.
      *
@@ -36,6 +37,7 @@ public class PeptideChecker {
             SequenceMatchingParameters modificationMatchingParameters
     ) {
 
+        // Updates the protein mapping
         ModificationFactory modificationFactory = ModificationFactory.getInstance();
         ModificationMatch[] variableModifications = peptide.getVariableModifications();
         TreeMap<String, int[]> proteinMapping = peptide.getProteinMapping();

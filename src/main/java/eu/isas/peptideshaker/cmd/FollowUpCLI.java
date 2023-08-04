@@ -522,7 +522,7 @@ public class FollowUpCLI extends PsdbParent {
             } catch (Exception e) {
 
                 waitingHandler.appendReport(
-                        "An error occurred while generating the DeepLC export.",
+                        "An error occurred while generating the MS2PIP export.",
                         true,
                         true
                 );
@@ -547,6 +547,7 @@ public class FollowUpCLI extends PsdbParent {
                         identificationParameters.getSequenceMatchingParameters(),
                         identificationParameters.getAnnotationParameters(),
                         identificationParameters.getModificationLocalizationParameters(),
+                        identificationParameters.getSearchParameters().getModificationParameters(),
                         sequenceProvider,
                         msFileHandler,
                         waitingHandler
@@ -555,7 +556,106 @@ public class FollowUpCLI extends PsdbParent {
             } catch (Exception e) {
 
                 waitingHandler.appendReport(
-                        "An error occurred while generating the DeepLC export.",
+                        "An error occurred while generating the Percolator export.",
+                        true,
+                        true
+                );
+
+                e.printStackTrace();
+                waitingHandler.setRunCanceled();
+
+            }
+        }
+        
+        // RT values export
+        if (followUpCLIInputBean.RTValuesExportNeeded()) {
+
+            waitingHandler.appendReport("RT values export.", true, true);
+
+            try {
+
+                CLIExportMethods.exportRTValues(
+                        followUpCLIInputBean,
+                        identification,
+                        identificationParameters.getSearchParameters(),
+                        identificationParameters.getSequenceMatchingParameters(),
+                        identificationParameters.getAnnotationParameters(),
+                        identificationParameters.getModificationLocalizationParameters(),
+                        identificationParameters.getSearchParameters().getModificationParameters(),
+                        sequenceProvider,
+                        msFileHandler,
+                        waitingHandler
+                );
+
+            } catch (Exception e) {
+
+                waitingHandler.appendReport(
+                        "An error occurred while generating the RT values export.",
+                        true,
+                        true
+                );
+
+                e.printStackTrace();
+                waitingHandler.setRunCanceled();
+
+            }
+        }
+        
+        // PSM identifiers export
+        if (followUpCLIInputBean.PSMIdentifiersExportNeeded()) {
+
+            waitingHandler.appendReport("PSM identifiers export.", true, true);
+
+            try {
+
+                CLIExportMethods.exportPSMIdentifiers(
+                        followUpCLIInputBean,
+                        identification,
+                        identificationParameters.getSearchParameters().getModificationParameters(),
+                        sequenceProvider,
+                        identificationParameters.getSequenceMatchingParameters(),
+                        msFileHandler,
+                        waitingHandler
+                );
+
+            } catch (Exception e) {
+
+                waitingHandler.appendReport(
+                        "An error occurred while generating the PSM identifiers export.",
+                        true,
+                        true
+                );
+
+                e.printStackTrace();
+                waitingHandler.setRunCanceled();
+
+            }
+        }
+        
+        // peaks intensities export
+        if (followUpCLIInputBean.peaksIntensitiesObsExportNeeded()) {
+
+            waitingHandler.appendReport("Peaks intensities export.", true, true);
+
+            try {
+
+                CLIExportMethods.exportPeaksIntensities(
+                        followUpCLIInputBean,
+                        identification,
+                        identificationParameters.getSearchParameters(),
+                        identificationParameters.getSequenceMatchingParameters(),
+                        identificationParameters.getAnnotationParameters(),
+                        identificationParameters.getModificationLocalizationParameters(),
+                        identificationParameters.getSearchParameters().getModificationParameters(),
+                        sequenceProvider,
+                        msFileHandler,
+                        waitingHandler
+                );
+
+            } catch (Exception e) {
+
+                waitingHandler.appendReport(
+                        "An error occurred while generating the peaks intensities export.",
                         true,
                         true
                 );
@@ -656,7 +756,7 @@ public class FollowUpCLI extends PsdbParent {
     private void loadSpecies() {
         try {
             SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
-            speciesFactory.initiate(PeptideShaker.getJarFilePath());
+            speciesFactory.initiate(PeptideShaker.getConfigFolder());
         } catch (Exception e) {
             System.out.println("An error occurred while loading the species.");
             e.printStackTrace();

@@ -347,6 +347,7 @@ public class ProteinProcessor {
                             identificationParameters,
                             false,
                             modificationProvider, 
+                            sequenceProvider,
                             waitingHandler
                     );
 

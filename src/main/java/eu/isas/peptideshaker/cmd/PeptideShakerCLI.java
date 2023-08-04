@@ -215,6 +215,10 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
             LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
             ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.zoodb");
             logger.setLevel(Level.toLevel("ERROR"));
+            
+            if (cliInputBean.getConfigFolder() != null) {
+                PeptideShaker.setConfigFolder(cliInputBean.getConfigFolder());
+            }
 
             setDbFolder(PeptideShaker.getMatchesFolder());
 
@@ -231,13 +235,13 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
             // Set the gene mappings
             ProteinGeneDetailsProvider geneFactory = new ProteinGeneDetailsProvider();
-            geneFactory.initialize(PeptideShaker.getJarFilePath());
+            geneFactory.initialize(PeptideShaker.getConfigFolder());
 
             // Load the species mapping
             try {
 
                 SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
-                speciesFactory.initiate(PeptideShaker.getJarFilePath());
+                speciesFactory.initiate(PeptideShaker.getConfigFolder());
 
             } catch (Exception e) {
 
@@ -889,7 +893,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                             MsFileExporter.writeMgfFile(
                                     msFileHandler,
-                                    false, // only include ms2 spectra
+                                    true,
                                     spectrumFileName,
                                     mgfFile,
                                     waitingHandler);
@@ -1610,7 +1614,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
         try {
             SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
-            speciesFactory.initiate(PeptideShaker.getJarFilePath());
+            speciesFactory.initiate(PeptideShaker.getConfigFolder());
         } catch (Exception e) {
             System.out.println("An error occurred while loading the species. " + getLogFileMessage());
             e.printStackTrace();
