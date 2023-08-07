@@ -179,27 +179,7 @@ public class TieBreaker {
                 spectrumFile,
                 spectrumTitle
         );
-try {
-    
-    nCoveredAminoAcids(
-                spectrumFile,
-                spectrumTitle,
-                peptideAssumption1,
-                spectrum,
-                true
-        );
-    nCoveredAminoAcids(
-                spectrumFile,
-                spectrumTitle,
-                peptideAssumption2,
-                spectrum,
-                true
-        );
-} catch (Exception e) {
-    
-    int debug = 1;
-    
-}
+
         int nCoveredAminoAcids1 = nCoveredAminoAcids(
                 spectrumFile,
                 spectrumTitle,

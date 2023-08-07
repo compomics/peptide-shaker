@@ -16,11 +16,14 @@ public class ExportUtils {
     private static HashSet<String> phosphorylations = null;
 
     /**
-     * Returns the names of the variable modifications containing "phospho", not case sensitive.
-     * 
-     * @param modificationParameters The modification parameters to use to get the variable modifications.
-     * 
-     * @return The names of the variable modifications containing "phospho" as a set.
+     * Returns the names of the variable modifications containing "phospho", not
+     * case sensitive.
+     *
+     * @param modificationParameters The modification parameters to use to get
+     * the variable modifications.
+     *
+     * @return The names of the variable modifications containing "phospho" as a
+     * set.
      */
     public static HashSet<String> getPhosphorylations(
             ModificationParameters modificationParameters

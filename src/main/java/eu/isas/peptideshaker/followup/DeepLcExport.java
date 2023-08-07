@@ -1,11 +1,9 @@
 package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
-import com.compomics.util.experiment.biology.proteins.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.SpectrumMatchesIterator;
-import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.spectrum_assumptions.PeptideAssumption;
 import com.compomics.util.experiment.io.biology.protein.SequenceProvider;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
@@ -22,7 +20,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.stream.Collectors;
 
 /**
@@ -35,10 +32,11 @@ public class DeepLcExport {
 
     /**
      * Exports DeepLC training files for each of the spectrum files.Returns an
- ArrayList of the files exported.
+     * ArrayList of the files exported.
      *
      * @param destinationStem The stem to use for the path.
-     * @param percolatorBenchmarkResultsFile The file containing Percolator results for all PSMs.
+     * @param percolatorBenchmarkResultsFile The file containing Percolator
+     * results for all PSMs.
      * @param identification The identification object containing the matches.
      * @param modificationParameters The modification parameters.
      * @param sequenceMatchingParameters The sequence matching parameters.
@@ -58,9 +56,9 @@ public class DeepLcExport {
             SpectrumProvider spectrumProvider,
             WaitingHandler waitingHandler
     ) {
-        
+
         HashMap<String, Double> confidenceScores = null;
-        if (percolatorBenchmarkResultsFile != null){
+        if (percolatorBenchmarkResultsFile != null) {
             confidenceScores = getPercolatorResults(percolatorBenchmarkResultsFile);
         }
 
@@ -99,12 +97,13 @@ public class DeepLcExport {
         return getExportedFiles(destinationStem, identification);
 
     }
-    
+
     /**
      * Parses the confidence scores from Percolator.
      *
-     * Expected format (tab delimited): PSMId   score   q-value   posterior_error_prob   peptide   proteinIds
-     * 644797219919995671_-2456456211135484764   5.52233   2.92539e-05   3.80375e-05   -.TINQSLLTPLHVEID.-   -
+     * Expected format (tab delimited): PSMId score q-value posterior_error_prob
+     * peptide proteinIds 644797219919995671_-2456456211135484764 5.52233
+     * 2.92539e-05 3.80375e-05 -.TINQSLLTPLHVEID.- -
      *
      * @param percResultsFile
      * @return
@@ -115,7 +114,7 @@ public class DeepLcExport {
 
         HashMap<String, Double> result = new HashMap<>();
 
-        try (SimpleFileReader reader = SimpleFileReader.getFileReader(percResultsFile)) {
+        try ( SimpleFileReader reader = SimpleFileReader.getFileReader(percResultsFile)) {
 
             String line = reader.readLine();
 
@@ -124,18 +123,18 @@ public class DeepLcExport {
                 String[] lineSplit = line.split("\t");
 
                 String key = lineSplit[0];
-                
+
                 double q_value = Double.parseDouble(lineSplit[2]);
-                
-                if (result.get(key) == null){
-                    
+
+                if (result.get(key) == null) {
+
                     result.put(key, q_value);
-                    
+
                 }
 
             }
         }
-        
+
         return result;
 
     }
@@ -195,7 +194,7 @@ public class DeepLcExport {
      *
      * @param destinationStem The stem to use for the path.
      * @param spectrumFile The name of the spectrum file.
-     * @param addSuffix A boolean indicating whehter the name of the spectrum
+     * @param addSuffix A boolean indicating whether the name of the spectrum
      * file should be appended to the stem.
      *
      * @return The file where to write the export.
@@ -230,7 +229,7 @@ public class DeepLcExport {
      *
      * @param destinationStem The stem to use for the path.
      * @param spectrumFile The name of the spectrum file.
-     * @param addSuffix A boolean indicating whehter the name of the spectrum
+     * @param addSuffix A boolean indicating whether the name of the spectrum
      * file should be appended to the stem.
      *
      * @return The file where to write the export.
@@ -296,14 +295,14 @@ public class DeepLcExport {
 
         HashSet<Long> processedPeptideKeys = new HashSet<>();
         SimpleSemaphore writingSemaphore = new SimpleSemaphore(1);
-        
+
         HashSet<Long> processedConfidentPeptideKeys = new HashSet<>();
 
-        try (SimpleFileWriter writer = new SimpleFileWriter(destinationFile, true)) {
+        try ( SimpleFileWriter writer = new SimpleFileWriter(destinationFile, true)) {
 
             writer.writeLine("seq,modifications,tr");
 
-            try (SimpleFileWriter writerConfident = new SimpleFileWriter(confidentHitsDestinationFile, true)) {
+            try ( SimpleFileWriter writerConfident = new SimpleFileWriter(confidentHitsDestinationFile, true)) {
 
                 writerConfident.writeLine("seq,modifications,tr");
 
@@ -352,7 +351,7 @@ public class DeepLcExport {
                                             writer
                                     )
                             );
-                    
+
                     // Export all confident candidate peptides
                     //SpectrumMatch tempSpectrumMatch2 = spectrumMatch;
                     tempSpectrumMatch.getAllPeptideAssumptions()
@@ -374,7 +373,6 @@ public class DeepLcExport {
                             );
 
                     // Check whether the spectrum yielded a confident peptide
-                    
                     /*if (spectrumMatch.getBestPeptideAssumption() != null
                             && ((PSParameter) spectrumMatch.getUrParam(PSParameter.dummy))
                                     .getMatchValidationLevel()
@@ -396,7 +394,6 @@ public class DeepLcExport {
                         );
 
                     }*/
-                    
                 }
             }
         }
@@ -429,10 +426,10 @@ public class DeepLcExport {
             SimpleSemaphore writingSemaphore,
             SimpleFileWriter writer
     ) {
-        
-        if (confidenceScores != null){
+
+        if (confidenceScores != null) {
             // PSM id
-            long spectrumKey = spectrumMatch.getKey();            
+            long spectrumKey = spectrumMatch.getKey();
             // Get peptide data
             String peptideData = Ms2PipUtils.getPeptideData(
                     peptideAssumption,
@@ -446,13 +443,13 @@ public class DeepLcExport {
             String peptideID = Long.toString(peptideMs2PipKey);
 
             String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
-            
+
             double q_value = confidenceScores.get(psmID);
-            if (q_value > 0.01){
+            if (q_value > 0.01) {
                 return;
             }
         }
-        
+
         // Get peptide data
         String peptideData = DeepLcUtils.getPeptideData(
                 peptideAssumption,
@@ -472,7 +469,7 @@ public class DeepLcExport {
         if (!processedPeptides.contains(peptideKey)) {
 
             writer.writeLine(peptideData);
-            
+
             processedPeptides.add(peptideKey);
 
         }

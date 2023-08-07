@@ -45,15 +45,15 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The PTM investigated.
+     * The modification investigated.
      */
     private Modification ptm;
     /**
-     * The PTM factory.
+     * The modification factory.
      */
     private ModificationFactory modificationFactory = ModificationFactory.getInstance();
     /**
-     * The peptide PTM scoring.
+     * The peptide modification scoring.
      */
     private PSModificationScores peptidePtmScore = null;
     /**
@@ -65,16 +65,16 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
      */
     private ArrayList<SpectrumMatch> psms = new ArrayList<>();
     /**
-     * Main PTM site selection.
+     * Main modification site selection.
      */
     private boolean[] mainSelection;
     /**
-     * Secondary PTM site selection.
+     * Secondary modification site selection.
      */
     private boolean[] secondarySelection;
     /**
-     * PTM confidence tooltip map, key: PTM confidence type, element: PTM
-     * confidence as a string.
+     * Modification confidence tooltip map, key: modification confidence type,
+     * element: modification confidence as a string.
      */
     private HashMap<Integer, String> ptmConfidenceTooltipMap;
 
@@ -83,7 +83,7 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
      *
      * @param peptideShakerGUI the main GUI
      * @param peptideKey the peptide key of the investigated peptide
-     * @param modification the PTM investigated
+     * @param modification the modification investigated
      */
     public ModificationSiteInferenceDialog(PeptideShakerGUI peptideShakerGUI, long peptideKey, Modification modification) {
         super(peptideShakerGUI, true);
@@ -95,37 +95,37 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
         Identification identification = peptideShakerGUI.getIdentification();
         peptideMatch = identification.getPeptideMatch(peptideKey);
         Peptide peptide = peptideMatch.getPeptide();
-        
-            mainSelection = new boolean[peptide.getSequence().length()];
-            secondarySelection = new boolean[peptide.getSequence().length()];
-            
-            for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
-                
-                Modification tempMod = modificationFactory.getModification(modificationMatch.getModification());
-                
-                if (tempMod.getMass() == ptmMass) {
-                    
-                    int site = modificationMatch.getSite();
-                    
-                    if (modificationMatch.getConfident()) {
-                        
-                        mainSelection[site - 1] = true;
-                        
-                    } else {
-                        
-                        secondarySelection[site - 1] = true;
-                        
-                    }
+
+        mainSelection = new boolean[peptide.getSequence().length()];
+        secondarySelection = new boolean[peptide.getSequence().length()];
+
+        for (ModificationMatch modificationMatch : peptide.getVariableModifications()) {
+
+            Modification tempMod = modificationFactory.getModification(modificationMatch.getModification());
+
+            if (tempMod.getMass() == ptmMass) {
+
+                int site = modificationMatch.getSite();
+
+                if (modificationMatch.getConfident()) {
+
+                    mainSelection[site - 1] = true;
+
+                } else {
+
+                    secondarySelection[site - 1] = true;
+
                 }
             }
+        }
 
         psms.addAll(
                 identification.retrieveObjects(
-                        Arrays.stream(peptideMatch.getSpectrumMatchesKeys()).boxed().collect(Collectors.toList()), 
-                        null, 
+                        Arrays.stream(peptideMatch.getSpectrumMatchesKeys()).boxed().collect(Collectors.toList()),
+                        null,
                         false
                 )
-                .stream()
+                        .stream()
                         .map(
                                 object -> (SpectrumMatch) object
                         )
@@ -148,7 +148,7 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
 
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
-        
+
     }
 
     /**
@@ -219,17 +219,17 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
         Peptide peptide = peptideMatch.getPeptide();
 
         String[] allFixedModifications = peptide.getFixedModifications(
-                        modificationParameters, 
-                        sequenceProvider, 
-                        modificationSequenceMatchingParameters
-                );
+                modificationParameters,
+                sequenceProvider,
+                modificationSequenceMatchingParameters
+        );
         String[] displayedFixedModifications = DisplayFeaturesGenerator.getDisplayedModifications(
-                allFixedModifications, 
+                allFixedModifications,
                 displayParameters.getDisplayedModifications()
         );
 
         String[] confidentLocations = DisplayFeaturesGenerator.getFilteredConfidentModificationsSites(
-                peptide, 
+                peptide,
                 displayParameters.getDisplayedModifications()
         );
         String[] ambiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModifications(peptide, displayParameters.getDisplayedModifications());
@@ -262,16 +262,16 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
         }
 
         String taggedModifiedSequence = PeptideUtils.getTaggedModifiedSequence(
-                peptide, 
+                peptide,
                 modificationParameters,
                 allFixedModifications,
-                peptide.getIndexedVariableModifications(), 
-                confidentLocations, 
-                ambiguousLocations, 
-                null, 
-                displayedFixedModifications, 
-                true, 
-                true, 
+                peptide.getIndexedVariableModifications(),
+                confidentLocations,
+                ambiguousLocations,
+                null,
+                displayedFixedModifications,
+                true,
+                true,
                 true
         );
         sequenceLabel.setText(taggedModifiedSequence);
@@ -611,14 +611,16 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
         boolean changed = false;
 
         if (changed) {
+
             try {
                 // save changes in the peptide match
                 Identification identification = peptideShakerGUI.getIdentification();
 
                 // update protein level PTM scoring
                 ModificationLocalizationScorer ptmScorer = new ModificationLocalizationScorer();
-        SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
+                SequenceProvider sequenceProvider = peptideShakerGUI.getSequenceProvider();
                 IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+
                 identification.getProteinMatches(peptideMatch.getKey())
                         .stream()
                         .map(
@@ -626,10 +628,10 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
                         )
                         .forEach(
                                 proteinMatch -> ptmScorer.scorePTMs(
-                                        identification, 
-                                        proteinMatch, 
-                                        identificationParameters, 
-                                        false, 
+                                        identification,
+                                        proteinMatch,
+                                        identificationParameters,
+                                        false,
                                         modificationFactory,
                                         sequenceProvider,
                                         null
@@ -639,7 +641,9 @@ public class ModificationSiteInferenceDialog extends javax.swing.JDialog {
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
             }
+
         }
+
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
