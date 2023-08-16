@@ -39,6 +39,7 @@ public class DeepLcExport {
      *
      * @param destinationStem The stem to use for the path.
      * @param percolatorBenchmarkResultsFile The file containing Percolator results for all PSMs.
+     * @param rtApexFile The file containing rt apex information for all PSMs.
      * @param identification The identification object containing the matches.
      * @param modificationParameters The modification parameters.
      * @param sequenceMatchingParameters The sequence matching parameters.
@@ -51,6 +52,7 @@ public class DeepLcExport {
     public static ArrayList<File> deepLcExport(
             String destinationStem,
             File percolatorBenchmarkResultsFile,
+            File rtApexFile,
             Identification identification,
             ModificationParameters modificationParameters,
             SequenceMatchingParameters sequenceMatchingParameters,
@@ -63,6 +65,11 @@ public class DeepLcExport {
         if (percolatorBenchmarkResultsFile != null){
             confidenceScores = getPercolatorResults(percolatorBenchmarkResultsFile);
         }
+        
+        HashMap<String, Double> rtApex = null;
+        if (rtApexFile != null){
+            rtApex = getRtApexInfo(rtApexFile);
+        }
 
         HashMap<String, HashSet<Long>> spectrumIdentificationMap = identification.getSpectrumIdentification();
 
@@ -71,6 +78,7 @@ public class DeepLcExport {
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
         HashMap<String, Double> confScores = confidenceScores;
+        HashMap<String, Double> retentionTimeApex = rtApex;
         spectrumIdentificationMap.entrySet()
                 .parallelStream()
                 .forEach(
@@ -86,6 +94,7 @@ public class DeepLcExport {
                                         spectrumIdentificationMap.size() > 1
                                 ),
                                 confScores,
+                                retentionTimeApex,
                                 entry.getValue(),
                                 identification,
                                 modificationParameters,
@@ -130,6 +139,46 @@ public class DeepLcExport {
                 if (result.get(key) == null){
                     
                     result.put(key, q_value);
+                    
+                }
+
+            }
+        }
+        
+        return result;
+
+    }
+    
+    /**
+     * Parses the rt apex information for all PSMs.
+     *
+     * Expected format (comma delimited): PSMId   rt_apex
+     * 644797219919995671_-2456456211135484764   1435.52233   
+     *
+     * @param rtApexFile
+     * @return Map of PSMIds to rt apex
+     */
+    public static HashMap<String, Double> getRtApexInfo(
+            File rtApexFile
+    ) {
+
+        HashMap<String, Double> result = new HashMap<>();
+
+        try (SimpleFileReader reader = SimpleFileReader.getFileReader(rtApexFile)) {
+
+            String line = reader.readLine();
+
+            while ((line = reader.readLine()) != null) {
+
+                String[] lineSplit = line.split(",");
+
+                String key = lineSplit[0];
+                
+                double rtApex = Double.parseDouble(lineSplit[1]);
+                
+                if (result.get(key) == null){
+                    
+                    result.put(key, rtApex);
                     
                 }
 
@@ -271,6 +320,7 @@ public class DeepLcExport {
      * @param confidentHitsDestinationFile The file where to write the export
      * for confident hits.
      * @param confidenceScores Confidence score for each PSM.
+     * @param rtApex RT apex for each PSM
      * @param keys The keys of the spectrum matches.
      * @param identification The identification object containing the matches.
      * @param modificationParameters The modification parameters.
@@ -283,6 +333,7 @@ public class DeepLcExport {
             File destinationFile,
             File confidentHitsDestinationFile,
             HashMap<String, Double> confidenceScores,
+            HashMap<String, Double>  rtApex,
             HashSet<Long> keys,
             Identification identification,
             ModificationParameters modificationParameters,
@@ -340,6 +391,7 @@ public class DeepLcExport {
                             .forEach(
                                     peptideAssumption -> writePeptideCandidate(
                                             null,
+                                            rtApex,
                                             peptideAssumption,
                                             retentionTime,
                                             tempSpectrumMatch,
@@ -360,6 +412,7 @@ public class DeepLcExport {
                             .forEach(
                                     peptideAssumption -> writePeptideCandidate(
                                             confidenceScores,
+                                            rtApex,
                                             peptideAssumption,
                                             retentionTime,
                                             tempSpectrumMatch,
@@ -405,6 +458,8 @@ public class DeepLcExport {
     /**
      * Writes a peptide candidate to the export if not done already.
      *
+     * @param confidenceScores Percolator score with standard features for all PSMs.
+     * @param rtApex RT apex info for all PSMs
      * @param peptideAssumption The peptide assumption to write.
      * @param modificationParameters The modification parameters.
      * @param sequenceMatchingParameters The sequence matching parameters.
@@ -418,6 +473,7 @@ public class DeepLcExport {
      */
     private static void writePeptideCandidate(
             HashMap<String, Double> confidenceScores,
+            HashMap<String, Double> rtApex,
             PeptideAssumption peptideAssumption,
             double retentionTime,
             SpectrumMatch spectrumMatch,
@@ -430,23 +486,23 @@ public class DeepLcExport {
             SimpleFileWriter writer
     ) {
         
-        if (confidenceScores != null){
-            // PSM id
-            long spectrumKey = spectrumMatch.getKey();            
-            // Get peptide data
-            String peptideData = Ms2PipUtils.getPeptideData(
-                    peptideAssumption,
-                    modificationParameters,
-                    sequenceProvider,
-                    sequenceMatchingParameters,
-                    modificationFactory
-            );
-            // Get corresponding key
-            long peptideMs2PipKey = Ms2PipUtils.getPeptideKey(peptideData);
-            String peptideID = Long.toString(peptideMs2PipKey);
+        // PSM id
+        long spectrumKey = spectrumMatch.getKey();            
+        // Get peptide data
+        String peptideDataMs2Pip = Ms2PipUtils.getPeptideData(
+                peptideAssumption,
+                modificationParameters,
+                sequenceProvider,
+                sequenceMatchingParameters,
+                modificationFactory
+        );
+        // Get corresponding key
+        long peptideMs2PipKey = Ms2PipUtils.getPeptideKey(peptideDataMs2Pip);
+        String peptideID = Long.toString(peptideMs2PipKey);
 
-            String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
-            
+        String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
+        
+        if (confidenceScores != null){
             double q_value = confidenceScores.get(psmID);
             if (q_value > 0.01){
                 return;
@@ -454,17 +510,46 @@ public class DeepLcExport {
         }
         
         // Get peptide data
-        String peptideData = DeepLcUtils.getPeptideData(
+        String peptideData = "";
+        
+        //Check if rt apex info is available
+        if (rtApex != null){
+            double retentionTimeApex = rtApex.get(psmID);
+            peptideData = DeepLcUtils.getPeptideData(
+                peptideAssumption,
+                retentionTimeApex,
+                modificationParameters,
+                sequenceProvider,
+                sequenceMatchingParameters,
+                modificationFactory
+            );
+        }
+        else{
+            DeepLcUtils.getPeptideData(
                 peptideAssumption,
                 retentionTime,
                 modificationParameters,
                 sequenceProvider,
                 sequenceMatchingParameters,
                 modificationFactory
-        );
+            );
+        }
 
         // Get corresponding key
         long peptideKey = DeepLcUtils.getPeptideKey(peptideData);
+        
+        //Check if rt apex info is available
+        if (rtApex != null){
+            double retentionTimeApex = rtApex.get(psmID);
+            peptideData = DeepLcUtils.getPeptideData(
+                peptideAssumption,
+                retentionTimeApex,
+                modificationParameters,
+                sequenceProvider,
+                sequenceMatchingParameters,
+                modificationFactory
+            );
+        }
 
         // Export if not done already
         writingSemaphore.acquire();

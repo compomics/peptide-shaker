@@ -77,4 +77,15 @@ public class PercolatorExportTest extends TestCase {
         Assert.assertTrue(percolatorExport.equals(expectedResult));
 
     }
+    
+    //TODO: for DeepLC newest version
+    /*public void testDeepLCoutput() {
+        String sequence1 = "VIEHIM[Oxidation]EDLDTNADKQ[Deamidated]LSFEEFIM[Oxidation]LM[Oxidation]AR";
+        String expectedResult1 = "VIEHIMEDLDTNADKQLSFEEFIMLMAR,6|Oxidation|16|Deamidated|24|Oxidation|26|Oxidation";
+        
+        String sequence2 = "[Acetyl]-VSLDPFRN[Deamidated]HVGC[Carbamidomethyl]C[Carbamidomethyl]NLC[Carbamidomethyl]LFLGK";
+        String expectedResult2 = "VSLDPFRNHVGCCNLCLFLGK,12|Carbamidomethyl|13|Carbamidomethyl|16|Carbamidomethyl|0|Acetyl|8|Deamidated";
+        
+        
+    }*/
 }

@@ -333,10 +333,12 @@ public class CLIExportMethods {
 
         String destinationStem = followUpCLIInputBean.getDeepLcStem();
         File percolatorBenchmarkResultsFile = followUpCLIInputBean.getPercolatorBenchmarkResultsFile();
+        File rtApexFile = followUpCLIInputBean.getRtApexFile();
 
         return DeepLcExport.deepLcExport(
                 destinationStem,
                 percolatorBenchmarkResultsFile,
+                rtApexFile,
                 identification, 
                 modificationParameters, 
                 sequenceMatchingParameters, 
@@ -414,6 +416,7 @@ public class CLIExportMethods {
 
         File deepLcFile = followUpCLIInputBean.getPercolatorRtFile();
         File ms2pipFile = followUpCLIInputBean.getPercolatorFragmentationFile();
+        File rtApexFile = followUpCLIInputBean.getRtApexFile();
         File destinationFile = followUpCLIInputBean.getPercolatorFile();
         
         File rtObsPredsFile = followUpCLIInputBean.getRTObsPredsFile();
@@ -422,6 +425,7 @@ public class CLIExportMethods {
                 destinationFile, 
                 deepLcFile,
                 rtObsPredsFile,
+                rtApexFile,
                 ms2pipFile, 
                 identification, 
                 searchParameters, 

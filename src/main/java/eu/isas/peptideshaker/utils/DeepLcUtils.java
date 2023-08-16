@@ -50,7 +50,7 @@ public class DeepLcUtils {
     /**
      * Returns the modifications of the peptides encoded as required by DeepLc.
      *
-     * @param peptide The pepitde.
+     * @param peptide The peptide.
      * @param modificationParameters The modification parameters of the search.
      * @param sequenceMatchingParameters The sequence matching parameters.
      * @param sequenceProvider The sequence provider.

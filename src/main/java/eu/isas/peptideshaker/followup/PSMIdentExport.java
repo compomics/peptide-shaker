@@ -54,7 +54,7 @@ public class PSMIdentExport {
 
         try (SimpleFileWriter writer = new SimpleFileWriter(psmIdentifiersFile, true)){
             
-            String header = String.join("\t", "PSMId", "SpectrumTitle", "SpectrumFilename", "Proteins", "Position", "Sequence", "SequenceWithMods");
+            String header = String.join("\t", "PSMId", "SpectrumTitle", "SpectrumFilename", "Proteins", "Position", "Sequence", "SequenceWithMods", "measured_mz", "measured_rt");
             
             writer.writeLine(header);
             
@@ -102,6 +102,7 @@ public class PSMIdentExport {
                                         modificationParameters,
                                         sequenceProvider,
                                         sequenceMatchingParameters,
+                                        spectrumProvider,
                                         writingSemaphore,
                                         writer
                                 )
@@ -120,6 +121,7 @@ public class PSMIdentExport {
             ModificationParameters modificationParameters,
             SequenceProvider sequenceProvider,
             SequenceMatchingParameters sequenceMatchingParameters,
+            SpectrumProvider spectrumProvider,
             SimpleSemaphore writingSemaphore,
             SimpleFileWriter writer
     ){
@@ -175,8 +177,16 @@ public class PSMIdentExport {
         
         String peptideSeqWithMods = PercolatorUtils.getSequenceWithModifications(peptide, modificationParameters, sequenceProvider, sequenceMatchingParameters, modificationFactory);
         
+        //Get measured mz
+        double measuredMz = spectrumProvider.getPrecursorMz(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
+        String measuredMzstr = String.valueOf(measuredMz);
+        
+        //Get measured rt
+        double measuredRt = spectrumProvider.getPrecursorRt(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
+        String measuredRtstr = String.valueOf(measuredRt);  
+        
         // Get PSM data
-        String psmData = String.join("\t",psmID, spectrumTitle, spectraFilenames, proteins.toString(), positions.toString(), peptideSequence, peptideSeqWithMods);
+        String psmData = String.join("\t",psmID, spectrumTitle, spectraFilenames, proteins.toString(), positions.toString(), peptideSequence, peptideSeqWithMods, measuredMzstr, measuredRtstr);
         
         // Export if not done already
         writingSemaphore.acquire();

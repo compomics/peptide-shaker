@@ -93,6 +93,7 @@ public class PercolatorUtils {
 
         if (rtPredictionsAvailable) {
             header.append("\t").append("measured_rt");
+            header.append("\t").append("rt_apex_dist");
             header.append("\t").append("rt_Abs_error");
             header.append("\t").append("rt_Square_error");
             header.append("\t").append("rt_Log_error");
@@ -140,6 +141,7 @@ public class PercolatorUtils {
                         "\t",
                         "PSMId",
                         "Decoy",
+                        "measured_mz",
                         "measured_rt",
                         "predicted_rt",
                         "scaled_measured_rt",
@@ -158,6 +160,7 @@ public class PercolatorUtils {
      * @param spectrumMatch The spectrum match where the peptide was found.
      * @param peptideAssumption The peptide assumption.
      * @param peptideRTs The retention time predictions for this peptide.
+     * @param retentionTimeApex The rt apex for this PSM.
      * @param predictedSpectra The predicted mass spectra for this peptide.
      * @param searchParameters The parameters of the search.
      * @param sequenceProvider The sequence provider.
@@ -176,6 +179,8 @@ public class PercolatorUtils {
             SpectrumMatch spectrumMatch,
             PeptideAssumption peptideAssumption,
             ArrayList<Double> peptideRTs,
+            double retentionTimeApex,
+            double maxApexDist,
             ArrayList<Spectrum> predictedSpectra,
             SearchParameters searchParameters,
             SequenceProvider sequenceProvider,
@@ -363,43 +368,34 @@ public class PercolatorUtils {
 
         // Retention time
         if (peptideRTs != null) {
-
-            /*double measuredRt = spectrumProvider.getPrecursorRt(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
-
-            double rtAbsError = predictedRts == null ? Double.NaN : predictedRts.stream()
-                    .mapToDouble(
-                            predictedRt -> Math.abs(predictedRt - measuredRt)
-                    )
-                    .min()
-                    .orElse(Double.NaN);
             
-            double rtSqrError = predictedRts == null ? Double.NaN : predictedRts.stream()
-                    .mapToDouble(
-                            predictedRt -> Math.pow((predictedRt - measuredRt),2)
-                    )
-                    .min()
-                    .orElse(Double.NaN);
-            
-            double rtLogError = predictedRts == null ? Double.NaN : predictedRts.stream()
-                    .mapToDouble(
-                            predictedRt -> (Math.log(predictedRt) - Math.log(measuredRt))
-                    )
-                    .min()
-                    .orElse(Double.NaN);*/
             double measuredRt = peptideRTs.get(0);
+            
+            //used rt to compare with prediction (apex, or measured)
+            double referenceMeasuredRT = measuredRt;
+            
+            //Maximum distance to penalize PSMs where the apex was not found
+            double rtApexDist = maxApexDist*10.0;
+            if (retentionTimeApex != measuredRt){ //rt apex is available
+                referenceMeasuredRT = retentionTimeApex;
+                rtApexDist = Math.abs(retentionTimeApex - measuredRt);
+            }
+            
+            
             double predictedRT = peptideRTs.get(1);
-            double rtAbsError = Math.abs(predictedRT - measuredRt);
-            double rtSqrError = Math.pow((predictedRT - measuredRt), 2);
+            double rtAbsError = Math.abs(predictedRT - referenceMeasuredRT);
+            double rtSqrError = Math.pow((predictedRT - referenceMeasuredRT), 2);
 
             if (predictedRT < 0.0) {
                 predictedRT = 0.0000000001;
             }
-            if (measuredRt < 0.0) {
-                measuredRt = 0.0000000001;
+            if (referenceMeasuredRT < 0.0) {
+                referenceMeasuredRT = 0.0000000001;
             }
-            double rtLogError = Math.abs(Math.log(predictedRT) - Math.log(measuredRt));
+            double rtLogError = Math.abs(Math.log(predictedRT) - Math.log(referenceMeasuredRT));
 
             line.append("\t").append(measuredRt);
+            line.append("\t").append(rtApexDist);
             line.append("\t").append(rtAbsError);
             line.append("\t").append(rtSqrError);
             line.append("\t").append(rtLogError);
@@ -1167,6 +1163,7 @@ public class PercolatorUtils {
             PeptideAssumption peptideAssumption,
             ModificationParameters modificationParameters,
             ArrayList<Double> peptideRTs,
+            SearchParameters searchParameters,
             SequenceProvider sequenceProvider,
             SpectrumProvider spectrumProvider,
             SequenceMatchingParameters sequenceMatchingParameters,
@@ -1195,8 +1192,13 @@ public class PercolatorUtils {
 
         // Label
         String decoyFlag = PeptideUtils.isDecoy(peptideAssumption.getPeptide(), sequenceProvider) ? "-1" : "1";
+        
+        //measured m/z
+        double[] measuredMzInfo = getMeasuredAndDeltaMzFeature(spectrumMatch, peptideAssumption, searchParameters, spectrumProvider);
+        
 
         line.append("\t").append(decoyFlag);
+        line.append("\t").append(measuredMzInfo[0]);
         line.append("\t").append(peptideRTs.get(0));
         line.append("\t").append(peptideRTs.get(1));
         line.append("\t").append(peptideRTs.get(2));

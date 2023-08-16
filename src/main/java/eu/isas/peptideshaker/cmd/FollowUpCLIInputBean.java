@@ -100,9 +100,13 @@ public class FollowUpCLIInputBean {
      */
     private String deepLcStem = null;
     /**
-     * The file where to write the RT observed and predicted values.
+     * The file with Percolator results with standard features.
      */
     private File percBenchResultsFile = null;
+    /**
+     * The file containing rt apex information.
+     */
+    private File rtApexFile = null;
     /**
      * The file to use for the path to ms2pip peptides.
      */
@@ -219,6 +223,18 @@ public class FollowUpCLIInputBean {
         if (aLine.hasOption(FollowUpCLIParams.DEEPLC_FILE.id)) {
             
             deepLcStem = aLine.getOptionValue(FollowUpCLIParams.DEEPLC_FILE.id);
+            
+        }
+        
+        if (aLine.hasOption(FollowUpCLIParams.RT_APEX_FILE.id)){
+            
+            rtApexFile = new File(aLine.getOptionValue(FollowUpCLIParams.RT_APEX_FILE.id));
+            
+            if (!rtApexFile.getParentFile().exists()) {
+                
+                throw new IllegalArgumentException("RT apex information file '" + rtApexFile + "' not found.");
+                
+            }
             
         }
         
@@ -467,6 +483,15 @@ public class FollowUpCLIInputBean {
      */
     public String getDeepLcStem() {
         return deepLcStem;
+    }
+    
+    /**
+     * Returns the file where to read rt apex info.
+     * 
+     * @return The file where to read rt apex info.
+     */
+    public File getRtApexFile() {
+        return rtApexFile;
     }
 
     /**

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Level;
@@ -47,6 +48,7 @@ public class PercolatorExport {
      * @param deepLcFile The deepLC results.
      * @param rtObsPredsFile The file to write RT observed and predicted values
      * per PSM.
+     * @param rtApexFile The file containing rt apex info for all PSMs.
      * @param ms2pipFile The ms2pip results.
      * @param identification The identification object containing the matches.
      * @param searchParameters The search parameters.
@@ -62,6 +64,7 @@ public class PercolatorExport {
             File destinationFile,
             File deepLcFile,
             File rtObsPredsFile,
+            File rtApexFile,
             File ms2pipFile,
             Identification identification,
             SearchParameters searchParameters,
@@ -84,6 +87,12 @@ public class PercolatorExport {
             rtPrediction = getRtPrediction(deepLcFile);
 
         }
+        
+        // Parse rt apex information
+        HashMap<String, Double> rtApex = null;
+        if (rtApexFile != null){
+            rtApex = DeepLcExport.getRtApexInfo(rtApexFile);
+        }
 
         // Parse fragmentation prediction
         HashMap<String, ArrayList<Spectrum>> fragmentationPrediction = null;
@@ -104,6 +113,7 @@ public class PercolatorExport {
                     destinationFile,
                     rtObsPredsFile,
                     rtPrediction,
+                    rtApex,
                     fragmentationPrediction,
                     identification,
                     searchParameters,
@@ -142,6 +152,9 @@ public class PercolatorExport {
             while ((line = reader.readLine()) != null) {
 
                 String[] lineSplit = line.split(",");
+                
+                //TODO: needed different output parsing for DeepLC newest version
+                //String key = transformDeepLCOutputSeq(lineSplit[1]);
 
                 String key = String.join(",", lineSplit[1], lineSplit[2]);
 
@@ -174,6 +187,86 @@ public class PercolatorExport {
         return result;
 
     }
+    
+    //TODO: for DeepLC newest version
+    /**
+     * Transforms the string representation of the peptide sequence
+     * from the output of DeepLC to the same format we give it as input.
+     *
+     * Input example: [Acetyl]-VSLDPFRN[Deamidated]HVGC[Carbamidomethyl]C[Carbamidomethyl]NLC[Carbamidomethyl]LFLGK
+     * Output example: VSLDPFRNHVGCCNLCLFLGK,12|Carbamidomethyl|13|Carbamidomethyl|16|Carbamidomethyl|0|Acetyl|8|Deamidated
+     * 
+     * (order of PTMs on the output should not matter)
+     *
+     * @param deepLcFile File with RT predictions from DeepLC.
+     * @return
+     */
+    /*private static String transformDeepLCOutputSeq(
+            String deepLCoutputSeq
+    ) {
+        String deepLCcorrectFormat="";
+        
+        String x = deepLCoutputSeq.replace("-", "");
+        
+        //TODO: reformat the PTMs and the peptide sequence like we get it from DeepLCUtils
+        
+        return deepLCcorrectFormat;
+    }*/
+    
+    /**
+     * Finds distance between rt apex and measured rt for a PSM and adds it to a HashMap.
+     * 
+     * 
+     * @param rtApex HashMap: PSMId to rt apex.
+     * @param rtApexDists HashMap: PSMId to (rt apex - measured rt)
+     * @param spectrumMatch
+     * @param spectrumProvider
+     * @param sequenceProvider
+     * @param sequenceMatchingParameters
+     * @param modificationFactory
+     * @param modificationParameters
+     * @param peptideAssumption
+     * @return
+     */
+    private static double findApexDist(
+            HashMap<String, Double> rtApex,
+            HashMap<String, Double> rtApexDists,
+            SpectrumMatch spectrumMatch,
+            SpectrumProvider spectrumProvider,
+            SequenceProvider sequenceProvider,
+            SequenceMatchingParameters sequenceMatchingParameters,
+            ModificationFactory modificationFactory,
+            ModificationParameters modificationParameters,
+            PeptideAssumption peptideAssumption
+    ){
+        
+        double measuredRt = spectrumProvider.getPrecursorRt(spectrumMatch.getSpectrumFile(), spectrumMatch.getSpectrumTitle());
+
+        // PSM id
+        long spectrumKey = spectrumMatch.getKey();            
+        // Get peptide data from ms2pip export
+        String peptideDataMs2Pip = Ms2PipUtils.getPeptideData(
+                peptideAssumption,
+                modificationParameters,
+                sequenceProvider,
+                sequenceMatchingParameters,
+                modificationFactory
+        );
+        // Get corresponding ms2pip key
+        long peptideMs2PipKey = Ms2PipUtils.getPeptideKey(peptideDataMs2Pip);
+        String peptideID = Long.toString(peptideMs2PipKey);
+
+        String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
+        
+        double psmApex = rtApex.get(psmID);
+        
+        double psmApexDist = Math.abs(psmApex - measuredRt);
+        
+        rtApexDists.put(psmID, psmApexDist);
+        
+        return psmApexDist;
+    }
+    
 
     /**
      * Parses the peaks intensities prediction from MS2PIP.
@@ -387,6 +480,7 @@ public class PercolatorExport {
      * @param rtObsPredsFile The file to write RT observed and predicted values
      * per PSM.
      * @param rtPrediction The retention time prediction.
+     * @param rtApex The rt apex for each PSM.
      * @param fragmentationPrediction The fragmentation prediction.
      * @param identification The identification object containing the matches.
      * @param searchParameters The search parameters.
@@ -407,6 +501,7 @@ public class PercolatorExport {
             File destinationFile,
             File rtObsPredsFile,
             HashMap<String, ArrayList<Double>> rtPrediction,
+            HashMap<String, Double> rtApex,
             HashMap<String, ArrayList<Spectrum>> fragmentationPrediction,
             Identification identification,
             SearchParameters searchParameters,
@@ -491,11 +586,37 @@ public class PercolatorExport {
 
                         }
                     }
+                    
+                    //Find maximum distance between rt apex and measured rt
+                    HashMap<String, Double> rtApexDists = new HashMap<>();
+                    if (rtApex != null){
+                        SpectrumMatch tempSpectrumMatch = spectrumMatch;
+                        tempSpectrumMatch.getAllPeptideAssumptions()
+                            .forEach(
+                                    peptideAssumption -> findApexDist(
+                                           rtApex,
+                                           rtApexDists,
+                                           tempSpectrumMatch,
+                                           spectrumProvider,
+                                           sequenceProvider,
+                                           sequenceMatchingParameters,
+                                           modificationFactory,
+                                           modificationParameters,
+                                           peptideAssumption
+                                    )
+                            );                        
+                    }
+                    
+                    double maxApexDist = 0.0;
+                    if (!rtApexDists.isEmpty()){
+                        maxApexDist = (Collections.max(rtApexDists.values()));
+                    }
 
                     Boolean rtFileWriterFlag = false;
 
                     // Export all candidate peptides
                     SpectrumMatch tempSpectrumMatch = spectrumMatch;
+                    double tempMaxApexDist = maxApexDist;
                     tempSpectrumMatch.getAllPeptideAssumptions()
                             .forEach(
                                     peptideAssumption -> writePeptideCandidate(
@@ -503,6 +624,8 @@ public class PercolatorExport {
                                             peptideAssumption,
                                             allRTs,
                                             rtFileWriterFlag,
+                                            rtApex,
+                                            tempMaxApexDist,
                                             fragmentationPrediction,
                                             searchParameters,
                                             sequenceProvider,
@@ -690,6 +813,8 @@ public class PercolatorExport {
                         //rtPreds,
                         allRTs,
                         rtFileWriterFlag,
+                        null,
+                        null,
                         null,
                         searchParameters,
                         sequenceProvider,
@@ -901,6 +1026,7 @@ public class PercolatorExport {
      * @param spectrumMatch The spectrum match where the peptide was found.
      * @param peptideAssumption The peptide assumption.
      * @param allRTvalues The retention time predictions for all peptides.
+     * @param rtApex The rt apex for all PSMs.
      * @param fragmentationPrediction The mass spectrum predictions for all
      * peptides.
      * @param searchParameters The parameters of the search.
@@ -922,6 +1048,8 @@ public class PercolatorExport {
             PeptideAssumption peptideAssumption,
             HashMap<String, ArrayList<Double>> allRTvalues,
             Boolean rtFileWriterFlag,
+            HashMap<String, Double> rtApex,
+            Double maxApexDist,
             HashMap<String, ArrayList<Spectrum>> fragmentationPrediction,
             SearchParameters searchParameters,
             SequenceProvider sequenceProvider,
@@ -935,6 +1063,22 @@ public class PercolatorExport {
             SimpleSemaphore writingSemaphore,
             SimpleFileWriter writer
     ) {
+        
+        // PSM id
+        long spectrumKey = spectrumMatch.getKey();            
+        // Get peptide data from ms2pip export
+        String peptideDataMs2Pip = Ms2PipUtils.getPeptideData(
+                peptideAssumption,
+                modificationParameters,
+                sequenceProvider,
+                sequenceMatchingParameters,
+                modificationFactory
+        );
+        // Get corresponding ms2pip key
+        long peptideMs2PipKey = Ms2PipUtils.getPeptideKey(peptideDataMs2Pip);
+        String peptideID = Long.toString(peptideMs2PipKey);
+
+        String psmID = String.join("_", String.valueOf(spectrumKey), peptideID);
 
         // Get peptide RTs
         Boolean rtPredictionsAvailable = allRTvalues != null;
@@ -953,6 +1097,13 @@ public class PercolatorExport {
                 return;
             }
         }
+        
+        // Get rt apex
+        double retentionTimeApex = -100000.0; //value indicating that rt apex is not available
+      
+        if (rtApex != null){
+            retentionTimeApex = rtApex.get(psmID);
+        }
 
         //Get peptide's predicted spectrum
         ArrayList<Spectrum> predictedSpectrum = null;
@@ -960,7 +1111,7 @@ public class PercolatorExport {
         
         if (spectraPredictionsAvailable) {
             
-            // Get peptide data
+            /*// Get peptide data
             String peptideData = Ms2PipUtils.getPeptideData(
                     peptideAssumption,
                     modificationParameters,
@@ -970,12 +1121,12 @@ public class PercolatorExport {
             );
             
             // Get corresponding key
-            long peptideKey = Ms2PipUtils.getPeptideKey(peptideData);
-            predictedSpectrum = fragmentationPrediction.get(Long.toString(peptideKey));
+            long peptideKey = Ms2PipUtils.getPeptideKey(peptideData);*/
+            predictedSpectrum = fragmentationPrediction.get(Long.toString(peptideMs2PipKey));
 
             //MS2PIP prediction is missing
             if (predictedSpectrum == null) {
-                System.out.println("Missing MS2PIP prediction for peptide: " + Long.toString(peptideKey));
+                System.out.println("Missing MS2PIP prediction for peptide: " + Long.toString(peptideMs2PipKey));
                 return;
             }
         }
@@ -990,6 +1141,7 @@ public class PercolatorExport {
                     peptideAssumption,
                     modificationParameters,
                     peptideRTs,
+                    searchParameters,
                     sequenceProvider,
                     spectrumProvider,
                     sequenceMatchingParameters,
@@ -1002,6 +1154,8 @@ public class PercolatorExport {
                     spectrumMatch,
                     peptideAssumption,
                     peptideRTs,
+                    retentionTimeApex,
+                    maxApexDist,
                     predictedSpectrum,
                     searchParameters,
                     sequenceProvider,
