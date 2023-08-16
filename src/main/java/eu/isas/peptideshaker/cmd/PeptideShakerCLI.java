@@ -893,6 +893,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                             MsFileExporter.writeMgfFile(
                                     msFileHandler,
+                                    true,
                                     spectrumFileName,
                                     mgfFile,
                                     waitingHandler);
