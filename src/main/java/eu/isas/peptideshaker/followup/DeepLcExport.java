@@ -525,7 +525,7 @@ public class DeepLcExport {
             );
         }
         else{
-            DeepLcUtils.getPeptideData(
+            peptideData = DeepLcUtils.getPeptideData(
                 peptideAssumption,
                 retentionTime,
                 modificationParameters,
