@@ -750,8 +750,11 @@ public class CLIExportMethods {
         projectDetails.setPrideOutputFolder(mzidCLIInputBean.getOutputFile().getAbsolutePath());
 
         IdentificationParameters identificationParameters = psbdParent.getIdentificationParameters();
-        FastaSummary fastaSummary = FastaSummary.getSummary(projectDetails.getFastaFile(),
-                identificationParameters.getFastaParameters(), waitingHandler);
+        FastaSummary fastaSummary = FastaSummary.getSummary(
+                projectDetails.getFastaFile(),
+                identificationParameters.getFastaParameters(), 
+                waitingHandler
+        );
 
         MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(
                 PeptideShaker.getVersion(),
