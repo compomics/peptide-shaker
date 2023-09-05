@@ -40,8 +40,8 @@ import java.util.logging.Logger;
 public class PercolatorExport {
 
     /**
-     * Exports a Percolator training file for each of the spectrum files.Returns
-     * an ArrayList of the files exported.
+     * Exports a Percolator training file for each of the spectrum files.
+     * Returns an ArrayList of the files exported.
      *
      * @param destinationFile The file to use to write the file.
      * @param deepLcFile The deepLC results.
@@ -217,7 +217,7 @@ public class PercolatorExport {
             ArrayList<Double> predictionsB = new ArrayList<>();
             ArrayList<Double> mzsY = new ArrayList<>();
             ArrayList<Double> predictionsY = new ArrayList<>();
-            
+
             if ((firstIon.equals("B")) || (firstIon.equals("B2"))) {
                 mzsB.add(firstMz);
                 predictionsB.add(firstPrediction);
@@ -240,7 +240,7 @@ public class PercolatorExport {
                 if (key.equals(predictedSpectrumKey)) {
                     mzs.add(mz);
                     predictions.add(prediction);
-                    
+
                     if ((ion.equals("B")) || (ion.equals("B2"))) {
                         mzsB.add(mz);
                         predictionsB.add(prediction);
@@ -248,10 +248,9 @@ public class PercolatorExport {
                         mzsY.add(mz);
                         predictionsY.add(prediction);
                     }
-                    
-                }
-                else{
-                    
+
+                } else {
+
                     //Create Spectrum object with all predicted peaks
                     ArrayList<Double> mzsUnsorted = new ArrayList<>(mzs);
                     Collections.sort(mzs);
@@ -265,11 +264,11 @@ public class PercolatorExport {
                     }
 
                     Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray, 2);
-                    
+
                     //Create Spectrum object with all B predicted peaks
                     ArrayList<Double> mzsBUnsorted = new ArrayList<>(mzsB);
                     Collections.sort(mzsB);
-                    
+
                     double[] mzsBArray = new double[mzsB.size()];
                     double[] predictionsBArray = new double[mzsB.size()];
                     for (int i = 0; i < predictionsBArray.length; i++) {
@@ -279,11 +278,11 @@ public class PercolatorExport {
                     }
 
                     Spectrum predictedBionSpectrum = new Spectrum(null, mzsBArray, predictionsBArray, 2);
-                    
+
                     //Create Spectrum object with all Y predicted peaks
                     ArrayList<Double> mzsYUnsorted = new ArrayList<>(mzsY);
                     Collections.sort(mzsY);
-                    
+
                     double[] mzsYArray = new double[mzsY.size()];
                     double[] predictionsYArray = new double[mzsY.size()];
                     for (int i = 0; i < predictionsYArray.length; i++) {
@@ -293,7 +292,7 @@ public class PercolatorExport {
                     }
 
                     Spectrum predictedYionSpectrum = new Spectrum(null, mzsYArray, predictionsYArray, 2);
-                                        
+
                     ArrayList<Spectrum> predictedSpectra = new ArrayList<>();
                     predictedSpectra.add(predictedSpectrum);
                     predictedSpectra.add(predictedBionSpectrum);
@@ -311,7 +310,7 @@ public class PercolatorExport {
                     predictionsB = new ArrayList<>();
                     mzsY = new ArrayList<>();
                     predictionsY = new ArrayList<>();
-                    
+
                     if ((ion.equals("B")) || (ion.equals("B2"))) {
                         mzsB.add(mz);
                         predictionsB.add(prediction);
@@ -324,9 +323,9 @@ public class PercolatorExport {
                 }
 
             }
-            
+
             //Create Spectrum object with all predicted peaks
-            ArrayList<Double> mzsUnsorted = new ArrayList<Double>(mzs);
+            ArrayList<Double> mzsUnsorted = new ArrayList<>(mzs);
             Collections.sort(mzs);
 
             double[] mzsArray = new double[mzs.size()];
@@ -338,11 +337,11 @@ public class PercolatorExport {
             }
 
             Spectrum predictedSpectrum = new Spectrum(null, mzsArray, predictionsArray, 2);
-            
+
             //Create Spectrum object with all B predicted peaks
-            ArrayList<Double> mzsBUnsorted = new ArrayList<Double>(mzsB);
+            ArrayList<Double> mzsBUnsorted = new ArrayList<>(mzsB);
             Collections.sort(mzsB);
-            
+
             double[] mzsBArray = new double[mzsB.size()];
             double[] predictionsBArray = new double[mzsB.size()];
             for (int i = 0; i < predictionsBArray.length; i++) {
@@ -354,9 +353,9 @@ public class PercolatorExport {
             Spectrum predictedBionSpectrum = new Spectrum(null, mzsBArray, predictionsBArray, 2);
 
             //Create Spectrum object with all Y predicted peaks
-            ArrayList<Double> mzsYUnsorted = new ArrayList<Double>(mzsY);
+            ArrayList<Double> mzsYUnsorted = new ArrayList<>(mzsY);
             Collections.sort(mzsY);
-            
+
             double[] mzsYArray = new double[mzsY.size()];
             double[] predictionsYArray = new double[mzsY.size()];
             for (int i = 0; i < predictionsYArray.length; i++) {
@@ -461,7 +460,7 @@ public class PercolatorExport {
             ForkJoinPool customThreadPool = new ForkJoinPool(threadCount);
 
             // aggregate all the spectrum matches into a list -> iterate over it
-            SpectrumMatch match = null;
+            SpectrumMatch match;
             ArrayList<SpectrumMatch> allSpectrumMatches = new ArrayList<>();
             while ((match = spectrumMatchesIterator.next()) != null) {
                 allSpectrumMatches.add(match);
@@ -619,7 +618,7 @@ public class PercolatorExport {
         Boolean rtPredictionsAvailable = deepLcFile != null;
 
         // Parse retention time prediction
-        HashMap<String, ArrayList<Double>> rtPrediction = new HashMap<String, ArrayList<Double>>();
+        HashMap<String, ArrayList<Double>> rtPrediction = new HashMap<>();
 
         if (deepLcFile != null) {
 
@@ -710,6 +709,20 @@ public class PercolatorExport {
 
     }
 
+    /**
+     * Returns all observed predicted retention times scaled.
+     *
+     * @param identification The identification.
+     * @param rtPrediction The RT prediction.
+     * @param searchParameters The search parameters.
+     * @param sequenceProvider The sequence provider.
+     * @param sequenceMatchingParameters The sequence matching parameters.
+     * @param modificationFactory The modification factory.
+     * @param spectrumProvider The spectrum provider.
+     * @param waitingHandler The waiting handler.
+     *
+     * @return All observed predicted retention times scaled.
+     */
     private static HashMap<String, ArrayList<Double>> getAllObservedPredictedRTScaled(
             Identification identification,
             HashMap<String, ArrayList<Double>> rtPrediction,
@@ -754,9 +767,8 @@ public class PercolatorExport {
         ArrayList<String> allDeepLCkeys = new ArrayList<>();
         ArrayList<Double> allObservedRTs = new ArrayList<>();
         ArrayList<Double> allPredictedRTs = new ArrayList<>();
-        Iterator entries = allRTvalues.entrySet().iterator();
-        while (entries.hasNext()) {
-            HashMap.Entry entry = (HashMap.Entry) entries.next();
+
+        for (HashMap.Entry entry : allRTvalues.entrySet()) {
             String key = (String) entry.getKey();
             ArrayList<Double> values = (ArrayList<Double>) entry.getValue();
             allDeepLCkeys.add(key);
@@ -769,9 +781,8 @@ public class PercolatorExport {
                 allObservedRTs,
                 allPredictedRTs
         );
-        Iterator newEntries = allRTvalues.entrySet().iterator();
-        while (newEntries.hasNext()) {
-            HashMap.Entry entry = (HashMap.Entry) newEntries.next();
+
+        for (HashMap.Entry entry : allRTvalues.entrySet()) {
             String key = (String) entry.getKey();
             ArrayList<Double> values = (ArrayList<Double>) entry.getValue();
             values.addAll(allRTsCenterScale.get(key));
@@ -795,6 +806,7 @@ public class PercolatorExport {
 
         double minObs = allObservedRTs.get(0);
         double maxObs = allObservedRTs.get(0);
+
         for (int i = 1; i < allObservedRTs.size(); i++) {
             double value = allObservedRTs.get(i);
             if (value < minObs) {
@@ -807,29 +819,39 @@ public class PercolatorExport {
 
         double minPreds = allPredictedRTs.get(0);
         double maxPreds = allPredictedRTs.get(0);
+
         for (int i = 1; i < allPredictedRTs.size(); i++) {
+
             double value = allPredictedRTs.get(i);
+
             if (value < minPreds) {
                 minPreds = value;
             }
+
             if (value > maxPreds) {
                 maxPreds = value;
             }
+
         }
 
         for (int i = 0; i < allPredictedRTs.size(); i++) {
+
             double scaledObsRT = (allObservedRTs.get(i) - minObs) / (maxObs - minObs);
             double scaledPredsRT = (allPredictedRTs.get(i) - minPreds) / (maxPreds - minPreds);
+
             ArrayList<Double> RTs = new ArrayList<Double>() {
                 {
                     add(scaledObsRT);
                     add(scaledPredsRT);
                 }
             };
+
             allRTsCenterScale.put(allDeepLCkeys.get(i), RTs);
+
         }
 
         return allRTsCenterScale;
+
     }
 
     private static ArrayList<Double> getPeptidePredictedRT(
@@ -845,8 +867,15 @@ public class PercolatorExport {
 
         String deepLcKey = String.join(",",
                 peptideAssumption.getPeptide().getSequence(),
-                DeepLcUtils.getModifications(peptideAssumption.getPeptide(), searchParameters.getModificationParameters(), sequenceProvider, sequenceMatchingParameters, modificationFactory)
+                DeepLcUtils.getModifications(
+                        peptideAssumption.getPeptide(),
+                        searchParameters.getModificationParameters(),
+                        sequenceProvider,
+                        sequenceMatchingParameters,
+                        modificationFactory
+                )
         );
+
         predictedRts = rtPrediction.get(deepLcKey);
 
         return predictedRts;
@@ -866,7 +895,13 @@ public class PercolatorExport {
 
         String deepLcKey = String.join(",",
                 peptideAssumption.getPeptide().getSequence(),
-                DeepLcUtils.getModifications(peptideAssumption.getPeptide(), searchParameters.getModificationParameters(), sequenceProvider, sequenceMatchingParameters, modificationFactory)
+                DeepLcUtils.getModifications(
+                        peptideAssumption.getPeptide(),
+                        searchParameters.getModificationParameters(),
+                        sequenceProvider,
+                        sequenceMatchingParameters,
+                        modificationFactory
+                )
         );
 
         ArrayList<Double> predictedRts;
@@ -893,6 +928,7 @@ public class PercolatorExport {
         );
 
         allRTvalues.put(deepLcKey, peptideRTs);
+
     }
 
     /**
@@ -941,10 +977,18 @@ public class PercolatorExport {
         ArrayList<Double> peptideRTs = null;
 
         if (rtPredictionsAvailable) {
+
             String deepLcKey = String.join(",",
                     peptideAssumption.getPeptide().getSequence(),
-                    DeepLcUtils.getModifications(peptideAssumption.getPeptide(), searchParameters.getModificationParameters(), sequenceProvider, sequenceMatchingParameters, modificationFactory)
+                    DeepLcUtils.getModifications(
+                            peptideAssumption.getPeptide(),
+                            searchParameters.getModificationParameters(),
+                            sequenceProvider,
+                            sequenceMatchingParameters,
+                            modificationFactory
+                    )
             );
+
             peptideRTs = allRTvalues.get(deepLcKey);
 
             //DeepLC prediction is missing
@@ -957,9 +1001,9 @@ public class PercolatorExport {
         //Get peptide's predicted spectrum
         ArrayList<Spectrum> predictedSpectrum = null;
         Boolean spectraPredictionsAvailable = fragmentationPrediction != null;
-        
+
         if (spectraPredictionsAvailable) {
-            
+
             // Get peptide data
             String peptideData = Ms2PipUtils.getPeptideData(
                     peptideAssumption,
@@ -968,7 +1012,7 @@ public class PercolatorExport {
                     sequenceMatchingParameters,
                     modificationFactory
             );
-            
+
             // Get corresponding key
             long peptideKey = Ms2PipUtils.getPeptideKey(peptideData);
             predictedSpectrum = fragmentationPrediction.get(Long.toString(peptideKey));
@@ -984,7 +1028,7 @@ public class PercolatorExport {
         String peptideData;
 
         if (rtFileWriterFlag && rtPredictionsAvailable) {
-            
+
             peptideData = PercolatorUtils.getPeptideRTData(
                     spectrumMatch,
                     peptideAssumption,
@@ -995,9 +1039,9 @@ public class PercolatorExport {
                     sequenceMatchingParameters,
                     modificationFactory
             );
-            
+
         } else {
-            
+
             peptideData = PercolatorUtils.getPeptideData(
                     spectrumMatch,
                     peptideAssumption,

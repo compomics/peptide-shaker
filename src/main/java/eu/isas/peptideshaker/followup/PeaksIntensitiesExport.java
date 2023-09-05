@@ -25,15 +25,17 @@ import eu.isas.peptideshaker.utils.PercolatorUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
+ * Export for peak intensities.
  *
  * @author Dafni Skiadopoulou
  */
 public class PeaksIntensitiesExport {
 
     /**
+     * Export the peak intensities.
+     *
      * @param peaksIntensitiesFile The file to write the export.
      * @param ms2pipFile The file with ms2pip results.
      * @param psmIDsFile The file with the PSM ids.
@@ -98,6 +100,8 @@ public class PeaksIntensitiesExport {
     }
 
     /**
+     * Returns the PSM identifications.
+     *
      * @param psmIDsFile The file with the PSM ids.
      */
     private static ArrayList<String> getPSMids(
@@ -119,6 +123,8 @@ public class PeaksIntensitiesExport {
     }
 
     /**
+     * Export the peak intensities.
+     *
      * @param peaksIntensitiesFile The file to write the export.
      * @param fragmentationPrediction the map of predicted spectrum key to
      * fragmentation predictions.
@@ -302,6 +308,7 @@ public class PeaksIntensitiesExport {
         // Get spectrum annotation
         PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         SequenceMatchingParameters modificationSequenceMatchingParameters = modificationLocalizationParameters.getSequenceMatchingParameters();
+
         SpecificAnnotationParameters specificAnnotationParameters = annotationParameters.getSpecificAnnotationParameters(
                 spectrumFile,
                 spectrumTitle,
@@ -311,6 +318,7 @@ public class PeaksIntensitiesExport {
                 modificationSequenceMatchingParameters,
                 peptideSpectrumAnnotator
         );
+
         IonMatch[] matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
                 annotationParameters,
                 specificAnnotationParameters,
@@ -348,6 +356,7 @@ public class PeaksIntensitiesExport {
         }
 
         peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+
         matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
                 annotationParameters,
                 specificAnnotationParameters,
@@ -402,7 +411,16 @@ public class PeaksIntensitiesExport {
 
             String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
 
-            String line = String.join(",", psmID, "1", matchedLabel, String.valueOf(measuredMz[i]), String.valueOf(measuredIntensities[i]), annotation);
+            String line = String.join(
+                    ",",
+                    psmID,
+                    "1",
+                    matchedLabel,
+                    String.valueOf(measuredMz[i]),
+                    String.valueOf(measuredIntensities[i]),
+                    annotation
+            );
+
             writer.writeLine(line);
 
         }
@@ -422,7 +440,16 @@ public class PeaksIntensitiesExport {
 
             String matchedLabel = measuredAlignedIndices.contains(i) ? "1" : "0";
 
-            String line = String.join(",", psmID, "-1", matchedLabel, String.valueOf(predMz[i]), String.valueOf(predIntensities[i]), annotation);
+            String line = String.join(
+                    ",",
+                    psmID,
+                    "-1",
+                    matchedLabel,
+                    String.valueOf(predMz[i]),
+                    String.valueOf(predIntensities[i]),
+                    annotation
+            );
+
             writer.writeLine(line);
 
         }

@@ -2791,8 +2791,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private void preferencesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_preferencesMenuItemActionPerformed
 
         ProjectParametersDialog projectParametersDialog = new ProjectParametersDialog(
-                this, 
-                getSpectrumCountingParameters(), 
+                this,
+                getSpectrumCountingParameters(),
                 getDisplayParameters()
         );
 
@@ -2816,12 +2816,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             // check if the display preferences need to be updated
             DisplayParameters newDisplayParameters = projectParametersDialog.getDisplayParameters();
-            
+
             if (newDisplayParameters.getnAASurroundingPeptides() != getDisplayParameters().getnAASurroundingPeptides()) {
                 getDisplayParameters().setnAASurroundingPeptides(newDisplayParameters.getnAASurroundingPeptides());
                 updateSurroundingAminoAcids();
             }
-            
+
         }
 
         // @TODO: replace the code above when backwards compatibility can be broken
@@ -5441,8 +5441,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             ModificationLocalizationScorer ptmScorer = new ModificationLocalizationScorer();
             Identification identification = getIdentification();
-        SequenceProvider sequenceProvider = getSequenceProvider();
+            SequenceProvider sequenceProvider = getSequenceProvider();
             ProteinMatch proteinMatch = identification.getProteinMatch(selectedProteinKey);
+
             ptmScorer.scorePTMs(
                     identification,
                     proteinMatch,
