@@ -181,9 +181,9 @@ For help on obtaining a valid sequence database see the [Database Help](https://
 PeptideShaker supports the import of data from [Mascot dat files](http://www.matrixscience.com/help/export_help.html#MascotDAT).
 Make sure that the spectra are available in the mgf format where every spectrum should have a unique title.
 
-Mascot's [Automatic Decoy Search](http://www.matrixscience.com/help/decoy_help.html#AUTO) is _not_ compatible with PeptideShaker. The reason for this is that Mascot uses a random decoy approach and not a reverse decoy approach. When combining results from different search engines it is important that the database and decoys used are identical, something that cannot be guaranteed when using the random approach.
+Mascot's randomised protein sequences decoy option is _not_ compatible with PeptideShaker. The reason being that this is a random decoy approach and not a reverse decoy approach. When combining results from different search engines it is important that the database and decoys used are identical, something that cannot be guaranteed when using the random approach.
 
-To combine Mascot results with your results from [SearchGUI](http://compomics.github.io/projects/searchgui.html) you therefore have to use the same target-decoy database as the one used in the [SearchGUI](http://compomics.github.io/projects/searchgui.html) search and **_not_** select the decoy option when performing the Mascot search.
+To combine Mascot results with your results from [SearchGUI](http://compomics.github.io/projects/searchgui.html) you therefore have to use the same target-decoy database as the one used in the [SearchGUI](http://compomics.github.io/projects/searchgui.html) search and not select the decoy option when performing the Mascot search. It may also be possible to use the reversed protein sequences decoy option in Mascot, but then there is no guarantee that the generated decoys are identical and the comparison against the other search engines may be less straightforward.
 
 To get target-decoy databases that are fully compatible with PeptideShaker see the [Decoy Databases](#decoy-databases) section below.
 
