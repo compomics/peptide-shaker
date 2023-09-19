@@ -5,10 +5,12 @@ import com.compomics.util.gui.file_handling.FileAndFileFilter;
 import com.compomics.util.experiment.identification.spectrum_annotation.AnnotationParameters;
 import com.compomics.util.experiment.io.biology.protein.FastaSummary;
 import com.compomics.util.experiment.io.identification.MzIdentMLVersion;
+import com.compomics.util.experiment.io.parameters.SdrfExport;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.file_handling.FileChooserUtil;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.io.IoUtil;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.file.LastSelectedFolder;
 import com.compomics.util.parameters.identification.IdentificationParameters;
@@ -53,6 +55,10 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      * The version of mzIdentML to use.
      */
     private MzIdentMLVersion mzIdentMLVersion = MzIdentMLVersion.v1_1;
+    /**
+     * Enables the export of an sdrf file next to the mzIdentML file.
+     */
+    private boolean exportSdrf = true;
 
     /**
      * Create a new MzIdentMLExportDialog.
@@ -762,6 +768,23 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 } finally {
                     // reset the annotation level
                     annotationParameters.setIntensityLimit(currentIntensityLimit);
+                }
+                
+                if (exportSdrf) {
+                    
+                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                    progressDialog.setTitle("Exporting sdrf draft. Please Wait...");
+
+                    // Export an sdrf file next to the mzIdentML file
+                    File sdrfFile = new File(IoUtil.removeExtension(finalOutputFile.getAbsolutePath()) + ".sdrf");
+
+                    SdrfExport.writeSdrf(
+                            sdrfFile,
+                            peptideShakerGUI.getIdentificationParameters().getSearchParameters(),
+                            peptideShakerGUI.getIdentification().getFractions(),
+                            ModificationFactory.getInstance()
+                    );
+                
                 }
 
                 // close the progress dialog

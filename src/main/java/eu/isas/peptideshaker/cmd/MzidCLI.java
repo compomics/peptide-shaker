@@ -3,8 +3,11 @@ package eu.isas.peptideshaker.cmd;
 import com.compomics.util.experiment.biology.enzymes.EnzymeFactory;
 import com.compomics.util.experiment.biology.modifications.ModificationFactory;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
+import com.compomics.util.experiment.io.parameters.SdrfExport;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
+import com.compomics.util.io.IoUtil;
 import com.compomics.util.parameters.UtilitiesUserParameters;
+import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.utils.PsdbParent;
@@ -182,6 +185,25 @@ public class MzidCLI extends PsdbParent {
         } finally {
             // reset the annotation level
             this.getIdentificationParameters().getAnnotationParameters().setIntensityLimit(currentIntensityLimit);
+        }
+
+        // export sdrf file
+        try {
+            
+            File sdrfFile = new File(IoUtil.removeExtension(mzidCLIInputBean.getOutputFile().getAbsolutePath()) + ".sdrf");
+
+            SdrfExport.writeSdrf(
+                    sdrfFile,
+                    getIdentificationParameters().getSearchParameters(),
+                    getIdentification().getFractions(),
+                    ModificationFactory.getInstance()
+            );
+
+        } catch (Exception e) {
+            waitingHandler.appendReport("An error occurred while generating the sdrf file.", true, true);
+            e.printStackTrace();
+            waitingHandler.setRunCanceled();
+
         }
 
         try {
