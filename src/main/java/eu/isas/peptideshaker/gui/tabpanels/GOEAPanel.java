@@ -111,6 +111,10 @@ public class GOEAPanel extends javax.swing.JPanel {
      * table.
      */
     private String currentGoMappingsColumn = null;
+    /**
+     * The species factory.
+     */
+    private SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
 
     /**
      * Creates a new GOEAPanel.
@@ -348,34 +352,53 @@ public class GOEAPanel extends javax.swing.JPanel {
                         TreeMap<String, Integer> datasetGoTermUsage = new TreeMap<>();
 
                         try {
+
                             progressDialog.setTitle("Importing GO (1/3). Please Wait...");
+
                             GoMapping backgroundGoMapping = new GoMapping();
-                            Integer taxon = null;
+                            String speciesLatinName = null;
                             IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                             GeneParameters genePreferences = identificationParameters.getGeneParameters();
+
                             if (genePreferences != null) {
-                                taxon = genePreferences.getBackgroundSpecies();
+                                speciesLatinName = genePreferences.getBackgroundSpecies();
                             }
-                            if (taxon == null) {
 
-                                FastaSummary fastaSummary = FastaSummary.getSummary(peptideShakerGUI.getProjectDetails().getFastaFile(), identificationParameters.getFastaParameters(), progressDialog);
+                            if (speciesLatinName == null) {
 
-                                BackgroundSpeciesDialog backgroundSpeciesDialog = new BackgroundSpeciesDialog(peptideShakerGUI, genePreferences, fastaSummary);
+                                FastaSummary fastaSummary = FastaSummary.getSummary(
+                                        peptideShakerGUI.getProjectDetails().getFastaFile(),
+                                        identificationParameters.getFastaParameters(),
+                                        progressDialog
+                                );
+
+                                BackgroundSpeciesDialog backgroundSpeciesDialog
+                                        = new BackgroundSpeciesDialog(
+                                                peptideShakerGUI,
+                                                genePreferences,
+                                                fastaSummary
+                                        );
+
                                 if (!backgroundSpeciesDialog.isCanceled()) {
                                     genePreferences = backgroundSpeciesDialog.getGeneParameters();
                                     identificationParameters.setGeneParameters(genePreferences);
-                                    taxon = genePreferences.getBackgroundSpecies();
+                                    speciesLatinName = genePreferences.getBackgroundSpecies();
                                 }
                             }
-                            if (taxon != null) {
-                                SpeciesFactory speciesFactory = SpeciesFactory.getInstance();
-                                String ensemblDatasetName = speciesFactory.getEnsemblDataset(taxon);
+
+                            if (speciesLatinName != null) {
+
+                                String ensemblDatasetName = speciesFactory.getEnsemblDatasetName(
+                                        speciesLatinName,
+                                        speciesFactory.getEnsemblSpecies().getDivision(speciesLatinName)
+                                );
+
                                 File goMappingFile = ProteinGeneDetailsProvider.getGoMappingFile(ensemblDatasetName);
                                 backgroundGoMapping.loadMappingsFromFile(goMappingFile, progressDialog);
 
                                 GoDomains goDomains = new GoDomains();
                                 File goDomainsFile = ProteinGeneDetailsProvider.getGoDomainsFile();
-                                goDomains.laodMappingFromFile(goDomainsFile, progressDialog);
+                                goDomains.loadMappingFromFile(goDomainsFile, progressDialog);
 
                                 Identification identification = peptideShakerGUI.getIdentification();
 
@@ -454,6 +477,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                             frequencyBackground, // number of successes
                                             totalNumberOfGoMappedProteinsInProject // sample size
                                     ).probability(frequencyDataset);
+
                                     Double log2Diff = Math.log(percentDataset / percentAll) / Math.log(2);
 
                                     if (!log2Diff.isInfinite() && Math.abs(log2Diff) > maxLog2Diff) {
