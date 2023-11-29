@@ -7,6 +7,7 @@ import com.compomics.util.experiment.biology.genes.GeneMaps;
 import com.compomics.util.experiment.biology.genes.go.GoDomains;
 import com.compomics.util.experiment.biology.genes.go.GoMapping;
 import com.compomics.util.experiment.biology.taxonomy.SpeciesFactory;
+import com.compomics.util.experiment.biology.taxonomy.mappings.EnsemblSpecies;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -388,10 +389,29 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                             if (speciesLatinName != null) {
 
-                                String ensemblDatasetName = speciesFactory.getEnsemblDatasetName(
-                                        speciesLatinName,
-                                        speciesFactory.getEnsemblSpecies().getDivision(speciesLatinName)
-                                );
+                                String organismNameLowerCase = speciesLatinName.toLowerCase();
+
+                                // remove trailing parentheses content
+                                // e.g. change 'Saccharomyces cerevisiae (strain ATCC 204508 / S288c)' into 'Saccharomyces cerevisiae' 
+                                if (organismNameLowerCase.lastIndexOf("(") != -1) {
+                                    organismNameLowerCase = organismNameLowerCase.substring(0, organismNameLowerCase.indexOf("(") - 1);
+                                }
+
+                                organismNameLowerCase = organismNameLowerCase.toLowerCase().replaceAll(" ", "_");
+
+                                // if species is still not found, try the synonym from the uniprot_species file
+                                if (!speciesFactory.getEnsemblSpecies().getLatinNames().contains(organismNameLowerCase)) {
+
+                                    String speciesSynonym = speciesFactory.getUniprotTaxonomy().getSynonym(speciesLatinName);
+
+                                    if (speciesSynonym != null) {
+                                        organismNameLowerCase = speciesSynonym.toLowerCase().replaceAll(" ", "_");
+                                    }
+
+                                }
+
+                                EnsemblSpecies.EnsemblDivision ensemblDivision = speciesFactory.getEnsemblSpecies().getDivision(organismNameLowerCase);
+                                String ensemblDatasetName = speciesFactory.getEnsemblDatasetName(organismNameLowerCase, ensemblDivision);
 
                                 File goMappingFile = ProteinGeneDetailsProvider.getGoMappingFile(ensemblDatasetName);
                                 backgroundGoMapping.loadMappingsFromFile(goMappingFile, progressDialog);
@@ -419,20 +439,30 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                         String mainMatch = proteinMatch.getLeadingAccession();
                                         HashSet<String> goTerms = backgroundGoMapping.getGoAccessions(mainMatch);
+
                                         if (goTerms != null && !goTerms.isEmpty()) {
+
                                             totalNumberOfGoMappedProteinsInProject++;
+
                                             for (String goTerm : goTerms) {
+
                                                 Integer usage = datasetGoTermUsage.get(goTerm);
+
                                                 if (usage == null) {
                                                     usage = 0;
                                                 }
+
                                                 datasetGoTermUsage.put(goTerm, usage + 1);
                                             }
+
                                         }
+
                                     }
+
                                     if (progressDialog.isRunCanceled()) {
                                         return;
                                     }
+
                                     progressDialog.increasePrimaryProgressCounter();
                                 }
 
