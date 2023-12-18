@@ -4070,7 +4070,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumTitle,
                             peptideAssumption
                     );
+                    
                     peptides.add(peptide);
+                    
                     IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(
                             annotationParameters,
                             specificAnnotationParameters,
@@ -4082,10 +4084,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             sequenceProvider,
                             modificationSequenceMatchingParameters
                     );
+                    
                     allAnnotations.add(annotations);
                     allSpectra.add(currentSpectrum);
 
                     int currentCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
+                    
                     if (currentCharge > maxCharge) {
                         maxCharge = currentCharge;
                     }
@@ -4136,6 +4140,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (i == 0) {
 
                         Spectrum spectrum = allSpectra.get(i);
+                        
                         spectrumPanel = new SpectrumPanel(
                                 spectrum.mz,
                                 ArrayUtil.scaleToMax(spectrum.intensity, true),
@@ -4149,9 +4154,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                 2,
                                 false
                         );
+                        
                         spectrumPanel.setAnnotateHighestPeak( //@TODO: implement ties resolution in the spectrum panel
                                 annotationParameters.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense
                         );
+                        
                         spectrumPanel.setAnnotations( //@TODO: the selection of the peak to annotate should be done outside the spectrum panel
                                 SpectrumAnnotator.getSpectrumAnnotation(
                                         allAnnotations.get(i)
@@ -4566,14 +4573,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 for (int aa = 0; aa < sequence.length(); aa++) {
 
                     String modName = fixedPtms.get(aa);
-                    
+
                     for (ModificationMatch modificationMatch : proteinMatch.getVariableModifications()) {
-                        
+
                         if (modificationMatch.getSite() == aa && displayParameters.isDisplayedPTM(modificationMatch.getModification())) {
-                            
+
                             modName = modificationMatch.getModification();
                             break;
-                            
+
                         }
                     }
 
@@ -5324,22 +5331,22 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     // update spectrum quantification column header tooltip
                     switch (peptideShakerGUI.getSpectrumCountingParameters().getSelectedMethod()) {
-                        
+
                         case NSAF:
                             proteinTableToolTips.set(proteinTable.getColumn("Quant").getModelIndex(), "Protein MS2 Quantification - NSAF");
                             break;
-                            
+
                         case EMPAI:
                             proteinTableToolTips.set(proteinTable.getColumn("Quant").getModelIndex(), "Protein MS2 Quantification - emPAI");
                             break;
-                            
+
                         case LFQ:
                             proteinTableToolTips.set(proteinTable.getColumn("Quant").getModelIndex(), "Label-free MS1 Quantification - LFQ");
                             break;
-                            
+
                         default:
                             break;
-                            
+
                     }
 
                     if (peptideShakerGUI.getDisplayParameters().showScores()) {
@@ -5456,6 +5463,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         spectrumTitle,
                         peptideAssumption
                 );
+
                 IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(
                         annotationParameters,
                         specificAnnotationParameters,
@@ -5467,10 +5475,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         sequenceProvider,
                         modificationSequenceMatchingParameters
                 );
+
                 allAnnotations.add(annotations);
                 currentSpectrumMatchKey = spectrumMatchKey;
 
             }
+
         }
 
         return allAnnotations;
