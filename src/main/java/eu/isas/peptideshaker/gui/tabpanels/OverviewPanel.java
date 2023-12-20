@@ -540,26 +540,71 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmTooltipMap.put(SpectrumIdentificationPanel.CONFLICT, "ID Software Disagree");
         psmTooltipMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, "First Hit(s) Missing");
 
-        psmTable.getColumn("ID").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
-        psmTable.getColumn("m/z Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
-                -peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPrecursorAccuracy(), // @TODO: how to handle negative values..?
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("m/z Error").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+        psmTable.getColumn("ID").setCellRenderer(
+                new JSparklinesIntegerColorTableCellRenderer(
+                        Color.lightGray,
+                        psmColorMap,
+                        psmTooltipMap
+                )
+        );
+
+        psmTable.getColumn("m/z Error").setCellRenderer(
+                new JSparklinesBarChartTableCellRenderer(
+                        PlotOrientation.HORIZONTAL,
+                        -peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPrecursorAccuracy(),
+                        peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPrecursorAccuracy(), // @TODO: how to handle negative values..?
+                        peptideShakerGUI.getSparklineColor(),
+                        peptideShakerGUI.getSparklineColor()
+                )
+        );
+
+        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("m/z Error").getCellRenderer()).showNumberAndChart(
+                true,
+                TableProperties.getLabelWidth()
+        );
 
         int maxCharge = peptideShakerGUI.getMetrics().getMaxCharge();
-        psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
-                (double) maxCharge, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
-        psmTable.getColumn("").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
-        psmTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/star_yellow.png")),
-                new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
-                new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
-                "Starred", null, null));
 
-        psmTable.getColumnModel().getColumn(6).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        psmTable.getColumn("Charge").setCellRenderer(
+                new JSparklinesBarChartTableCellRenderer(
+                        PlotOrientation.HORIZONTAL,
+                        (double) maxCharge,
+                        peptideShakerGUI.getSparklineColor()
+                )
+        );
+
+        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(
+                true,
+                TableProperties.getLabelWidth() - 30
+        );
+
+        psmTable.getColumn("").setCellRenderer(
+                new JSparklinesIntegerIconTableCellRenderer(
+                        MatchValidationLevel.getIconMap(this.getClass()),
+                        MatchValidationLevel.getTooltipMap()
+                )
+        );
+
+        psmTable.getColumn("  ").setCellRenderer(
+                new TrueFalseIconRenderer(
+                        new ImageIcon(this.getClass().getResource("/icons/star_yellow.png")),
+                        new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
+                        new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
+                        "Starred", null, null
+                )
+        );
+
+        psmTable.getColumnModel().getColumn(6).setCellRenderer(
+                new JSparklinesBarChartTableCellRenderer(
+                        PlotOrientation.HORIZONTAL,
+                        100.0, peptideShakerGUI.getSparklineColor())
+        );
+
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumnModel().getColumn(6).getCellRenderer()).showNumberAndChart(
-                true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+                true,
+                TableProperties.getLabelWidth() - 20,
+                peptideShakerGUI.getScoreAndConfidenceDecimalFormat()
+        );
 
         if (peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) {
             psmTableToolTips.set(psmTable.getColumn("m/z Error").getModelIndex(), "m/z Error (ppm)");
@@ -576,6 +621,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 });
             }
         });
+
     }
 
     /**
@@ -4070,9 +4116,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumTitle,
                             peptideAssumption
                     );
-                    
+
                     peptides.add(peptide);
-                    
+
                     IonMatch[] annotations = spectrumAnnotator.getSpectrumAnnotation(
                             annotationParameters,
                             specificAnnotationParameters,
@@ -4084,12 +4130,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             sequenceProvider,
                             modificationSequenceMatchingParameters
                     );
-                    
+
                     allAnnotations.add(annotations);
                     allSpectra.add(currentSpectrum);
 
                     int currentCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge();
-                    
+
                     if (currentCharge > maxCharge) {
                         maxCharge = currentCharge;
                     }
@@ -4140,7 +4186,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (i == 0) {
 
                         Spectrum spectrum = allSpectra.get(i);
-                        
+
                         spectrumPanel = new SpectrumPanel(
                                 spectrum.mz,
                                 ArrayUtil.scaleToMax(spectrum.intensity, true),
@@ -4154,11 +4200,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                 2,
                                 false
                         );
-                        
+
                         spectrumPanel.setAnnotateHighestPeak( //@TODO: implement ties resolution in the spectrum panel
                                 annotationParameters.getTiesResolution() == SpectrumAnnotator.TiesResolution.mostIntense
                         );
-                        
+
                         spectrumPanel.setAnnotations( //@TODO: the selection of the peak to annotate should be done outside the spectrum panel
                                 SpectrumAnnotator.getSpectrumAnnotation(
                                         allAnnotations.get(i)
