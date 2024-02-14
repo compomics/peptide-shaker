@@ -137,6 +137,19 @@ public class PeptideShakerIdentificationParametersCLIParams {
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_LOADED_PROTEINS.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_LOADED_PROTEINS   .description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_LOADED_SPECTRA.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_LOADED_SPECTRA.description + "\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_OUTPUT_FORMAT.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_OUTPUT_FORMAT.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_MAX_ALLOWED_CHARGE_STATE.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_MAX_ALLOWED_CHARGE_STATE.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_MIN_PEAK_DEPTH.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_MIN_PEAK_DEPTH.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_MAX_PEAK_DEPTH.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_MAX_PEAK_DEPTH.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_SECOND_SEARCH.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_SECOND_SEARCH.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_KEEP_Y1_ION.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_KEEP_Y1_ION.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_REMOVE_WATER_LOSSES.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_REMOVE_WATER_LOSSES.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_REMOVE_AMMONIA_LOSSES.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_REMOVE_AMMONIA_LOSSES.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_EXCLUDE_FIRST_PRECURSOR.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_EXCLUDE_FIRST_PRECURSOR.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_MAX_MULTIPLE_PRECURORS.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_MAX_MULTIPLE_PRECURORS.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_CONSIDERED_CHARGE_STATES_FOR_PRECURSOR.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_CONSIDERED_CHARGE_STATES_FOR_PRECURSOR.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_COMBINE_CHARGE_STATES.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_COMBINE_CHARGE_STATES.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_RUN_PERCOLATOR.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_RUN_PERCOLATOR.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.MS_AMANDA_GENERATE_PIN_FILE.id) + " " + IdentificationParametersCLIParams.MS_AMANDA_GENERATE_PIN_FILE.description + "\n";
 
         output += "\n\nMS-GF+ advanced parameters:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MSGF_DECOY.id) + " " + IdentificationParametersCLIParams.MSGF_DECOY.description + "\n";
