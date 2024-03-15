@@ -340,7 +340,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>5.1.8</version>
+            <version>5.1.9</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
