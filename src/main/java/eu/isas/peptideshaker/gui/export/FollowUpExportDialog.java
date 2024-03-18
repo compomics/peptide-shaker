@@ -608,8 +608,13 @@ public class FollowUpExportDialog extends javax.swing.JDialog {
 
     private void tppExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tppExportButtonActionPerformed
 
-        JOptionPane.showMessageDialog(FollowUpExportDialog.this, "PepXML does not allow the storage of all PeptideShaker results and should thus be used carefully." + System.getProperty("line.separator")
-                + "For third party tools we recommend using mzIdentML, the standard format of proteomics identification results.", "Warning", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(
+                FollowUpExportDialog.this, 
+                "PepXML does not allow the storage of all PeptideShaker results and should thus be used carefully." + System.getProperty("line.separator")
+                + "For third party tools we recommend using mzIdentML, the standard format of proteomics identification results.", 
+                "Warning", 
+                JOptionPane.WARNING_MESSAGE
+        );
 
         final File finalOutputFile = peptideShakerGUI.getUserSelectedFile("tpp_psm_export.pep.xml", ".pep.xml", "PepXML (*.pep.xml)", "Select Destination File", false);;
 
