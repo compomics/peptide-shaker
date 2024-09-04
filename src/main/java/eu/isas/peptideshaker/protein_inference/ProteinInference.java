@@ -177,6 +177,7 @@ public class ProteinInference {
                     mainAccession = accession;
 
                 }
+
             }
 
             similarityLoop:
@@ -389,7 +390,7 @@ public class ProteinInference {
             ProteinDetailsProvider proteinDetailsProvider,
             IdentificationParameters identificationParameters,
             Identification identification
-    ) {
+    ) { // @TODO: add check for if the two accession numbers are equal?
 
         DigestionParameters digestionPreferences = identificationParameters.getSearchParameters().getDigestionParameters();
 
