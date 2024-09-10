@@ -278,7 +278,7 @@ public class PsPeptideSection {
 
                         }
 
-                        writer.decreseDepth();
+                        writer.decreaseDepth();
 
                     }
 

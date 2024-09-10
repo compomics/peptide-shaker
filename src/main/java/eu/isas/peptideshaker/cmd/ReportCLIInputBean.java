@@ -49,7 +49,7 @@ public class ReportCLIInputBean {
     private final PathSettingsCLIInputBean pathSettingsCLIInputBean;
 
     /**
-     * Construct a FollowUpCLIInputBean from an Apache CLI instance.
+     * Construct a ReportCLIInputBean from an Apache CLI instance.
      *
      * @param aLine the command line
      */
@@ -93,13 +93,14 @@ public class ReportCLIInputBean {
             }
         }
 
-        if (aLine.hasOption(MzidCLIParams.GZIP.id)) {
-            String input = aLine.getOptionValue(MzidCLIParams.GZIP.id);
+        if (aLine.hasOption(ReportCLIParams.GZIP.id)) {
+            String input = aLine.getOptionValue(ReportCLIParams.GZIP.id);
             int index = Integer.parseInt(input.trim());
             gzip = index == 1;
         }
 
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
+
     }
 
     /**
@@ -218,4 +219,5 @@ public class ReportCLIInputBean {
     public boolean isGzip() {
         return gzip;
     }
+
 }

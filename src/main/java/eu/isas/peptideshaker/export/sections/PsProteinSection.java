@@ -308,7 +308,7 @@ public class PsProteinSection {
 
                         }
 
-                        writer.decreseDepth();
+                        writer.decreaseDepth();
 
                     }
 

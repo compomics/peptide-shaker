@@ -289,7 +289,7 @@ public class CLIExportMethods {
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param waitingHandler a waiting handler to display progress
-     * 
+     *
      * @return File file containing the proteoforms data
      */
     public static File exportProteoforms(
@@ -318,7 +318,7 @@ public class CLIExportMethods {
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The waiting handler.
-     * 
+     *
      * @return The files created by the export.
      */
     public static ArrayList<File> exportDeepLC(
@@ -337,11 +337,11 @@ public class CLIExportMethods {
         return DeepLcExport.deepLcExport(
                 destinationStem,
                 percolatorBenchmarkResultsFile,
-                identification, 
-                modificationParameters, 
-                sequenceMatchingParameters, 
-                sequenceProvider, 
-                spectrumProvider, 
+                identification,
+                modificationParameters,
+                sequenceMatchingParameters,
+                sequenceProvider,
+                spectrumProvider,
                 waitingHandler
         );
     }
@@ -356,7 +356,7 @@ public class CLIExportMethods {
      * @param sequenceProvider The sequence provider.
      * @param spectrumProvider The spectrum provider.
      * @param waitingHandler The waiting handler.
-     * 
+     *
      * @return The files created by the export.
      */
     public static ArrayList<File> exportMs2pip(
@@ -373,13 +373,13 @@ public class CLIExportMethods {
         String[] models = followUpCLIInputBean.getMs2pipModels();
 
         return Ms2PipExport.ms2pipExport(
-                destinationFile, 
-                models, 
-                identification, 
-                searchParameters, 
-                sequenceMatchingParameters, 
-                sequenceProvider, 
-                spectrumProvider, 
+                destinationFile,
+                models,
+                identification,
+                searchParameters,
+                sequenceMatchingParameters,
+                sequenceProvider,
+                spectrumProvider,
                 waitingHandler
         );
     }
@@ -415,37 +415,40 @@ public class CLIExportMethods {
         File deepLcFile = followUpCLIInputBean.getPercolatorRtFile();
         File ms2pipFile = followUpCLIInputBean.getPercolatorFragmentationFile();
         File destinationFile = followUpCLIInputBean.getPercolatorFile();
-        
+
         File rtObsPredsFile = followUpCLIInputBean.getRTObsPredsFile();
 
         PercolatorExport.percolatorExport(
-                destinationFile, 
+                destinationFile,
                 deepLcFile,
                 rtObsPredsFile,
-                ms2pipFile, 
-                identification, 
-                searchParameters, 
-                sequenceMatchingParameters, 
-                annotationParameters, 
+                ms2pipFile,
+                identification,
+                searchParameters,
+                sequenceMatchingParameters,
+                annotationParameters,
                 modificationLocalizationParameters,
                 modificationParameters,
-                sequenceProvider, 
-                spectrumProvider, 
+                sequenceProvider,
+                spectrumProvider,
                 waitingHandler
         );
     }
-    
+
     /**
      * Exports the peaks intensities (observed).
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
-     * @param searchParameters The search parameters.
-     * @param sequenceMatchingParameters The sequence matching parameters.
-     * @param modificationParameters The modification parameters.
-     * @param sequenceProvider The sequence provider.
-     * @param spectrumProvider The spectrum provider.
-     * @param waitingHandler The waiting handler.
+     * @param searchParameters the search parameters
+     * @param sequenceMatchingParameters the sequence matching parameters
+     * @param annotationParameters the annotation parameters
+     * @param modificationLocalizationParameters the modification localization
+     * parameters
+     * @param modificationParameters the modification parameters
+     * @param sequenceProvider the sequence provider
+     * @param spectrumProvider the spectrum provider
+     * @param waitingHandler the waiting handler
      */
     public static void exportPeaksIntensities(
             FollowUpCLIInputBean followUpCLIInputBean,
@@ -468,18 +471,18 @@ public class CLIExportMethods {
                 peaksIntensitiesFile,
                 ms2pipFile,
                 psmIDsForPeaksExport,
-                identification, 
+                identification,
                 //searchParameters, 
-                sequenceMatchingParameters, 
-                annotationParameters, 
+                sequenceMatchingParameters,
+                annotationParameters,
                 modificationLocalizationParameters,
                 modificationParameters,
-                sequenceProvider, 
-                spectrumProvider, 
+                sequenceProvider,
+                spectrumProvider,
                 waitingHandler
         );
     }
-    
+
     /**
      * Exports the RT values (observed,predicted).
      *
@@ -514,18 +517,18 @@ public class CLIExportMethods {
         PercolatorExport.RTValuesExport(
                 deepLcFile,
                 rtObsPredsFile,
-                identification, 
-                searchParameters, 
-                sequenceMatchingParameters, 
-                annotationParameters, 
+                identification,
+                searchParameters,
+                sequenceMatchingParameters,
+                annotationParameters,
                 modificationLocalizationParameters,
                 modificationParameters,
-                sequenceProvider, 
-                spectrumProvider, 
+                sequenceProvider,
+                spectrumProvider,
                 waitingHandler
         );
     }
-    
+
     public static void exportPSMIdentifiers(
             FollowUpCLIInputBean followUpCLIInputBean,
             Identification identification,
@@ -539,13 +542,13 @@ public class CLIExportMethods {
         File psmIdentifiersFile = followUpCLIInputBean.getPSMIdentifiersFile();
 
         PSMIdentExport.psmIdentExport(
-            psmIdentifiersFile,
-            identification,
-            modificationParameters,
-            sequenceProvider,
-            sequenceMatchingParameters,
-            spectrumProvider,
-            waitingHandler
+                psmIdentifiersFile,
+                identification,
+                modificationParameters,
+                sequenceProvider,
+                sequenceMatchingParameters,
+                spectrumProvider,
+                waitingHandler
         );
     }
 
@@ -656,7 +659,7 @@ public class CLIExportMethods {
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
 
         String reportName = reportType.replaceAll(" ", "_");
-        reportName = PSExportFactory.getDefaultReportName(experiment, reportName);
+        reportName = PSExportFactory.getDefaultReportName(experiment, reportName, reportCLIInputBean.isGzip());
         if (reportCLIInputBean.getReportNamePrefix() != null) {
             reportName = reportCLIInputBean.getReportNamePrefix() + reportName;
         }
@@ -722,8 +725,8 @@ public class CLIExportMethods {
      * Exports the project in the mzIdentML format.
      *
      * @param mzidCLIInputBean the user input
-     * @param psbdParent a psbd file parent allowing accessing the information it
-     * contains
+     * @param psbdParent a PSDB file parent allowing accessing the information
+     * it contains
      * @param waitingHandler a waiting handler allowing display of progress and
      * interruption of the export
      *
@@ -752,7 +755,7 @@ public class CLIExportMethods {
         IdentificationParameters identificationParameters = psbdParent.getIdentificationParameters();
         FastaSummary fastaSummary = FastaSummary.getSummary(
                 projectDetails.getFastaFile(),
-                identificationParameters.getFastaParameters(), 
+                identificationParameters.getFastaParameters(),
                 waitingHandler
         );
 

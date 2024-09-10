@@ -123,7 +123,7 @@ public class PSExportFactory implements ExportFactory {
      * Saves the factory in the user folder.
      *
      * @param psExportFactory the instance of the factory to save
-     * 
+     *
      * @throws IOException exception thrown whenever an error occurred while
      * saving the PSExportFactory
      */
@@ -694,15 +694,23 @@ public class PSExportFactory implements ExportFactory {
      *
      * @param experiment the experiment of the project
      * @param exportName the name of the report type
+     * @param gzipped whether the report should be gzipped
      *
      * @return the default file name for the export
      */
     public static String getDefaultReportName(
             String experiment,
-            String exportName
+            String exportName,
+            boolean gzipped
     ) {
 
-        return experiment + "_" + exportName + ".txt";
+        String reportName = experiment + "_" + exportName + ".txt";
+
+        if (gzipped) {
+            reportName += ".gz";
+        }
+
+        return reportName;
 
     }
 

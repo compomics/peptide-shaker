@@ -353,7 +353,7 @@ public class PsPsmSection {
                                 );
                             }
 
-                            writer.decreseDepth();
+                            writer.decreaseDepth();
 
                         }
 
