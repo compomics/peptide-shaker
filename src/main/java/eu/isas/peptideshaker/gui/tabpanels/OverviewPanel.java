@@ -4622,7 +4622,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     for (ModificationMatch modificationMatch : proteinMatch.getVariableModifications()) {
 
-                        if (modificationMatch.getSite() == aa && displayParameters.isDisplayedPTM(modificationMatch.getModification())) {
+                        if (modificationMatch.getSite() - 1 == aa && displayParameters.isDisplayedPTM(modificationMatch.getModification())) {
 
                             modName = modificationMatch.getModification();
                             break;
@@ -4652,7 +4652,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         }
 
                         ArrayList<ResidueAnnotation> annotations = new ArrayList<>(1);
-                        annotations.add(new ResidueAnnotation(modName + " (" + (aa + 1) + ")", 0l, false)); // @TODO: note that terminal ptms are annotated one residue too early or too late...
+                        annotations.add(new ResidueAnnotation(modName + " (" + (aa + 1) + ")", 0l, false));
                         proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
 
                         data = new ArrayList<>(1);

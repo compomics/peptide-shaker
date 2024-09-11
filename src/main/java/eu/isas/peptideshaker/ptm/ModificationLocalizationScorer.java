@@ -29,7 +29,6 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.experiment.identification.peptide_shaker.PSParameter;
 import com.compomics.util.experiment.identification.peptide_shaker.PSModificationScores;
 import com.compomics.util.experiment.identification.peptide_shaker.ModificationScoring;
-import com.compomics.util.experiment.identification.utils.PeptideUtils;
 import com.compomics.util.experiment.mass_spectrometry.SpectrumProvider;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -813,13 +812,21 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                     String modName = modificationMatch.getModification();
                     double modMass = modificationProvider.getModification(modName).getMass();
 
-                    int siteOnPeptide = PeptideUtils.getModifiedAaIndex(modificationMatch.getSite(), peptide.getSequence().length());
+                    int siteOnPeptide = modificationMatch.getSite();
 
                     if (modificationMatch.getConfident()) {
 
                         for (int peptideTempStart : peptideStart) {
 
-                            int siteOnProtein = peptideTempStart + siteOnPeptide - 1;
+                            int siteOnProtein;
+                            
+                            if (siteOnPeptide == 0) {
+                                siteOnProtein = peptideTempStart + 1;
+                            } else if (siteOnPeptide == peptide.getSequence().length() + 1) {
+                                siteOnProtein = peptideTempStart + siteOnPeptide - 1;
+                            } else {
+                                siteOnProtein = peptideTempStart + siteOnPeptide;
+                            }
 
                             HashMap<Double, String> modificationsAtSite = confidentSites.get(siteOnProtein);
 
@@ -833,11 +840,20 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                             modificationsAtSite.put(modMass, modName);
 
                         }
+
                     } else {
 
                         for (int peptideTempStart : peptideStart) {
 
-                            int siteOnProtein = peptideTempStart + siteOnPeptide - 1;
+                            int siteOnProtein;
+                            
+                            if (siteOnPeptide == 0) {
+                                siteOnProtein = peptideTempStart + 1;
+                            } else if (siteOnPeptide == peptide.getSequence().length() + 1) {
+                                siteOnProtein = peptideTempStart + siteOnPeptide - 1;
+                            } else {
+                                siteOnProtein = peptideTempStart + siteOnPeptide;
+                            }
 
                             HashMap<Double, String> modificationsAtSite = ambiguousSites.get(siteOnProtein);
 
@@ -851,9 +867,13 @@ public class ModificationLocalizationScorer extends ExperimentObject {
                             modificationsAtSite.put(modMass, modName);
 
                         }
+
                     }
+
                 }
+
             }
+
         }
 
         if (confidentSites.isEmpty() && ambiguousSites.isEmpty()) {
