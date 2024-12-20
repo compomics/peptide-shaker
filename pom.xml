@@ -485,7 +485,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>6.1.5</version>
+            <version>6.1.15</version>
         </dependency>
  
         <dependency>
