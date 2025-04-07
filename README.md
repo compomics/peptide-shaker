@@ -239,7 +239,7 @@ PeptideShaker supports mgf and mzML files as the input format for the spectra. T
 
   * **Database Help** - For help on how to set up a proper FASTA database, please see [Database Help](https://github.com/compomics/searchgui/wiki/DatabaseHelp). For Mascot databases see [Mascot Support](#mascot-support). Also see [Databases Decoy Databases](#decoy).
 
-  * **Does Not Start I** - Do you have Java installed? Download the latest version of Java  [here](http://java.sun.com/javase/downloads/index.jsp) and try again. (You only need the JRE version (and not the JDK version) to run PeptideShaker.)
+  * **Does Not Start I** - Do you have Java installed? Download the latest version of Java [here](https://adoptium.net/temurin/releases) and try again. (You only need the JRE version (and not the JDK version) to run PeptideShaker.)
 
   * **Does Not Start II** - Have you unzipped the zip file? You need to unzip the file before double clicking the jar file. If you get the message "A Java Exception has occurred", you are most likely trying to run PeptideShaker from within the zip file. Unzip the file and try again.
 
